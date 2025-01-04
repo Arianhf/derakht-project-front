@@ -5,7 +5,7 @@ import { Pagination } from 'antd';
 
 const BlogPost: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const blogsPerPage = 6;
+  const blogsPerPage = 8;
   const blogs = Array.from({ length: 20 }, (_, i) => i + 1); // Mock blog data
 
   const indexOfLastBlog = currentPage * blogsPerPage;
@@ -54,7 +54,7 @@ const BlogPost: React.FC = () => {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
+          gridTemplateColumns: 'repeat(4, 1fr)',
           gap: '20px',
           marginTop: '20px',
           width: '100%',
