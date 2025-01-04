@@ -1,9 +1,8 @@
-// src/components/Header.tsx
 import React from 'react';
 import styles from '../styles/BlogPage.module.css';
 import headerImage from '../assets/images/header.jpg';
 import logoImage from '../assets/images/logo.svg';
-import { FaUserCircle, FaSearch } from 'react-icons/fa'; // Import icons
+import { FaUserCircle, FaSearch } from 'react-icons/fa'; 
 import { IconContext } from 'react-icons/lib';
 
 const Header: React.FC = () => {
@@ -89,7 +88,7 @@ const Header: React.FC = () => {
 
       {/* Header Content */}
       <div className={styles.header}>
-        <img src={headerImage} alt="تصویر هدر" className={styles.headerImage} />
+        <img src={headerImage} alt="image header" className={styles.headerImage} />
         <div className={styles.overlay}>
           <div>
             <div
