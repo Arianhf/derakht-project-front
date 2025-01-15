@@ -71,9 +71,11 @@ const BlogDetails = () => {
           margin: "20px 0",
         }}
       />
-      <p style={{ fontSize: "18px", lineHeight: "1.8", color: "#555" }}>
-        {blog.content}
-      </p>
+      {/* Rich Text Content */}
+      <div
+        style={{ fontSize: "18px", lineHeight: "1.8", color: "#555" }}
+        dangerouslySetInnerHTML={{ __html: blog.content }} // Render rich text content
+      />
     </div>
   );
 };
