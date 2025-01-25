@@ -1,0 +1,224 @@
+@use "sass:color";
+/* Variables */
+$primary-color: #345BC0;
+$color-primary-darker: hsl(from var($primary-color) h s calc(l - 5));
+$background-light: #ECECEC;
+$button-bg: #80D46D;
+$button-bg-darker: hsl(from var($button-bg) h s calc(l - 5));
+
+
+/* General styles */
+body {
+  background: white;
+}
+
+.story-page {
+  font-family: "Yekan", sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  height: 60px;
+
+  .navbar-left {
+    .back-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background-color: $background-light;
+      border-radius: 50%;
+    }
+  }
+
+  .navbar-center {
+    flex: 1;
+    text-align: center;
+
+    .navbar-items {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: inline-flex;
+      gap: 20px;
+
+      li {
+        color: $primary-color;
+        font-size: 22px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .navbar-right {
+    .logo {
+      width: 100px;
+
+      img {
+        display: block;
+        width: 100%;
+      }
+    }
+  }
+}
+
+/* Page content styles */
+.page-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  padding: 20px;
+  height: calc(100% - 60px);
+}
+
+.right-content {
+  width: 27%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .image-container {
+    height: 60%;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 30px;
+    }
+  }
+
+  .rectangle-container {
+    height: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 30px;
+    padding: 20px;
+
+    .help-button {
+      font-family: "Yekan", sans-serif;
+      background-color: $button-bg;
+      color: white;
+      border: none;
+      padding: 10px 40px;
+      font-size: 26px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 1px 2px rgb(192, 192, 192);
+
+      &:hover {
+        background-color: $button-bg-darker;
+      }
+    }
+  }
+}
+
+.story-container {
+  width: 45%;
+  height: calc(100% - 40px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: white;
+  border-radius: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+
+  .story-text {
+    flex: 1;
+    overflow-y: auto;
+
+    p {
+      font-family: "Yekan", sans-serif;
+      font-size: 18px;
+      line-height: 1.8;
+      color: #333;
+      text-align: justify;
+    }
+  }
+
+  .submit-button {
+    font-family: "Yekan", sans-serif;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    padding: 10px 40px;
+    font-size: 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 1px 2px rgb(192, 192, 192);
+
+    &:hover {
+      background-color: $color-primary-darker;
+    }
+  }
+}
+
+.left-content {
+  width: 20%;
+  height: calc(100% - 40px);
+  background: white;
+  border-radius: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+
+  .button-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+
+    .action-button {
+      flex: 1;
+      background-color: $primary-color;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-family: "Yekan", sans-serif;
+      font-size: 16px;
+      padding: 10px 0;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: $color-primary-darker;
+      }
+    }
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #d7d7d7;
+    margin: 10px 0;
+  }
+
+  .image-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    overflow-y: auto;
+
+    .gallery-image {
+      width: 100%;
+      border-radius: 30px;
+      object-fit: cover;
+    }
+  }
+}
+
