@@ -5,11 +5,30 @@
   font-style: normal;
 }
 
-/* Apply the font globally */
+@font-face {
+  font-family: 'shoor-Medium';
+  src: url('../assets/fonts/Shoor-Medium.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'shoor-Regular';
+  src: url('../assets/fonts/Shoor-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
-  font-family: 'Yekan', Arial, sans-serif;
+  font-family: 'shoor-Medium', Arial, sans-serif;
   margin: 0;
   padding: 0;
+  height: 100vh;
+  background-color: #F4F4F4;
+}
+
+#root{
+  height: 100vh;
 }
 
 .header {
