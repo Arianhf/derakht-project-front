@@ -5,7 +5,7 @@ body {
   margin: 0;
   padding: 0;
   background: linear-gradient(180deg, #FFDDE1, #D4F1F4, #FFF7E5);
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'shoor-Medium';
 }
 
 /* Featured Blog Section */
@@ -19,6 +19,7 @@ body {
   padding: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   animation: fadeIn 1s ease-in-out;
+  font-family: 'shoor-Medium';
 }
 
 .featured-blog h2 {

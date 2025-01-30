@@ -4,7 +4,7 @@ import "./BlogPage.css"; // Add a CSS file for animations and styles
 
 // Mock blog data
 const mockBlogs = [
-  { id: 1, title: "ماجراجویی در جنگل جادویی", category: "Top Blog", isFeatured: true, author: "آریل ون هوتن", time: "۴ دقیقه" },
+  { id: 1, title: "ماجراجویی در جنگل جادویی", category: "Top Blog", isFeatured: true, author: "علی کلاته", time: "۴ دقیقه" },
   { id: 2, title: "رباتی که می‌خواست برقصد", category: "Top Blog", author: "صبا ناصر", time: "۱۰ دقیقه" },
   { id: 3, title: "شاهزاده و اژدها", category: "Top Blog", author: "آرین هدایتی فر", time: "۵ دقیقه" },
   { id: 4, title: "باغ مخفی", category: "Top Blog", author: "صبا ناصر", time: "۱۵ دقیقه" },
@@ -23,7 +23,6 @@ const BlogPage: React.FC = () => {
   return (
     <div
       style={{
-        fontFamily: "'Yekan', sans-serif",
         direction: "rtl",
         textAlign: "right",
         margin: "0 auto",
