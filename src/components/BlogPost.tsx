@@ -1,86 +1,95 @@
-import React from "react";
-import childIllustration from "../assets/images/blogimage1.jpg"; // Replace with a kid-friendly image
-import styles from "./BlogPage.module.scss"; // New CSS module for styles
-
-// Mock blog data
-const mockBlogs = [
-  { id: 1, title: "ماجراجویی در جنگل جادویی", category: "Top Blog", isFeatured: true, author: "علی کلاته", time: "۴ دقیقه" },
-  { id: 2, title: "رباتی که می‌خواست برقصد", category: "Top Blog", author: "صبا ناصر", time: "۱۰ دقیقه" },
-  { id: 3, title: "شاهزاده و اژدها", category: "Top Blog", author: "آرین هدایتی فر", time: "۵ دقیقه" },
-  { id: 4, title: "باغ مخفی", category: "Top Blog", author: "صبا ناصر", time: "۱۵ دقیقه" },
-  { id: 5, title: "هیولای دوست‌داشتنی", category: "Latest Blog", author: "بهزاد", time: "۹ دقیقه" },
-  { id: 6, title: "کاوشگر فضایی", category: "Latest Blog", author: "علی کلاته", time: "۶ دقیقه" },
-  { id: 7, title: "حیوانات سخنگو", category: "Latest Blog", author: "آرین هدایتی فر", time: "۵ دقیقه" },
-  { id: 8, title: "پل رنگین‌کمان", category: "Latest Blog", author: "علی کلاته", time: "۱۲ دقیقه" },
-  { id: 9, title: "جستجوی گنج", category: "Latest Blog", author: "بهزاد", time: "۷ دقیقه" },
-];
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import navigation hook
+import styles from "./BlogPage.module.scss";
+import axios from "axios";
 
 const BlogPage: React.FC = () => {
-  const featuredBlog = mockBlogs.find((blog) => blog.isFeatured);
-  const topBlogs = mockBlogs.filter((blog) => blog.category === "Top Blog" && !blog.isFeatured);
-  const latestBlogs = mockBlogs.filter((blog) => blog.category === "Latest Blog");
+  const [blogs, setBlogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate(); // React Router hook for navigation
+
+  const API_URL = import.meta.env.VITE_BASE_URL + "v2/posts/";
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await axios.get(API_URL);
+        setBlogs(response.data.items);
+      } catch (err) {
+        setError("مشکلی در دریافت مقالات رخ داده است.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, [API_URL]);
+
+  if (loading) return <p className={styles.loading}>در حال بارگذاری...</p>;
+  if (error) return <p className={styles.error}>{error}</p>;
+
+  if (blogs.length === 0) {
+    return <p className={styles.noBlogs}>هیچ مقاله‌ای یافت نشد.</p>;
+  }
 
   return (
     <div className={styles.blogContainer}>
       {/* Featured Blog Section */}
-      {featuredBlog && (
+      {blogs.length > 0 && (
         <section className={styles.featuredBlog}>
           <div>
-            <h2 className={styles.featuredTitle}>{featuredBlog.title}</h2>
-            <p className={styles.featuredText}>
-              همراه ما به یک سفر جادویی در دل جنگل بروید، جایی که همه چیز ممکن است!
-            </p>
+            <h2 className={styles.featuredTitle}>{blogs[0].title}</h2>
             <p className={styles.blogMeta}>
-              نوشته شده توسط <span className={styles.authorName}>{featuredBlog.author}</span> · {featuredBlog.time}
+              نوشته شده توسط <span className={styles.authorName}>درخت</span> · {blogs[0].jalali_date || "تاریخ نامشخص"}
             </p>
-            <button className={styles.readButton}>مطالعه</button>
+            <button 
+              className={styles.readButton} 
+              onClick={() => navigate(`/blog/${blogs[0].id}`)} // Navigate to BlogDetails
+            >
+              مطالعه
+            </button>
           </div>
           <div>
-            <img src={childIllustration} alt={featuredBlog.title} className={styles.featuredImage} />
+            <img 
+              src={blogs[0]?.schema_markup?.image?.url || "default-image.jpg"} 
+              alt={blogs[0].title} 
+              className={styles.featuredImage} 
+              onClick={() => navigate(`/blog/${blogs[0].id}`)} // Clickable image
+              style={{ cursor: "pointer" }}
+            />
           </div>
         </section>
       )}
 
-      {/* Top Blogs Section */}
-      <section className={styles.topBlogs}>
-        <h2 className={styles.sectionTitle}>داستان‌های برتر</h2>
-        <div className={styles.topBlogsGrid}>
-          {/* Left Large Blog */}
-          <div className={styles.largeBlog}>
-            <img src={childIllustration} alt={topBlogs[0].title} className={styles.largeBlogImage} />
-            <div className={styles.blogContent}>
-              <h3 className={styles.blogTitle}>{topBlogs[0].title}</h3>
-              <p className={styles.blogMeta}>
-                نوشته شده توسط <span className={styles.authorName}>{topBlogs[0].author}</span> · {topBlogs[0].time}
-              </p>
-            </div>
-          </div>
-
-          {/* Right Small Blogs */}
-          <div className={styles.smallBlogs}>
-            {topBlogs.slice(1).map((blog) => (
-              <div key={blog.id} className={styles.smallBlog}>
-                <img src={childIllustration} alt={blog.title} className={styles.smallBlogImage} />
-                <div>
-                  <h4 className={styles.blogTitle}>{blog.title}</h4>
-                  <p className={styles.blogMeta}>{blog.time} · {blog.author}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Latest Blogs Section */}
+      {/* Other Blogs */}
       <section className={styles.latestBlogs}>
         <h2 className={styles.sectionTitle}>آخرین داستان‌ها</h2>
         <div className={styles.latestBlogsGrid}>
-          {latestBlogs.map((blog) => (
-            <div key={blog.id} className={styles.blogCard}>
-              <img src={childIllustration} alt={blog.title} className={styles.blogCardImage} />
+          {blogs.slice(1).map((blog) => (
+            <div 
+              key={blog.id} 
+              className={styles.blogCard} 
+              onClick={() => navigate(`/blog/${blog.id}`)} // Clickable blog card
+              style={{ cursor: "pointer" }}
+            >
+              <img 
+                src={blog.schema_markup?.image?.url || "default-image.jpg"} 
+                alt={blog.title} 
+                className={styles.blogCardImage} 
+              />
               <div className={styles.blogContent}>
                 <h3 className={styles.blogTitle}>{blog.title}</h3>
-                <p className={styles.blogMeta}>{blog.time} · {blog.author}</p>
+                <p className={styles.blogMeta}>{blog.jalali_date || "تاریخ نامشخص"}</p>
+                <button 
+                  className={styles.readButton} 
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering card click
+                    navigate(`/blog/${blog.id}`);
+                  }}
+                >
+                  مطالعه
+                </button>
               </div>
             </div>
           ))}
