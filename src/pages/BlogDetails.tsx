@@ -1,12 +1,12 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { mockBlogs } from "../data/mockBlogs"; // Replace with your real data source
+import { mockBlogs } from "../data/mockBlogs";
 import { FaArrowLeft } from "react-icons/fa";
-import styles from "./BlogDetails.module.scss"; // Import the SCSS module
+import styles from "./BlogDetails.module.scss"; 
 
 const BlogDetails = () => {
-  const { id } = useParams(); // Get the blog ID from the URL
+  const { id } = useParams(); 
   const navigate = useNavigate();
-  const blog = id ? mockBlogs.find((b) => b.id === parseInt(id)) : null; // Find the blog by ID
+  const blog = id ? mockBlogs.find((b) => b.id === parseInt(id)) : null; 
 
   if (!blog) {
     return <p>مقاله یافت نشد!</p>;
