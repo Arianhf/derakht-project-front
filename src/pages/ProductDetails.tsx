@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { mockProducts } from "../data/mockProducts";
-import { FaShoppingBasket, FaPlus, FaMinus, FaArrowRight } from "react-icons/fa";
+import { FaPlus, FaMinus, FaArrowRight } from "react-icons/fa";
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams();
