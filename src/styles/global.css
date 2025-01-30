@@ -27,10 +27,6 @@ body {
   background-color: #F4F4F4;
 }
 
-#root{
-  height: 100vh;
-}
-
 .header {
   display: flex;
   justify-content: space-between;
