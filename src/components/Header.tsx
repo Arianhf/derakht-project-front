@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import styles from './Header.module.css';
-import headerImage from '../assets/images/header.jpg';
 import logoImage from '../assets/images/logo.svg';
 import {FaUserCircle, FaSearch} from 'react-icons/fa';
 import {IconContext} from 'react-icons/lib';
@@ -66,7 +65,7 @@ const Header: React.FC = () => {
                         <div className={styles.overlay}>
                             <div>
                                 <div className={styles.headerTags}>
-                                    {heroPost.tags?.map((tag, index) => (
+                                    {heroPost.tags?.map((tag: string|number|undefined|null, index: string|number|undefined|null) => (
                                         <span key={index} className={styles.tag}>
                                   {tag}
                                 </span>
