@@ -21,6 +21,7 @@ const BlogDetails = () => {
         const response = await axios.get(`${API_BASE_URL}v2/posts/${id}/`);
         setBlog(response.data);
       } catch (err) {
+        console.error(err)
         setError("مقاله یافت نشد!");
       } finally {
         setLoading(false);

@@ -18,6 +18,7 @@ const Header: React.FC = () => {
                 const response = await axios.get(`${BASE_URL}/hero/`);
                 setHeroPost(response.data);
             } catch (err) {
+                console.error(err);
                 setError("مشکلی در دریافت مقاله رخ داده است.");
             } finally {
                 setLoading(false);
@@ -79,7 +80,7 @@ const Header: React.FC = () => {
                                     <IconContext.Provider value={{className: styles.authorIcon}}>
                                         <FaUserCircle size={30}/>
                                     </IconContext.Provider>
-                                    <span>{heroPost.owner.name}</span>
+                                    <span>{heroPost.owner?.first_name}</span>
                                 </div>
                                 <div className={styles.authorMeta}>
                                     <span>{heroPost.jalali_date}</span>-<span>{heroPost.reading_time} دقیقه مطالعه</span>
