@@ -38,21 +38,13 @@ const BlogDetails = () => {
     return <p className={styles.notFound}>مقاله‌ای برای نمایش وجود ندارد.</p>;
   }
 
-  const {
-    title,
-    jalali_date,
-    meta,
-    schema_markup,
-  } = blog || {}; // Ensure blog exists before destructuring
 
-  const author = schema_markup
-    ? JSON.parse(schema_markup)?.author?.name || "نامشخص"
-    : "نامشخص";
+  const author = blog.owner?.first_name || "نامشخص";
 
-  const publishedDate = jalali_date || "تاریخ نامشخص";
-  const intro = meta?.intro || "";
-  const body = meta?.body || "<p>متنی برای این مقاله یافت نشد.</p>";
-  const imageUrl = meta?.header_image?.url || "default-image.jpg";
+  const publishedDate = blog.jalali_date || "تاریخ نامشخص";
+  const intro = blog.intro || "";
+  const body = blog.body || "<p>متنی برای این مقاله یافت نشد.</p>";
+  const imageUrl = blog.header_image?.meta?.download_url || "default-image.jpg";
 
   return (
     <div className={styles.blogContainer}>
@@ -65,12 +57,12 @@ const BlogDetails = () => {
       </div>
 
       {/* Blog Content */}
-      <h1 className={styles.blogTitle}>{title || "بدون عنوان"}</h1>
+      <h1 className={styles.blogTitle}>{blog.title || "بدون عنوان"}</h1>
       <p className={styles.blogMeta}>
         نوشته شده توسط <span className={styles.author}>{author}</span> · {publishedDate}
       </p>
 
-      <img src={imageUrl} alt={title || "تصویر مقاله"} className={styles.blogImage} />
+      <img src={imageUrl} alt={blog.header_image?.title || "تصویر مقاله"} className={styles.blogImage} />
 
       {/* Blog Intro */}
       {intro && <p className={styles.blogIntro}>{intro}</p>}
