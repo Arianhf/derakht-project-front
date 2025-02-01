@@ -78,7 +78,7 @@ const Header: React.FC = () => {
                   <span>{heroPost.owner?.first_name}</span>
                 </div>
                 <div className={styles.authorMeta}>
-                  <span>{heroPost.jalali_date}</span>-
+                  <span>{heroPost.jalali_date}</span>
                   <span>{heroPost.reading_time} دقیقه مطالعه</span>
                 </div>
               </div>
