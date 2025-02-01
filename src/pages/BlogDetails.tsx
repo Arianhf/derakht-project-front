@@ -4,8 +4,9 @@ import axios from "axios";
 import { FaArrowLeft } from "react-icons/fa";
 import styles from "./BlogDetails.module.scss";
 import logoImage from '../assets/images/logo2.png';
+import { toPersianNumber } from "../utils/convertToPersianNumber";
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL; // Read API URL from .env
+const API_BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 const BlogDetails = () => {
   const { id } = useParams();
@@ -80,7 +81,7 @@ const BlogDetails = () => {
         {/* Blog Content */}
         <h1 className={styles.blogTitle}>{blog.title || "بدون عنوان"}</h1>
         <p className={styles.blogMeta}>
-          نوشته شده توسط <span className={styles.author}>{author}</span> · {publishedDate}
+          نوشته شده توسط <span className={styles.author}>{author}</span> · {toPersianNumber(publishedDate)}
         </p>
 
         <img src={imageUrl} alt={blog.header_image?.title || "تصویر مقاله"} className={styles.blogImage} />
