@@ -4,7 +4,6 @@ import axios from "axios";
 import { FaArrowLeft } from "react-icons/fa";
 import styles from "./BlogDetails.module.scss";
 import logoImage from '../assets/images/logo2.png';
-import { FaSearch } from 'react-icons/fa';
 
 const API_BASE_URL = import.meta.env.VITE_BASE_URL; // Read API URL from .env
 
