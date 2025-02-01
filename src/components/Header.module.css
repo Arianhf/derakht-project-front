@@ -25,11 +25,12 @@ body {
 .logoContainer {
   display: flex;
   align-items: center;
+  padding-top: 20px;
 }
 
 .logo {
-  width: 150px;
-  height: 100px;
+  width: 140px;
+  height: 70px;
   border-radius: 50%;
 }
 

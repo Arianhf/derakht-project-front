@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
-import logoImage from '../assets/images/logo.svg';
+import logoImage from '../assets/images/logo2.png';
 import { FaUserCircle, FaSearch } from 'react-icons/fa';
 import { IconContext } from 'react-icons/lib';
 import axios from 'axios';
