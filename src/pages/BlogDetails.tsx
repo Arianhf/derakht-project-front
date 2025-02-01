@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { FaArrowLeft } from "react-icons/fa";
 import styles from "./BlogDetails.module.scss";
+import logoImage from '../assets/images/logo2.png';
+import { FaSearch } from 'react-icons/fa';
 
 const API_BASE_URL = import.meta.env.VITE_BASE_URL; // Read API URL from .env
 
@@ -48,27 +50,48 @@ const BlogDetails = () => {
 
   return (
     <div className={styles.blogContainer}>
-      {/* Back Button */}
-      <div className={styles.backButtonContainer}>
-        <button onClick={() => navigate(-1)} className={styles.backButton}>
-          بازگشت
-          <FaArrowLeft size={18} />
-        </button>
+
+      {/* Navbar */}
+      <nav className={styles.navbar}>
+        {/* Logo */}
+        <div className={styles.logoContainer}>
+          <img src={logoImage} alt="Logo" className={styles.logo} />
+        </div>
+
+        {/* Navbar Items */}
+        <div className={styles.navbarItems}>
+          {['خانه', 'درباره ما', 'وبلاگ', 'داستان'].map((item, index) => (
+            <a key={index} href="#" className={styles.navbarLink}>
+              {item}
+            </a>
+          ))}
+        </div>
+
+        {/* Back Button */}
+        <div className={styles.backButtonContainer}>
+          <button onClick={() => navigate(-1)} className={styles.backButton}>
+            بازگشت
+            <FaArrowLeft size={18} />
+          </button>
+        </div>
+      </nav>
+
+
+      <div style={{ marginTop: "120px" }}>
+        {/* Blog Content */}
+        <h1 className={styles.blogTitle}>{blog.title || "بدون عنوان"}</h1>
+        <p className={styles.blogMeta}>
+          نوشته شده توسط <span className={styles.author}>{author}</span> · {publishedDate}
+        </p>
+
+        <img src={imageUrl} alt={blog.header_image?.title || "تصویر مقاله"} className={styles.blogImage} />
+
+        {/* Blog Intro */}
+        {intro && <p className={styles.blogIntro}>{intro}</p>}
+
+        {/* Rich Text Content */}
+        <div className={styles.blogContent} dangerouslySetInnerHTML={{ __html: body }} />
       </div>
-
-      {/* Blog Content */}
-      <h1 className={styles.blogTitle}>{blog.title || "بدون عنوان"}</h1>
-      <p className={styles.blogMeta}>
-        نوشته شده توسط <span className={styles.author}>{author}</span> · {publishedDate}
-      </p>
-
-      <img src={imageUrl} alt={blog.header_image?.title || "تصویر مقاله"} className={styles.blogImage} />
-
-      {/* Blog Intro */}
-      {intro && <p className={styles.blogIntro}>{intro}</p>}
-
-      {/* Rich Text Content */}
-      <div className={styles.blogContent} dangerouslySetInnerHTML={{ __html: body }} />
     </div>
   );
 };
