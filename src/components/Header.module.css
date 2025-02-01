@@ -72,6 +72,8 @@ body {
   }
 }
 
+/* Body and Navbar styles remain unchanged ... */
+
 /* Header Section */
 .header {
   position: relative;
@@ -80,12 +82,31 @@ body {
   direction: rtl;
 }
 
+/* Container for clickable header content */
+.clickableContainer {
+  position: relative;
+  height: 600px;
+}
+
+/* Image styling with fixed width/height and cover */
 .headerImage {
   width: 100%;
-  height: 100%;
+  height: 600px;
   object-fit: cover;
 }
 
+/* Overlay placed on top of the image to darken it for better readability */
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 5;
+}
+
+/* Content overlay (texts and tags) on top of the imageOverlay */
 .overlay {
   position: absolute;
   top: 80%;
@@ -97,6 +118,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  z-index: 10; /* Make sure text is above the dark overlay */
 }
 
 /* Tags */
@@ -151,9 +173,9 @@ body {
 
 .authorMeta {
   font-size: 0.9rem;
+}
 
-  span {
-    margin-left: 5px;
-    margin-right: 5px;
-  }
+.authorMeta span {
+  margin-left: 5px;
+  margin-right: 5px;
 }
