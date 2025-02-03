@@ -15,6 +15,8 @@ const images = [sideStory1, sideStory2, sideStory3, sideStory4, sideStory5, side
 const StoryPage = () => {
     const [selectedIndex, setSelectedIndex] = useState(0); // Track selected image index
     const [texts, setTexts] = useState(Array(images.length).fill("")); // Store text for each image
+    const [isModalOpen, setIsModalOpen] = useState(false); // Track modal visibility
+    const [storyName, setStoryName] = useState(""); // Track story name
 
     const handleImageSelect = (index: SetStateAction<number>) => {
         setSelectedIndex(index);
@@ -29,7 +31,14 @@ const StoryPage = () => {
     const handleNextImage = () => {
         if (selectedIndex < images.length - 1) {
             setSelectedIndex(selectedIndex + 1);
+        } else {
+            setIsModalOpen(true); // Open modal when "پایان" is clicked
         }
+    };
+
+    const handleModalClose = () => {
+        setIsModalOpen(false);
+        console.log("Story Name:", storyName); // Do something with the story name (e.g., save it)
     };
 
     return (
@@ -66,7 +75,7 @@ const StoryPage = () => {
                             className="story-input"
                         />
                     </div>
-                    <button className="submit-button" onClick={handleNextImage} disabled={selectedIndex === images.length - 1}>
+                    <button className="submit-button" onClick={handleNextImage}>
                         {selectedIndex === images.length - 1 ? "پایان" : "ثبت"}
                     </button>
                 </div>
@@ -105,6 +114,23 @@ const StoryPage = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Modal for Story Name */}
+            {isModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h2>نام داستان را وارد کنید</h2>
+                        <input
+                            type="text"
+                            value={storyName}
+                            onChange={(e) => setStoryName(e.target.value)}
+                            placeholder="نام داستان"
+                            className="story-name-input"
+                        />
+                        <button className="modal-button" onClick={handleModalClose}>تایید</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

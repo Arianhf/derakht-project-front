@@ -235,44 +235,44 @@ body {
       background: #555;
     }
 
-  .gallery-item {
-    position: relative; // Enables absolute positioning for the number
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    .gallery-item {
+      position: relative; // Enables absolute positioning for the number
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-  .image-number {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: #345BC0;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-  }
+    .image-number {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #345BC0;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    }
 
-  .gallery-image {
-    width: 95%;
-    height: 190px;
-    border-radius: 20px;
-    object-fit: cover;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    border: 3px solid transparent;
+    .gallery-image {
+      width: 95%;
+      height: 190px;
+      border-radius: 20px;
+      object-fit: cover;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      border: 3px solid transparent;
 
-    &.selected {
-      border: 3px solid #345BC0;
+      &.selected {
+        border: 3px solid #345BC0;
+      }
     }
   }
-}
 
 }
 
@@ -326,4 +326,68 @@ body {
     background-color: #ccc;
     cursor: not-allowed;
   }
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  font-family: "shoor-Medium", sans-serif;
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.story-name-input {
+  width: 90%;
+  padding: 10px;
+  font-size: 18px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  text-align: right;
+  direction: rtl;
+  margin-bottom: 15px;
+  font-family: "shoor-Medium", sans-serif;
+
+  &:focus-visible {
+    outline: unset !important;
+  }
+}
+
+input::placeholder {
+  font-family: "shoor-Medium", sans-serif;
+}
+
+.modal-button {
+  background-color: #345BC0;
+  color: white;
+  font-size: 18px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: "shoor-Medium", sans-serif;
+}
+
+.modal-button:hover {
+  background-color: #2b4aa0;
 }
