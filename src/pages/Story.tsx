@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import "./story.scss";
 import { ArrowLeft } from "lucide-react";
 import logo from "../assets/images/logo2.png";
@@ -16,11 +16,11 @@ const StoryPage = () => {
     const [selectedIndex, setSelectedIndex] = useState(0); // Track selected image index
     const [texts, setTexts] = useState(Array(images.length).fill("")); // Store text for each image
 
-    const handleImageSelect = (index) => {
+    const handleImageSelect = (index: SetStateAction<number>) => {
         setSelectedIndex(index);
     };
 
-    const handleTextChange = (event) => {
+    const handleTextChange = (event: { target: { value: any; }; }) => {
         const newTexts = [...texts];
         newTexts[selectedIndex] = event.target.value;
         setTexts(newTexts);
