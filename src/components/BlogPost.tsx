@@ -140,7 +140,7 @@ const BlogPostList: React.FC = () => {
 
         {/* Regular Blogs */}
         <section className={styles.latestBlogs}>
-          <h2 className={styles.sectionTitle}>آخرین داستان‌ها</h2>
+          <h2 className={styles.sectionTitle}>آخرین مقاله‌ها</h2>
           <div className={styles.latestBlogsGrid}>
             {blogs.map((blog) => (
                 <RegularBlogCard
