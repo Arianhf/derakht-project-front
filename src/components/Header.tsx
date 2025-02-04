@@ -9,6 +9,7 @@ import { Loading } from './shared/Loading';
 import { ErrorMessage } from './shared/ErrorMessage';
 import { HeroPost } from '../types';
 import logoImage from '../assets/images/logo2.png';
+import {toPersianNumber} from "../utils/convertToPersianNumber.ts";
 
 const Header: React.FC = () => {
   const [heroPost, setHeroPost] = useState<HeroPost | null>(null);
@@ -78,7 +79,7 @@ const Header: React.FC = () => {
                   <span>{heroPost.owner?.first_name}</span>
                 </div>
                 <div className={styles.authorMeta}>
-                  <span>{heroPost.jalali_date}</span>
+                  <span>{toPersianNumber(heroPost.jalali_date || "تاریخ نامشخص")}</span>
                   <span>{heroPost.reading_time} دقیقه مطالعه</span>
                 </div>
               </div>

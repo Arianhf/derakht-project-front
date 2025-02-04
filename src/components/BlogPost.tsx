@@ -7,6 +7,7 @@ import { Loading } from './shared/Loading';
 import { ErrorMessage } from './shared/ErrorMessage';
 import { BlogPost } from '../types';
 import { UI_CONSTANTS } from '../constants';
+import {toPersianNumber} from "../utils/convertToPersianNumber.ts";
 
 interface FeaturedBlogProps {
   blog: BlogPost;
@@ -26,7 +27,7 @@ const FeaturedBlogCard: React.FC<FeaturedBlogProps> = ({ blog, onNavigate }) => 
           <span className={styles.authorName}>
           {blog.owner?.first_name}
         </span>{" "}
-          · {blog.jalali_date || "تاریخ نامشخص"}
+          · {toPersianNumber(blog.jalali_date || "تاریخ نامشخص")}
         </p>
         <Button
             onClick={(e) => {
@@ -70,7 +71,7 @@ const RegularBlogCard: React.FC<RegularBlogCardProps> = ({ blog, onNavigate }) =
           <span className={styles.authorName}>
           {blog.owner?.first_name}
         </span>{" "}
-          · {blog.jalali_date || "تاریخ نامشخص"}
+          · {toPersianNumber(blog.jalali_date || "تاریخ نامشخص")}
         </p>
         <Button
             onClick={(e) => {

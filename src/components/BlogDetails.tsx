@@ -10,6 +10,7 @@ import { ErrorMessage } from './shared/ErrorMessage';
 import { BlogPost } from '../types';
 import { UI_CONSTANTS } from '../constants';
 import logoImage from '../assets/images/logo2.png';
+import {toPersianNumber} from "../utils/convertToPersianNumber.ts";
 
 interface BlogContentProps {
     blog: BlogPost;
@@ -21,7 +22,7 @@ const BlogContent: React.FC<BlogContentProps> = ({ blog }) => (
         <p className={styles.blogMeta}>
             نوشته شده توسط{" "}
             <span className={styles.author}>{blog.owner?.first_name || "نامشخص"}</span> ·{" "}
-            {blog.jalali_date || "تاریخ نامشخص"}
+            {toPersianNumber(blog.jalali_date || "تاریخ نامشخص")}
         </p>
 
         <img
