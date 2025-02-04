@@ -415,3 +415,33 @@ input::placeholder {
 .modal-button:hover {
   background-color: #2b4aa0;
 }
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  direction: rtl;
+}
+
+.prev-button {
+  font-family: "Yekan", sans-serif;
+  background-color: #ccc;
+  color: black;
+  border: none;
+  padding: 10px 40px;
+  font-size: 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 1px 2px rgb(192, 192, 192);
+
+  &:hover {
+    background-color: #b0b0b0;
+  }
+
+  &:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+  }
+}

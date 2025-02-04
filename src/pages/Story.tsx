@@ -81,9 +81,19 @@ const StoryPage = () => {
                             className="story-input"
                         />
                     </div>
-                    <button className="submit-button" onClick={handleNextImage}>
-                        {selectedIndex === images.length - 1 ? "پایان" : "ادامه‍"}
-                    </button>
+                    <div className="button-container">
+                        <button
+                            className="prev-button"
+                            onClick={() => setSelectedIndex((prev) => Math.max(0, prev - 1))}
+                            disabled={selectedIndex === 0}
+                        >
+                            قبلی
+                        </button>
+
+                        <button className="submit-button" onClick={handleNextImage}>
+                            {selectedIndex === images.length - 1 ? "پایان" : "ادامه"}
+                        </button>
+                    </div>
                 </div>
                 {/* Left Content - Image Selection */}
                 <div className="left-content">
