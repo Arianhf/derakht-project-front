@@ -79,14 +79,14 @@ body {
 }
 
 .right-content {
-  width: 41%;
+  width: 43%;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 
   .image-container {
-    height: 90%;
+    height: 100%;
 
     img {
       width: 100%;
@@ -124,7 +124,7 @@ body {
 }
 
 .story-container {
-  width: 29%;
+  width: 28%;
   height: calc(100% - 40px);
   display: flex;
   flex-direction: column;
@@ -236,11 +236,35 @@ body {
     }
 
     .gallery-item {
-      position: relative; // Enables absolute positioning for the number
+      position: relative; // Enables absolute positioning for the guide icon
       display: flex;
       justify-content: center;
       align-items: center;
     }
+
+    .guide-icon {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: #345BC0;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background: #2b4aa0;
+      }
+    }
+
 
     .image-number {
       position: absolute;

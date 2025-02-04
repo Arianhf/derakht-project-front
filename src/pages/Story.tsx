@@ -65,6 +65,12 @@ const StoryPage = () => {
             </nav>
 
             <div className="page-content">
+                {/* Right Content - Main Image */}
+                <div className="right-content">
+                    <div className="image-container">
+                        <img src={images[selectedIndex]} alt="داستان" className="story-image" />
+                    </div>
+                </div>
                 {/* Story Content */}
                 <div className="story-container">
                     <div className="story-text">
@@ -76,20 +82,9 @@ const StoryPage = () => {
                         />
                     </div>
                     <button className="submit-button" onClick={handleNextImage}>
-                        {selectedIndex === images.length - 1 ? "پایان" : "ثبت"}
+                        {selectedIndex === images.length - 1 ? "پایان" : "ادامه‍"}
                     </button>
                 </div>
-
-                {/* Right Content - Main Image */}
-                <div className="right-content">
-                    <div className="image-container">
-                        <img src={images[selectedIndex]} alt="داستان" className="story-image" />
-                    </div>
-                    <div className="rectangle-container">
-                        <button className="help-button">راهنمایی</button>
-                    </div>
-                </div>
-
                 {/* Left Content - Image Selection */}
                 <div className="left-content">
                     <div className="button-group">
@@ -103,6 +98,9 @@ const StoryPage = () => {
                                 {selectedIndex === index && (
                                     <span className="image-number">{toPersianNumber(index + 1)}</span>
                                 )}
+
+                                <span className="guide-icon" onClick={() => alert(`راهنمای تصویر ${toPersianNumber(index + 1)}`)}>?</span>
+
                                 <img
                                     src={image}
                                     alt={`تصویر ${index + 1}`}
@@ -112,6 +110,7 @@ const StoryPage = () => {
                             </div>
                         ))}
                     </div>
+
                 </div>
             </div>
 
