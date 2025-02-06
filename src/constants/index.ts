@@ -5,6 +5,7 @@ export const ROUTES = {
     BLOG: '/blog',
     BLOG_DETAILS: '/blog/:id',
     STORY: '/story',
+    STORY_TEMPLATE: '/story/:id',
     SHOP: '/shop',
     PRODUCT_DETAILS: '/shop/product/:id',
 };

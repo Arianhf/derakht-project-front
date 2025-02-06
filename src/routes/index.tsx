@@ -6,6 +6,8 @@ import ProductsPage from '../pages/ProductsPage';
 import ProductDetails from '../pages/ProductDetails';
 import { ROUTES } from '../constants';
 
+
+
 export const routes: RouteObject[] = [
     {
         path: ROUTES.HOME,
@@ -17,6 +19,10 @@ export const routes: RouteObject[] = [
     },
     {
         path: ROUTES.STORY,
+        element: <StoryPage />,
+    },
+    {
+        path: ROUTES.STORY_TEMPLATE,
         element: <StoryPage />,
     },
     {
