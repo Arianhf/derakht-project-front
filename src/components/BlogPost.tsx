@@ -140,7 +140,8 @@ const BlogPostList: React.FC = () => {
         )}
 
         {/* Regular Blogs */}
-        <section className={styles.latestBlogs}>
+        {blogs.length > 0 && (
+            <section className={styles.latestBlogs}>
           <h2 className={styles.sectionTitle}>آخرین مقاله‌ها</h2>
           <div className={styles.latestBlogsGrid}>
             {blogs.map((blog) => (
@@ -152,6 +153,7 @@ const BlogPostList: React.FC = () => {
             ))}
           </div>
         </section>
+        )}
       </div>
   );
 };
