@@ -119,7 +119,7 @@ const BlogPostList: React.FC = () => {
 
   if (loading) return <Loading />;
   if (error) return <ErrorMessage message={error} />;
-  if (blogs.length === 0) return <p className={styles.noBlogs}>هیچ مقاله‌ای یافت نشد.</p>;
+  if ((blogs.length === 0) && (featuredBlogs.length === 0)) return <p className={styles.noBlogs}>هیچ مقاله‌ای یافت نشد.</p>;
 
   return (
       <div className={styles.blogContainer}>
