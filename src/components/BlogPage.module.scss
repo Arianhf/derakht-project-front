@@ -1,0 +1,144 @@
+.blogContainer {
+  direction: rtl;
+  text-align: right;
+  margin: 0 auto;
+  max-width: 1500px;
+  padding: 20px;
+}
+
+.featuredBlog {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  margin-bottom: 40px;
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.featuredTitle {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #ff6f61;
+}
+
+.featuredText {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 15px;
+  line-height: 1.8;
+}
+
+.blogMeta {
+  font-size: 14px;
+  color: #777;
+}
+
+.authorName {
+  font-weight: bold;
+  color: #007BFF;
+}
+
+.readButton {
+  background-color: #ff6f61;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  font-family: "shoor-Medium";
+}
+
+.readButton:hover {
+  background-color: #ff4a3d;
+  transform: scale(1.05);
+}
+
+.featuredImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  object-fit: cover;
+}
+
+/* Top Blogs Section */
+.topBlogs {
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.topBlogsGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.largeBlog {
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.blogContent{
+  padding: 10px 20px;
+}
+
+.largeBlogImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.smallBlogs {
+  display: grid;
+  gap: 20px;
+}
+
+.smallBlog {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 0px 20px;
+}
+
+.smallBlogImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+/* Latest Blogs Section */
+.latestBlogsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  
+}
+
+.blogCard {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.blogCardImage{
+  width: 100% !important;
+}
