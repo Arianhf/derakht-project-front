@@ -1,138 +1,36 @@
-# React Blog Page Application
-
-This project is a React-based blog page designed for children's content, built using **Vite** for a fast development experience.
-
-## Prerequisites
-
-To run this project, ensure the following tools are installed on your system:
-
-- **Node.js** (version 16 or higher recommended): [Download Node.js](https://nodejs.org/)
-- **npm** or **yarn**: npm comes bundled with Node.js, or you can install Yarn separately: [Yarn Installation Guide](https://classic.yarnpkg.com/lang/en/docs/install/)
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-Follow these steps to run the project locally:
-
-### 1. Clone the Repository
-
-First, clone the repository to your local machine using the following command:
-
-```bash
-git clone <repository-url>
-```
-Replace `<repository-url>` with the actual URL of the repository.
-
-### 2. Navigate to the Project Directory
-
-```bash
-cd <project-directory>
-```
-Replace `<project-directory>` with the folder name where the project was cloned.
-
-### 3. Install Dependencies
-
-Install the necessary dependencies by running:
-
-```bash
-npm install
-```
-Or if you're using Yarn:
-
-```bash
-yarn install
-```
-
-This will download and set up all the required libraries for the project.
-
-### 4. Start the Development Server
-
-Run the following command to start the development server:
+First, run the development server:
 
 ```bash
 npm run dev
-```
-Or with Yarn:
-
-```bash
+# or
 yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-You should see output similar to:
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-```
-VITE vX.X.X  ready in X.Xs
-🌐 Local: http://localhost:5173/
-```
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-Open your browser and navigate to the provided URL (usually `http://localhost:5173/`). The app should now be running locally!
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Project Structure
+## Learn More
 
-Here are the key files and folders:
+To learn more about Next.js, take a look at the following resources:
 
-- **src/**: Contains all source code.
-  - **components/**: React components used in the app.
-  - **assets/**: Static files such as images.
-  - **App.jsx**: Main app component.
-  - **main.jsx**: Entry point for the app.
-- **public/**: Publicly available files.
-- **vite.config.js**: Vite configuration file.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## Scripts
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-Here are the main scripts available:
+## Deploy on Vercel
 
-- `npm run dev`: Starts the development server.
-- `npm run build`: Builds the project for production.
-- `npm run preview`: Serves the production build locally for testing.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-## Customization
-
-If you want to modify the content or appearance:
-
-1. **Edit Blog Data**:
-   The blog data is stored in the `mockBlogs` array inside `src/components/BlogPage.jsx`. Modify this array to change the blog content.
-
-2. **Change Styles**:
-   - CSS for styling is located in `src/BlogPage.css`. Update this file to customize the design.
-
-## Deployment
-
-To deploy the app, you need to build it for production:
-
-```bash
-npm run build
-```
-
-This will generate a `dist/` folder containing the optimized production build. Deploy the contents of the `dist/` folder to any static hosting service like:
-
-- [Netlify](https://www.netlify.com/)
-- [Vercel](https://vercel.com/)
-- [GitHub Pages](https://pages.github.com/)
-
-## Troubleshooting
-
-If you encounter any issues:
-
-1. Ensure Node.js and npm/yarn are installed and up-to-date.
-2. Delete the `node_modules` folder and reinstall dependencies:
-
-   ```bash
-   rm -rf node_modules
-   npm install
-   ```
-
-3. Check for errors in the terminal or browser console and resolve them.
-
-## Contributing
-
-If you want to contribute to this project:
-
-1. Fork the repository.
-2. Create a new branch for your feature/bug fix.
-3. Submit a pull request with a detailed description of your changes.
-
----
-
-Feel free to reach out if you have any questions or need further assistance. Enjoy working with the React Blog Page Application!
-
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

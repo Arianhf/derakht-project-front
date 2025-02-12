@@ -18,8 +18,8 @@
 }
 
 .logo {
-    width: 140px;
-    height: 70px;
+    width: 140px !important;
+    height: 70px !important;
     border-radius: 50%;
 }
 
