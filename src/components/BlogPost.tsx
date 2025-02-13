@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; // Use next/navigation
+import { useRouter } from "next/navigation";
 import styles from "./BlogPage.module.scss";
 import { blogService } from '../services/blogService';
 import { Button } from './shared/Button';
@@ -44,9 +44,9 @@ const FeaturedBlogCard: React.FC<FeaturedBlogProps> = ({ blog, onNavigate }) => 
         src={blog.header_image?.meta?.download_url || "/default-image.jpg"}
         alt={blog.header_image?.title || "Featured Blog Image"}
         className={styles.featuredImage}
-        width={600} // Set appropriate width
-        height={400} // Set appropriate height
-        layout="responsive" // Adjust layout as needed
+        width={600} 
+        height={400} 
+        layout="responsive" 
       />
     </div>
   </div>
