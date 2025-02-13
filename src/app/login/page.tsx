@@ -2,14 +2,14 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import styles from "./login.module.css";
 import logo from "@/assets/images/logo2.png";
 
 export default function AuthPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [isSignup, setIsSignup] = useState(false); // Toggle between login and signup
+    const [isSignup, setIsSignup] = useState(false); 
 
     return (
         <div className={styles.container}>
@@ -25,7 +25,6 @@ export default function AuthPage() {
                     <input type="email" placeholder="Email" className={styles.input} />
                 )}
 
-                {/* Password Input */}
                 <div className={styles.passwordContainer}>
                     <input
                         type={showPassword ? "text" : "password"}
@@ -41,7 +40,6 @@ export default function AuthPage() {
                     </button>
                 </div>
 
-                {/* Confirm Password for Signup */}
                 {isSignup && (
                     <div className={styles.passwordContainer}>
                         <input
@@ -64,7 +62,6 @@ export default function AuthPage() {
                 </button>
             </form>
 
-            {/* Toggle Between Login & Signup */}
             <p className={styles.toggleText}>
                 {isSignup ? "قبلاً ثبت نام کرده‌اید؟" : "حساب ندارید؟"}
                 <button
