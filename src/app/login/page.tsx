@@ -1,14 +1,80 @@
-import React from "react";
+"use client";
 
-export default function LoginPage() {
+import React, { useState } from "react";
+import Image from "next/image";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
+import styles from "./login.module.css";
+import logo from "@/assets/images/logo2.png";
+
+export default function AuthPage() {
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isSignup, setIsSignup] = useState(false); // Toggle between login and signup
+
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen">
-            <h1 className="text-2xl font-bold">Login Page</h1>
-            <form className="mt-4">
-                <input type="text" placeholder="Username" className="border p-2 rounded-md" />
-                <input type="password" placeholder="Password" className="border p-2 rounded-md mt-2" />
-                <button type="submit" className="bg-blue-500 text-white p-2 rounded-md mt-2">Login</button>
+        <div className={styles.container}>
+            <Image src={logo} alt="Logo" width={120} height={60} className={styles.logo} />
+            <form className={styles.form}>
+                {isSignup && (
+                    <input type="text" placeholder="Full Name" className={styles.input} />
+                )}
+
+                <input type="text" placeholder="Username" className={styles.input} />
+                
+                {isSignup && (
+                    <input type="email" placeholder="Email" className={styles.input} />
+                )}
+
+                {/* Password Input */}
+                <div className={styles.passwordContainer}>
+                    <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Password"
+                        className={styles.input}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className={styles.eyeButton}
+                    >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                </div>
+
+                {/* Confirm Password for Signup */}
+                {isSignup && (
+                    <div className={styles.passwordContainer}>
+                        <input
+                            type={showConfirmPassword ? "text" : "password"}
+                            placeholder="Confirm Password"
+                            className={styles.input}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className={styles.eyeButton}
+                        >
+                            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                    </div>
+                )}
+
+                <button type="submit" className={styles.button}>
+                    {isSignup ? "ثبت نام" : "ورود"}
+                </button>
             </form>
+
+            {/* Toggle Between Login & Signup */}
+            <p className={styles.toggleText}>
+                {isSignup ? "قبلاً ثبت نام کرده‌اید؟" : "حساب ندارید؟"}
+                <button
+                    type="button"
+                    className={styles.toggleButton}
+                    onClick={() => setIsSignup(!isSignup)}
+                >
+                    {isSignup ? "ورود" : "ثبت نام"}
+                </button>
+            </p>
         </div>
     );
 }
