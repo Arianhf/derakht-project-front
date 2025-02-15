@@ -1,4 +1,4 @@
-'use client'; // Mark as a Client Component
+'use client'; 
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation'; 
@@ -6,9 +6,13 @@ import { toPersianNumber } from '../../../utils/convertToPersianNumber';
 import { storyService } from '../../../services/storyService';
 import { StoryTemplate } from '../../../types/story';
 import Image from 'next/image';
+import logo from '@/assets/images/logo2.png'
+import './story.scss'
+import { Navbar } from '@/components/shared/Navbar';
 
 const StoryPage = () => {
-  const { id } = useParams<{ id: string }>(); 
+  const params = useParams<{ id: string }>();
+  const id = params?.id;
   const router = useRouter(); 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [template, setTemplate] = useState<StoryTemplate | null>(null);
@@ -85,10 +89,7 @@ const StoryPage = () => {
 
   return (
     <div className="story-page">
-      <nav className="navbar">
-        {/* ... navbar content remains the same ... */}
-      </nav>
-
+      <Navbar logo={logo}/>
       <div className="page-content">
         <div className="right-content">
           <div className="image-container">
@@ -96,8 +97,8 @@ const StoryPage = () => {
               src={template.template_parts[selectedIndex]?.illustration || ''}
               alt={`تصویر ${selectedIndex + 1}`}
               className="story-image"
-              width={600} // Set appropriate width
-              height={400} // Set appropriate height
+              width={600} 
+              height={400} 
               layout="responsive"
             />
           </div>
@@ -154,8 +155,8 @@ const StoryPage = () => {
                   alt={`تصویر ${index + 1}`}
                   className={`gallery-image ${selectedIndex === index ? 'selected' : ''}`}
                   onClick={() => handleImageSelect(index)}
-                  width={100} // Set appropriate width
-                  height={100} // Set appropriate height
+                  width={100} 
+                  height={100} 
                   layout="responsive"
                 />
               </div>

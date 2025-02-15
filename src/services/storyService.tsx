@@ -7,7 +7,7 @@ export const storyService = {
         return response.data;
     },
 
-    //localhost:8000/api/stories/templates/ebd15be0-700a-47d1-b749-0a9e20ed99c1/
+    
     getStoryById: async (id: string): Promise<StoryTemplate> => {
         const response = await api.get(`/stories/templates/${id}/`);
         return response.data;
