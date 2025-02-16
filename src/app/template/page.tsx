@@ -7,7 +7,7 @@ import logo from "@/assets/images/logo2.png";
 import styles from "./template.module.scss";
 import { FaBook, FaPaintBrush } from "react-icons/fa";
 
-const stories = {
+const stories: Record<"story" | "drawing", { id: number; title: string }[]> = {
   story: [
     { id: 1, title: "داستان اول" },
     { id: 2, title: "داستان دوم" },
@@ -21,7 +21,7 @@ const stories = {
 };
 
 const TemplatePage = () => {
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<"story" | "drawing" | null>(null);
   const router = useRouter();
 
   const navigateToStory = (id: number) => {
