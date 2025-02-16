@@ -51,13 +51,34 @@
 }
 
 .storyList {
-  list-style: none;
-  padding: 0;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
   margin-top: 20px;
 }
 
-.storyItem {
-  margin: 10px 0;
+.storyCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 150px;
+  transition: transform 0.2s ease;
+}
+
+.storyCard:hover {
+  transform: scale(1.05);
+}
+
+.storyIcon {
+  font-size: 30px;
+  color: #007BFF;
+  margin-bottom: 10px;
 }
 
 .storyLink {
@@ -66,12 +87,12 @@
   font-size: 18px;
   color: #007BFF;
   cursor: pointer;
-  text-decoration: underline;
+  text-decoration: none;
   font-family: 'shoor-Medium';
 }
 
 .storyLink:hover {
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 .backButton {

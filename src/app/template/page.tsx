@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {Navbar} from "@/components/shared/Navbar";
+import { Navbar } from "@/components/shared/Navbar";
 import logo from "@/assets/images/logo2.png";
 import styles from "./template.module.scss";
+import { FaBook, FaPaintBrush } from "react-icons/fa";
 
 const stories = {
   story: [
@@ -48,13 +49,14 @@ const TemplatePage = () => {
         ) : (
           <div className={styles.selectedTemplate}>
             <h2>{selectedTemplate === "story" ? "نوشتن داستان" : "کشیدن عکس"}</h2>
-            <ul className={styles.storyList}>
+            <div className={styles.storyList}>
               {stories[selectedTemplate].map((story) => (
-                <li key={story.id} className={styles.storyItem}>
+                <div key={story.id} className={styles.storyCard}>
+                  {selectedTemplate === "story" ? <FaBook className={styles.storyIcon} /> : <FaPaintBrush className={styles.storyIcon} />}
                   <button onClick={() => navigateToStory(story.id)} className={styles.storyLink}>{story.title}</button>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
             <button onClick={() => setSelectedTemplate(null)} className={styles.backButton}>بازگشت</button>
           </div>
         )}
