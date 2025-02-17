@@ -1,0 +1,61 @@
+/* shop.module.scss */
+.shopContainer {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(180deg, #FFDDE1, #D4F1F4, #FFF7E5) !important;
+  }
+      
+  .icon {
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .cartCounter {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 4px 7px;
+  }
+  
+  .heroSection {
+    width: 100%;
+    height: 250px;
+    background: url('/path-to-hero-image.jpg') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .heroOverlay {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px 40px;
+    border-radius: 8px;
+  }
+  
+  .heroText {
+    color: white;
+    font-size: 36px;
+    font-weight: bold;
+  }
+  
+  .filtersContainer {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+  }
+  
+  .filterDropdown {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f0f0f0;
+    font-size: 16px;
+  }
