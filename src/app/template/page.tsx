@@ -1,31 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/shared/Navbar";
 import logo from "@/assets/images/logo2.png";
 import styles from "./template.module.scss";
 import { FaBook, FaPaintBrush } from "react-icons/fa";
+import { templateService } from "@/services/templateService";
 
-const stories: Record<"story" | "drawing", { id: number; title: string }[]> = {
-  story: [
-    { id: 1, title: "داستان اول" },
-    { id: 2, title: "داستان دوم" },
-    { id: 3, title: "داستان سوم" },
-  ],
-  drawing: [
-    { id: 1, title: "نقاشی اول" },
-    { id: 2, title: "نقاشی دوم" },
-    { id: 3, title: "نقاشی سوم" },
-  ],
-};
+interface Template {
+  id: number;
+  title: string;
+}
 
 const TemplatePage = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<"story" | "drawing" | null>(null);
+  const [templates, setTemplates] = useState<Template[]>([]);
   const router = useRouter();
 
-  const navigateToStory = (id: number) => {
-    router.push(`/story/${id}`);
+  useEffect(() => {
+    if (selectedTemplate) {
+      fetchTemplates(selectedTemplate);
+    }
+  }, [selectedTemplate]);
+
+  const fetchTemplates = async (type: "story" | "drawing") => {
+    try {
+      const activityType = type === "story" ? "WRITE_FOR_DRAWING" : "ILLUSTRATE";
+      const response = await templateService.getTemplates(activityType);
+      setTemplates(response);
+    } catch (error) {
+      console.error("Error fetching templates:", error);
+    }
+  };
+
+  const startStory = async (templateId: number) => {
+    try {
+      const response = await templateService.startStory(templateId);
+      const storyId = response.id;
+      router.push(`/story/${storyId}`);
+    } catch (error) {
+      console.error("Error starting story:", error);
+    }
   };
 
   return (
@@ -50,10 +66,10 @@ const TemplatePage = () => {
           <div className={styles.selectedTemplate}>
             <h2>{selectedTemplate === "story" ? "نوشتن داستان" : "کشیدن عکس"}</h2>
             <div className={styles.storyList}>
-              {stories[selectedTemplate].map((story) => (
-                <div key={story.id} className={styles.storyCard}>
+              {templates.map((template) => (
+                <div key={template.id} className={styles.storyCard}>
                   {selectedTemplate === "story" ? <FaBook className={styles.storyIcon} /> : <FaPaintBrush className={styles.storyIcon} />}
-                  <button onClick={() => navigateToStory(story.id)} className={styles.storyLink}>{story.title}</button>
+                  <button onClick={() => startStory(template.id)} className={styles.storyLink}>{template.title}</button>
                 </div>
               ))}
             </div>

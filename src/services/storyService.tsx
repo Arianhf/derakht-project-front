@@ -9,7 +9,7 @@ export const storyService = {
 
     
     getStoryById: async (id: string): Promise<StoryTemplate> => {
-        const response = await api.get(`/stories/templates/${id}/`);
+        const response = await api.get(`/stories/${id}/`);
         return response.data;
     },
 
