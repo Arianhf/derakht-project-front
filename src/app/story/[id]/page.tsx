@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation'; 
-import { toPersianNumber } from '../../../utils/convertToPersianNumber';
-import { storyService } from '../../../services/storyService';
-import { StoryTemplate } from '../../../types/story';
+import { toPersianNumber } from '@/utils/convertToPersianNumber';
+import { storyService } from '@/services/storyService';
+import { Story } from '@/types/story';
 import Image from 'next/image';
 import logo from '@/assets/images/logo2.png'
 import './story.scss'
@@ -15,7 +15,7 @@ const StoryPage = () => {
   const id = params?.id;
   const router = useRouter(); 
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [template, setTemplate] = useState<StoryTemplate | null>(null);
+  const [template, setTemplate] = useState<Story | null>(null);
   const [texts, setTexts] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [storyName, setStoryName] = useState('');
@@ -29,7 +29,7 @@ const StoryPage = () => {
       try {
         const response = await storyService.getStoryById(id);
         setTemplate(response);
-        setTexts(new Array(response.template_parts.length).fill(''));
+        setTexts(new Array(response.parts.length).fill(''));
       } catch (err) {
         setError('خطا در دریافت قالب داستان');
         console.error(err);
@@ -52,7 +52,7 @@ const StoryPage = () => {
   };
 
   const handleNextImage = () => {
-    if (selectedIndex < (template?.template_parts.length ?? 0) - 1) {
+    if (selectedIndex < (template?.parts.length ?? 0) - 1) {
       setSelectedIndex(selectedIndex + 1);
     } else {
       setIsModalOpen(true);
@@ -67,7 +67,7 @@ const StoryPage = () => {
       formData.append('title', storyName);
       formData.append('template_id', template.id);
 
-      const storyContent = template.template_parts.map((part, index) => ({
+      const storyContent = template.parts.map((part, index) => ({
         template_part_id: part.id,
         text: texts[index],
         position: part.position,
@@ -94,7 +94,7 @@ const StoryPage = () => {
         <div className="right-content">
           <div className="image-container">
             <Image
-              src={template.template_parts[selectedIndex]?.illustration || ''}
+              src={template.parts[selectedIndex]?.illustration || ''}
               alt={`تصویر ${selectedIndex + 1}`}
               className="story-image"
               width={600} 
@@ -109,7 +109,7 @@ const StoryPage = () => {
             <textarea
               value={texts[selectedIndex] || ''}
               onChange={handleTextChange}
-              placeholder={template.template_parts[selectedIndex]?.prompt_text || 'داستان خود را بنویسید...'}
+              placeholder={template.parts[selectedIndex]?.text || 'داستان خود را بنویسید...'}
               className="story-input"
             />
           </div>
@@ -123,7 +123,7 @@ const StoryPage = () => {
             </button>
 
             <button className="submit-button" onClick={handleNextImage}>
-              {selectedIndex === template.template_parts.length - 1 ? 'پایان' : 'ادامه'}
+              {selectedIndex === template.parts.length - 1 ? 'پایان' : 'ادامه'}
             </button>
           </div>
         </div>
@@ -135,7 +135,7 @@ const StoryPage = () => {
           </div>
           <hr className="divider" />
           <div className="image-gallery">
-            {template.template_parts.map((part, index) => (
+            {template.parts.map((part, index) => (
               <div key={part.id} className="gallery-item">
                 {selectedIndex === index && (
                   <span className="image-number">
@@ -145,7 +145,7 @@ const StoryPage = () => {
 
                 <span
                   className="guide-icon"
-                  onClick={() => alert(part.prompt_text)}
+                  onClick={() => alert(part.text)}
                 >
                   ?
                 </span>

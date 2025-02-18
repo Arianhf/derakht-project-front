@@ -19,3 +19,22 @@ export interface TemplatePart {
     prompt_text: string;
     illustration: string | null;
 }
+
+export interface StoryPart {
+    created_at: string;
+    id: string;
+    position: number;
+    text: string;
+    story_part_template: string;
+    illustration: string | null;
+}
+
+export interface Story {
+    activity_type: 'WRITE_FOR_DRAWING' | string;
+    author: number;
+    created_at: string;
+    id: string;
+    parts: StoryPart[];
+    story_template: string;
+    title: string;
+}

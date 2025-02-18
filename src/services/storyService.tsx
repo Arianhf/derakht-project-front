@@ -1,5 +1,5 @@
 import api from './api';
-import { StoryTemplate, StoryResponse } from '../types/story';
+import {StoryTemplate, StoryResponse, Story} from '@/types/story';
 
 export const storyService = {
     getAllStories: async (): Promise<StoryResponse<StoryTemplate>> => {
@@ -8,7 +8,7 @@ export const storyService = {
     },
 
     
-    getStoryById: async (id: string): Promise<StoryTemplate> => {
+    getStoryById: async (id: string): Promise<Story> => {
         const response = await api.get(`/stories/${id}/`);
         return response.data;
     },
