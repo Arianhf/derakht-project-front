@@ -66,14 +66,24 @@ $button-bg-darker: hsl(from var($button-bg) h s calc(l - 5));
 
 .story-container {
   width: 28%;
-  height: calc(100% - 40px);
+  height: calc(100% - 20px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   background: white;
   border-radius: 30px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  padding: 10px;
+
+  .story-input {
+    height: 100%;
+    direction: rtl;
+    padding: 15px;
+    font-family: 'shoor-Medium';
+    outline: unset;
+    border: 1px solid rgb(228, 228, 228);
+    border-radius: 20px;
+  }
 
   .story-text {
     flex: 1;
@@ -86,6 +96,7 @@ $button-bg-darker: hsl(from var($button-bg) h s calc(l - 5));
       color: #333;
       text-align: justify;
     }
+
   }
 
   .submit-button {
@@ -153,8 +164,8 @@ $button-bg-darker: hsl(from var($button-bg) h s calc(l - 5));
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    max-height: 800px; 
-    overflow-y: auto; 
+    max-height: 800px;
+    overflow-y: auto;
 
     /* Custom scrollbar styling */
     &::-webkit-scrollbar {
@@ -176,7 +187,7 @@ $button-bg-darker: hsl(from var($button-bg) h s calc(l - 5));
     }
 
     .gallery-item {
-      position: relative; 
+      position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
