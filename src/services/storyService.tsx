@@ -31,7 +31,7 @@ export const storyService = {
   },
 
   addStoryPart: async (storyId: string, storyPartTemplateId: string, text: string): Promise<StoryPart> => {
-    const response = await api.post(`/api/stories/${storyId}/add_part`, {
+    const response = await api.post(`/api/stories/${storyId}/add_part/`, {
       text,
       story_part_template_id: storyPartTemplateId,
     });
@@ -39,7 +39,7 @@ export const storyService = {
   },
 
   finishStory: async (storyId: string, title: string): Promise<StoryTemplate> => {
-    const response = await api.post(`/api/stories/${storyId}/finish`, { title });
+    const response = await api.post(`/api/stories/${storyId}/finish/`, { title });
     return response.data;
   },
 };

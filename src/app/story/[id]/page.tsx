@@ -9,6 +9,7 @@ import logo from '@/assets/images/logo2.png';
 import { Navbar } from '@/components/shared/Navbar';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import './story.scss';
+import StoryPreview from '@/components/story/StoryPreview';
 
 const StoryPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +21,7 @@ const StoryPage = () => {
   const [storyName, setStoryName] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   useEffect(() => {
     const fetchTemplate = async () => {
@@ -51,7 +53,7 @@ const StoryPage = () => {
 
     const currentPart = template.parts[selectedIndex];
     try {
-      await storyService.addStoryPart(template.id, currentPart.story_part_template, texts[selectedIndex]);
+      // await storyService.addStoryPart(template.id, currentPart.story_part_template, texts[selectedIndex]);
       if (selectedIndex < template.parts.length - 1) {
         setSelectedIndex((prev) => prev + 1);
       } else {
@@ -67,9 +69,10 @@ const StoryPage = () => {
     if (!template) return;
 
     try {
-      await storyService.finishStory(template.id, storyName);
+      // await storyService.finishStory(template.id, storyName);
       setIsModalOpen(false);
-      router.push('/stories');
+      setIsPreviewOpen(true);
+      // router.push('/stories');
     } catch (err) {
       console.error('Error finishing story:', err);
       alert('خطا در پایان داستان');
@@ -157,6 +160,16 @@ const StoryPage = () => {
           </div>
         </div>
       )}
+
+      <StoryPreview
+        parts={template.parts.map((part, index) => ({
+          illustration: part.illustration || "/placeholder-image.jpg", 
+          text: texts[index] || "متنی وارد نشده است.", 
+        }))}
+        isOpen={isPreviewOpen}
+        onClose={() => router.push('/stories')}
+      />
+
     </div>
   );
 };

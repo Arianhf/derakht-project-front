@@ -9,6 +9,7 @@ $button-bg-darker: hsl(from var($button-bg) h s calc(l - 5));
   height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .page-content {
