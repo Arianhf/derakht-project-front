@@ -48,76 +48,87 @@
    Filters Section
    ======================= */
 
-.filtersContainer {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  padding: 10px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  direction: rtl;
-}
-
-.filterBox {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background: white;
-  padding: 12px 18px;
-  border-radius: 12px;
-  transition: transform 0.2s ease-in-out;
-  font-family: 'shoor-Medium';
-}
-
-.filterBox:hover {
-  transform: scale(1.05);
-}
-
-.filterIcon {
-  font-size: 20px;
-  color: #777;
-  margin-right: 10px;
-}
-
-.filterDropdown {
-  border: none;
-  outline: none;
-  background: white;
-  font-size: 16px;
-  cursor: pointer;
-  font-family: 'shoor-Medium';
-  color: #333;
-  padding: 10px 12px;
-  width: 140px;
-  border-radius: 8px;
-  appearance: none;
-  transition: all 0.2s ease-in-out;
-}
-
-.filterBox::after {
-  content: "▼";
-  position: absolute;
-  right: 12px;
-  font-size: 14px;
-  color: #777;
-  pointer-events: none;
-}
-
-.filterDropdown:hover,
-.filterDropdown:focus {
-  background: #f0f0f0;
-}
-
-.filterDropdown option {
-  background: white;
-  color: #333;
-  font-family: 'shoor-Medium';
-  font-size: 14px;
-  padding: 10px;
-}
+   .filtersContainer {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    direction: rtl;
+  }
+  
+  /* Each filter item is wrapped in its own container */
+  .filterItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 0 15px;
+  }
+  
+  /* Centered filter label */
+  .filterLabel {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #2B463C;
+  }
+  
+  .filterSeperator{
+    width: 1px;
+    height: 40px;
+    background-color: #b4b4b4;
+    border-radius: 20px;
+  }
+  
+  /* Updated filter dropdown */
+  .filterDropdown {
+    border: none;
+    outline: none;
+    background: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: 'shoor-Medium';
+    color: #333;
+    padding: 10px 12px;
+    width: 140px;
+    border-radius: 8px;
+    appearance: none;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .filterDropdown:hover,
+  .filterDropdown:focus {
+    background: #f0f0f0;
+  }
+  
+  .filterDropdown option {
+    background: white;
+    color: #333;
+    font-family: 'shoor-Medium';
+    font-size: 14px;
+    padding: 10px;
+  }
+  
+  /* =======================
+     Product Cards Layout
+     ======================= */
+  .productsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    margin-bottom: 50px;
+  }
+  
 
 /* =======================
    Product Cards Layout

@@ -60,7 +60,7 @@ const ShopPage = () => {
           <option value="low">کمترین قیمت</option>
           <option value="high">بیشترین قیمت</option>
         </select>
-
+        <div className={styles.filterSeperator}></div>
         <select
           className={styles.filterDropdown}
           value={filters.category}
