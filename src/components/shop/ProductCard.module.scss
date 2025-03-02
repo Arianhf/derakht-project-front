@@ -20,7 +20,8 @@
   
   .cardBody {
     padding: 15px;
-    text-align: right;
+    text-align: center;
+    background-color: #e9f8ec;
   }
   
   .cardTitle {
@@ -44,16 +45,27 @@
   .addToCartButton {
     width: 100%;
     padding: 10px;
-    background-color: #007bff;
+    background-color: #018A08;
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
     font-family: 'shoor-Medium';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s ease-in-out;
+    direction: rtl;
+  
   }
   
   .addToCartButton:hover {
-    background-color: #0056b3;
+    background-color: #14911a;
+  }
+
+  .plusIcon {
+    margin-left: 5px;
   }
   

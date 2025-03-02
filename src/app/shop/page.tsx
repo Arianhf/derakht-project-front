@@ -7,8 +7,7 @@ import ProductCard from '@/components/shop/ProductCard';
 import styles from './shop.module.scss';
 import logo from '@/assets/images/logo2.png';
 import heroImage from '@/assets/images/header1.jpg';
-import image1 from '@/assets/images/blogimage1.jpg';
-import { toPersianNumber } from '@/utils/convertToPersianNumber';
+import image1 from '@/assets/images/story.png';
 
 const products = [
   {
@@ -33,7 +32,6 @@ const ShopPage = () => {
   >([]);
   const [filters, setFilters] = useState({ price: '', category: '' });
 
-  // ✅ Function to update the basket with selected products
   const addToCart = (product: { id: number; title: string; price: number; imageSrc: string }) => {
     setCartItems((prev) => [...prev, product]);
   };
