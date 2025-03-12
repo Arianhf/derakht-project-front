@@ -28,6 +28,9 @@
   margin: 0 auto;
   max-width: 600px;
   text-align: center;
+  background-color: white;
+  border-radius: 30px;
+  box-shadow: 0 1px 2px rgb(216, 216, 216);
 }
 
 .cartItem {
@@ -51,19 +54,35 @@
   border-bottom: none;
 }
 
-/* Delete button at left */
-.deleteButton {
-  background: none;
-  border: none;
-  color: red;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 5px;
-  transition: transform 0.2s ease;
+/* Controls for increasing/decreasing quantity */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
-.deleteButton:hover {
-  transform: scale(1.1);
+.decreaseButton,
+.increaseButton {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.decreaseButton:hover,
+.increaseButton:hover {
+  background-color: #f0f0f0;
+}
+
+.quantity {
+  font-size: 16px;
+  font-weight: bold;
 }
 
 /* Center section for product details */

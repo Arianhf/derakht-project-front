@@ -7,10 +7,10 @@ import styles from './cart.module.scss';
 import logo from '@/assets/images/logo2.png';
 import { useCart } from '@/contexts/CartContext';
 import NextImage from 'next/image';
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaPlus, FaMinus } from 'react-icons/fa';
 
 const CartPage: React.FC = () => {
-  const { cartItems, removeFromCart } = useCart();
+  const { cartItems, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
   const router = useRouter();
 
   const goBackToShop = () => {
@@ -19,7 +19,7 @@ const CartPage: React.FC = () => {
 
   return (
     <div className={styles.cartContainer}>
-      <Navbar logo={logo} cartItems={cartItems} />
+      <Navbar logo={logo} />
       <div className={styles.cartContent}>
         <h1 className={styles.cartTitle}>سبد خرید شما</h1>
         {cartItems.length === 0 ? (
@@ -28,15 +28,32 @@ const CartPage: React.FC = () => {
           <ul className={styles.cartList}>
             {cartItems.map((item) => (
               <li key={item.id} className={styles.cartItem}>
-                <button 
-                  className={styles.deleteButton} 
-                  onClick={() => removeFromCart(item.id)}
-                >
-                  <FaTrash />
-                </button>
+                <div className={styles.controls}>
+                  <button 
+                    className={styles.decreaseButton}
+                    onClick={() => {
+                      if (item.quantity > 1) {
+                        decreaseQuantity(item.id);
+                      } else {
+                        removeFromCart(item.id);
+                      }
+                    }}
+                  >
+                    {item.quantity > 1 ? <FaMinus /> : <FaTrash />}
+                  </button>
+                  <span className={styles.quantity}>{item.quantity}</span>
+                  <button 
+                    className={styles.increaseButton}
+                    onClick={() => increaseQuantity(item.id)}
+                  >
+                    <FaPlus />
+                  </button>
+                </div>
                 <div className={styles.cartItemDetails}>
                   <p className={styles.cartItemTitle}>{item.title}</p>
-                  <p className={styles.cartItemPrice}>{item.price.toLocaleString()} تومان</p>
+                  <p className={styles.cartItemPrice}>
+                    {item.price.toLocaleString()} تومان
+                  </p>
                 </div>
                 <div className={styles.cartItemImage}>
                   <NextImage 

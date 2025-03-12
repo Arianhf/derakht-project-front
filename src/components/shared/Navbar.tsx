@@ -8,32 +8,23 @@ import { FaSearch, FaShoppingBasket, FaTrash } from 'react-icons/fa';
 import styles from './Navbar.module.css';
 import { StaticImageData } from 'next/image';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
-
-interface CartItem {
-  id: number;
-  title: string;
-  price: number;
-  imageSrc: string | StaticImageData;
-}
+import { useCart } from '@/contexts/CartContext';
 
 interface NavbarProps {
   logo?: string | StaticImageData;
   showSearch?: boolean;
-  cartItems?: CartItem[];
-  setCartItems?: React.Dispatch<React.SetStateAction<CartItem[]>>;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true, cartItems = [], setCartItems }) => {
+export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true }) => {
   const pathname = usePathname();
   const isShopPage = pathname === '/shop';
   const router = useRouter();
+  const { cartItems, removeFromCart } = useCart();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Function to remove an item from the cart
-  const removeFromCart = (id: number) => {
-    // setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
-  };
+  // Calculate total quantity from cart items
+  const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   // Navigate to the cart page when the basket container is clicked
   const handleBasketClick = () => {
@@ -78,12 +69,12 @@ export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true, cartIte
             className={styles.basketContainer}
             onMouseEnter={() => setIsDropdownOpen(true)}
             onMouseLeave={() => setIsDropdownOpen(false)}
-            onClick={handleBasketClick} 
+            onClick={handleBasketClick}
           >
             <FaShoppingBasket className={styles.icon} />
-            {cartItems.length > 0 && (
+            {totalQuantity > 0 && (
               <span className={styles.cartCounter}>
-                {toPersianNumber(cartItems.length)}
+                {toPersianNumber(totalQuantity)}
               </span>
             )}
 
@@ -102,13 +93,15 @@ export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true, cartIte
                         <Image src={item.imageSrc} alt={item.title} width={50} height={40} />
                         <div className={styles.cartItemInfo}>
                           <p>{item.title}</p>
-                          <span>{toPersianNumber(item.price.toLocaleString())} تومان</span>
+                          <span>
+                            {toPersianNumber(item.price.toLocaleString())} تومان x {toPersianNumber(item.quantity)}
+                          </span>
                         </div>
                       </div>
                       <button 
                         className={styles.removeButton} 
                         onClick={(e) => {
-                          e.stopPropagation(); 
+                          e.stopPropagation();
                           removeFromCart(item.id);
                         }}
                       >
