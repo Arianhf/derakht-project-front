@@ -8,6 +8,7 @@ import styles from './shop.module.scss';
 import logo from '@/assets/images/logo2.png';
 import heroImage from '@/assets/images/header1.jpg';
 import image1 from '@/assets/images/story.png';
+import { useCart } from '@/contexts/CartContext';
 
 const products = [
   {
@@ -27,51 +28,45 @@ const products = [
 ];
 
 const ShopPage = () => {
-  const [cartItems, setCartItems] = useState<
-    { id: number; title: string; price: number; imageSrc: string }[]
-  >([]);
   const [filters, setFilters] = useState({ price: '', category: '' });
-
-  const addToCart = (product: { id: number; title: string; price: number; imageSrc: string }) => {
-    setCartItems((prev) => [...prev, product]);
-  };
+  const { cartItems, addToCart } = useCart();
 
   return (
     <div className={styles.shopContainer}>
-      <Navbar logo={logo} cartItems={cartItems} setCartItems={setCartItems}/>
-
+      <Navbar logo={logo} cartItems={cartItems} />
       <div className={styles.heroSection}>
         <Image src={heroImage} alt="Shop Hero" layout="fill" objectFit="cover" className={styles.heroImage} />
         <div className={styles.heroOverlay}>
           <h1 className={styles.heroText}>فروشگاه درخت</h1>
         </div>
       </div>
-
-      {/* ✅ Filters */}
       <div className={styles.filtersContainer}>
-        <select
-          className={styles.filterDropdown}
-          value={filters.price}
-          onChange={(e) => setFilters({ ...filters, price: e.target.value })}
-        >
-          <option value="">قیمت</option>
-          <option value="low">کمترین قیمت</option>
-          <option value="high">بیشترین قیمت</option>
-        </select>
-        <div className={styles.filterSeperator}></div>
-        <select
-          className={styles.filterDropdown}
-          value={filters.category}
-          onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-        >
-          <option value="">دسته‌بندی</option>
-          <option value="electronics">لوازم الکترونیکی</option>
-          <option value="clothing">پوشاک</option>
-          <option value="home">لوازم خانگی</option>
-        </select>
+        <div className={styles.filterItem}>
+          <span className={styles.filterLabel}>قیمت</span>
+          <select
+            className={styles.filterDropdown}
+            value={filters.price}
+            onChange={(e) => setFilters({ ...filters, price: e.target.value })}
+          >
+            <option value="">انتخاب کنید</option>
+            <option value="low">کمترین قیمت</option>
+            <option value="high">بیشترین قیمت</option>
+          </select>
+        </div>
+        <div className={styles.filterItem}>
+          <span className={styles.filterLabel}>دسته‌بندی</span>
+          <select
+            className={styles.filterDropdown}
+            value={filters.category}
+            onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+          >
+            <option value="">انتخاب کنید</option>
+            <option value="electronics">لوازم الکترونیکی</option>
+            <option value="clothing">پوشاک</option>
+            <option value="home">لوازم خانگی</option>
+          </select>
+        </div>
       </div>
-
-      {/* ✅ Product Cards */}
       <div className={styles.productsContainer}>
         {products.map((product) => (
           <ProductCard
@@ -80,7 +75,7 @@ const ShopPage = () => {
             title={product.title}
             price={product.price}
             description={product.description}
-            onAddToCart={() => addToCart(product)} 
+            onAddToCart={() => addToCart(product)}
           />
         ))}
       </div>

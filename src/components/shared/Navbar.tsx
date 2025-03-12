@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaSearch, FaShoppingBasket, FaTrash } from 'react-icons/fa';
@@ -13,25 +13,31 @@ interface CartItem {
   id: number;
   title: string;
   price: number;
-  imageSrc: string;
+  imageSrc: string | StaticImageData;
 }
 
 interface NavbarProps {
   logo?: string | StaticImageData;
   showSearch?: boolean;
   cartItems?: CartItem[];
-  setCartItems: React.Dispatch<React.SetStateAction<CartItem[]>>;
+  setCartItems?: React.Dispatch<React.SetStateAction<CartItem[]>>;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true, cartItems = [], setCartItems }) => {
   const pathname = usePathname();
   const isShopPage = pathname === '/shop';
+  const router = useRouter();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Function to remove an item from the cart
   const removeFromCart = (id: number) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    // setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  };
+
+  // Navigate to the cart page when the basket container is clicked
+  const handleBasketClick = () => {
+    router.push('/cart');
   };
 
   return (
@@ -67,12 +73,12 @@ export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true, cartIte
           </div>
         )}
 
-        {/* Cart Icon with Dropdown */}
         {isShopPage && (
           <div 
             className={styles.basketContainer}
             onMouseEnter={() => setIsDropdownOpen(true)}
-            // onMouseLeave={() => setIsDropdownOpen(false)}
+            onMouseLeave={() => setIsDropdownOpen(false)}
+            onClick={handleBasketClick} 
           >
             <FaShoppingBasket className={styles.icon} />
             {cartItems.length > 0 && (
@@ -101,7 +107,10 @@ export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true, cartIte
                       </div>
                       <button 
                         className={styles.removeButton} 
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={(e) => {
+                          e.stopPropagation(); 
+                          removeFromCart(item.id);
+                        }}
                       >
                         <FaTrash />
                       </button>
