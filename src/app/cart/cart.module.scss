@@ -2,11 +2,11 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f9f9f9;
+  background: linear-gradient(180deg, #ffdde1, #d4f1f4, #fff7e5) !important;
 }
 
 .cartContent {
-  padding: 100px 20px 20px;
+  padding: 100px 30px;
   flex: 1;
   text-align: center;
 }
@@ -27,23 +27,49 @@
   padding: 0;
   margin: 0 auto;
   max-width: 600px;
-  text-align: right;
+  text-align: center;
 }
 
 .cartItem {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   padding: 15px;
   border-bottom: 1px solid #ddd;
+  transition: background-color 0.3s ease; 
+  border-radius: 20px;
+  margin-bottom: 10px;
+  background-color: white;
+}
+
+.cartItem:hover {
+  background-color: #f5fff8; 
 }
 
 .cartItem:last-child {
   border-bottom: none;
 }
 
+/* Delete button at left */
+.deleteButton {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.2s ease;
+}
+
+.deleteButton:hover {
+  transform: scale(1.1);
+}
+
+/* Center section for product details */
 .cartItemDetails {
   flex: 1;
+  text-align: center;
 }
 
 .cartItemTitle {
@@ -57,6 +83,7 @@
   color: #28a745;
 }
 
+/* Image section on the right */
 .cartItemImage {
   width: 80px;
   height: 60px;
@@ -64,6 +91,7 @@
   overflow: hidden;
 }
 
+/* Back button styling */
 .backButton {
   margin-top: 30px;
   padding: 10px 20px;
