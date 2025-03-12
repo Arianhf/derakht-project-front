@@ -1,56 +1,81 @@
 .cartContainer {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: #f9f9f9;
-  }
-  
-  .cartContent {
-    padding: 100px 20px 20px;
-    flex: 1;
-    text-align: center;
-  }
-  
-  .cartTitle {
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .emptyMessage {
-    font-size: 20px;
-    color: #666;
-  }
-  
-  .cartList {
-    list-style: none;
-    padding: 0;
-    margin: 0 auto;
-    max-width: 600px;
-    text-align: right;
-  }
-  
-  .cartItem {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    font-size: 18px;
-  }
-  
-  .backButton {
-    margin-top: 30px;
-    padding: 10px 20px;
-    font-size: 18px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .backButton:hover {
-    background-color: #0056b3;
-  }
-  
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f9f9f9;
+}
+
+.cartContent {
+  padding: 100px 20px 20px;
+  flex: 1;
+  text-align: center;
+}
+
+.cartTitle {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.emptyMessage {
+  font-size: 20px;
+  color: #666;
+}
+
+.cartList {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  max-width: 600px;
+  text-align: right;
+}
+
+.cartItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.cartItem:last-child {
+  border-bottom: none;
+}
+
+.cartItemDetails {
+  flex: 1;
+}
+
+.cartItemTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.cartItemPrice {
+  font-size: 16px;
+  color: #28a745;
+}
+
+.cartItemImage {
+  width: 80px;
+  height: 60px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.backButton {
+  margin-top: 30px;
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.backButton:hover {
+  background-color: #0056b3;
+}
