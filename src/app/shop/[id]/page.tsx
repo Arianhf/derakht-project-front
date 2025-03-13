@@ -1,15 +1,16 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Image, { StaticImageData } from 'next/image';
-import { Navbar } from '@/components/shared/Navbar';
-import styles from '../productDetails.module.scss';
-import logo from '@/assets/images/logo2.png';
-import heroImage from '@/assets/images/header1.jpg';
-import image1 from '@/assets/images/story.png';
-import { useCart } from '@/contexts/CartContext';
-import { FaPlus, FaMinus, FaTrash } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Image, { StaticImageData } from "next/image";
+import { Navbar } from "@/components/shared/Navbar";
+import styles from "../productDetails.module.scss";
+import logo from "@/assets/images/logo2.png";
+import heroImage from "@/assets/images/header1.jpg";
+import image1 from "@/assets/images/story.png";
+import { useCart } from "@/contexts/CartContext";
+import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
+import { toPersianNumber } from "@/utils/convertToPersianNumber";
 
 interface Product {
   id: number;
@@ -23,16 +24,16 @@ const products: Product[] = [
   {
     id: 1,
     imageSrc: image1,
-    title: 'محصول اول',
+    title: "محصول اول",
     price: 100000,
-    description: 'توضیح مختصر درباره محصول اول',
+    description: "توضیح مختصر درباره محصول اول",
   },
   {
     id: 2,
     imageSrc: image1,
-    title: 'محصول دوم',
+    title: "محصول دوم",
     price: 200000,
-    description: 'توضیح مختصر درباره محصول دوم',
+    description: "توضیح مختصر درباره محصول دوم",
   },
 ];
 
@@ -40,12 +41,18 @@ const ProductDetailsPage: React.FC = () => {
   const router = useRouter();
   const params = useParams();
   const productId = Number(params.id);
-  
+
   const product = products.find((p) => p.id === productId);
-  const { cartItems, addToCart, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
-  
-  const [quantity, setQuantity] = useState(1);
-  const [comment, setComment] = useState('');
+  const {
+    cartItems,
+    addToCart,
+    increaseQuantity,
+    decreaseQuantity,
+    removeFromCart,
+  } = useCart();
+
+  const quantity = cartItems.find(item => item.id === product?.id)?.quantity || 0;
+  const [comment, setComment] = useState("");
   const [comments, setComments] = useState<string[]>([]);
 
   if (!product) {
@@ -53,19 +60,20 @@ const ProductDetailsPage: React.FC = () => {
   }
 
   const handleIncrease = () => {
-    setQuantity((prev) => prev + 1);
+    increaseQuantity(product.id)
   };
 
   const handleDecrease = () => {
-    if (quantity > 1) {
-      setQuantity((prev) => prev - 1);
+    const existing = cartItems.find(item => item.id === product.id)
+    if (existing && existing.quantity > 1) {
+      decreaseQuantity(product.id);
     } else {
-      setQuantity(1);
+      removeFromCart(product.id)
     }
   };
 
   const handleAddToCart = () => {
-    const existing = cartItems.find(item => item.id === product.id);
+    const existing = cartItems.find((item) => item.id === product.id);
     if (existing) {
       const diff = quantity - existing.quantity;
       if (diff > 0) {
@@ -83,30 +91,29 @@ const ProductDetailsPage: React.FC = () => {
         increaseQuantity(product.id);
       }
     }
-    // Optionally, show a notification here.
   };
 
   const handleSubmitComment = () => {
     if (comment.trim()) {
       setComments((prev) => [...prev, comment.trim()]);
-      setComment('');
+      setComment("");
     }
   };
 
   const goBack = () => {
-    router.push('/shop');
+    router.push("/shop");
   };
 
   return (
     <div className={styles.productContainer}>
       <Navbar logo={logo} />
       <div className={styles.heroSection}>
-        <Image 
-          src={heroImage} 
-          alt="Shop Hero" 
-          layout="fill" 
-          objectFit="cover" 
-          className={styles.heroImage} 
+        <Image
+          src={heroImage}
+          alt="Shop Hero"
+          layout="fill"
+          objectFit="cover"
+          className={styles.heroImage}
         />
         <div className={styles.heroOverlay}>
           <h1 className={styles.heroText}>فروشگاه درخت</h1>
@@ -116,31 +123,39 @@ const ProductDetailsPage: React.FC = () => {
         {/* Left Column: Product Information & Controls */}
         <div className={styles.productDetails}>
           <h1 className={styles.productTitle}>{product.title}</h1>
-          <p className={styles.productPrice}>{product.price.toLocaleString()} تومان</p>
+          <p className={styles.productPrice} style={{direction: 'rtl'}}>
+            {toPersianNumber(product.price.toLocaleString())} 
+          تومان
+          </p>
           <p className={styles.productDescription}>{product.description}</p>
-          <div className={styles.quantityControls}>
-            <button 
-              className={styles.decreaseButton}
-              onClick={handleDecrease}
-            >
-              {quantity === 1 ? <FaTrash /> : <FaMinus />}
-            </button>
-            <span className={styles.quantityDisplay}>{quantity}</span>
-            <button className={styles.increaseButton} onClick={handleIncrease}>
-              <FaPlus />
-            </button>
-          </div>
+          {cartItems.some((item) => item.id === product.id) && (
+            <div className={styles.quantityControls}>
+              <button
+                className={styles.decreaseButton}
+                onClick={handleDecrease}
+              >
+                {quantity === 1 ? <FaTrash /> : <FaMinus />}
+              </button>
+              <span className={styles.quantityDisplay}>{quantity}</span>
+              <button
+                className={styles.increaseButton}
+                onClick={handleIncrease}
+              >
+                <FaPlus />
+              </button>
+            </div>
+          )}
           <button className={styles.addToCartButton} onClick={handleAddToCart}>
             افزودن به سبد خرید
           </button>
         </div>
         {/* Right Column: Product Image */}
         <div className={styles.productImage}>
-          <Image 
-            src={product.imageSrc} 
-            alt={product.title} 
-            layout="responsive" 
-            objectFit="cover" 
+          <Image
+            src={product.imageSrc}
+            alt={product.title}
+            layout="responsive"
+            objectFit="cover"
             width={800}
             height={500}
           />
@@ -161,13 +176,16 @@ const ProductDetailsPage: React.FC = () => {
               ))}
             </ul>
           )}
-          <textarea 
+          <textarea
             className={styles.commentInput}
             placeholder="نظر خود را وارد کنید..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />
-          <button className={styles.submitCommentButton} onClick={handleSubmitComment}>
+          <button
+            className={styles.submitCommentButton}
+            onClick={handleSubmitComment}
+          >
             ارسال نظر
           </button>
         </div>

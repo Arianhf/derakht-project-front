@@ -24,7 +24,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true }) => {
   const pathname = usePathname();
-  const isShopPage = pathname === '/shop';
+  const isShopPage = pathname.startsWith("/shop");
   const router = useRouter();
   const { cartItems, removeFromCart } = useCart();
 
