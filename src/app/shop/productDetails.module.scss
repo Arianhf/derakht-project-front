@@ -41,33 +41,26 @@
     padding: 40px 30px;
     flex: 1;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
     gap: 30px;
-  }
-  
-  .productImage {
-    width: 100%;
-    max-width: 800px;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    align-items: flex-start;
   }
   
   .productDetails {
-    max-width: 800px;
+    flex: 1;
     background-color: white;
     padding: 20px 30px;
-    border-radius: 12px;
+    border-radius: 30px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     text-align: right;
+    position: relative;
   }
   
   .productTitle {
     font-size: 32px;
     font-weight: bold;
     margin-bottom: 15px;
-    color: #2B463C;
+    color: #2b463c;
   }
   
   .productPrice {
@@ -81,6 +74,59 @@
     line-height: 1.6;
     margin-bottom: 30px;
     color: #333;
+  }
+  
+  .quantityControls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 50px;
+  }
+  
+  .decreaseButton,
+  .increaseButton {
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .decreaseButton:hover,
+  .increaseButton:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .quantityDisplay {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .addToCartButton {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 0px 0px 30px 30px;
+    font-size: 16px;
+    font-family: 'shoor-Medium';
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .addToCartButton:hover {
+    background-color: #218838;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
   }
   
   .backButton {
@@ -98,10 +144,94 @@
     background-color: #0056b3;
   }
   
-  .notFound {
-    text-align: center;
-    font-size: 24px;
-    padding: 40px;
+  .productImage {
+    flex: 1;
+    max-width: 600px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  /* =======================
+     Comments Section
+     ======================= */
+  .commentsContainer {
+    width: 100%;
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px 30px;
+    background-color: white;
+    border-radius: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: right;
+    position: relative;
+  }
+  
+  .commentsTitle {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #2b463c;
+  }
+  
+  .commentsBox {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 15px;
+    width: 100%;
+  }
+  
+  .noComments {
+    font-size: 16px;
     color: #666;
+    text-align: center;
+  }
+  
+  .commentsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .commentItem {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .commentInput {
+    width: 90%;
+    font-family: 'shoor-Medium';
+    direction: rtl;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    resize: vertical;
+    margin-bottom: 50px;
+  }
+  
+  .submitCommentButton {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 0px 0px 30px 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: flex-end;
+    font-family: 'shoor-Medium';
+    font-size: 20px;
+  }
+  
+  .submitCommentButton:hover {
+    background-color: #218838;
   }
   
