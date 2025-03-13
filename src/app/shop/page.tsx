@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/shared/Navbar';
 import ProductCard from '@/components/shop/ProductCard';
 import styles from './shop.module.scss';
@@ -9,8 +10,17 @@ import logo from '@/assets/images/logo2.png';
 import heroImage from '@/assets/images/header1.jpg';
 import image1 from '@/assets/images/story.png';
 import { useCart } from '@/contexts/CartContext';
+import { toPersianNumber } from '@/utils/convertToPersianNumber';
 
-const products = [
+interface Product {
+  id: number;
+  imageSrc: string | StaticImageData;
+  title: string;
+  price: number;
+  description: string;
+}
+
+const products: Product[] = [
   {
     id: 1,
     imageSrc: image1,
@@ -30,10 +40,18 @@ const products = [
 const ShopPage = () => {
   const [filters, setFilters] = useState({ price: '', category: '' });
   const { cartItems, addToCart } = useCart();
+  const [notification, setNotification] = useState<string | null>(null);
+  const router = useRouter();
+
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+    setNotification(`${product.title} به سبد خرید اضافه شد`);
+    setTimeout(() => setNotification(null), 2000);
+  };
 
   return (
     <div className={styles.shopContainer}>
-      <Navbar logo={logo} cartItems={cartItems} />
+      <Navbar logo={logo} />
       <div className={styles.heroSection}>
         <Image src={heroImage} alt="Shop Hero" layout="fill" objectFit="cover" className={styles.heroImage} />
         <div className={styles.heroOverlay}>
@@ -75,10 +93,12 @@ const ShopPage = () => {
             title={product.title}
             price={product.price}
             description={product.description}
-            onAddToCart={() => addToCart(product)}
+            onAddToCart={() => handleAddToCart(product)}
+            onCardClick={() => router.push(`/shop/${product.id}`)}
           />
         ))}
       </div>
+      {notification && <div className={styles.notification}>{notification}</div>}
     </div>
   );
 };

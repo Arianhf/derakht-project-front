@@ -10,6 +10,13 @@ import { StaticImageData } from 'next/image';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import { useCart } from '@/contexts/CartContext';
 
+interface CartItem {
+  id: number;
+  title: string;
+  price: number;
+  imageSrc: string | StaticImageData;
+}
+
 interface NavbarProps {
   logo?: string | StaticImageData;
   showSearch?: boolean;
@@ -23,17 +30,14 @@ export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true }) => {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Calculate total quantity from cart items
   const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  // Navigate to the cart page when the basket container is clicked
   const handleBasketClick = () => {
     router.push('/cart');
   };
 
   return (
     <nav className={styles.navbar}>
-      {/* Logo */}
       <div className={styles.logoContainer}>
         {logo && (
           <Image
@@ -47,7 +51,6 @@ export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true }) => {
         )}
       </div>
 
-      {/* Navigation Links */}
       <div className={styles.navbarItems}>
         <Link href="/" className={styles.navbarLink}>صفحه اصلی</Link>
         <Link href="/shop" className={styles.navbarLink}>فروشگاه</Link>
@@ -56,7 +59,6 @@ export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true }) => {
       </div>
 
       <div className={styles.rightSection}>
-        {/* Search Bar */}
         {showSearch && (
           <div className={styles.searchBar}>
             <input type="text" placeholder="جستجو" className={styles.searchInput} />
@@ -68,7 +70,6 @@ export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true }) => {
           <div 
             className={styles.basketContainer}
             onMouseEnter={() => setIsDropdownOpen(true)}
-            onMouseLeave={() => setIsDropdownOpen(false)}
             onClick={handleBasketClick}
           >
             <FaShoppingBasket className={styles.icon} />
@@ -79,11 +80,7 @@ export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true }) => {
             )}
 
             {isDropdownOpen && (
-              <div 
-                className={styles.cartDropdown}
-                onMouseEnter={() => setIsDropdownOpen(true)}
-                onMouseLeave={() => setIsDropdownOpen(false)}
-              >
+              <div className={styles.cartDropdown}>
                 {cartItems.length === 0 ? (
                   <p className={styles.emptyCart}>سبد خرید شما خالی است</p>
                 ) : (

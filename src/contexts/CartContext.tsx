@@ -29,12 +29,10 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setCartItems((prev) => {
       const existingItem = prev.find((i) => i.id === item.id);
       if (existingItem) {
-        // Increase quantity if item already exists
         return prev.map((i) =>
           i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
         );
       } else {
-        // Add new item with quantity 1
         return [...prev, { ...item, quantity: 1 }];
       }
     });
@@ -60,7 +58,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           item.id === id ? { ...item, quantity: item.quantity - 1 } : item
         );
       } else {
-        // If quantity is 1, remove the item
         return prev.filter((item) => item.id !== id);
       }
     });

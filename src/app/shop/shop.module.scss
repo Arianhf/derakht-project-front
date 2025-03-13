@@ -1,4 +1,3 @@
-
 .shopContainer {
   min-height: 100vh;
   display: flex;
@@ -10,7 +9,6 @@
 /* =======================
    Hero Section (Banner)
    ======================= */
-
 .heroSection {
   position: relative;
   width: 100%;
@@ -46,93 +44,73 @@
 /* =======================
    Filters Section
    ======================= */
+.filtersContainer {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  direction: rtl;
+}
 
-   .filtersContainer {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    padding: 10px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    direction: rtl;
-  }
-  
-  /* Each filter item is wrapped in its own container */
-  .filterItem {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    padding: 0 15px;
-  }
-  
-  /* Centered filter label */
-  .filterLabel {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #2B463C;
-  }
-  
-  .filterSeperator{
-    width: 1px;
-    height: 40px;
-    background-color: #b4b4b4;
-    border-radius: 20px;
-  }
-  
-  /* Updated filter dropdown */
-  .filterDropdown {
-    border: none;
-    outline: none;
-    background: #ffffff;
-    font-size: 16px;
-    cursor: pointer;
-    font-family: 'shoor-Medium';
-    color: #333;
-    padding: 10px 12px;
-    width: 140px;
-    border-radius: 8px;
-    appearance: none;
-    text-align: center;
-    transition: all 0.2s ease-in-out;
-  }
-  
-  .filterDropdown:hover,
-  .filterDropdown:focus {
-    background-color: rgb(233, 248, 236);
-  }
-  
-  .filterDropdown option {
-    background: white;
-    color: #333;
-    font-family: 'shoor-Medium';
-    font-size: 14px;
-    padding: 10px;
-  }
-  
-  /* =======================
-     Product Cards Layout
-     ======================= */
-  .productsContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    width: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-    margin-bottom: 50px;
-  }
-  
+.filterItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 0 15px;
+}
+
+.filterLabel {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #2B463C;
+}
+
+.filterSeperator {
+  width: 1px;
+  height: 40px;
+  background-color: #b4b4b4;
+  border-radius: 20px;
+}
+
+.filterDropdown {
+  border: none;
+  outline: none;
+  background: #ffffff;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: 'shoor-Medium';
+  color: #333;
+  padding: 10px 12px;
+  width: 140px;
+  border-radius: 8px;
+  appearance: none;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.filterDropdown:hover,
+.filterDropdown:focus {
+  background-color: rgb(233, 248, 236);
+}
+
+.filterDropdown option {
+  background: white;
+  color: #333;
+  font-family: 'shoor-Medium';
+  font-size: 14px;
+  padding: 10px;
+}
 
 /* =======================
-   Product Cards Layout
+   Products Container
    ======================= */
-
 .productsContainer {
   display: flex;
   flex-wrap: wrap;
@@ -145,86 +123,39 @@
 }
 
 /* =======================
-   Product Card Styles
+   Notification
    ======================= */
-
-.card {
-  width: 100%;
-  max-width: 300px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
-  background-color: #fff;
-  cursor: pointer;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-}
-
-.imageContainer {
-  position: relative;
-  width: 100%;
-  height: 200px;
-}
-
-.cardBody {
-  padding: 15px;
-  text-align: right;
-}
-
-.cardTitle {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.cardPrice {
-  font-size: 16px;
-  color: #28a745;
-  margin-bottom: 10px;
-}
-
-.cardDescription {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 15px;
-}
-
-.addToCartButton {
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
+.notification {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f9743;
+  color: white;
+  padding: 10px 20px;
   border-radius: 5px;
-  cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.addToCartButton:hover {
-  background-color: #0056b3;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  transition: opacity 0.3s ease;
 }
 
 /* =======================
    Responsive Design
    ======================= */
-
 @media (max-width: 1024px) {
   .heroText {
     font-size: 80px;
   }
-
+  
   .filtersContainer {
     flex-direction: column;
     align-items: center;
   }
-
+  
   .productsContainer {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 15px;
   }
 }
 
@@ -232,17 +163,17 @@
   .heroText {
     font-size: 60px;
   }
-
+  
   .filtersContainer {
     width: 100%;
     padding: 15px;
     gap: 10px;
   }
-
+  
   .filterDropdown {
     width: 100%;
   }
-
+  
   .productsContainer {
     gap: 15px;
     padding: 15px;
@@ -253,11 +184,7 @@
   .heroText {
     font-size: 40px;
   }
-
-  .productsContainer {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  }
-
+  
   .productsContainer {
     grid-template-columns: 1fr;
     padding: 10px;
