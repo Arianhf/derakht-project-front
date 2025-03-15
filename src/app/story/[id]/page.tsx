@@ -53,7 +53,6 @@ const StoryPage = () => {
 
     const currentPart = template.parts[selectedIndex];
     try {
-      // await storyService.addStoryPart(template.id, currentPart.story_part_template, texts[selectedIndex]);
       if (selectedIndex < template.parts.length - 1) {
         setSelectedIndex((prev) => prev + 1);
       } else {
@@ -69,10 +68,8 @@ const StoryPage = () => {
     if (!template) return;
 
     try {
-      // await storyService.finishStory(template.id, storyName);
       setIsModalOpen(false);
       setIsPreviewOpen(true);
-      // router.push('/stories');
     } catch (err) {
       console.error('Error finishing story:', err);
       alert('خطا در پایان داستان');

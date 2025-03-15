@@ -1,0 +1,75 @@
+.container {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #ffdde1, #d4f1f4, #fff7e5);
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    direction: rtl;
+  }
+  
+  .title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #2b463c;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+  }
+  
+  .storyCard {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+    padding-bottom: 15px;
+  }
+  
+  .storyCard:hover {
+    transform: translateY(-5px);
+  }
+  
+  .storyImage {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .storyTitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 15px 0 10px;
+    color: #2b463c;
+  }
+  
+  .storyExcerpt {
+    font-size: 16px;
+    color: #555;
+    padding: 0 15px;
+    margin-bottom: 10px;
+  }
+  
+  .readMoreButton {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .readMoreButton:hover {
+    background-color: #218838;
+  }
+  
