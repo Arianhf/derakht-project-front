@@ -42,4 +42,9 @@ export const storyService = {
     const response = await api.post(`/api/stories/${storyId}/finish/`, { title });
     return response.data;
   },
+
+  getApiStories: async (): Promise<StoryResponse<Story>> => {
+    const response = await api.get('/stories/');
+    return response.data;
+  }
 };
