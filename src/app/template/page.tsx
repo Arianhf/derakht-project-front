@@ -5,8 +5,16 @@ import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/shared/Navbar";
 import logo from "@/assets/images/logo2.png";
 import styles from "./template.module.scss";
-import { FaBook, FaPaintBrush } from "react-icons/fa";
 import { templateService } from "@/services/templateService";
+import Image from "next/image";
+
+// Import images
+import writeStoryImage from "../../../public/images/writeStory.jpg";
+import paintStoryImage from "../../../public/images/paintStory.jpg";
+import finishStoryImage from "../../../public/images/finishStory.jpg";
+
+// Icons
+import { FaBook, FaPaintBrush } from "react-icons/fa";
 
 interface TemplatePart {
   id: string;
@@ -51,7 +59,7 @@ const TemplatePage = () => {
     }
   };
 
-  const startStory = async (templateId: string) => { // Change parameter type to string
+  const startStory = async (templateId: string) => {
     try {
       const response = await templateService.startStory(templateId);
       const storyId = response.story.id;
@@ -62,43 +70,51 @@ const TemplatePage = () => {
   };
 
   return (
-      <div className={styles.templateContainer}>
-        <Navbar logo={logo} />
+    <div className={styles.templateContainer}>
+      <Navbar logo={logo} />
 
-        <div className={styles.contentWrapper}>
-          {!selectedTemplate ? (
-              <div className={styles.selectionContainer}>
-                <h1 className={styles.title}>یک قالب انتخاب کنید</h1>
+      <div className={styles.contentWrapper}>
+        {!selectedTemplate ? (
+          <div className={styles.selectionContainer}>
+            <h1 className={styles.title}>یک قالب انتخاب کنید</h1>
 
-                <div className={styles.templateOptions}>
-                  <button onClick={() => setSelectedTemplate("story")} className={styles.templateButton}>
-                    نوشتن داستان
-                  </button>
-                  <button onClick={() => setSelectedTemplate("drawing")} className={styles.templateButton}>
-                    کشیدن عکس
-                  </button>
-                </div>
+            {/* Image options */}
+            <div className={styles.imageOptions}>
+              <div onClick={() => setSelectedTemplate("story")} className={styles.imageContainer}>
+                <Image src={writeStoryImage} alt="نوشتن داستان" className={styles.templateImage} />
+                <p className={styles.imageLabel}>نوشتن داستان</p>
               </div>
-          ) : (
-              <div className={styles.selectedTemplate}>
-                <h2>{selectedTemplate === "story" ? "نوشتن داستان" : "کشیدن عکس"}</h2>
-                <div className={styles.storyList}>
-                  {templates.map((template) => (
-                      <div key={template.id} className={styles.storyCard}>
-                        {selectedTemplate === "story" ? <FaBook className={styles.storyIcon} /> : <FaPaintBrush className={styles.storyIcon} />}
-                        <button onClick={() => startStory(template.id)} className={styles.storyLink}>
-                          {template.title}
-                        </button>
-                      </div>
-                  ))}
-                </div>
-                <button onClick={() => setSelectedTemplate(null)} className={styles.backButton}>
-                  بازگشت
-                </button>
+              <div onClick={() => setSelectedTemplate("drawing")} className={styles.imageContainer}>
+                <Image src={paintStoryImage} alt="کشیدن عکس" className={styles.templateImage} />
+                <p className={styles.imageLabel}>کشیدن عکس</p>
               </div>
-          )}
-        </div>
+              <div className={styles.imageContainer}>
+                <Image src={finishStoryImage} alt="اتمام داستان" className={styles.templateImage} />
+                <p className={styles.imageLabel}>اتمام داستان</p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.selectedTemplate}>
+            <h2>{selectedTemplate === "story" ? "نوشتن داستان" : "کشیدن عکس"}</h2>
+            <div className={styles.storyList}>
+              {templates.map((template) => (
+                <div key={template.id} className={styles.storyCard} onClick={() => startStory(template.id)}>
+                  <div className={styles.iconContainer}>
+                    {selectedTemplate === "story" ? <FaBook className={styles.storyIcon} /> : <FaPaintBrush className={styles.storyIcon} />}
+                  </div>
+                  <h3 className={styles.storyTitle}>{template.title}</h3>
+                  <p className={styles.storyDescription}>{template.description}</p>
+                </div>
+              ))}
+            </div>
+            <button onClick={() => setSelectedTemplate(null)} className={styles.backButton}>
+              بازگشت
+            </button>
+          </div>
+        )}
       </div>
+    </div>
   );
 };
 
