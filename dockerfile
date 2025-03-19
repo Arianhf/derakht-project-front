@@ -1,30 +1,32 @@
-# Stage 1: Build
+# Stage 1: Building the code
 FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies separately to leverage Docker cache
-COPY package.json package-lock.json ./
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
 # Copy the rest of the application code
 COPY . .
 
-# Build the application
-RUN npm run build
+# Build the application and export to static HTML
+RUN npm run build && npx next export
 
 # Stage 2: Serve with Nginx
 FROM nginx:stable-alpine
 
-# Remove default Nginx static files and copy our built app
+# Remove default Nginx static files
 RUN rm -rf /usr/share/nginx/html/*
-COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy custom Nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy the static export from the build stage
+COPY --from=builder /app/out /usr/share/nginx/html
 
-# Expose port 80
+# Optional: Copy custom Nginx config if needed
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
 
-# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
