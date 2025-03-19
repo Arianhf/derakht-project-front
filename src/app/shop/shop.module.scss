@@ -85,7 +85,7 @@
   background: #ffffff;
   font-size: 16px;
   cursor: pointer;
-  font-family: 'shoor-Medium';
+  font-family: 'shoor-Medium', sans-serif;
   color: #333;
   padding: 10px 12px;
   width: 140px;
@@ -103,7 +103,7 @@
 .filterDropdown option {
   background: white;
   color: #333;
-  font-family: 'shoor-Medium';
+  font-family: 'shoor-Medium', sans-serif;
   font-size: 14px;
   padding: 10px;
 }
@@ -147,12 +147,12 @@
   .heroText {
     font-size: 80px;
   }
-  
+
   .filtersContainer {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .productsContainer {
     gap: 15px;
     padding: 15px;
@@ -163,17 +163,17 @@
   .heroText {
     font-size: 60px;
   }
-  
+
   .filtersContainer {
     width: 100%;
     padding: 15px;
     gap: 10px;
   }
-  
+
   .filterDropdown {
     width: 100%;
   }
-  
+
   .productsContainer {
     gap: 15px;
     padding: 15px;
@@ -184,9 +184,246 @@
   .heroText {
     font-size: 40px;
   }
-  
+
   .productsContainer {
     grid-template-columns: 1fr;
     padding: 10px;
+  }
+}
+
+
+
+
+
+
+// my css
+// app/shop/shop.module.scss
+
+.shopContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f5f7;
+}
+
+.heroSection {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  margin-bottom: 30px;
+}
+
+.heroImage {
+  z-index: 1;
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.heroText {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.contentContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+  width: 100%;
+}
+
+.filtersContainer {
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.searchForm {
+  margin-bottom: 20px;
+}
+
+.searchInputContainer {
+  display: flex;
+  position: relative;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 46px 12px 12px;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  font-size: 16px;
+  direction: rtl;
+  transition: border-color 0.3s;
+
+  &:focus {
+    outline: none;
+    border-color: #7c6ef7;
+  }
+}
+
+.searchButton {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #7c6ef7;
+}
+
+.filterControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.filterItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 200px;
+}
+
+.filterLabel {
+  font-size: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.filterDropdown {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  background-color: white;
+  font-size: 14px;
+  direction: rtl;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: #7c6ef7;
+  }
+}
+
+.productsSection {
+  min-height: 400px;
+}
+
+.productsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.loaderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+}
+
+.spinner {
+  font-size: 2rem;
+  color: #7c6ef7;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.noProducts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0;
+  font-size: 18px;
+  color: #666;
+  text-align: center;
+}
+
+.notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .heroText {
+    font-size: 2rem;
+  }
+
+  .productsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .filterControls {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .filterItem {
+    flex: 1 1 100%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .heroSection {
+    height: 200px;
+  }
+
+  .heroText {
+    font-size: 1.5rem;
+  }
+
+  .productsGrid {
+    grid-template-columns: 1fr;
+    gap: 15px;
   }
 }

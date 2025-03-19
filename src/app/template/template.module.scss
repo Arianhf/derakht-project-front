@@ -5,7 +5,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: 'shoor-Medium';
+  font-family: 'shoor-Medium', sans-serif;
 }
 
 .contentWrapper {
@@ -20,8 +20,8 @@
 }
 
 .title {
-  font-size: 24px;
-  margin-bottom: 20px;
+  font-size: 32px;
+  margin-bottom: 30px;
 }
 
 /* Image Selection */
@@ -42,7 +42,7 @@
 }
 
 .templateImage {
-  width: 180px;
+  width: 480px;
   height: auto;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -119,7 +119,7 @@
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  font-family: 'shoor-Medium';
+  font-family: 'shoor-Medium', sans-serif;
 }
 
 .backButton:hover {

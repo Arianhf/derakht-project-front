@@ -2,41 +2,65 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { FaPlus } from 'react-icons/fa';
-import { StaticImageData } from 'next/image';
+import Link from 'next/link';
 import styles from './ProductCard.module.scss';
+import { toPersianNumber } from '@/utils/convertToPersianNumber';
+import { Product } from '@/types/shop';
+import { FaShoppingCart } from 'react-icons/fa';
 
 interface ProductCardProps {
-  imageSrc: string | StaticImageData;
-  title: string;
-  price: number;
-  description: string;
-  onAddToCart: () => void;
-  onCardClick: () => void;
+    product: Product;
+    onAddToCart: (e: React.MouseEvent) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ imageSrc, title, price, description, onAddToCart, onCardClick }) => {
-  return (
-    <div className={styles.card} onClick={onCardClick}>
-      <div className={styles.imageContainer}>
-        <Image src={imageSrc} alt={title} layout="fill" objectFit="cover" />
-      </div>
-      <div className={styles.cardBody}>
-        <h3 className={styles.cardTitle}>{title}</h3>
-        <p className={styles.cardPrice}>{price.toLocaleString()} تومان</p>
-        <p className={styles.cardDescription}>{description}</p>
-        <button
-          className={styles.addToCartButton}
-          onClick={(e) => {
-            e.stopPropagation(); 
-            onAddToCart();
-          }}
-        >
-          افزودن به سبد خرید <FaPlus className={styles.plusIcon} />
-        </button>
-      </div>
-    </div>
-  );
+const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onAddToCart(e);
+    };
+
+    return (
+        <Link href={`/shop/${product.slug}`} className={styles.productCard}>
+            <div className={styles.imageContainer}>
+                {product.feature_image ? (
+                    <Image
+                        src={product.feature_image}
+                        alt={product.title}
+                        layout="fill"
+                        objectFit="contain"
+                        className={styles.productImage}
+                    />
+                ) : (
+                    <div className={styles.placeholderImage}>
+                        تصویر موجود نیست
+                    </div>
+                )}
+                {!product.is_available && (
+                    <div className={styles.unavailableBadge}>ناموجود</div>
+                )}
+                {product.age_range && (
+                    <div className={styles.ageBadge}>
+                        {product.age_range}
+                    </div>
+                )}
+            </div>
+            <div className={styles.productInfo}>
+                <h3 className={styles.productTitle}>{product.title}</h3>
+                <p className={styles.productPrice}>
+                    {toPersianNumber(product.price_in_toman.toLocaleString())} تومان
+                </p>
+                <button
+                    className={styles.addToCartButton}
+                    onClick={handleAddToCart}
+                    disabled={!product.is_available}
+                >
+                    <FaShoppingCart />
+                    <span>افزودن به سبد خرید</span>
+                </button>
+            </div>
+        </Link>
+    );
 };
 
 export default ProductCard;

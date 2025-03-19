@@ -1,6 +1,126 @@
+// components/shop/ProductCard.module.scss
+
+.productCard {
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  background-color: #f6f6f6;
+}
+
+.productImage {
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.placeholderImage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 14px;
+}
+
+.unavailableBadge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255, 0, 0, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 2;
+}
+
+.ageBadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 128, 255, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 2;
+}
+
+.productInfo {
+  padding: 16px;
+  text-align: right;
+}
+
+.productTitle {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.productPrice {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4caf50;
+  margin-bottom: 12px;
+}
+
+.addToCartButton {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: #7c6ef7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  &:hover {
+    background-color: #6458d1;
+  }
+
+  &:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+
+  svg {
+    font-size: 16px;
+  }
+}
+
+//ali css
 .card {
-    width: 300px;
-    border: 1px solid #ddd;
+  width: 300px;
+  border: 1px solid #ddd;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -51,7 +171,7 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    font-family: 'shoor-Medium';
+    font-family: 'shoor-Medium', sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;

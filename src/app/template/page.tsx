@@ -80,24 +80,21 @@ const TemplatePage = () => {
 
             {/* Image options */}
             <div className={styles.imageOptions}>
-              <div onClick={() => setSelectedTemplate("story")} className={styles.imageContainer}>
-                <Image src={writeStoryImage} alt="نوشتن داستان" className={styles.templateImage} />
-                <p className={styles.imageLabel}>نوشتن داستان</p>
+              <div className={styles.imageContainer}>
+                <Image src={finishStoryImage} alt="اتمام داستان" className={styles.templateImage}/>
               </div>
               <div onClick={() => setSelectedTemplate("drawing")} className={styles.imageContainer}>
-                <Image src={paintStoryImage} alt="کشیدن عکس" className={styles.templateImage} />
-                <p className={styles.imageLabel}>کشیدن عکس</p>
+                <Image src={paintStoryImage} alt="کشیدن عکس" className={styles.templateImage}/>
               </div>
-              <div className={styles.imageContainer}>
-                <Image src={finishStoryImage} alt="اتمام داستان" className={styles.templateImage} />
-                <p className={styles.imageLabel}>اتمام داستان</p>
+              <div onClick={() => setSelectedTemplate("story")} className={styles.imageContainer}>
+                <Image src={writeStoryImage} alt="نوشتن داستان" className={styles.templateImage}/>
               </div>
             </div>
           </div>
         ) : (
-          <div className={styles.selectedTemplate}>
-            <h2>{selectedTemplate === "story" ? "نوشتن داستان" : "کشیدن عکس"}</h2>
-            <div className={styles.storyList}>
+            <div className={styles.selectedTemplate}>
+              <h2>{selectedTemplate === "story" ? "نوشتن داستان" : "کشیدن عکس"}</h2>
+              <div className={styles.storyList}>
               {templates.map((template) => (
                 <div key={template.id} className={styles.storyCard} onClick={() => startStory(template.id)}>
                   <div className={styles.iconContainer}>
