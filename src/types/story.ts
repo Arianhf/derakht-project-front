@@ -1,8 +1,8 @@
 export interface StoryResponse<T> {
-    items: T[];
-    total: number;
-    page: number;
-    size: number;
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: T[];
 }
 
 export interface StoryTemplate {
