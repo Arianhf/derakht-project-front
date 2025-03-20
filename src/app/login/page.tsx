@@ -3,13 +3,16 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useRouter } from "next/navigation"; 
+import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./login.module.css";
 import logo from "@/assets/images/logo2.png";
 import { loginService } from "@/services/loginService";
 
 export default function AuthPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirectPath = searchParams.get('redirect') || '/blog';
+
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isSignup, setIsSignup] = useState(false);
@@ -82,7 +85,7 @@ export default function AuthPage() {
 
             setFormData({ email: "", password: "", confirmPassword: "", age: "" });
 
-            router.push("/blog");
+            router.push(redirectPath);
 
         } catch (err: any) {
             setError(err.message || "خطایی رخ داده است");

@@ -32,26 +32,6 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-# Create improved startup script with direct hostname specification
-# RUN echo '#!/bin/sh' > /start.sh && \
-#     echo 'cd /app' >> /start.sh && \
-#     echo 'echo "Starting Next.js on port 3000..."' >> /start.sh && \
-#     echo 'PORT=3000 node -e "process.env.HOSTNAME=\"0.0.0.0\"; require(\"./server.js\")" &' >> /start.sh && \
-#     echo 'NODE_PID=$!' >> /start.sh && \
-#     echo 'echo "Next.js process started with PID: $NODE_PID"' >> /start.sh && \
-#     echo 'echo "Waiting for Next.js to be ready..."' >> /start.sh && \
-#     echo 'sleep 15' >> /start.sh && \
-#     echo 'if kill -0 $NODE_PID 2>/dev/null; then' >> /start.sh && \
-#     echo '  echo "Next.js is running, starting Nginx..."' >> /start.sh && \
-#     echo '  echo "Attempting connection to Next.js at http://127.0.0.1:3000..."' >> /start.sh && \
-#     echo '  curl -s http://127.0.0.1:3000 > /dev/null || echo "Warning: Connection test failed!"' >> /start.sh && \
-#     echo '  nginx -g "daemon off;"' >> /start.sh && \
-#     echo 'else' >> /start.sh && \
-#     echo '  echo "ERROR: Next.js failed to start!"' >> /start.sh && \
-#     echo '  exit 1' >> /start.sh && \
-#     echo 'fi' >> /start.sh && \
-#     chmod +x /start.sh
-
 RUN echo '#!/bin/sh' > /start.sh && \
     echo 'cd /app' >> /start.sh && \
     echo 'PORT=3000 node -e "process.env.HOSTNAME=\"0.0.0.0\"; require(\"./server.js\")" &' >> /start.sh && \
