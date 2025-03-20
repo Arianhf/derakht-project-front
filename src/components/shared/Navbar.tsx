@@ -8,7 +8,6 @@ import { FaSearch, FaShoppingBasket, FaTrash } from 'react-icons/fa';
 import styles from './Navbar.module.css';
 import { StaticImageData } from 'next/image';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
-import { useCart } from '@/contexts/CartContext';
 
 interface NavbarProps {
     logo?: string | StaticImageData;
@@ -19,11 +18,26 @@ export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true }) => {
     const pathname = usePathname();
     const isShopPage = pathname?.startsWith("/shop");
     const router = useRouter();
-    const { cartDetails, removeFromCart } = useCart();
-
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-    const totalQuantity = cartDetails?.items_count || 0;
+    // Only import and use cart context if we're on a shop page
+    let cartDetails = null;
+    let removeFromCart = (product_id: any) => {};
+    let totalQuantity = 0;
+
+    // Dynamically import cart-related functionality only when needed
+    if (isShopPage) {
+        // Using require to conditionally import
+        try {
+            const { useCart } = require('@/contexts/CartContext');
+            const cartContext = useCart();
+            cartDetails = cartContext.cartDetails;
+            removeFromCart = cartContext.removeFromCart;
+            totalQuantity = cartDetails?.items_count || 0;
+        } catch (error) {
+            console.error('Error loading cart context:', error);
+        }
+    }
 
     const handleBasketClick = () => {
         router.push('/cart');
@@ -67,17 +81,17 @@ export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true }) => {
                     >
                         <FaShoppingBasket className={styles.icon} />
                         {totalQuantity > 0 && (
-                                <span className={styles.cartCounter}>
-                {toPersianNumber(totalQuantity)}
-              </span>
+                            <span className={styles.cartCounter}>
+                                {toPersianNumber(totalQuantity)}
+                            </span>
                         )}
 
-                        {isDropdownOpen && (
+                        {isDropdownOpen && cartDetails && (
                             <div className={styles.cartDropdown}>
                                 {!cartDetails?.items || cartDetails.items.length === 0 ? (
                                     <p className={styles.emptyCart}>سبد خرید شما خالی است</p>
                                 ) : (
-                                    cartDetails.items.map((item) => (
+                                    cartDetails.items.map((item:any) => (
                                         <div key={item.product.id} className={styles.cartItem}>
                                             <div className={styles.cartItemContent}>
                                                 {item.product.feature_image ? (
@@ -88,8 +102,8 @@ export const Navbar: React.FC<NavbarProps> = ({ logo, showSearch = true }) => {
                                                 <div className={styles.cartItemInfo}>
                                                     <p>{item.product.title}</p>
                                                     <span>
-                            {toPersianNumber(item.product.price_in_toman.toLocaleString())} تومان x {toPersianNumber(item.quantity)}
-                          </span>
+                                                        {toPersianNumber(item.product.price_in_toman.toLocaleString())} تومان x {toPersianNumber(item.quantity)}
+                                                    </span>
                                                 </div>
                                             </div>
                                             <button

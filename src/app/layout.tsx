@@ -1,16 +1,16 @@
-import { CartProvider } from "@/contexts/CartContext";
+import { ConditionalCartProvider } from "@/components/ConditionalCartProvider";
 import "../styles/globals.css";
 
 export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
+                                       children,
+                                   }: Readonly<{
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body>
-        <CartProvider>{children}</CartProvider>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+        <body>
+        <ConditionalCartProvider>{children}</ConditionalCartProvider>
+        </body>
+        </html>
+    );
 }

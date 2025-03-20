@@ -1,23 +1,26 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Image from "next/image";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import styles from "./login.module.css";
 import logo from "@/assets/images/logo2.png";
 import { loginService } from "@/services/loginService";
 
-export default function AuthPage() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const redirectPath = searchParams.get('redirect') || '/blog';
-
+// Create a separate component for the part that uses useSearchParams
+function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isSignup, setIsSignup] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const router = useRouter();
+
+    // Using dynamic import to avoid the server error
+    const { useSearchParams } = require('next/navigation');
+    const searchParams = useSearchParams();
+    const redirectPath = searchParams?.get('redirect') || '/blog';
 
     const [formData, setFormData] = useState({
         email: "",
@@ -170,5 +173,20 @@ export default function AuthPage() {
                 </button>
             </p>
         </div>
+    );
+}
+
+// Loading fallback component
+const LoadingFallback = () => (
+    <div className={styles.container}>
+        <p>در حال بارگذاری...</p>
+    </div>
+);
+
+export default function AuthPage() {
+    return (
+        <Suspense fallback={<LoadingFallback />}>
+            <LoginForm />
+        </Suspense>
     );
 }
