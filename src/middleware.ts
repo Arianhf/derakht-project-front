@@ -13,7 +13,13 @@ export function middleware(req: NextRequest) {
     }
 
     // Check authentication for protected routes
-    if (!isAuthenticated && req.nextUrl.pathname !== "/login") {
+    if (!isAuthenticated &&
+        (req.nextUrl.pathname !== "/login" &&
+            (req.nextUrl.pathname.startsWith("/account") ||
+                req.nextUrl.pathname.startsWith("/story") ||
+                req.nextUrl.pathname.startsWith("/shop") ||
+                req.nextUrl.pathname.startsWith("/cart") ||
+                req.nextUrl.pathname.startsWith("/checkout")))) {
         // Include the original URL as a query parameter
         const loginUrl = new URL("/login", req.url);
         loginUrl.searchParams.set("redirect", req.nextUrl.pathname);
@@ -26,10 +32,10 @@ export function middleware(req: NextRequest) {
 export const config = {
     matcher: [
         '/',
+        '/account/:path*',
         '/story/:path*',
-        '/shop',
         '/shop/:path*',
-        '/cart',
-        '/cart/:path*'
+        '/cart/:path*',
+        '/checkout/:path*'
     ],
 };

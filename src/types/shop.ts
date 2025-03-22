@@ -60,6 +60,7 @@ export interface OrderItem {
     product: Product;
     quantity: number;
     price: number;
+    total_price: number;
 }
 
 export interface ShippingInfo {

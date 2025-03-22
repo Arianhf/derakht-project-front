@@ -1,4 +1,4 @@
-import { ConditionalCartProvider } from "@/components/ConditionalCartProvider";
+import { ConditionalProviders } from "@/components/ConditionalProviders";
 import "../styles/globals.css";
 
 export default function RootLayout({
@@ -9,7 +9,7 @@ export default function RootLayout({
     return (
         <html lang="en">
         <body>
-        <ConditionalCartProvider>{children}</ConditionalCartProvider>
+        <ConditionalProviders>{children}</ConditionalProviders>
         </body>
         </html>
     );
