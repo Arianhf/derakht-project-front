@@ -1,0 +1,278 @@
+.ordersContainer {
+    width: 100%;
+}
+
+.pageTitle {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #2B463C;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.searchContainer {
+    margin-bottom: 20px;
+}
+
+.searchForm {
+    display: flex;
+    align-items: center;
+    position: relative;
+    max-width: 400px;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 12px 45px 12px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: 'shoor-Medium', sans-serif;
+
+    &:focus {
+        outline: none;
+        border-color: #345BC0;
+    }
+}
+
+.searchButton {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #777;
+    font-size: 16px;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+        color: #345BC0;
+    }
+}
+
+.ordersContent {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.ordersTable {
+    width: 100%;
+}
+
+.tableHeader {
+    display: flex;
+    background-color: #f2f2f2;
+    padding: 15px;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+}
+
+.tableRow {
+    display: flex;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &:hover {
+        background-color: #f5f5f5;
+    }
+
+    @media (max-width: 768px) {
+        flex-wrap: wrap;
+        padding: 10px;
+    }
+}
+
+.idColumn {
+    flex: 0 0 20%;
+
+    @media (max-width: 768px) {
+        flex: 0 0 100%;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+}
+
+.dateColumn {
+    flex: 0 0 25%;
+
+    @media (max-width: 768px) {
+        flex: 0 0 50%;
+    }
+}
+
+.statusColumn {
+    flex: 0 0 25%;
+
+    @media (max-width: 768px) {
+        flex: 0 0 50%;
+        text-align: left;
+    }
+}
+
+.totalColumn {
+    flex: 0 0 20%;
+
+    @media (max-width: 768px) {
+        flex: 0 0 50%;
+        margin-top: 5px;
+    }
+}
+
+.actionColumn {
+    flex: 0 0 10%;
+    text-align: center;
+
+    @media (max-width: 768px) {
+        flex: 0 0 50%;
+        text-align: left;
+        margin-top: 5px;
+    }
+}
+
+.statusBadge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.pending {
+    background-color: #fff8e1;
+    color: #ffa000;
+}
+
+.processing {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.shipped {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+.delivered {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+.canceled {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+.viewButton {
+    background-color: #345BC0;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-family: 'shoor-Medium', sans-serif;
+
+    &:hover {
+        background-color: #2b4aa0;
+    }
+}
+
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 0;
+}
+
+.spinner {
+    font-size: 24px;
+    color: #345BC0;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.emptyOrders {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 0;
+    text-align: center;
+}
+
+.emptyOrders p {
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.shopButton {
+    background-color: #345BC0;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-family: 'shoor-Medium', sans-serif;
+
+    &:hover {
+        background-color: #2b4aa0;
+    }
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+    gap: 5px;
+}
+
+.pageButton {
+    min-width: 40px;
+    height: 40px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'shoor-Medium', sans-serif;
+
+    &:hover:not(.disabled) {
+        background-color: #f0f0f0;
+        border-color: #ccc;
+    }
+
+    &.active {
+        background-color: #345BC0;
+        color: white;
+        border-color: #345BC0;
+    }
+
+    &.disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+}

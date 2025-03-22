@@ -1,0 +1,269 @@
+.orderDetailContainer {
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2B463C;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: transparent;
+  color: #345BC0;
+  border: 1px solid #345BC0;
+  border-radius: 5px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'shoor-Medium', sans-serif;
+
+  &:hover {
+    background-color: #f0f5ff;
+  }
+}
+
+.loadingContainer, .errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+  text-align: center;
+}
+
+.spinner {
+  font-size: 24px;
+  color: #345BC0;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.errorContainer h2 {
+  color: #d32f2f;
+  margin-bottom: 10px;
+}
+
+.errorContainer p {
+  color: #777;
+  margin-bottom: 20px;
+}
+
+.orderInfoCard {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f2f2f2;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.orderHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.orderNumber {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+
+  span {
+    color: #345BC0;
+  }
+}
+
+.orderDate {
+  font-size: 14px;
+  color: #777;
+}
+
+.orderStatus {
+  display: flex;
+  align-items: center;
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.pending {
+  background-color: #fff8e1;
+  color: #ffa000;
+}
+
+.processing {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.shipped {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.delivered {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.canceled {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.statusIconPending,
+.statusIconProcessing,
+.statusIconShipped,
+.statusIconDelivered,
+.statusIconCanceled {
+  font-size: 16px;
+}
+
+.orderSection {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  color: #2B463C;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #ddd;
+}
+
+.deliveryInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.infoRow {
+  display: flex;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    margin-bottom: 5px;
+  }
+}
+
+.infoLabel {
+  flex: 0 0 150px;
+  font-weight: bold;
+  color: #555;
+}
+
+.infoValue {
+  flex: 1;
+  color: #333;
+}
+
+.orderItems {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.orderItem {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.itemImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: #f5f5f5;
+  flex-shrink: 0;
+}
+
+.noImage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 12px;
+  text-align: center;
+}
+
+.itemDetails {
+  flex: 1;
+}
+
+.itemTitle {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.itemMeta {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.itemPrice, .itemQuantity {
+  font-size: 14px;
+  color: #777;
+}
+
+.itemTotal {
+  font-weight: bold;
+  color: #345BC0;
+}
+
+.orderSummary {
+  padding: 20px;
+  background-color: #f5f5f5;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: bold;
+  color: #2B463C;
+}
