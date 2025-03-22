@@ -1,5 +1,6 @@
 // services/shopService.ts
 import api from "@/services/api";
+import { ShippingInfo } from "@/types/shop";
 
 export const shopService = {
     // Product related endpoints
@@ -28,6 +29,16 @@ export const shopService = {
 
     getProductsByAgeRange: async (minAge: number, maxAge: number) => {
         const response = await api.get(`/shop/products/age_filter/?min=${minAge}&max=${maxAge}`);
+        return response.data;
+    },
+
+    getProductsByCategory: async (categoryId: string) => {
+        const response = await api.get(`/shop/products/by_category/${categoryId}/`);
+        return response.data;
+    },
+
+    getProductCategories: async () => {
+        const response = await api.get('/shop/categories/');
         return response.data;
     },
 
@@ -65,17 +76,31 @@ export const shopService = {
         return response.data;
     },
 
-    checkout: async (shippingAddress: string, phoneNumber: string) => {
+    // Checkout related endpoints
+    checkout: async (shippingInfo: ShippingInfo) => {
         const response = await api.post('/shop/cart/checkout/', {
-            shipping_address: shippingAddress,
-            phone_number: phoneNumber
+            shipping_info: shippingInfo,
+        });
+        return response.data;
+    },
+
+    applyPromoCode: async (code: string) => {
+        const response = await api.post('/shop/cart/apply_promo/', {
+            code
+        });
+        return response.data;
+    },
+
+    estimateShipping: async (postalCode: string) => {
+        const response = await api.post('/shop/cart/estimate_shipping/', {
+            postal_code: postalCode
         });
         return response.data;
     },
 
     // Order related endpoints
-    getOrders: async () => {
-        const response = await api.get('/shop/orders/');
+    getOrders: async (page = 1, limit = 10) => {
+        const response = await api.get(`/shop/orders/?page=${page}&limit=${limit}`);
         return response.data;
     },
 
@@ -84,8 +109,25 @@ export const shopService = {
         return response.data;
     },
 
+    cancelOrder: async (orderId: string) => {
+        const response = await api.post(`/shop/orders/${orderId}/cancel/`);
+        return response.data;
+    },
+
+    trackOrder: async (orderId: string) => {
+        const response = await api.get(`/shop/orders/${orderId}/track/`);
+        return response.data;
+    },
+
     requestPayment: async (orderId: string) => {
         const response = await api.post(`/shop/orders/${orderId}/request_payment/`);
         return response.data;
+    },
+
+    verifyPayment: async (orderId: string, transactionId: string) => {
+        const response = await api.post(`/shop/orders/${orderId}/verify_payment/`, {
+            transaction_id: transactionId
+        });
+        return response.data;
     }
-};
+}

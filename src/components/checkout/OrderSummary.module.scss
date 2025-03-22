@@ -1,0 +1,161 @@
+.orderSummaryContainer {
+  width: 100%;
+}
+
+.summaryTitle {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #333;
+  border-bottom: 1px solid #e1e1e1;
+  padding-bottom: 10px;
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 5px;
+
+  /* Scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  direction: rtl;
+}
+
+.itemImage {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f8f8f8;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.noImage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 12px;
+  background-color: #f0f0f0;
+}
+
+.itemDetails {
+  flex-grow: 1;
+  min-width: 0;
+  text-align: right;
+}
+
+.itemTitle {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemQuantity {
+  font-size: 14px;
+  color: #777;
+}
+
+.itemPrice {
+  font-weight: bold;
+  color: #4caf50;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.summaryDetails {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px dashed #e1e1e1;
+  direction: rtl;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.totalRow {
+  font-weight: bold;
+  font-size: 18px;
+  color: #333;
+  margin-top: 10px;
+  border-top: 1px solid #e1e1e1;
+  border-bottom: none !important;
+  padding-top: 15px;
+}
+
+.freeShippingMessage {
+  color: #4caf50;
+  font-size: 14px;
+  text-align: center;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: rgba(76, 175, 80, 0.1);
+  border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+  .summaryTitle {
+    font-size: 18px;
+  }
+
+  .itemTitle {
+    font-size: 14px;
+  }
+
+  .itemQuantity,
+  .itemPrice {
+    font-size: 12px;
+  }
+
+  .summaryRow {
+    font-size: 14px;
+  }
+
+  .totalRow {
+    font-size: 16px;
+  }
+}
