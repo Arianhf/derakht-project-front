@@ -1,203 +1,4 @@
-.shopContainer {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: linear-gradient(180deg, #ffdde1, #d4f1f4, #fff7e5) !important;
-}
-
-/* =======================
-   Hero Section (Banner)
-   ======================= */
-.heroSection {
-  position: relative;
-  width: 100%;
-  height: 700px;
-}
-
-.heroImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.heroOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
-}
-
-.heroText {
-  font-size: 120px;
-  font-weight: bold;
-  color: white;
-  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
-  margin-bottom: 20px;
-}
-
-/* =======================
-   Filters Section
-   ======================= */
-.filtersContainer {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  padding: 10px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  direction: rtl;
-}
-
-.filterItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  padding: 0 15px;
-}
-
-.filterLabel {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #2B463C;
-}
-
-.filterSeperator {
-  width: 1px;
-  height: 40px;
-  background-color: #b4b4b4;
-  border-radius: 20px;
-}
-
-.filterDropdown {
-  border: none;
-  outline: none;
-  background: #ffffff;
-  font-size: 16px;
-  cursor: pointer;
-  font-family: 'shoor-Medium', sans-serif;
-  color: #333;
-  padding: 10px 12px;
-  width: 140px;
-  border-radius: 8px;
-  appearance: none;
-  text-align: center;
-  transition: all 0.2s ease-in-out;
-}
-
-.filterDropdown:hover,
-.filterDropdown:focus {
-  background-color: rgb(233, 248, 236);
-}
-
-.filterDropdown option {
-  background: white;
-  color: #333;
-  font-family: 'shoor-Medium', sans-serif;
-  font-size: 14px;
-  padding: 10px;
-}
-
-/* =======================
-   Products Container
-   ======================= */
-.productsContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-  width: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-  margin-bottom: 50px;
-}
-
-/* =======================
-   Notification
-   ======================= */
-.notification {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #0f9743;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-size: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  z-index: 100;
-  transition: opacity 0.3s ease;
-}
-
-/* =======================
-   Responsive Design
-   ======================= */
-@media (max-width: 1024px) {
-  .heroText {
-    font-size: 80px;
-  }
-
-  .filtersContainer {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .productsContainer {
-    gap: 15px;
-    padding: 15px;
-  }
-}
-
-@media (max-width: 768px) {
-  .heroText {
-    font-size: 60px;
-  }
-
-  .filtersContainer {
-    width: 100%;
-    padding: 15px;
-    gap: 10px;
-  }
-
-  .filterDropdown {
-    width: 100%;
-  }
-
-  .productsContainer {
-    gap: 15px;
-    padding: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .heroText {
-    font-size: 40px;
-  }
-
-  .productsContainer {
-    grid-template-columns: 1fr;
-    padding: 10px;
-  }
-}
-
-
-
-
-
-
-// my css
-// app/shop/shop.module.scss
+// src/app/shop/shop.module.scss
 
 .shopContainer {
   display: flex;
@@ -245,83 +46,18 @@
   width: 100%;
 }
 
-.filtersContainer {
-  background-color: white;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.searchForm {
-  margin-bottom: 20px;
-}
-
-.searchInputContainer {
+.shopLayout {
   display: flex;
-  position: relative;
+  gap: 30px;
 }
 
-.searchInput {
-  width: 100%;
-  padding: 12px 46px 12px 12px;
-  border: 1px solid #e1e1e1;
-  border-radius: 8px;
-  font-size: 16px;
-  direction: rtl;
-  transition: border-color 0.3s;
-
-  &:focus {
-    outline: none;
-    border-color: #7c6ef7;
-  }
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
 }
 
-.searchButton {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  color: #7c6ef7;
-}
-
-.filterControls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.filterItem {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1 1 200px;
-}
-
-.filterLabel {
-  font-size: 16px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.filterDropdown {
+.mainContent {
   flex: 1;
-  padding: 10px;
-  border: 1px solid #e1e1e1;
-  border-radius: 8px;
-  background-color: white;
-  font-size: 14px;
-  direction: rtl;
-  cursor: pointer;
-
-  &:focus {
-    outline: none;
-    border-color: #7c6ef7;
-  }
 }
 
 .productsSection {
@@ -368,31 +104,17 @@
   text-align: center;
 }
 
-.notification {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
-  z-index: 1000;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease-in;
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
+/* Responsive styles */
+@media screen and (max-width: 992px) {
+  .shopLayout {
+    flex-direction: column;
   }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
+
+  .sidebar {
+    width: 100%;
   }
 }
 
-/* Responsive Styles */
 @media screen and (max-width: 768px) {
   .heroText {
     font-size: 2rem;
@@ -401,15 +123,6 @@
   .productsGrid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
-  }
-
-  .filterControls {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .filterItem {
-    flex: 1 1 100%;
   }
 }
 

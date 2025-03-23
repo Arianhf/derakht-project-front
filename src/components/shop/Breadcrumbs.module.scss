@@ -1,0 +1,91 @@
+// src/components/shop/Breadcrumbs.module.scss
+
+.breadcrumbs {
+  padding: 12px 0;
+  margin-bottom: 20px;
+  direction: rtl;
+}
+
+.breadcrumbsList {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.breadcrumbItem {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 14px;
+
+  &:last-child {
+    .separator {
+      display: none;
+    }
+  }
+
+  &.active {
+    color: #333;
+    font-weight: 600;
+  }
+}
+
+.breadcrumbLink {
+  color: #666;
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #7c6ef7;
+    text-decoration: underline;
+  }
+}
+
+.currentPage {
+  color: #333;
+}
+
+.separator {
+  margin: 0 8px;
+  color: #ccc;
+  font-size: 12px;
+}
+
+.homeIcon {
+  font-size: 16px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+@media (max-width: 768px) {
+  .breadcrumbs {
+    padding: 10px 0;
+    margin-bottom: 15px;
+  }
+
+  .breadcrumbItem {
+    font-size: 12px;
+  }
+
+  .separator {
+    margin: 0 6px;
+    font-size: 10px;
+  }
+
+  .homeIcon {
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,217 @@
+// src/components/shop/ProductFilters.module.scss
+
+.filtersContainer {
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  direction: rtl;
+
+  .filterGroup {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .filterGroupTitle {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #333;
+  }
+
+  .sortOptions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .sortButton {
+    padding: 8px 16px;
+    background-color: #f5f5f7;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: 'shoor-Medium', sans-serif;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: #e8e8e8;
+    }
+
+    &.active {
+      background-color: #7c6ef7;
+      color: white;
+    }
+  }
+
+  .priceFilter {
+    margin-top: 10px;
+  }
+
+  .priceInputs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .priceInputGroup {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    label {
+      font-size: 14px;
+      color: #666;
+    }
+  }
+
+  .priceInput {
+    padding: 8px 12px;
+    border: 1px solid #e1e1e1;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: 'shoor-Medium', sans-serif;
+
+    &:focus {
+      outline: none;
+      border-color: #7c6ef7;
+    }
+  }
+
+  .priceFilterActions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .applyButton, .resetButton {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: 'shoor-Medium', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .applyButton {
+    background-color: #7c6ef7;
+    color: white;
+
+    &:hover {
+      background-color: #6458d1;
+    }
+  }
+
+  .resetButton {
+    background-color: #f1f1f1;
+    color: #666;
+
+    &:hover {
+      background-color: #e1e1e1;
+    }
+  }
+
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .mobileFilterToggle {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .filtersSection {
+      display: none;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 15px;
+
+      &.filtersOpen {
+        display: flex;
+      }
+    }
+
+    .sortOptions {
+      flex-direction: column;
+      gap: 8px;
+
+      .sortButton {
+        width: 100%;
+        text-align: right;
+      }
+    }
+
+    .priceInputs {
+      flex-direction: column;
+    }
+  }
+}
+
+.searchForm {
+  margin-bottom: 20px;
+}
+
+.searchInputContainer {
+  display: flex;
+  position: relative;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 46px 12px 12px;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: 'shoor-Medium', sans-serif;
+  transition: border-color 0.3s;
+
+  &:focus {
+    outline: none;
+    border-color: #7c6ef7;
+  }
+}
+
+.searchButton {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #7c6ef7;
+}
+
+.filterControls {
+  transition: all 0.3s ease-in-out;
+}
+
+.filterHeader {
+  margin-bottom: 15px;
+}
+
+.filtersSection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.mobileFilterToggle {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 10px 15px;
+  background-color: #f5f5f7;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #e8e8e8;
+  }
+}

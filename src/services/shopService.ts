@@ -1,16 +1,51 @@
-// services/shopService.ts
-import api from "@/services/api";
-import { ShippingInfo } from "@/types/shop";
+// src/services/shopService.ts
+import api from "./api";
+import { ShippingInfo, ShopFilters, SortOption } from "@/types/shop";
 
 export const shopService = {
-    // Product related endpoints
-    getProducts: async (filters?: Record<string, string>) => {
-        const queryString = filters
-            ? Object.entries(filters)
-                .filter(([_, value]) => value)
-                .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-                .join('&')
-            : '';
+    // Product related endpoints with enhanced filtering
+    getProducts: async (filters?: ShopFilters) => {
+        // Convert filters to query parameters
+        const queryParams: Record<string, string> = {};
+
+        if (filters?.searchTerm) {
+            queryParams.search = filters.searchTerm;
+        }
+
+        if (filters?.category) {
+            queryParams.category = filters.category;
+        }
+
+        if (filters?.price?.min !== undefined) {
+            queryParams.min_price = filters.price.min.toString();
+        }
+
+        if (filters?.price?.max !== undefined) {
+            queryParams.max_price = filters.price.max.toString();
+        }
+
+        if (filters?.sort) {
+            // Convert sort option to API parameter
+            switch (filters.sort) {
+                case 'price_low':
+                    queryParams.ordering = 'price';
+                    break;
+                case 'price_high':
+                    queryParams.ordering = '-price';
+                    break;
+                case 'newest':
+                    queryParams.ordering = '-created_at';
+                    break;
+                case 'popular':
+                    queryParams.ordering = '-popularity';
+                    break;
+            }
+        }
+
+        // Build query string
+        const queryString = Object.entries(queryParams)
+            .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+            .join('&');
 
         const url = `/shop/products/${queryString ? `?${queryString}` : ''}`;
         const response = await api.get(url);
@@ -32,17 +67,51 @@ export const shopService = {
         return response.data;
     },
 
-    getProductsByCategory: async (categoryId: string) => {
-        const response = await api.get(`/shop/products/by_category/${categoryId}/`);
+    getProductsByCategory: async (categorySlug: string, filters?: Omit<ShopFilters, 'category'>) => {
+        // Convert remaining filters to query parameters
+        const queryParams: Record<string, string> = {};
+
+        if (filters?.searchTerm) {
+            queryParams.search = filters.searchTerm;
+        }
+
+        if (filters?.price?.min !== undefined) {
+            queryParams.min_price = filters.price.min.toString();
+        }
+
+        if (filters?.price?.max !== undefined) {
+            queryParams.max_price = filters.price.max.toString();
+        }
+
+        if (filters?.sort) {
+            // Convert sort option to API parameter
+            switch (filters.sort) {
+                case 'price_low':
+                    queryParams.ordering = 'price';
+                    break;
+                case 'price_high':
+                    queryParams.ordering = '-price';
+                    break;
+                case 'newest':
+                    queryParams.ordering = '-created_at';
+                    break;
+                case 'popular':
+                    queryParams.ordering = '-popularity';
+                    break;
+            }
+        }
+
+        // Build query string
+        const queryString = Object.entries(queryParams)
+            .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+            .join('&');
+
+        const url = `/shop/products/by_category_slug/${categorySlug}/${queryString ? `?${queryString}` : ''}`;
+        const response = await api.get(url);
         return response.data;
     },
 
-    getProductCategories: async () => {
-        const response = await api.get('/shop/categories/');
-        return response.data;
-    },
-
-    // Cart related endpoints
+    // The rest of your existing service methods...
     getCartDetails: async () => {
         const response = await api.get('/shop/cart/details/');
         return response.data;
@@ -76,46 +145,10 @@ export const shopService = {
         return response.data;
     },
 
-    // Checkout related endpoints
     checkout: async (shippingInfo: ShippingInfo) => {
         const response = await api.post('/shop/cart/checkout/', {
             shipping_info: shippingInfo,
         });
-        return response.data;
-    },
-
-    applyPromoCode: async (code: string) => {
-        const response = await api.post('/shop/cart/apply_promo/', {
-            code
-        });
-        return response.data;
-    },
-
-    estimateShipping: async (postalCode: string) => {
-        const response = await api.post('/shop/cart/estimate_shipping/', {
-            postal_code: postalCode
-        });
-        return response.data;
-    },
-
-    // Order related endpoints
-    getOrders: async (page = 1, limit = 10) => {
-        const response = await api.get(`/shop/orders/?page=${page}&limit=${limit}`);
-        return response.data;
-    },
-
-    getOrderById: async (orderId: string) => {
-        const response = await api.get(`/shop/orders/${orderId}/`);
-        return response.data;
-    },
-
-    cancelOrder: async (orderId: string) => {
-        const response = await api.post(`/shop/orders/${orderId}/cancel/`);
-        return response.data;
-    },
-
-    trackOrder: async (orderId: string) => {
-        const response = await api.get(`/shop/orders/${orderId}/track/`);
         return response.data;
     },
 
@@ -129,5 +162,10 @@ export const shopService = {
             transaction_id: transactionId
         });
         return response.data;
+    },
+
+    getOrderById: async (orderId: string) => {
+        const response = await api.get(`/shop/orders/${orderId}/`);
+        return response.data;
     }
-}
+};

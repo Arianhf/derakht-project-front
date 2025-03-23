@@ -1,3 +1,5 @@
+// src/types/shop.ts
+
 export interface ProductImage {
     id: string;
     image: string;
@@ -35,6 +37,8 @@ export interface Product {
     category?: ProductCategory;
     images?: ProductImage[];
     feature_image?: string;
+    created_at?: string;
+    popularity?: number;
 }
 
 export interface CartItem {
@@ -54,6 +58,8 @@ export interface CartDetails {
     };
     shipping_cost?: number;
 }
+
+// Order types remain the same
 
 export interface OrderItem {
     id: string;
@@ -116,6 +122,8 @@ export interface OrdersResponse {
     pages: number;
 }
 
+// Enhanced filter types
+
 export interface AgeFilter {
     min?: number;
     max?: number;
@@ -126,10 +134,19 @@ export interface PriceFilter {
     max?: number;
 }
 
+export type SortOption = 'price_low' | 'price_high' | 'newest' | 'popular';
+
 export interface ShopFilters {
     age?: AgeFilter;
     price?: PriceFilter;
-    category?: string;
+    category?: string; // Category ID or slug
     searchTerm?: string;
-    sort?: 'price_low' | 'price_high' | 'newest' | 'popular';
+    sort?: SortOption;
+}
+
+// Breadcrumb navigation type
+export interface Breadcrumb {
+    label: string;
+    href: string;
+    isActive?: boolean;
 }
