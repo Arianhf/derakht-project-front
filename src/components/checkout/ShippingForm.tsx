@@ -11,9 +11,10 @@ interface ShippingFormProps {
         phoneNumber: string;
     };
     onSubmit: (data: any) => void;
+    onCancel?: () => void; // Optional cancel handler for returning to default address
 }
 
-export const ShippingForm: React.FC<ShippingFormProps> = ({ initialData, onSubmit }) => {
+export const ShippingForm: React.FC<ShippingFormProps> = ({ initialData, onSubmit, onCancel }) => {
     const [formData, setFormData] = useState(initialData);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -115,6 +116,14 @@ export const ShippingForm: React.FC<ShippingFormProps> = ({ initialData, onSubmi
     return (
         <div className={styles.shippingFormContainer}>
             <h2 className={styles.formTitle}>اطلاعات ارسال</h2>
+
+            {onCancel && (
+                <div className={styles.defaultAddressToggle}>
+                    <button onClick={onCancel} className={styles.useDefaultButton}>
+                        استفاده از آدرس پیش‌فرض
+                    </button>
+                </div>
+            )}
 
             <form onSubmit={handleSubmit} className={styles.form}>
                 <div className={styles.formGroup}>

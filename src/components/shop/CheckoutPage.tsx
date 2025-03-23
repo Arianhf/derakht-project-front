@@ -2,17 +2,17 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { Navbar } from '@/components/shared/Navbar';
 import styles from './checkout.module.scss';
 import logo from '@/assets/images/logo2.png';
 import { useCart } from '@/contexts/CartContext';
-import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
+import { useUser } from '@/contexts/UserContext';
+import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import { ShippingForm } from '@/components/checkout/ShippingForm';
 import { PaymentMethod } from '@/components/checkout/PaymentMethod';
 import { OrderSummary } from '@/components/checkout/OrderSummary';
 import { Toaster } from 'react-hot-toast';
-import { FaArrowRight, FaSpinner } from 'react-icons/fa';
+import { FaArrowRight, FaSpinner, FaEdit } from 'react-icons/fa';
 import { shopService } from '@/services/shopService';
 import toast from 'react-hot-toast';
 
@@ -26,11 +26,13 @@ enum CheckoutStep {
 const CheckoutPage: React.FC = () => {
     const router = useRouter();
     const { cartDetails, clearCart } = useCart();
+    const { user } = useUser();
     const [currentStep, setCurrentStep] = useState<CheckoutStep>(CheckoutStep.SHIPPING);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [orderId, setOrderId] = useState<string | null>(null);
     const [paymentRedirectUrl, setPaymentRedirectUrl] = useState<string | null>(null);
+    const [useDefaultAddress, setUseDefaultAddress] = useState<boolean>(true);
 
     // Form state
     const [shippingInfo, setShippingInfo] = useState({
@@ -49,7 +51,19 @@ const CheckoutPage: React.FC = () => {
         if (cartDetails && cartDetails.items.length === 0) {
             router.push('/cart');
         }
-    }, [cartDetails, router]);
+
+        // Load default address if available
+        if (user?.default_address && useDefaultAddress) {
+            setShippingInfo({
+                fullName: user.default_address.recipient_name || `${user.first_name} ${user.last_name}`,
+                address: user.default_address.address || '',
+                city: user.default_address.city || '',
+                province: user.default_address.province || '',
+                postalCode: user.default_address.postal_code || '',
+                phoneNumber: user.default_address.phone_number || user.phone_number || '',
+            });
+        }
+    }, [cartDetails, router, user, useDefaultAddress]);
 
     // Check if we're returning from a payment gateway
     useEffect(() => {
@@ -86,6 +100,22 @@ const CheckoutPage: React.FC = () => {
 
         handlePaymentReturn();
     }, [router, clearCart]);
+
+    const handleToggleAddressMode = () => {
+        setUseDefaultAddress(!useDefaultAddress);
+
+        if (!useDefaultAddress && user?.default_address) {
+            // Switch back to default address
+            setShippingInfo({
+                fullName: user.default_address.recipient_name || `${user.first_name} ${user.last_name}`,
+                address: user.default_address.address || '',
+                city: user.default_address.city || '',
+                province: user.default_address.province || '',
+                postalCode: user.default_address.postal_code || '',
+                phoneNumber: user.default_address.phone_number || user.phone_number || '',
+            });
+        }
+    };
 
     const handleShippingSubmit = (data: any) => {
         setShippingInfo(data);
@@ -166,6 +196,51 @@ const CheckoutPage: React.FC = () => {
         );
     }
 
+    const renderShippingStep = () => {
+        if (user?.default_address && useDefaultAddress) {
+            return (
+                <div className={styles.defaultAddressContainer}>
+                    <h2 className={styles.sectionTitle}>آدرس ارسال</h2>
+
+                    <div className={styles.addressCard}>
+                        <div className={styles.addressDetails}>
+                            <div className={styles.addressHeader}>
+                                <h3>{shippingInfo.fullName}</h3>
+                                <button
+                                    className={styles.editButton}
+                                    onClick={handleToggleAddressMode}
+                                >
+                                    <FaEdit /> تغییر آدرس
+                                </button>
+                            </div>
+                            <p>{shippingInfo.address}</p>
+                            <p>{shippingInfo.city}، {shippingInfo.province}</p>
+                            <p>کد پستی: {toPersianNumber(shippingInfo.postalCode)}</p>
+                            <p>شماره تماس: {toPersianNumber(shippingInfo.phoneNumber)}</p>
+                        </div>
+                    </div>
+
+                    <div className={styles.formActions}>
+                        <button
+                            className={styles.continueButton}
+                            onClick={() => setCurrentStep(CheckoutStep.PAYMENT)}
+                        >
+                            ادامه به پرداخت
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <ShippingForm
+                initialData={shippingInfo}
+                onSubmit={handleShippingSubmit}
+                onCancel={user?.default_address ? handleToggleAddressMode : undefined}
+            />
+        );
+    };
+
     return (
         <div className={styles.checkoutContainer}>
             <Navbar logo={logo} />
@@ -197,12 +272,7 @@ const CheckoutPage: React.FC = () => {
 
                 <div className={styles.checkoutContent}>
                     <div className={styles.formContainer}>
-                        {currentStep === CheckoutStep.SHIPPING && (
-                            <ShippingForm
-                                initialData={shippingInfo}
-                                onSubmit={handleShippingSubmit}
-                            />
-                        )}
+                        {currentStep === CheckoutStep.SHIPPING && renderShippingStep()}
 
                         {currentStep === CheckoutStep.PAYMENT && (
                             <PaymentMethod
