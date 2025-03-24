@@ -20,7 +20,6 @@ const CartPage: React.FC = () => {
   };
 
   const proceedToCheckout = () => {
-      // Implement checkout logic
       router.push('/shop/checkout');
   };
 
