@@ -11,7 +11,7 @@ interface OrderSummaryProps {
 export const OrderSummary: React.FC<OrderSummaryProps> = ({ cartDetails }) => {
     // Calculate shipping cost - this would normally come from backend
     const shippingCost = cartDetails.total_amount > 500000 ? 0 : 30000; // Free shipping for orders over 500,000 toman
-    const totalWithShipping = cartDetails.total_amount + shippingCost;
+    const totalWithShipping = Number(cartDetails.total_amount) + shippingCost;
 
     return (
         <div className={styles.orderSummaryContainer}>
