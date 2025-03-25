@@ -63,7 +63,8 @@ const TemplatePage = () => {
     try {
       const response = await templateService.startStory(templateId);
       const storyId = response.story.id;
-      router.push(`/story/${storyId}`);
+      if(selectedTemplate === 'drawing') router.push(`/story/illustrate/${storyId}`);
+      else if (selectedTemplate === 'story') router.push(`/story/${storyId}`);
     } catch (error) {
       console.error("Error starting story:", error);
     }
@@ -77,11 +78,9 @@ const TemplatePage = () => {
         {!selectedTemplate ? (
           <div className={styles.selectionContainer}>
             <h1 className={styles.title}>یک قالب انتخاب کنید</h1>
-
-            {/* Image options */}
             <div className={styles.imageOptions}>
               <div className={styles.imageContainer}>
-                <Image src={finishStoryImage} alt="اتمام داستان" className={styles.templateImage}/>
+                <Image src={finishStoryImage} alt="تمام داستان" className={styles.templateImage}/>
               </div>
               <div onClick={() => setSelectedTemplate("drawing")} className={styles.imageContainer}>
                 <Image src={paintStoryImage} alt="کشیدن عکس" className={styles.templateImage}/>

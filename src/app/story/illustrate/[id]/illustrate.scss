@@ -1,0 +1,131 @@
+.illustrate-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 150px 20px 40px 20px;
+  gap: 40px;
+
+  .text-block {
+    width: 60%;
+    height: 100%;
+    min-height: 500px;
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    direction: rtl;
+    position: relative;
+
+    h2 {
+      font-family: "shoor-Medium";
+      font-size: 22px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    p {
+      font-family: "shoor-Medium";
+      font-size: 18px;
+      line-height: 1.8;
+      text-align: justify;
+      color: #444;
+      margin-bottom: 30px;
+    }
+
+    .navigation-buttons {
+      display: flex;
+      justify-content: space-between;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      padding: 30px;
+
+      button {
+        font-family: "shoor-Medium";
+        font-size: 18px;
+        padding: 10px 30px;
+        border-radius: 15px;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.3s ease;
+
+        &:first-child {
+          background-color: #ccc;
+          color: #000;
+
+          &:hover {
+            background-color: #b0b0b0;
+          }
+
+          &:disabled {
+            background-color: #e0e0e0;
+            cursor: not-allowed;
+          }
+        }
+
+        &:last-child {
+          background-color: #345bc0;
+          color: white;
+
+          &:hover {
+            background-color: #2b4aa0;
+          }
+        }
+      }
+    }
+  }
+
+  .upload-block {
+    width: 35%;
+    height: 100%;
+    min-height: 500px;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    direction: rtl;
+
+    .custom-upload {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      font-family: "shoor-Medium";
+      background-color: #345bc0;
+      color: white;
+      padding: 12px 28px;
+      font-size: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #2b4aa0;
+      }
+
+      input[type="file"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+      }
+    }
+
+    .selected-file {
+      margin-top: 20px;
+      font-family: "shoor-Medium";
+      font-size: 16px;
+      color: #555;
+      word-break: break-all;
+      text-align: center;
+    }
+  }
+}

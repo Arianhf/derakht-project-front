@@ -11,7 +11,7 @@ export const storyService = {
     const response = await api.get(`/stories/${id}/`);
     return response.data;
   },
-
+  
   createStory: async (storyData: FormData): Promise<StoryTemplate> => {
     const response = await api.post('v2/stories/', storyData, {
       headers: {
