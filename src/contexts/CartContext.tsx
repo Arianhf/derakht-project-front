@@ -1,9 +1,12 @@
-'use client';
+// 1. Update your CartContext.tsx to handle anonymous carts
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { CartDetails } from '@/types/shop';
 import { shopService } from '@/services/shopService';
 import { toast } from 'react-hot-toast';
+import { v4 as uuidv4 } from 'uuid';
+import Cookies from 'js-cookie';
+import { useUser } from './UserContext';
 
 interface CartContextType {
   cartDetails: CartDetails | null;
@@ -12,7 +15,7 @@ interface CartContextType {
   removeFromCart: (productId: string) => Promise<void>;
   increaseQuantity: (productId: string) => Promise<void>;
   decreaseQuantity: (productId: string) => Promise<void>;
-  clearCart: () => Promise<void>;
+  clearCart: (refreshCart: boolean) => Promise<void>;
   refreshCart: () => Promise<void>;
 }
 
@@ -21,6 +24,19 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cartDetails, setCartDetails] = useState<CartDetails | null>(null);
   const [loading, setLoading] = useState(false);
+  const { user } = useUser();
+
+  // Generate or retrieve anonymous cart ID
+  useEffect(() => {
+    // Check if we already have an anonymous cart ID
+    let anonymousCartId = Cookies.get('anonymous_cart_id');
+
+    // If not, create one and store it
+    if (!anonymousCartId) {
+      anonymousCartId = uuidv4();
+      Cookies.set('anonymous_cart_id', anonymousCartId, { expires: 30 }); // Expires in 30 days
+    }
+  }, []);
 
   const refreshCart = async () => {
     try {
@@ -36,7 +52,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     refreshCart();
-  }, []);
+  }, [user]); // Refresh cart when user changes (login/logout)
 
   const addToCart = async (productId: string, quantity = 1) => {
     try {
@@ -100,11 +116,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const clearCart = async () => {
+  const clearCart = async (skipRefresh = false) => {
     try {
       setLoading(true);
       await shopService.clearCart();
-      await refreshCart();
+      if (!skipRefresh) {
+        await refreshCart();
+      } else {
+        setCartDetails(null);
+      }
       toast.success('سبد خرید خالی شد');
     } catch (error) {
       console.error('Error clearing cart:', error);

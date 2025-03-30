@@ -1,0 +1,177 @@
+.paymentFailedContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #ffdde1, #d4f1f4, #fff7e5) !important;
+  font-family: 'shoor-Medium', sans-serif;
+}
+
+.contentContainer {
+  padding: 100px 30px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.failureCard {
+  width: 100%;
+  max-width: 600px;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  text-align: center;
+  direction: rtl;
+}
+
+.iconContainer {
+  margin-bottom: 20px;
+}
+
+.failureIcon {
+  font-size: 80px;
+  color: #e74c3c;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.title {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.errorInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff9e6;
+  border: 1px solid #ffeeba;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 30px;
+  gap: 10px;
+}
+
+.warningIcon {
+  color: #f39c12;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.errorMessage {
+  color: #555;
+  font-size: 16px;
+  text-align: right;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.actionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.retryButton {
+  background-color: #345BC0;
+  color: white;
+
+  &:hover {
+    background-color: #2b4aa0;
+    transform: translateY(-2px);
+  }
+}
+
+.cartButton {
+  background-color: #f39c12;
+  color: white;
+
+  &:hover {
+    background-color: #e67e22;
+    transform: translateY(-2px);
+  }
+}
+
+.shopButton {
+  background-color: #3498db;
+  color: white;
+
+  &:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+  }
+}
+
+.supportInfo {
+  margin-top: 20px;
+  color: #777;
+  font-size: 14px;
+  line-height: 1.6;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.supportContact {
+  font-weight: bold;
+  color: #345BC0;
+  margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+  .contentContainer {
+    padding: 80px 20px;
+  }
+
+  .failureCard {
+    padding: 30px 20px;
+  }
+
+  .failureIcon {
+    font-size: 60px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .errorMessage {
+    font-size: 14px;
+  }
+
+  .actionButton {
+    font-size: 14px;
+    padding: 12px;
+  }
+}

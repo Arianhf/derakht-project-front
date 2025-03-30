@@ -1,0 +1,398 @@
+.blogContainer {
+  direction: rtl;
+  text-align: right;
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 20px;
+}
+
+/* Navbar */
+.navbar {
+  direction: rtl;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  top: 0;
+  left: 30px;
+  right: 30px;
+  background: transparent;
+  z-index: 10;
+  padding-top: 20px;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 140px !important;
+  height: 70px !important;
+  border-radius: 50%;
+}
+
+.navbarItems {
+  display: flex;
+  gap: 50px;
+  font-size: 23px;
+  font-weight: bold;
+}
+
+.navbarLink {
+  text-decoration: none;
+  color: #2B463C;
+  transition: color 0.2s ease;
+}
+
+.navbarLink:hover {
+  color: #018A08;
+}
+
+/* Back Button */
+.backButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #ff6f61;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-family: "shoor-Medium", sans-serif;
+
+  &:hover {
+    background-color: #e55a50;
+    transform: scale(1.05);
+  }
+}
+
+/* Blog Article */
+.blogArticle {
+  margin-top: 120px;
+  padding: 0 20px;
+}
+
+.blogTitle {
+  font-size: 36px; /* Larger title for Persian text */
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #ff6f61;
+  line-height: 1.3; /* Better for Persian text */
+}
+
+.blogMeta {
+  font-size: 16px; /* Slightly larger meta text */
+  color: #777;
+  line-height: 1.5;
+}
+
+.author {
+  font-weight: bold;
+  color: #007BFF;
+}
+
+.headerImageContainer {
+  margin: 20px 0;
+}
+
+.headerImage {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.blogContent {
+  font-size: 20px; /* Larger base font for Persian text on large screens */
+  line-height: 1.8;
+  color: #333; /* Darker color for better readability */
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 30px; /* More padding for better spacing */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+  font-family: "shoor-Medium", "sans-serif";
+
+  /* Improved paragraph styling */
+  p {
+    margin-bottom: 24px; /* More space between paragraphs */
+    overflow: hidden; /* This helps with float containment */
+    line-height: 1.9; /* Better line height for Persian text */
+  }
+
+  /* Clear floats when paragraphs are next to each other */
+  p:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  /* Style for text alignment classes */
+  :global(.text-center) {
+    text-align: center;
+  }
+
+  /* Image styles within the blog content */
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin: 20px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Full width image */
+  img:global(.full-width) {
+    width: 100%;
+    margin: 30px 0;
+    float: none;
+    display: block;
+  }
+
+  /* Left aligned image */
+  img:global(.left) {
+    float: left;
+    max-width: 45%;
+    margin: 15px 25px 30px 0; /* Increased margins for better spacing */
+    clear: left; /* Clear previous left floats */
+  }
+
+  /* Right aligned image */
+  img:global(.right) {
+    float: right;
+    max-width: 45%;
+    margin: 15px 0 30px 25px; /* Increased margins for better spacing */
+    clear: right; /* Clear previous right floats - this is key! */
+  }
+
+  /* Default centered image */
+  img:not(:global(.left)):not(:global(.right)):not(:global(.full-width)) {
+    display: block;
+    max-width: 80%; /* Slightly larger for better visibility */
+    margin: 30px auto;
+    float: none;
+  }
+
+  /* Clear floats for the entire blog content when needed */
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  /* Add a break-float utility class */
+  :global(.break-float) {
+    clear: both;
+    display: block;
+    height: 1px;
+    margin: 10px 0;
+  }
+
+  /* Improved headings for Persian text */
+  h2 {
+    font-size: 30px;
+    color: #2B463C;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    clear: both; /* Clear floats before headings */
+    line-height: 1.4;
+  }
+
+  h3 {
+    font-size: 26px;
+    color: #2B463C;
+    margin-top: 35px;
+    margin-bottom: 20px;
+    clear: both;
+    line-height: 1.4;
+  }
+
+  h4, h5, h6 {
+    font-size: 22px;
+    color: #2B463C;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    clear: both;
+    line-height: 1.4;
+  }
+
+  ul, ol {
+    margin-bottom: 24px;
+    padding-right: 25px; /* Better for RTL lists */
+    font-size: 20px;
+  }
+
+  li {
+    margin-bottom: 12px; /* More space between list items */
+    line-height: 1.8;
+  }
+
+  blockquote {
+    margin: 25px 0;
+    padding: 15px 25px;
+    border-right: 3px solid #ff6f61;
+    background-color: rgba(255, 255, 255, 0.5);
+    clear: both; /* Clear floats for blockquotes */
+    font-size: 20px;
+    line-height: 1.8;
+  }
+}
+
+/* Force clear on empty paragraphs */
+.blogContent p:empty {
+  clear: both;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+}
+
+/* Responsive typography using media queries */
+@media (max-width: 1200px) {
+  .blogContent {
+    font-size: 19px;
+
+    h2 { font-size: 28px; }
+    h3 { font-size: 24px; }
+    h4, h5, h6 { font-size: 20px; }
+
+    ul, ol { font-size: 19px; }
+    blockquote { font-size: 19px; }
+  }
+
+  .blogTitle {
+    font-size: 34px;
+  }
+}
+
+/* Medium screens */
+@media (max-width: 992px) {
+  .blogContent {
+    font-size: 18px;
+    padding: 25px;
+
+    h2 { font-size: 26px; }
+    h3 { font-size: 22px; }
+    h4, h5, h6 { font-size: 18px; }
+
+    ul, ol { font-size: 18px; }
+    blockquote { font-size: 18px; }
+
+    p { margin-bottom: 20px; }
+  }
+
+  .blogTitle {
+    font-size: 30px;
+  }
+}
+
+/* Tablet screens */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 15px;
+    left: 10px;
+    right: 10px;
+  }
+
+  .navbarItems {
+    display: none;
+  }
+
+  .logo {
+    width: 100px !important;
+    height: 50px !important;
+  }
+
+  .blogTitle {
+    font-size: 26px;
+  }
+
+  .blogContent {
+    font-size: 17px;
+    padding: 20px;
+
+    h2 { font-size: 24px; }
+    h3 { font-size: 20px; }
+    h4, h5, h6 { font-size: 17px; }
+
+    ul, ol {
+      font-size: 17px;
+      padding-right: 20px;
+    }
+    blockquote {
+      font-size: 17px;
+      padding: 12px 20px;
+    }
+
+    p {
+      margin-bottom: 18px;
+      line-height: 1.8;
+    }
+
+    img:global(.left),
+    img:global(.right) {
+      float: none;
+      max-width: 100%;
+      margin: 20px 0;
+      clear: both;
+    }
+
+    img:not(:global(.left)):not(:global(.right)):not(:global(.full-width)) {
+      max-width: 100%;
+    }
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 480px) {
+  .blogArticle {
+    margin-top: 100px;
+    padding: 0 15px;
+  }
+
+  .blogTitle {
+    font-size: 22px;
+  }
+
+  .blogMeta {
+    font-size: 14px;
+  }
+
+  .blogContent {
+    font-size: 16px;
+    padding: 15px;
+
+    h2 { font-size: 20px; margin-top: 30px; margin-bottom: 15px; }
+    h3 { font-size: 18px; margin-top: 25px; }
+    h4, h5, h6 { font-size: 16px; margin-top: 20px; }
+
+    ul, ol {
+      font-size: 16px;
+      padding-right: 15px;
+      margin-bottom: 20px;
+    }
+
+    blockquote {
+      font-size: 16px;
+      padding: 10px 15px;
+      margin: 20px 0;
+    }
+
+    p {
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+
+    img {
+      margin: 15px 0;
+    }
+  }
+}

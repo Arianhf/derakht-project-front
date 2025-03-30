@@ -1,3 +1,4 @@
+// src/services/api.tsx with anonymous cart ID
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -17,10 +18,20 @@ const api = axios.create({
 
 api.interceptors.request.use(
     (config) => {
-        const token = Cookies.get("access_token") || localStorage.getItem("access_token"); 
+        // Add auth token if available
+        const token = Cookies.get("access_token") || localStorage.getItem("access_token");
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+
+        // Add anonymous cart ID header if available and not already authenticated
+        if (!token) {
+            const anonymousCartId = Cookies.get("anonymous_cart_id");
+            if (anonymousCartId) {
+                config.headers["X-Anonymous-Cart-ID"] = anonymousCartId;
+            }
+        }
+
         return config;
     },
     (error) => {

@@ -73,8 +73,11 @@ const CheckoutPage: React.FC = () => {
             const returnedOrderId = urlParams.get('order_id');
             const status = urlParams.get('status');
             const transactionId = urlParams.get('transaction_id');
+            const errorCode = urlParams.get('error_code') || 'unknown';
+            const errorMessage = urlParams.get('error_message') || 'خطا در پرداخت';
 
-            if (returnedOrderId && status && transactionId) {
+            // Case 1: Payment gateway returned with success status and transaction ID
+            if (returnedOrderId && status === 'success' && transactionId) {
                 setLoading(true);
                 try {
                     // Verify the payment with the backend
@@ -82,19 +85,30 @@ const CheckoutPage: React.FC = () => {
 
                     if (result.status === 'success') {
                         toast.success('پرداخت با موفقیت انجام شد');
-                        await clearCart(); // Clear the cart after successful payment
+                        await clearCart(true);  // Clear the cart after successful payment
                         router.push(`/shop/order-confirmation/${returnedOrderId}`);
                     } else {
-                        toast.error('پرداخت ناموفق بود. لطفا مجددا تلاش کنید.');
-                        setError('پرداخت ناموفق بود. لطفا مجددا تلاش کنید.');
+                        // Backend verification failed
+                        const resultErrorCode = result.error_code || errorCode;
+                        const resultErrorMessage = encodeURIComponent(result.error_message || errorMessage);
+                        router.push(`/shop/payment-failed?order_id=${returnedOrderId}&error_code=${resultErrorCode}&error_message=${resultErrorMessage}`);
                     }
-                } catch (err) {
+                } catch (err: any) {
                     console.error('Error verifying payment:', err);
-                    toast.error('خطا در تایید پرداخت');
-                    setError('خطا در تایید پرداخت. لطفا با پشتیبانی تماس بگیرید.');
+                    // Redirect to payment failed page with generic error
+                    router.push(`/shop/payment-failed?order_id=${returnedOrderId}&error_code=api_error&error_message=${encodeURIComponent('خطا در تایید پرداخت')}`);
                 } finally {
                     setLoading(false);
                 }
+            }
+            // Case 2: Payment gateway returned with failure status or missing transaction ID
+            else if (returnedOrderId && (status === 'failed' || !transactionId)) {
+                // Direct failure from payment gateway
+                router.push(`/shop/payment-failed?order_id=${returnedOrderId}&error_code=${errorCode}&error_message=${encodeURIComponent(decodeURIComponent(errorMessage))}`);
+            }
+            // Case 3: Payment gateway returned with other status (canceled, etc.)
+            else if (returnedOrderId && status) {
+                router.push(`/shop/payment-failed?order_id=${returnedOrderId}&error_code=${status}&error_message=${encodeURIComponent('پرداخت توسط کاربر لغو شد')}`);
             }
         };
 
@@ -159,22 +173,29 @@ const CheckoutPage: React.FC = () => {
 
             if (paymentMethod === 'online') {
                 // Request payment for online payment method
-                const paymentResponse = await shopService.requestPayment(order.id);
+                const paymentResponse = await shopService.requestPayment(order.id, "zarinpal_sdk");
 
                 if (paymentResponse.payment_url) {
                     // Redirect to payment gateway
                     window.location.href = paymentResponse.payment_url;
                 } else {
-                    throw new Error('دریافت آدرس درگاه پرداخت با خطا مواجه شد');
+                    // If we can't get payment URL, redirect to payment failed page
+                    router.push(`/shop/payment-failed?order_id=${order.id}&error_code=payment_init_failed&error_message=${encodeURIComponent('خطا در ایجاد درخواست پرداخت')}`);
                 }
             } else {
                 // For cash on delivery, just proceed to confirmation
-                await clearCart();
+                await clearCart(true);
                 router.push(`/shop/order-confirmation/${order.id}`);
             }
         } catch (err: any) {
             console.error('Error placing order:', err);
-            setError(err.message || 'خطا در ثبت سفارش. لطفا مجددا تلاش کنید.');
+
+            // Instead of just setting an error, redirect to payment failed page
+            if (orderId) {
+                router.push(`/shop/payment-failed?order_id=${orderId}&error_code=order_processing&error_message=${encodeURIComponent(err.message || 'خطا در ثبت سفارش')}`);
+            } else {
+                setError(err.message || 'خطا در ثبت سفارش. لطفا مجددا تلاش کنید.');
+            }
         } finally {
             setLoading(false);
         }

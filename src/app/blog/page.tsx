@@ -1,6 +1,6 @@
 'use client'; 
 import React from 'react';
-import BlogPost from '../../components/BlogPost';
+import BlogPost from '../../components/blog/BlogPost';
 import Header from '../../components/Header';
 
 const BlogPage: React.FC = () => {

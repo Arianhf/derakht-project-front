@@ -1,5 +1,5 @@
 import api from './api';
-import { BlogPost, HeroPost } from '../types';
+import { BlogPost, HeroPost } from '@/types';
 
 export const blogService = {
     getHeroPost: async (): Promise<HeroPost> => {
@@ -19,6 +19,12 @@ export const blogService = {
 
     getPostById: async (id: string) => {
         const response = await api.get(`v2/posts/${id}/`);
+        return response.data;
+    },
+
+    // New function to get posts by tag
+    getPostsByTag: async (tag: string): Promise<BlogServiceResponse<BlogPost>> => {
+        const response = await api.get(`v2/posts/?tag=${tag}`);
         return response.data;
     }
 }

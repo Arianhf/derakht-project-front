@@ -1,8 +1,14 @@
 // src/services/shopService.ts
 import api from "./api";
-import { ShippingInfo, ShopFilters, SortOption } from "@/types/shop";
+import { ShippingInfo, ShopFilters } from "@/types/shop";
+import Cookies from 'js-cookie';
 
 export const shopService = {
+    // Helper function to get anonymous cart ID
+    getAnonymousCartId: () => {
+        return Cookies.get('anonymous_cart_id');
+    },
+
     // Product related endpoints with enhanced filtering
     getProducts: async (filters?: ShopFilters) => {
         // Convert filters to query parameters
@@ -57,16 +63,6 @@ export const shopService = {
         return response.data;
     },
 
-    getProductsByAge: async (age: number) => {
-        const response = await api.get(`/shop/products/by_age/?age=${age}`);
-        return response.data;
-    },
-
-    getProductsByAgeRange: async (minAge: number, maxAge: number) => {
-        const response = await api.get(`/shop/products/age_filter/?min=${minAge}&max=${maxAge}`);
-        return response.data;
-    },
-
     getProductsByCategory: async (categorySlug: string, filters?: Omit<ShopFilters, 'category'>) => {
         // Convert remaining filters to query parameters
         const queryParams: Record<string, string> = {};
@@ -111,58 +107,127 @@ export const shopService = {
         return response.data;
     },
 
-    // The rest of your existing service methods...
+    // Updated cart methods with anonymous cart support
     getCartDetails: async () => {
-        const response = await api.get('/shop/cart/details/');
+        const anonymousCartId = shopService.getAnonymousCartId();
+        let url = '/shop/cart/details/';
+
+        // Add anonymous cart ID if available
+        if (anonymousCartId) {
+            url += `?cart_id=${anonymousCartId}`;
+        }
+
+        const response = await api.get(url);
         return response.data;
     },
 
-    addToCart: async (productId: string, quantity: number = 1) => {
-        const response = await api.post('/shop/cart/add_item/', {
+    addToCart: async (productId: string, quantity = 1) => {
+        const anonymousCartId = shopService.getAnonymousCartId();
+        const payload = {
             product_id: productId,
-            quantity
-        });
+            quantity,
+            anonymous_cart_id: anonymousCartId
+        };
+
+        const response = await api.post('/shop/cart/add_item/', payload);
         return response.data;
     },
 
     updateCartItemQuantity: async (productId: string, quantity: number) => {
-        const response = await api.post('/shop/cart/update_quantity/', {
+        const anonymousCartId = shopService.getAnonymousCartId();
+        const payload = {
             product_id: productId,
-            quantity
-        });
+            quantity,
+            anonymous_cart_id: anonymousCartId
+        };
+
+        const response = await api.post('/shop/cart/update_quantity/', payload);
         return response.data;
     },
 
     removeFromCart: async (productId: string) => {
-        const response = await api.post('/shop/cart/remove_item/', {
-            product_id: productId
-        });
+        const anonymousCartId = shopService.getAnonymousCartId();
+        const payload = {
+            product_id: productId,
+            anonymous_cart_id: anonymousCartId
+        };
+
+        const response = await api.post('/shop/cart/remove_item/', payload);
         return response.data;
     },
 
     clearCart: async () => {
-        const response = await api.post('/shop/cart/clear/');
+        const anonymousCartId = shopService.getAnonymousCartId();
+        let url = '/shop/cart/clear/';
+
+        if (anonymousCartId) {
+            url += `?cart_id=${anonymousCartId}`;
+        }
+
+        const response = await api.post(url);
         return response.data;
+    },
+
+    // This method will merge anonymous cart with user cart upon login
+    mergeAnonymousCart: async () => {
+        const anonymousCartId = shopService.getAnonymousCartId();
+
+        if (anonymousCartId) {
+            await api.post('/shop/cart/merge/', { anonymous_cart_id: anonymousCartId });
+            Cookies.remove('anonymous_cart_id'); // Clear the cookie after merging
+        }
     },
 
     checkout: async (shippingInfo: ShippingInfo) => {
-        const response = await api.post('/shop/cart/checkout/', {
+        const anonymousCartId = shopService.getAnonymousCartId();
+        const payload: any = {
             shipping_info: shippingInfo,
-        });
+        };
+
+        if (anonymousCartId) {
+            payload.anonymous_cart_id = anonymousCartId;
+        }
+
+        const response = await api.post('/shop/cart/checkout/', payload);
         return response.data;
     },
 
-    requestPayment: async (orderId: string) => {
-        const response = await api.post(`/shop/orders/${orderId}/request_payment/`);
+    requestPayment: async (orderId: string, gateway: string) => {
+        const response = await api.post(`/shop/payments/request/${orderId}/`, {
+            "gateway": gateway
+        });
         return response.data;
     },
 
     verifyPayment: async (orderId: string, transactionId: string) => {
-        const response = await api.post(`/shop/orders/${orderId}/verify_payment/`, {
-            transaction_id: transactionId
-        });
-        return response.data;
+        try {
+            const response = await api.post('/shop/payments/verify/', {
+                order_id: orderId,
+                transaction_id: transactionId,
+            });
+
+            return response.data;
+        } catch (error: any) {
+            console.error('Error verifying payment:', error);
+
+            // Extract error details from the API response if available
+            let errorCode = 'unknown';
+            let errorMessage = 'خطا در تایید پرداخت';
+
+            if (error.response && error.response.data) {
+                errorCode = error.response.data.error_code || errorCode;
+                errorMessage = error.response.data.error_message || errorMessage;
+            }
+
+            // Throw a structured error object that includes error details
+            throw {
+                status: 'failed',
+                error_code: errorCode,
+                error_message: errorMessage
+            };
+        }
     },
+
 
     getOrderById: async (orderId: string) => {
         const response = await api.get(`/shop/orders/${orderId}/`);

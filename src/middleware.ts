@@ -17,8 +17,6 @@ export function middleware(req: NextRequest) {
         (req.nextUrl.pathname !== "/login" &&
             (req.nextUrl.pathname.startsWith("/account") ||
                 req.nextUrl.pathname.startsWith("/story") ||
-                req.nextUrl.pathname.startsWith("/shop") ||
-                req.nextUrl.pathname.startsWith("/cart") ||
                 req.nextUrl.pathname.startsWith("/checkout")))) {
         // Include the original URL as a query parameter
         const loginUrl = new URL("/login", req.url);
@@ -34,7 +32,6 @@ export const config = {
         '/',
         '/account/:path*',
         '/story/:path*',
-        '/shop/:path*',
         '/cart/:path*',
         '/checkout/:path*'
     ],

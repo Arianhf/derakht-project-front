@@ -1,106 +1,67 @@
-'use client'; 
+'use client';
 
-import { useParams, useRouter } from 'next/navigation'; 
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { FaArrowLeft } from 'react-icons/fa';
-import styles from '../../../styles/BlogDetails.module.scss';
-import Image from 'next/image';
-import logoImage from '../../../../public/images/logo2.png';
-import { toPersianNumber } from '../../../utils/convertToPersianNumber';
+import React, { useEffect, useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import BlogDetails from '@/components/blog/BlogDetails';
+import { Loading } from '@/components/shared/Loading';
+import { ErrorMessage } from '@/components/shared/ErrorMessage';
+import { blogService } from '@/services/blogService';
+import { BlogPost } from '@/types';
+import logo from '@/assets/images/logo2.png';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL; 
+const BlogDetailPage: React.FC = () => {
+  const router = useRouter();
+  const params = useParams();
+  const blogId = params?.id as string;
 
-const BlogDetails = () => {
-  const { id } = useParams(); 
-  const router = useRouter(); 
-  const [blog, setBlog] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [blog, setBlog] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!id) return;
-
-    const fetchBlog = async () => {
+    const fetchBlogDetails = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}v2/posts/${id}/`);
-        setBlog(response.data);
+        setLoading(true);
+        const data = await blogService.getPostById(blogId);
+        setBlog(data);
       } catch (err) {
         console.error(err);
-        setError('مقاله یافت نشد!');
+        setError('مشکلی در دریافت مقاله رخ داده است.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBlog();
-  }, [id]);
+    if (blogId) {
+      fetchBlogDetails();
+    }
+  }, [blogId]);
 
-  if (loading) return <p className={styles.loading}>در حال بارگذاری...</p>;
-  if (error) return <p className={styles.error}>{error}</p>;
+  if (loading) return <Loading />;
+  if (error) return <ErrorMessage message={error} />;
+  if (!blog) return <ErrorMessage message="مقاله مورد نظر یافت نشد" />;
 
-  if (!blog) {
-    return <p className={styles.notFound}>مقاله‌ای برای نمایش وجود ندارد.</p>;
-  }
+  // The issue is here - we need to ensure the blog object matches the expected type
+  // TypeScript is complaining because the blog object from the API might not
+  // have the exact structure expected by the BlogDetails component
 
-  const author = blog.owner?.first_name || 'نامشخص';
-  const publishedDate = blog.jalali_date || 'تاریخ نامشخص';
-  const intro = blog.intro || '';
-  const body = blog.body || '<p>متنی برای این مقاله یافت نشد.</p>';
-  const imageUrl = blog.header_image?.meta?.download_url || '/default-image.jpg';
+  // Create a properly typed object to pass to BlogDetails
+  const blogDetailsData = {
+    title: blog.title || '',
+    author: {
+      first_name: blog.owner?.first_name || 'نویسنده'
+    },
+    jalali_date: blog.jalali_date,
+    content: blog.body || '',
+    header_image: blog.header_image ? {
+      meta: {
+        download_url: blog.header_image.meta?.download_url || ''
+      },
+      title: blog.header_image.title
+    } : undefined
+  };
 
-  return (
-    <div className={styles.blogContainer}>
-      {/* Navbar */}
-      <nav className={styles.navbar}>
-        {/* Logo */}
-        <div className={styles.logoContainer}>
-          <Image src={logoImage} alt="Logo" className={styles.logo} width={140} height={70} />
-        </div>
-
-        {/* Navbar Items */}
-        <div className={styles.navbarItems}>
-          {['خانه', 'درباره ما', 'وبلاگ', 'داستان'].map((item, index) => (
-            <a key={index} href="#" className={styles.navbarLink}>
-              {item}
-            </a>
-          ))}
-        </div>
-
-        {/* Back Button */}
-        <div className={styles.backButtonContainer}>
-          <button onClick={() => router.back()} className={styles.backButton}>
-            بازگشت
-            <FaArrowLeft size={18} />
-          </button>
-        </div>
-      </nav>
-
-      <div style={{ marginTop: '120px' }}>
-        {/* Blog Content */}
-        <h1 className={styles.blogTitle}>{blog.title || 'بدون عنوان'}</h1>
-        <p className={styles.blogMeta}>
-          نوشته شده توسط <span className={styles.author}>{author}</span> ·{' '}
-          {toPersianNumber(publishedDate)}
-        </p>
-
-        <Image
-          src={imageUrl}
-          alt={blog.header_image?.title || 'تصویر مقاله'}
-          className={styles.blogImage}
-          width={800} // Set appropriate width
-          height={400} // Set appropriate height
-          layout="responsive"
-        />
-
-        {/* Blog Intro */}
-        {intro && <p className={styles.blogIntro}>{intro}</p>}
-
-        {/* Rich Text Content */}
-        <div className={styles.blogContent} dangerouslySetInnerHTML={{ __html: body }} />
-      </div>
-    </div>
-  );
+  return <BlogDetails blog={blogDetailsData} logo={logo} />;
 };
 
-export default BlogDetails;
+export default BlogDetailPage;

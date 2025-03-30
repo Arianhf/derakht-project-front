@@ -2,16 +2,20 @@
 import { Metadata } from 'next';
 import CategoryPage from './CategoryPage';
 
-// Generate metadata dynamically based on the category
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-    // You can fetch category data here if needed for more specific metadata
-    // For now, we'll use a generic title and description
+export type CategoryParams = Promise<{ slug: string }>;
+
+// Update generateMetadata to also handle params as a Promise
+export async function generateMetadata({ params }: { params: CategoryParams }): Promise<Metadata> {
+    // Await the params Promise to get the slug
+    const { slug } = await params;
+
     return {
-        title: `فروشگاه درخت | دسته‌بندی ${params.slug}`,
-        description: `محصولات دسته‌بندی ${params.slug} در فروشگاه درخت`,
+        title: `فروشگاه درخت | دسته‌بندی ${slug}`,
+        description: `محصولات دسته‌بندی ${slug} در فروشگاه درخت`,
     };
 }
 
-export default function Page({ params }: { params: { slug: string } }) {
-    return <CategoryPage params={params} />;
+export default async function Page({ params }: { params: CategoryParams }) {
+    const { slug } = await params;
+    return <CategoryPage params={{ slug }} />;
 }
