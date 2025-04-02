@@ -1,12 +1,13 @@
-// src/components/shop/ProductFilters.module.scss
+@import '../../styles/globals.scss';
 
 .filtersContainer {
-  background-color: white;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  background-color: $card-bg;
+  border-radius: $border-radius-lg;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-sm;
   direction: rtl;
+  animation: slideDown 0.5s ease;
 
   .filterGroup {
     flex: 1;
@@ -16,99 +17,117 @@
   .filterGroupTitle {
     font-size: 16px;
     font-weight: 600;
-    margin-bottom: 12px;
-    color: #333;
+    margin-bottom: $spacing-sm;
+    color: $dark-text;
+    position: relative;
+    padding-right: 15px;
+
+    &:before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 5px;
+      height: 18px;
+      background-color: $primary-color;
+      border-radius: 3px;
+    }
   }
 
   .sortOptions {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    margin-bottom: $spacing-md;
   }
 
   .sortButton {
     padding: 8px 16px;
     background-color: #f5f5f7;
     border: none;
-    border-radius: 6px;
+    border-radius: $border-radius-md;
     font-size: 14px;
-    font-family: 'shoor-Medium', sans-serif;
-    color: #555;
+    font-family: $font-primary;
+    color: $light-text;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: $transition-base;
 
     &:hover {
       background-color: #e8e8e8;
+      transform: translateY(-2px);
     }
 
     &.active {
-      background-color: #7c6ef7;
+      background-color: $primary-color;
       color: white;
     }
   }
 
   .priceFilter {
-    margin-top: 10px;
+    margin-top: $spacing-sm;
   }
 
   .priceInputs {
     display: flex;
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
   }
 
   .priceInputGroup {
-    width: 48%;
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 5px;
 
     label {
       font-size: 14px;
-      color: #666;
+      color: $light-text;
     }
   }
 
   .priceInput {
     padding: 8px 12px;
     border: 1px solid #e1e1e1;
-    border-radius: 6px;
+    border-radius: $border-radius-md;
     font-size: 14px;
-    font-family: 'shoor-Medium', sans-serif;
+    font-family: $font-primary;
 
     &:focus {
       outline: none;
-      border-color: #7c6ef7;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
     }
   }
 
   .priceFilterActions {
     display: flex;
-    gap: 10px;
+    gap: $spacing-sm;
   }
 
   .applyButton, .resetButton {
     padding: 8px 16px;
     border: none;
-    border-radius: 6px;
+    border-radius: $border-radius-md;
     font-size: 14px;
-    font-family: 'shoor-Medium', sans-serif;
+    font-family: $font-primary;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: $transition-base;
   }
 
   .applyButton {
-    background-color: #7c6ef7;
+    background-color: $primary-color;
     color: white;
 
     &:hover {
-      background-color: #6458d1;
+      background-color: darken($primary-color, 10%);
+      transform: translateY(-2px);
     }
   }
 
   .resetButton {
     background-color: #f1f1f1;
-    color: #666;
+    color: $light-text;
 
     &:hover {
       background-color: #e1e1e1;
@@ -116,21 +135,31 @@
   }
 
   /* Responsive styles */
-  @media (max-width: 768px) {
+  @media (max-width: $breakpoint-md) {
     .mobileFilterToggle {
       display: flex;
       justify-content: space-between;
       width: 100%;
+      padding: $spacing-xs $spacing-sm;
+      background-color: $primary-color;
+      color: white;
+      border: none;
+      border-radius: $border-radius-md;
+      font-family: $font-primary;
+      font-size: 16px;
+      cursor: pointer;
+      align-items: center;
+      margin-bottom: $spacing-sm;
     }
 
     .filtersSection {
       display: none;
       flex-direction: column;
-      gap: 15px;
-      margin-top: 15px;
+      gap: $spacing-sm;
 
       &.filtersOpen {
         display: flex;
+        animation: fadeIn 0.3s ease;
       }
     }
 
@@ -151,7 +180,7 @@
 }
 
 .searchForm {
-  margin-bottom: 20px;
+  margin-bottom: $spacing-md;
 }
 
 .searchInputContainer {
@@ -163,14 +192,15 @@
   width: 100%;
   padding: 12px 46px 12px 12px;
   border: 1px solid #e1e1e1;
-  border-radius: 8px;
+  border-radius: $border-radius-lg;
   font-size: 16px;
-  font-family: 'shoor-Medium', sans-serif;
-  transition: border-color 0.3s;
+  font-family: $font-primary;
+  transition: $transition-base;
 
   &:focus {
     outline: none;
-    border-color: #7c6ef7;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
   }
 }
 
@@ -183,35 +213,51 @@
   border: none;
   cursor: pointer;
   font-size: 18px;
-  color: #7c6ef7;
+  color: $primary-color;
+  transition: $transition-base;
+
+  &:hover {
+    color: darken($primary-color, 15%);
+    transform: translateY(-50%) scale(1.1);
+  }
 }
 
 .filterControls {
-  transition: all 0.3s ease-in-out;
+  transition: $transition-base;
 }
 
 .filterHeader {
-  margin-bottom: 15px;
+  margin-bottom: $spacing-sm;
 }
 
 .filtersSection {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: $spacing-md;
 }
 
 .mobileFilterToggle {
   display: none;
   align-items: center;
-  gap: 10px;
+  gap: $spacing-sm;
   cursor: pointer;
-  padding: 10px 15px;
+  padding: $spacing-sm $spacing-md;
   background-color: #f5f5f7;
-  border-radius: 8px;
+  border-radius: $border-radius-md;
   font-weight: 500;
-  transition: background-color 0.2s ease;
+  transition: $transition-base;
 
   &:hover {
     background-color: #e8e8e8;
   }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }

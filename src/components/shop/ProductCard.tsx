@@ -6,7 +6,7 @@ import Link from 'next/link';
 import styles from './ProductCard.module.scss';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import { Product } from '@/types/shop';
-import { FaShoppingCart } from 'react-icons/fa';
+import { FaShoppingCart, FaChild } from 'react-icons/fa';
 
 interface ProductCardProps {
     product: Product;
@@ -27,9 +27,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                     <Image
                         src={product.feature_image}
                         alt={product.title}
-                        layout="fill"
-                        objectFit="contain"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className={styles.productImage}
+                        style={{ objectFit: 'contain' }}
                     />
                 ) : (
                     <div className={styles.placeholderImage}>
@@ -41,6 +42,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                 )}
                 {product.age_range && (
                     <div className={styles.ageBadge}>
+                        <FaChild style={{ marginLeft: '5px' }} />
                         {product.age_range}
                     </div>
                 )}

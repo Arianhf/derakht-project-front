@@ -1,43 +1,69 @@
-// src/components/shop/CategoryNavigation.module.scss
+@import '../../styles/globals.scss';
 
 .categoryNavigation {
-  background-color: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  margin-bottom: 20px;
+  background-color: $card-bg;
+  border-radius: $border-radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-sm;
+  margin-bottom: $spacing-md;
   direction: rtl;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8px;
+    height: 100%;
+    background: linear-gradient(to bottom, $primary-color, $secondary-color);
+    border-radius: 0 $border-radius-lg $border-radius-lg 0;
+  }
 }
 
 .navigationTitle {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
-  margin-bottom: 16px;
-  padding-bottom: 10px;
+  color: $dark-text;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-sm;
   border-bottom: 1px solid #e1e1e1;
+  position: relative;
+  padding-right: 15px;
+
+  &:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 20px;
+    background-color: $secondary-color;
+    border-radius: 3px;
+  }
 }
 
 .categoriesList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: $spacing-xs;
 }
 
 .categoryItem {
-  transition: all 0.2s ease;
+  transition: $transition-base;
 }
 
 .categoryHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
+  padding: 8px 10px;
+  border-radius: $border-radius-md;
+  transition: $transition-base;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: rgba($primary-color, 0.05);
   }
 }
 
@@ -45,12 +71,12 @@
   display: block;
   flex: 1;
   font-size: 15px;
-  color: #333;
+  color: $dark-text;
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: $transition-base;
 
   &:hover {
-    color: #7c6ef7;
+    color: $primary-color;
   }
 }
 
@@ -62,28 +88,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
+  width: 28px;
+  height: 28px;
+  border-radius: $border-radius-sm;
+  transition: $transition-base;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.06);
-    color: #7c6ef7;
+    background-color: rgba($primary-color, 0.1);
+    color: $primary-color;
   }
 }
 
 .childCategories {
-  padding-right: 10px;
+  padding-right: $spacing-md;
   margin-right: 5px;
-  border-right: 1px solid #e1e1e1;
+  border-right: 1px dashed #e1e1e1;
+  animation: fadeIn 0.3s ease;
 }
 
 .subCategory {
   margin-top: 4px;
 
   .categoryHeader {
-    padding: 6px 0;
+    padding: 6px 10px;
   }
 
   .categoryLink {
@@ -92,11 +119,11 @@
 }
 
 .activeCategory {
-  background-color: rgba(124, 110, 247, 0.1);
-  border-radius: 6px;
+  background-color: rgba($primary-color, 0.1);
+  border-radius: $border-radius-md;
 
   .categoryLink {
-    color: #7c6ef7;
+    color: $primary-color;
     font-weight: 600;
   }
 }
@@ -105,14 +132,29 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
-  color: #888;
+  padding: $spacing-md;
+  color: $light-text;
   font-size: 14px;
 }
 
-@media (max-width: 768px) {
+.loadingIcon {
+  margin-left: $spacing-xs;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: $breakpoint-md) {
   .categoryNavigation {
-    margin-bottom: 15px;
+    margin-bottom: $spacing-sm;
   }
 
   .navigationTitle {

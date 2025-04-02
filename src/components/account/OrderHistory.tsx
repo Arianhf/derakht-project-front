@@ -186,7 +186,7 @@ const OrderHistory: React.FC = () => {
 
                             {filteredOrders.map(order => (
                                 <div key={order.id} className={styles.tableRow}>
-                                    <div className={styles.idColumn}>{toPersianNumber(order.id.substring(0, 8))}</div>
+                                    <div className={styles.idColumn}>{order.id.substring(0, 8)}</div>
                                     <div className={styles.dateColumn}>
                                         {toPersianNumber(new Date(order.created_at).toLocaleDateString('fa-IR'))}
                                     </div>
@@ -196,7 +196,7 @@ const OrderHistory: React.FC = () => {
                     </span>
                                     </div>
                                     <div className={styles.totalColumn}>
-                                        {toPersianNumber(Math.round(order.total_amount / 10000).toLocaleString())} تومان
+                                        {toPersianNumber(order.total_amount)} تومان
                                     </div>
                                     <div className={styles.actionColumn}>
                                         <button

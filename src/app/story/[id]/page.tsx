@@ -6,7 +6,7 @@ import { storyService } from '@/services/storyService';
 import { Story } from '@/types/story';
 import Image from 'next/image';
 import logo from '@/assets/images/logo2.png';
-import { Navbar } from '@/components/shared/Navbar';
+import { Navbar } from '@/components/shared/Navbar/Navbar';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import './story.scss';
 import StoryPreview from '@/components/story/StoryPreview';

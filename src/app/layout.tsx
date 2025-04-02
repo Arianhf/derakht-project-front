@@ -1,5 +1,5 @@
 import { ConditionalProviders } from "@/components/ConditionalProviders";
-import "../styles/globals.css";
+import "./globals.scss";
 
 export default function RootLayout({
                                        children,
@@ -7,7 +7,11 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="fa" dir="rtl">
+        <head>
+            <title>درخت - بلاگ کودکان</title>
+            <meta name="description" content="وبسایت آموزشی کودکان" />
+        </head>
         <body>
         <ConditionalProviders>{children}</ConditionalProviders>
         </body>

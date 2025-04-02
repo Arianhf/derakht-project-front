@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Navbar } from '@/components/shared/Navbar';
+import { Navbar } from '@/components/shared/Navbar/Navbar';
 import ProductCard from '@/components/shop/ProductCard';
 import CategoryNavigation from '@/components/shop/CategoryNavigation';
 import ProductFilters from '@/components/shop/ProductFilters';

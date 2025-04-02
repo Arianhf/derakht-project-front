@@ -1,0 +1,60 @@
+/* globals.scss - Main styling for the entire application */
+
+// Color Variables
+$primary-color: #345BC0;
+$secondary-color: #FF6F61;
+$accent-color: #80D46D;
+$dark-text: #2B463C;
+$light-text: #666;
+$background: #F9F7F3;
+$card-bg: #FFFFFF;
+$tag-bg: #FFE4E1;
+
+// Gradient Background
+$gradient-bg: linear-gradient(135deg, #FFF9F5 0%, #E8F6FF 50%, #FFF7E5 100%);
+
+// Typography
+$font-primary: 'shoor-Medium', sans-serif;
+$font-size-base: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 22px;
+$font-size-xxl: 28px;
+$font-size-title: 36px;
+$line-height-base: 1.8;
+
+// Spacing
+$spacing-xs: 5px;
+$spacing-sm: 10px;
+$spacing-md: 20px;
+$spacing-lg: 30px;
+$spacing-xl: 50px;
+
+// Border Radius
+$border-radius-sm: 8px;
+$border-radius-md: 15px;
+$border-radius-lg: 25px;
+$border-radius-full: 50px;
+
+
+// Border Color
+$border-color: $primary-color;
+
+
+// Shadows
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 6px 18px rgba(0, 0, 0, 0.15);
+
+// Transitions
+$transition-fast: all 0.2s ease;
+$transition-base: all 0.3s ease;
+$transition-slow: all 0.5s ease;
+
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+// Backgrounds
+$clouds: url('/images/patterns/clouds.svg')

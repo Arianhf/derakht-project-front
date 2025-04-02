@@ -1,3 +1,5 @@
+@import '../../styles/globals.scss';
+
 .dashboardContainer {
   width: 100%;
 }
@@ -6,23 +8,39 @@
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
-  color: #2B463C;
+  color: $dark-text;
   border-bottom: 1px solid #eee;
   padding-bottom: 15px;
+  position: relative;
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    right: 0;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(to right, $secondary-color, $primary-color);
+    border-radius: 3px;
+  }
 }
 
 .welcomeSection {
   margin-bottom: 30px;
+  background-color: rgba($primary-color, 0.03);
+  padding: $spacing-md;
+  border-radius: $border-radius-md;
+  border-right: 4px solid $primary-color;
 }
 
 .welcomeSection h2 {
   font-size: 20px;
   margin-bottom: 10px;
-  color: #345BC0;
+  color: $primary-color;
 }
 
 .welcomeSection p {
-  color: #666;
+  color: $light-text;
   font-size: 16px;
 }
 
@@ -35,14 +53,16 @@
 
 .card {
   display: flex;
-  background-color: #f9f9f9;
-  border-radius: 10px;
+  background-color: white;
+  border-radius: $border-radius-md;
   padding: 20px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: $transition-base;
+  box-shadow: $shadow-sm;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: $shadow-md;
   }
 }
 
@@ -52,11 +72,12 @@
   justify-content: center;
   width: 50px;
   height: 50px;
-  background-color: #e3f2fd;
+  background-color: rgba($primary-color, 0.1);
   border-radius: 50%;
-  color: #345BC0;
+  color: $primary-color;
   font-size: 24px;
   margin-left: 15px;
+  flex-shrink: 0;
 }
 
 .cardContent {
@@ -66,19 +87,19 @@
 .cardContent h3 {
   font-size: 18px;
   margin: 0 0 5px 0;
-  color: #2B463C;
+  color: $dark-text;
 }
 
 .cardContent p {
   font-size: 14px;
-  color: #666;
+  color: $light-text;
   margin-bottom: 15px;
 }
 
 .cardButton {
   background: none;
   border: none;
-  color: #345BC0;
+  color: $primary-color;
   font-size: 14px;
   font-weight: bold;
   display: flex;
@@ -86,11 +107,11 @@
   gap: 5px;
   padding: 0;
   cursor: pointer;
-  transition: color 0.2s ease;
-  font-family: 'shoor-Medium', sans-serif;
+  transition: $transition-base;
+  font-family: $font-primary;
 
   &:hover {
-    color: #2b4aa0;
+    color: darken($primary-color, 10%);
     text-decoration: underline;
   }
 }
@@ -108,39 +129,56 @@
 
 .sectionHeader h2 {
   font-size: 20px;
-  color: #2B463C;
+  color: $dark-text;
+  position: relative;
+  padding-right: 15px;
+
+  &:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 20px;
+    background-color: $secondary-color;
+    border-radius: 3px;
+  }
 }
 
 .viewAllButton {
   background: none;
   border: none;
-  color: #345BC0;
+  color: $primary-color;
   font-size: 14px;
   font-weight: bold;
   cursor: pointer;
-  transition: color 0.2s ease;
-  font-family: 'shoor-Medium', sans-serif;
+  transition: $transition-base;
+  font-family: $font-primary;
 
   &:hover {
-    color: #2b4aa0;
+    color: darken($primary-color, 10%);
     text-decoration: underline;
   }
 }
 
 .recentOrdersTable {
   width: 100%;
-  border-radius: 10px;
+  border-radius: $border-radius-md;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: $shadow-sm;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .tableHeader {
   display: flex;
-  background-color: #f5f5f5;
+  background-color: rgba($primary-color, 0.05);
   padding: 15px;
   font-weight: bold;
-  color: #333;
+  color: $dark-text;
   font-size: 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .tableRow {
@@ -153,7 +191,7 @@
   }
 
   &:hover {
-    background-color: #f9f9f9;
+    background-color: rgba($primary-color, 0.02);
   }
 }
 
@@ -181,7 +219,7 @@
 .statusBadge {
   display: inline-block;
   padding: 5px 10px;
-  border-radius: 20px;
+  border-radius: $border-radius-full;
   font-size: 12px;
   font-weight: bold;
 }
@@ -212,27 +250,28 @@
 }
 
 .viewButton {
-  background-color: #345BC0;
+  background-color: $primary-color;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: $border-radius-md;
   padding: 5px 10px;
   font-size: 12px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-family: 'shoor-Medium', sans-serif;
+  transition: $transition-base;
+  font-family: $font-primary;
 
   &:hover {
-    background-color: #2b4aa0;
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-2px);
   }
 }
 
 .loadingState {
   padding: 40px;
   text-align: center;
-  color: #666;
+  color: $light-text;
   background-color: #f9f9f9;
-  border-radius: 10px;
+  border-radius: $border-radius-md;
 }
 
 .emptyState {
@@ -243,32 +282,33 @@
   padding: 40px;
   text-align: center;
   background-color: #f9f9f9;
-  border-radius: 10px;
+  border-radius: $border-radius-md;
 }
 
 .emptyState p {
-  color: #666;
+  color: $light-text;
   margin-bottom: 20px;
 }
 
 .shopButton {
-  background-color: #345BC0;
+  background-color: $primary-color;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: $border-radius-md;
   padding: 10px 20px;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-family: 'shoor-Medium', sans-serif;
+  transition: $transition-base;
+  font-family: $font-primary;
 
   &:hover {
-    background-color: #2b4aa0;
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-2px);
   }
 }
 
 /* Responsive styles */
-@media (max-width: 768px) {
+@media (max-width: $breakpoint-md) {
   .cardGrid {
     grid-template-columns: 1fr;
   }
@@ -285,5 +325,21 @@
   .statusBadge {
     padding: 3px 8px;
     font-size: 10px;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .tableHeader, .tableRow {
+    flex-wrap: wrap;
+  }
+
+  .orderIdColumn, .dateColumn, .statusColumn, .totalColumn {
+    flex: 1 0 50%;
+    margin-bottom: 5px;
+  }
+
+  .actionColumn {
+    flex: 0 0 100%;
+    text-align: right;
   }
 }

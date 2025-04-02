@@ -3,15 +3,24 @@
 /**
  * Converts English digits to Persian digits
  * @param input - The input string or number to convert
+ * @param addCommas - Whether to add commas every 3 digits or not
  * @returns String with Persian digits
  */
-export const toPersianNumber = (input: string | number): string => {
+export const toPersianNumber = (input: string | number, addCommas: boolean = true): string => {
     const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
 
-    return String(input)
-        .replace(/[0-9]/g, function(match) {
-            return persianDigits[parseInt(match)];
-        });
+    // First convert to string and add commas if needed
+    let stringValue = String(input);
+
+    if (addCommas) {
+        // Add commas for every 3 digits
+        stringValue = stringValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // Then convert digits to Persian
+    return stringValue.replace(/[0-9]/g, function(match) {
+        return persianDigits[parseInt(match)];
+    });
 };
 
 /**

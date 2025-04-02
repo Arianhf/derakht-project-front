@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
 import { userService } from '@/services/userService';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
-import { FaBox, FaUser, FaMapMarkerAlt, FaArrowLeft } from 'react-icons/fa';
+import { FaBox, FaUser, FaMapMarkerAlt, FaArrowLeft, FaSpinner } from 'react-icons/fa';
 import styles from './AccountDashboard.module.scss';
 
 interface RecentOrder {
@@ -26,7 +26,7 @@ const AccountDashboard: React.FC = () => {
             try {
                 setLoading(true);
                 const response = await userService.getOrders(1, 3); // Get first 3 orders
-                setRecentOrders(response.results);
+                setRecentOrders(response.results || []);
             } catch (error) {
                 console.error('Error fetching recent orders:', error);
             } finally {
@@ -138,7 +138,10 @@ const AccountDashboard: React.FC = () => {
                 </div>
 
                 {loading ? (
-                    <div className={styles.loadingState}>در حال بارگذاری...</div>
+                    <div className={styles.loadingState}>
+                        <FaSpinner className="animate-spin" style={{ fontSize: '24px', marginBottom: '10px' }} />
+                        <p>در حال بارگذاری...</p>
+                    </div>
                 ) : recentOrders.length > 0 ? (
                     <div className={styles.recentOrdersTable}>
                         <div className={styles.tableHeader}>
@@ -151,17 +154,17 @@ const AccountDashboard: React.FC = () => {
 
                         {recentOrders.map(order => (
                             <div key={order.id} className={styles.tableRow}>
-                                <div className={styles.orderIdColumn}>{toPersianNumber(order.id.substring(0, 8))}</div>
+                                <div className={styles.orderIdColumn}>{order.id.substring(0, 8)}</div>
                                 <div className={styles.dateColumn}>
                                     {toPersianNumber(new Date(order.created_at).toLocaleDateString('fa-IR'))}
                                 </div>
                                 <div className={styles.statusColumn}>
-                  <span className={`${styles.statusBadge} ${getStatusClass(order.status)}`}>
-                    {getStatusText(order.status)}
-                  </span>
+                                    <span className={`${styles.statusBadge} ${getStatusClass(order.status)}`}>
+                                        {getStatusText(order.status)}
+                                    </span>
                                 </div>
                                 <div className={styles.totalColumn}>
-                                    {toPersianNumber(Math.round(order.total_amount / 10000).toLocaleString())} تومان
+                                    {toPersianNumber(order.total_amount)} تومان
                                 </div>
                                 <div className={styles.actionColumn}>
                                     <button

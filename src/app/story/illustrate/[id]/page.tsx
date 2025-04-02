@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Navbar } from "@/components/shared/Navbar";
+import { Navbar } from "@/components/shared/Navbar/Navbar";
 import logo from "@/assets/images/logo2.png";
 import "./illustrate.scss";
 

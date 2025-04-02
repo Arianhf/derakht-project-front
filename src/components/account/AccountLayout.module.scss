@@ -1,18 +1,38 @@
+@import '../../styles/globals.scss';
+
 .accountContainer {
   min-height: 100vh;
-  background: linear-gradient(180deg, #ffdde1, #d4f1f4, #fff7e5) !important;
+  background: $gradient-bg;
   display: flex;
   flex-direction: column;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.1;
+    background-image: $clouds;
+    background-repeat: repeat;
+    background-size: 300px 300px;
+    z-index: 0;
+  }
 }
 
 .contentContainer {
   display: flex;
   flex: 1;
-  margin: 80px auto 40px;
+  margin: 130px auto 40px;
   max-width: 1200px;
   width: 100%;
-  padding: 0 20px;
+  padding: 10px 20px;
   gap: 30px;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .loadingContainer {
@@ -21,7 +41,22 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(180deg, #ffdde1, #d4f1f4, #fff7e5) !important;
+  background: $gradient-bg;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.1;
+    background-image: $clouds;
+    background-repeat: repeat;
+    background-size: 300px 300px;
+    z-index: 0;
+  }
 }
 
 .spinner {
@@ -29,9 +64,11 @@
   height: 50px;
   border-radius: 50%;
   border: 3px solid rgba(0, 0, 0, 0.1);
-  border-top-color: #345BC0;
+  border-top-color: $primary-color;
   animation: spin 1s linear infinite;
   margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 @keyframes spin {
@@ -39,14 +76,24 @@
   100% { transform: rotate(360deg); }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .sidebar {
   width: 280px;
-  background-color: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: $card-bg;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
   overflow: hidden;
   align-self: flex-start;
   direction: rtl;
+  transition: $transition-base;
+
+  &:hover {
+    box-shadow: $shadow-lg;
+  }
 }
 
 .userInfo {
@@ -55,6 +102,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: rgba($primary-color, 0.03);
 }
 
 .avatarContainer {
@@ -64,7 +112,7 @@
 .avatar {
   width: 80px;
   height: 80px;
-  background-color: #345BC0;
+  background-color: $primary-color;
   color: white;
   display: flex;
   align-items: center;
@@ -72,6 +120,13 @@
   border-radius: 50%;
   font-size: 30px;
   font-weight: bold;
+  box-shadow: $shadow-sm;
+  transition: $transition-base;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: $shadow-md;
+  }
 }
 
 .userDetails {
@@ -81,11 +136,12 @@
 .userDetails h3 {
   font-size: 18px;
   margin-bottom: 5px;
+  color: $dark-text;
 }
 
 .userDetails p {
   font-size: 14px;
-  color: #777;
+  color: $light-text;
 }
 
 .navigation {
@@ -103,27 +159,28 @@
   align-items: center;
   padding: 12px 20px;
   text-decoration: none;
-  color: #2B463C;
-  transition: all 0.2s ease;
+  color: $dark-text;
+  transition: $transition-base;
   font-size: 16px;
   width: 100%;
   text-align: right;
   background: none;
   border: none;
   cursor: pointer;
-  font-family: 'shoor-Medium', sans-serif;
-}
+  font-family: $font-primary;
 
-.navLink:hover, .logoutButton:hover {
-  background-color: rgba(52, 91, 192, 0.1);
-  color: #345BC0;
+  &:hover {
+    background-color: rgba($primary-color, 0.1);
+    color: $primary-color;
+    transform: translateX(-5px);
+  }
 }
 
 .active {
-  background-color: rgba(52, 91, 192, 0.1);
-  color: #345BC0;
+  background-color: rgba($primary-color, 0.1);
+  color: $primary-color;
   font-weight: bold;
-  border-right: 4px solid #345BC0;
+  border-right: 4px solid $primary-color;
 }
 
 .navIcon {
@@ -131,37 +188,55 @@
   font-size: 20px;
   display: flex;
   align-items: center;
+  color: $primary-color;
 }
 
 .logoutButton {
   color: #e74c3c;
-}
 
-.logoutButton:hover {
-  background-color: rgba(231, 76, 60, 0.1);
-  color: #e74c3c;
+  &:hover {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+  }
 }
 
 .mainContent {
   flex: 1;
-  background-color: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: $card-bg;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
   padding: 30px;
   direction: rtl;
+  transition: $transition-base;
+
+  &:hover {
+    box-shadow: $shadow-lg;
+  }
 }
 
-@media (max-width: 768px) {
+@media (max-width: $breakpoint-lg) {
+  .contentContainer {
+    margin-top: 100px;
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
   .contentContainer {
     flex-direction: column;
-    margin-top: 70px;
+    margin-top: 90px;
   }
 
   .sidebar {
     width: 100%;
+    margin-bottom: 20px;
   }
 
   .navigation {
     padding: 10px 0;
+  }
+
+  .mainContent {
+    padding: 20px;
   }
 }

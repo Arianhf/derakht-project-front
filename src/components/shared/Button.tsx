@@ -1,10 +1,13 @@
 import React from 'react';
-import { THEME } from '../../constants';
+import styles from './Button.module.scss';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary';
+    variant?: 'primary' | 'secondary' | 'accent' | 'outline';
     size?: 'small' | 'medium' | 'large';
     fullWidth?: boolean;
+    rounded?: boolean;
+    icon?: React.ReactNode;
+    iconPosition?: 'left' | 'right';
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -12,27 +15,31 @@ export const Button: React.FC<ButtonProps> = ({
                                                   variant = 'primary',
                                                   size = 'medium',
                                                   fullWidth = false,
+                                                  rounded = false,
+                                                  icon,
+                                                  iconPosition = 'left',
+                                                  className,
                                                   ...props
                                               }) => {
-    const baseStyle = {
-        border: 'none',
-        borderRadius: THEME.borderRadius.medium,
-        cursor: 'pointer',
-        fontFamily: THEME.fontFamily.primary,
-        transition: 'all 0.3s ease',
-        width: fullWidth ? '100%' : 'auto',
-        backgroundColor: THEME.colors.button[variant],
-        color: '#fff',
-        padding: size === 'small' ? '8px 16px' : size === 'medium' ? '12px 24px' : '16px 32px',
-        fontSize: size === 'small' ? '14px' : size === 'medium' ? '16px' : '18px',
-    };
+    const buttonClasses = [
+        styles.button,
+        styles[variant],
+        styles[size],
+        fullWidth ? styles.fullWidth : '',
+        rounded ? styles.rounded : '',
+        icon ? styles.withIcon : '',
+        className || ''
+    ].filter(Boolean).join(' ');
 
     return (
-        <button
-            style={baseStyle}
-            {...props}
-        >
-            {children}
+        <button className={buttonClasses} {...props}>
+            {icon && iconPosition === 'left' && (
+                <span className={styles.iconLeft}>{icon}</span>
+            )}
+            <span className={styles.text}>{children}</span>
+            {icon && iconPosition === 'right' && (
+                <span className={styles.iconRight}>{icon}</span>
+            )}
         </button>
     );
 };

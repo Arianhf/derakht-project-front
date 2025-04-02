@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Navbar } from '@/components/shared/Navbar';
+import { Navbar } from '@/components/shared/Navbar/Navbar';
 import logo from '@/assets/images/logo2.png';
 import styles from './PaymentFailedPage.module.scss';
 import { FaTimesCircle, FaExclamationTriangle, FaArrowLeft, FaShoppingCart, FaCreditCard } from 'react-icons/fa';

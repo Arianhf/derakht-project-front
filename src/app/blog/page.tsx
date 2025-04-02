@@ -1,17 +1,19 @@
-'use client'; 
+'use client';
 import React from 'react';
 import BlogPost from '../../components/blog/BlogPost';
-import Header from '../../components/Header';
+import { Navbar } from '@/components/shared/Navbar/Navbar';
+import logoImage from '@/assets/images/logo2.png';
+import styles from './page.module.scss';
 
 const BlogPage: React.FC = () => {
-  return (
-    <div className="blog-page">
-      <Header />
-      <div className="blog-content">
-        <BlogPost />
-      </div>
-    </div>
-  );
+    return (
+        <div className={styles.blogPageWrapper}>
+            <Navbar logo={logoImage} />
+            <main className={styles.mainContent}>
+                <BlogPost />
+            </main>
+        </div>
+    );
 };
 
 export default BlogPage;

@@ -4,7 +4,7 @@ import styles from './Header.module.css';
 import { FaUserCircle } from 'react-icons/fa';
 import { IconContext } from 'react-icons/lib';
 import { blogService } from '@/services/blogService';
-import { Navbar } from './shared/Navbar';
+import { Navbar } from './shared/Navbar/Navbar';
 import { Loading } from './shared/Loading';
 import { ErrorMessage } from './shared/ErrorMessage';
 import { HeroPost } from '@/types';

@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Navbar } from '@/components/shared/Navbar';
+import { Navbar } from '@/components/shared/Navbar/Navbar';
 import ProductCard from '@/components/shop/ProductCard';
 import CategoryNavigation from '@/components/shop/CategoryNavigation';
 import ProductFilters from '@/components/shop/ProductFilters';
 import Breadcrumbs from '@/components/shop/Breadcrumbs';
 import styles from './shop.module.scss';
 import logo from '@/assets/images/logo2.png';
-import heroImage from '@/assets/images/header1.jpg';
+import heroImage from "../../../public/images/shop_hero.jpg";
 import { useCart } from '@/contexts/CartContext';
 import { Product, ShopFilters, Breadcrumb } from '@/types/shop';
 import { shopService } from '@/services/shopService';

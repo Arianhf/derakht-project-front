@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Navbar } from '@/components/shared/Navbar';
+import { Navbar } from '@/components/shared/Navbar/Navbar';
 import { ErrorMessage } from '@/components/shared/ErrorMessage';
 import { blogService } from '@/services/blogService';
 import { BlogPost } from '@/types';
