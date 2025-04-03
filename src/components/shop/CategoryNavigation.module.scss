@@ -2,7 +2,7 @@
 
 .categoryNavigation {
   background-color: $card-bg;
-  border-radius: $border-radius-lg;
+  border-radius: 8px;
   padding: $spacing-md;
   box-shadow: $shadow-sm;
   margin-bottom: $spacing-md;
@@ -21,6 +21,7 @@
   }
 }
 
+
 .navigationTitle {
   font-size: 18px;
   font-weight: 600;
@@ -35,7 +36,7 @@
     content: '';
     position: absolute;
     right: 0;
-    top: 50%;
+    top: 35%;
     transform: translateY(-50%);
     width: 5px;
     height: 20px;
@@ -74,6 +75,9 @@
   color: $dark-text;
   text-decoration: none;
   transition: $transition-base;
+  padding: 5px 20px;
+  margin-right: -10px;
+  border-radius: $border-radius-md;
 
   &:hover {
     color: $primary-color;

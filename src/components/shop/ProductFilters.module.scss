@@ -9,13 +9,74 @@
   direction: rtl;
   animation: slideDown 0.5s ease;
 
+  .searchForm {
+    margin-bottom: $spacing-md;
+  }
+
+  .searchInputContainer {
+    display: flex;
+    position: relative;
+  }
+
+  .searchInput {
+    width: 100%;
+    padding: 12px 46px 12px 12px;
+    border: 1px solid lighten($light-text, 40%);
+    border-radius: $border-radius-lg;
+    font-size: $font-size-base;
+    font-family: $font-primary;
+    transition: $transition-base;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    }
+  }
+
+  .searchButton {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: $primary-color;
+    transition: $transition-base;
+
+    &:hover {
+      color: darken($primary-color, 15%);
+      transform: translateY(-50%) scale(1.1);
+    }
+  }
+
+  .filterControls {
+    transition: $transition-base;
+  }
+
+  .filterHeader {
+    margin-bottom: $spacing-sm;
+  }
+
+  .mobileFilterToggle {
+    display: none;
+  }
+
+  .filtersSection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+  }
+
   .filterGroup {
     flex: 1;
     min-width: 250px;
   }
 
   .filterGroupTitle {
-    font-size: 16px;
+    font-size: $font-size-base;
     font-weight: 600;
     margin-bottom: $spacing-sm;
     color: $dark-text;
@@ -44,17 +105,17 @@
 
   .sortButton {
     padding: 8px 16px;
-    background-color: #f5f5f7;
+    background-color: lighten($light-text, 45%);
     border: none;
     border-radius: $border-radius-md;
-    font-size: 14px;
+    font-size: $font-size-base;
     font-family: $font-primary;
     color: $light-text;
     cursor: pointer;
     transition: $transition-base;
 
     &:hover {
-      background-color: #e8e8e8;
+      background-color: lighten($light-text, 40%);
       transform: translateY(-2px);
     }
 
@@ -79,18 +140,19 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
-
+    width: 50%;
+    
     label {
-      font-size: 14px;
+      font-size: $font-size-base;
       color: $light-text;
     }
   }
 
   .priceInput {
     padding: 8px 12px;
-    border: 1px solid #e1e1e1;
+    border: 1px solid lighten($light-text, 40%);
     border-radius: $border-radius-md;
-    font-size: 14px;
+    font-size: $font-size-base;
     font-family: $font-primary;
 
     &:focus {
@@ -109,7 +171,7 @@
     padding: 8px 16px;
     border: none;
     border-radius: $border-radius-md;
-    font-size: 14px;
+    font-size: $font-size-base;
     font-family: $font-primary;
     cursor: pointer;
     transition: $transition-base;
@@ -126,15 +188,15 @@
   }
 
   .resetButton {
-    background-color: #f1f1f1;
+    background-color: lighten($light-text, 45%);
     color: $light-text;
 
     &:hover {
-      background-color: #e1e1e1;
+      background-color: lighten($light-text, 40%);
     }
   }
 
-  /* Responsive styles */
+  // Responsive Styles
   @media (max-width: $breakpoint-md) {
     .mobileFilterToggle {
       display: flex;
@@ -146,7 +208,7 @@
       border: none;
       border-radius: $border-radius-md;
       font-family: $font-primary;
-      font-size: 16px;
+      font-size: $font-size-base;
       cursor: pointer;
       align-items: center;
       margin-bottom: $spacing-sm;
@@ -179,85 +241,25 @@
   }
 }
 
-.searchForm {
-  margin-bottom: $spacing-md;
-}
-
-.searchInputContainer {
-  display: flex;
-  position: relative;
-}
-
-.searchInput {
-  width: 100%;
-  padding: 12px 46px 12px 12px;
-  border: 1px solid #e1e1e1;
-  border-radius: $border-radius-lg;
-  font-size: 16px;
-  font-family: $font-primary;
-  transition: $transition-base;
-
-  &:focus {
-    outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
-  }
-}
-
-.searchButton {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  color: $primary-color;
-  transition: $transition-base;
-
-  &:hover {
-    color: darken($primary-color, 15%);
-    transform: translateY(-50%) scale(1.1);
-  }
-}
-
-.filterControls {
-  transition: $transition-base;
-}
-
-.filterHeader {
-  margin-bottom: $spacing-sm;
-}
-
-.filtersSection {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-md;
-}
-
-.mobileFilterToggle {
-  display: none;
-  align-items: center;
-  gap: $spacing-sm;
-  cursor: pointer;
-  padding: $spacing-sm $spacing-md;
-  background-color: #f5f5f7;
-  border-radius: $border-radius-md;
-  font-weight: 500;
-  transition: $transition-base;
-
-  &:hover {
-    background-color: #e8e8e8;
-  }
-}
-
+// Animations
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

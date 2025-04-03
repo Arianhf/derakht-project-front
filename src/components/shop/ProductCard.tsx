@@ -42,8 +42,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                 )}
                 {product.age_range && (
                     <div className={styles.ageBadge}>
-                        <FaChild style={{ marginLeft: '5px' }} />
-                        {product.age_range}
+                        <FaChild size={18} style={{ marginLeft: '5px' }} />
+                        <span className={styles.ageValue}>{product.age_range}</span>
                     </div>
                 )}
             </div>

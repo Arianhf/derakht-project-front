@@ -1,0 +1,141 @@
+@import '../../../../styles/globals';
+
+// Mobile menu toggle button
+.mobileMenuToggle {
+  display: none; // Hidden on desktop
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 22px;
+  color: $dark-text;
+  transition: $transition-base;
+  z-index: 1001; // Higher than the mobile menu
+
+  &:hover {
+    background-color: $primary-color;
+    color: white;
+  }
+}
+
+// Navigation items container
+.navbarItems {
+  display: flex;
+  gap: 40px;
+  font-size: 20px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+// Individual navigation link
+.navbarLink {
+  text-decoration: none;
+  color: $dark-text;
+  position: relative;
+  padding: 5px 0;
+  transition: $transition-base;
+
+  span {
+    position: relative;
+
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background-color: $secondary-color;
+      transition: $transition-base;
+      border-radius: 3px;
+    }
+
+    &.active {
+      color: $primary-color;
+
+      &:after {
+        width: 100%;
+      }
+    }
+  }
+
+  &:hover {
+    color: $primary-color;
+
+    span:after {
+      width: 100%;
+    }
+  }
+}
+
+// Overlay that appears behind the mobile menu
+.mobileMenuOverlay {
+  display: none; // Hidden by default on desktop
+}
+
+// Media query for mobile devices
+@media (max-width: $breakpoint-md) {
+  // Show the mobile menu toggle button on right side
+  .mobileMenuToggle {
+    display: flex;
+    position: absolute;
+    right: 15px;
+  }
+
+  // Restyle navigation for mobile
+  .navbarItems {
+    position: fixed;
+    top: 0;
+    right: -100%; // Start off-screen
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: white;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 80px 20px 20px;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    overflow-y: auto;
+
+    // When mobile menu is open
+    &.mobileMenuOpen {
+      right: 0; // Slide in from right
+    }
+  }
+
+  // Restyle links for mobile
+  .navbarLink {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 18px;
+    border-radius: 8px;
+
+    &:hover {
+      background-color: rgba($primary-color, 0.1);
+    }
+  }
+
+  // Show overlay when mobile menu is open
+  .mobileMenuOverlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 990;
+    animation: fadeIn 0.3s ease;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

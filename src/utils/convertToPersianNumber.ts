@@ -23,6 +23,28 @@ export const toPersianNumber = (input: string | number, addCommas: boolean = tru
     });
 };
 
+export const formatJalaliDate = (dateStr: string) => {
+    if (!dateStr) return "تاریخ نامشخص";
+
+    // This is a simple implementation to convert numeric month to Persian month name
+    const persianMonths = [
+        'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+        'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+    ];
+
+    // Extract components from jalali date string (assuming format like 1403-12-21)
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return toPersianNumber(dateStr, false);
+
+    const year = toPersianNumber(parts[0], false);
+    // Convert month number (1-12) to array index (0-11)
+    const monthIndex = parseInt(parts[1]) - 1;
+    const monthName = persianMonths[monthIndex] || '';
+    const day = toPersianNumber(parts[2], false);
+
+    return `${day} ${monthName} ${year}`;
+};
+
 /**
  * Converts Persian digits to English digits
  * @param input - The input string with Persian digits

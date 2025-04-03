@@ -4,15 +4,18 @@
   direction: rtl;
   min-height: 100vh;
   //background: $gradient-bg;
-  padding-top: 100px;
+  padding-top: 30px; // Reduced from 100px to avoid cutting off content
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .contentWrapper {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  position: relative;
+  z-index: 2;
 }
 
 // Hero Section
@@ -24,6 +27,7 @@
   overflow: hidden;
   margin-bottom: $spacing-xl;
   box-shadow: $shadow-md;
+  z-index: 1;
 
   &:hover {
     .headerImage {
@@ -43,7 +47,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  //background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
   z-index: 2;
 }
 
@@ -54,22 +58,26 @@
   left: 0;
   padding: $spacing-xl;
   color: white;
-  z-index: 3;
-  text-align: right;
+  z-index: 3; /* Make sure text is above the dark overlay */
 }
 
+.heroContent {
+  max-width: 90%;
+}
+
+/* Tags */
 .headerTags {
   display: flex;
-  margin-bottom: $spacing-md;
   flex-wrap: wrap;
-  gap: $spacing-xs;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
 .tag {
   background-color: rgba(255, 255, 255, 0.2);
   color: white;
   padding: 6px 14px;
-  border-radius: $border-radius-full;
+  border-radius: 20px;
   font-size: 14px;
   backdrop-filter: blur(5px);
   transition: $transition-base;
@@ -81,30 +89,34 @@
   }
 }
 
+/* Titles */
 .headerTitle {
   font-size: 42px;
   font-weight: bold;
   margin-bottom: $spacing-sm;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  color: white;
 }
 
 .headerSubtitle {
   font-size: 20px;
   margin-bottom: $spacing-md;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  color: #f5f5f5;
   max-width: 80%;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
 }
 
+/* Author Info */
 .authorInfo {
   display: flex;
   align-items: center;
   gap: $spacing-sm;
+  margin-top: 20px;
 }
 
 .authorIcon {
   color: white;
-  width: 40px;
-  height: 40px;
+  font-size: 32px;
   opacity: 0.9;
 }
 
@@ -116,6 +128,9 @@
 .authorName {
   font-weight: bold;
   font-size: 16px;
+  color: white;
+  display: flex;
+  align-items: center;
 }
 
 .authorMeta {
@@ -124,6 +139,14 @@
   gap: $spacing-sm;
   font-size: 14px;
   opacity: 0.8;
+  color: white;
+}
+
+.authorMeta span {
+  margin-left: 5px;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
 }
 
 // Featured Section
@@ -214,6 +237,14 @@
   font-size: 14px;
   color: $light-text;
   margin-bottom: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.blogMetaDetail{
+  display: flex;
+  align-items: center;
 }
 
 .authorName {
@@ -247,7 +278,7 @@
 }
 
 .featuredImage {
-  object-fit: contain;
+  object-fit: cover;
   transition: transform 1s ease;
 
   &:hover {
@@ -293,7 +324,7 @@
 }
 
 .blogCardImage {
-  object-fit: contain;
+  object-fit: cover;
   transition: transform 0.8s ease;
 }
 
@@ -309,6 +340,30 @@
   font-weight: bold;
   margin-bottom: $spacing-sm;
   color: $dark-text;
+}
+
+.blogCardTag {
+  background-color: $tag-bg;
+  color: $dark-text;
+  padding: 5px 12px;
+  border-radius: $border-radius-full;
+  font-size: 14px;
+  transition: $transition-base;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $secondary-color;
+    color: white;
+    transform: translateY(-2px);
+  }
+}
+
+
+.blogCardTagContainer{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: $spacing-sm;
 }
 
 .tagContainer {
@@ -427,5 +482,11 @@
   &:after {
     content: "✨";
     margin-right: 10px;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .blogPageContainer {
+    padding-top: 20px;
   }
 }

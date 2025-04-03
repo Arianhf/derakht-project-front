@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from 'next/image';
-import { FaUserCircle, FaCalendarAlt, FaClock, FaStar } from 'react-icons/fa';
+import { FaUserCircle, FaCalendarAlt, FaClock } from 'react-icons/fa';
 import styles from "./BlogPage.module.scss";
 import { blogService } from '@/services/blogService';
-import { Button } from '../shared/Button';
 import { Loading } from '../shared/Loading';
 import { ErrorMessage } from '../shared/ErrorMessage';
 import { BlogPost } from '@/types';
 import { UI_CONSTANTS } from '@/constants';
-import { toPersianNumber } from "@/utils/convertToPersianNumber";
+import { formatJalaliDate, toPersianNumber } from "@/utils/convertToPersianNumber";
 
 // Updated TagList component with onTagClick handler
 interface TagListProps {
@@ -62,13 +61,26 @@ const FeaturedBlogCard: React.FC<FeaturedBlogProps> = ({ blog, onNavigate, onTag
                 tagClassName={styles.featuredTag}
             />
         )}
-        <p className={styles.blogMeta}>
-          نوشته شده توسط{" "}
-          <span className={styles.authorName}>
-          {blog.owner?.first_name}
-        </span>{" "}
-          · {toPersianNumber(blog.jalali_date || "تاریخ نامشخص")}
-        </p>
+        <div className={styles.authorInfo}>
+          <div className={styles.authorDetails}>
+            <div className={styles.authorName}>
+              <FaUserCircle style={{marginLeft: '5px'}}/>
+              نویسنده: {blog.owner?.first_name}
+            </div>
+            <div className={styles.blogMeta}>
+                      <span className={styles.blogMetaDetail}>
+                        <FaCalendarAlt style={{marginLeft: '5px'}}/>
+                        نوشته شده در {formatJalaliDate(blog.jalali_date || "")}
+                      </span>
+              {blog.reading_time && (
+                  <span className={styles.blogMetaDetail}>
+                          <FaClock style={{marginLeft: '5px'}}/>
+                    {toPersianNumber(blog.reading_time)} دقیقه مطالعه
+                        </span>
+              )}
+            </div>
+          </div>
+        </div>
         <button
             className={styles.featuredButton}
             onClick={(e) => {
@@ -97,11 +109,11 @@ interface RegularBlogCardProps {
   onTagClick: (tag: string) => void;
 }
 
-const RegularBlogCard: React.FC<RegularBlogCardProps> = ({ blog, onNavigate, onTagClick }) => (
+const RegularBlogCard: React.FC<RegularBlogCardProps> = ({blog, onNavigate, onTagClick}) => (
     <div
         className={styles.blogCard}
         onClick={() => onNavigate(blog.id)}
-        style={{ cursor: "pointer" }}
+        style={{cursor: "pointer"}}
     >
       <div className={styles.blogCardImageContainer}>
         <Image
@@ -115,15 +127,28 @@ const RegularBlogCard: React.FC<RegularBlogCardProps> = ({ blog, onNavigate, onT
       <div className={styles.blogCardContent}>
         <h3 className={styles.blogCardTitle}>{blog.title}</h3>
         {blog.tags && blog.tags.length > 0 && (
-            <TagList tags={blog.tags} onTagClick={onTagClick} />
+            <TagList tags={blog.tags} onTagClick={onTagClick} className={styles.blogCardTagContainer} tagClassName={styles.blogCardTag}/>
         )}
-        <p className={styles.blogMeta}>
-          نوشته شده توسط{" "}
-          <span className={styles.authorName}>
-          {blog.owner?.first_name}
-        </span>{" "}
-          · {toPersianNumber(blog.jalali_date || "تاریخ نامشخص")}
-        </p>
+        <div className={styles.authorInfo}>
+          <div className={styles.authorDetails}>
+            <div className={styles.authorName}>
+              <FaUserCircle style={{marginLeft: '5px' }}/>
+              نویسنده: {blog.owner?.first_name}
+            </div>
+            <div className={styles.blogMeta}>
+                      <span className={styles.blogMetaDetail}>
+                        <FaCalendarAlt style={{marginLeft: '5px'}}/>
+                        نوشته شده در {formatJalaliDate(blog.jalali_date || "")}
+                      </span>
+              {blog.reading_time && (
+                  <span className={styles.blogMetaDetail}>
+                          <FaClock style={{marginLeft: '5px'}}/>
+                    {toPersianNumber(blog.reading_time)} دقیقه مطالعه
+                        </span>
+              )}
+            </div>
+          </div>
+        </div>
         <button
             className={styles.readButton}
             onClick={(e) => {
@@ -183,7 +208,11 @@ const BlogPostList: React.FC = () => {
         <div className={styles.contentWrapper}>
           {/* Hero Post */}
           {featuredBlogs.length > 0 && (
-              <div className={styles.heroSection}>
+              <div
+                  className={styles.heroSection}
+                  onClick={() => handleNavigate(featuredBlogs[0].id)}
+                  style={{ cursor: "pointer" }}
+              >
                 <Image
                     src={featuredBlogs[0].header_image?.meta?.download_url || "/default-image.jpg"}
                     alt={featuredBlogs[0].title}
@@ -194,43 +223,45 @@ const BlogPostList: React.FC = () => {
                 />
                 <div className={styles.imageOverlay}></div>
                 <div className={styles.overlay}>
-                  {featuredBlogs[0].tags && featuredBlogs[0].tags.length > 0 && (
-                      <div className={styles.headerTags}>
-                        {featuredBlogs[0].tags.map((tag, index) => (
-                            <span
-                                key={index}
-                                className={styles.tag}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleTagClick(tag);
-                                }}
-                            >
-                      {tag}
-                    </span>
-                        ))}
-                      </div>
-                  )}
-                  <h1 className={styles.headerTitle}>{featuredBlogs[0].title}</h1>
-                  {featuredBlogs[0].subtitle && (
-                      <p className={styles.headerSubtitle}>{featuredBlogs[0].subtitle}</p>
-                  )}
-                  <div className={styles.authorInfo}>
-                    <FaUserCircle className={styles.authorIcon} />
-                    <div className={styles.authorDetails}>
-                  <span className={styles.authorName}>
-                    {featuredBlogs[0].owner?.first_name}
-                  </span>
-                      <div className={styles.authorMeta}>
-                    <span>
-                      <FaCalendarAlt style={{ marginLeft: '5px' }} />
-                      {toPersianNumber(featuredBlogs[0].jalali_date || "تاریخ نامشخص")}
-                    </span>
-                        {featuredBlogs[0].reading_time && (
-                            <span>
-                        <FaClock style={{ marginLeft: '5px' }} />
-                              {toPersianNumber(featuredBlogs[0].reading_time)} دقیقه مطالعه
+                  <div className={styles.heroContent}>
+                    {featuredBlogs[0].tags && featuredBlogs[0].tags.length > 0 && (
+                        <div className={styles.headerTags}>
+                          {featuredBlogs[0].tags.map((tag, index) => (
+                              <span
+                                  key={index}
+                                  className={styles.tag}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleTagClick(tag);
+                                  }}
+                              >
+                        {tag}
                       </span>
-                        )}
+                          ))}
+                        </div>
+                    )}
+                    <h1 className={styles.headerTitle}>{featuredBlogs[0].title}</h1>
+                    {featuredBlogs[0].subtitle && (
+                        <p className={styles.headerSubtitle}>{featuredBlogs[0].subtitle}</p>
+                    )}
+                    <div className={styles.authorInfo}>
+                      <FaUserCircle className={styles.authorIcon} />
+                      <div className={styles.authorDetails}>
+                        <div className={styles.authorName}>
+                          نویسنده: {featuredBlogs[0].owner?.first_name}
+                        </div>
+                        <div className={styles.authorMeta}>
+                      <span>
+                        <FaCalendarAlt style={{ marginLeft: '5px' }} />
+                        نوشته شده در {formatJalaliDate(featuredBlogs[0].jalali_date || "")}
+                      </span>
+                          {featuredBlogs[0].reading_time && (
+                              <span>
+                          <FaClock style={{ marginLeft: '5px' }} />
+                                {toPersianNumber(featuredBlogs[0].reading_time)} دقیقه مطالعه
+                        </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

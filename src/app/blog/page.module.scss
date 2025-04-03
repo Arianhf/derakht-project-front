@@ -23,4 +23,18 @@
 .mainContent {
   min-height: 100vh;
   padding-top: 120px;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: $breakpoint-md) {
+  .mainContent {
+    padding-top: 60px;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .mainContent {
+    padding-top: 120px;
+  }
 }

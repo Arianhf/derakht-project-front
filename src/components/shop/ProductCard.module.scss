@@ -128,9 +128,19 @@
   position: absolute;
   padding: 5px 10px;
   border-radius: $border-radius-md;
-  font-size: 12px;
+  font-size: 18px;
   font-weight: bold;
   z-index: 2;
+  display: flex;
+  align-items: center;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 12px;
+  }
+}
+
+.ageValue{
+  margin-bottom: -3px;
 }
 
 .unavailableBadge {
@@ -156,3 +166,4 @@
   50% { transform: translateY(-3px); }
   100% { transform: translateY(0px); }
 }
+
