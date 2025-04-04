@@ -3,7 +3,7 @@
 .blogContainer {
   direction: rtl;
   text-align: right;
-  min-height: 100vh;
+  min-height: $default-min-height;
   background: $gradient-bg;
   position: relative;
   z-index: 0;

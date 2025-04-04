@@ -10,7 +10,7 @@ import styles from './productDetails.module.scss';
 import logo from '@/assets/images/logo2.png';
 import heroImage from "../../../../public/images/shop_hero.jpg";
 import { useCart } from '@/contexts/CartContext';
-import { FaPlus, FaMinus, FaTrash, FaArrowRight, FaSpinner, FaShoppingCart, FaCheck } from 'react-icons/fa';
+import { FaPlus, FaMinus, FaTrash, FaArrowRight, FaSpinner, FaShoppingCart } from 'react-icons/fa';
 import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
 import { Product, ProductImage, Breadcrumb } from '@/types/shop';
 import { shopService } from '@/services/shopService';
@@ -152,6 +152,7 @@ const ProductDetailsPage: React.FC = () => {
     }
 
     const quantity = getQuantityInCart();
+    const isInCart = quantity > 0;
 
     return (
         <div className={styles.productContainer}>
@@ -249,7 +250,7 @@ const ProductDetailsPage: React.FC = () => {
 
                         {product.is_available && (
                             <div className={styles.addToCartSection}>
-                                {quantity > 0 ? (
+                                {isInCart ? (
                                     <div className={styles.quantityControls}>
                                         <button
                                             className={styles.decreaseButton}
@@ -274,6 +275,7 @@ const ProductDetailsPage: React.FC = () => {
                                         fullWidth
                                         onClick={handleAddToCart}
                                         disabled={!product.is_available}
+                                        className={styles.addToCartButton}
                                     >
                                         افزودن به سبد خرید
                                     </Button>
@@ -285,10 +287,10 @@ const ProductDetailsPage: React.FC = () => {
 
                 {/* Comments Section */}
                 <div className={styles.commentsContainer}>
-                    <h2 className={styles.commentsTitle}>نظرات</h2>
+                    <h2 className={styles.commentsTitle}>نظرات کاربران</h2>
                     <div className={styles.commentsBox}>
                         {comments.length === 0 ? (
-                            <p className={styles.noComments}>هنوز نظری ثبت نشده است.</p>
+                            <p className={styles.noComments}>هنوز نظری ثبت نشده است. اولین نفری باشید که نظر می‌دهد!</p>
                         ) : (
                             <ul className={styles.commentsList}>
                                 {comments.map((cmt, index) => (
@@ -312,6 +314,20 @@ const ProductDetailsPage: React.FC = () => {
                             ارسال نظر
                         </Button>
                     </div>
+                </div>
+
+                {/* Related products section could be added here */}
+
+                {/* Back to shop button */}
+                <div className={styles.backToShopContainer}>
+                    <Button
+                        variant="outline"
+                        onClick={goBack}
+                        icon={<FaArrowRight />}
+                        iconPosition="left"
+                    >
+                        بازگشت به فروشگاه
+                    </Button>
                 </div>
             </div>
         </div>
