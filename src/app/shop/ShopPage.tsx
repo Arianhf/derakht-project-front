@@ -13,8 +13,8 @@ import heroImage from "../../../public/images/shop_hero.jpg";
 import { useCart } from '@/contexts/CartContext';
 import { Product, ShopFilters, Breadcrumb } from '@/types/shop';
 import { shopService } from '@/services/shopService';
-import { FaSpinner } from 'react-icons/fa';
 import { Toaster } from 'react-hot-toast';
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
 const ShopPage = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -95,10 +95,7 @@ const ShopPage = () => {
 
                         <div className={styles.productsSection}>
                             {loading ? (
-                                <div className={styles.loaderContainer}>
-                                    <FaSpinner className={styles.spinner} />
-                                    <p>در حال بارگذاری محصولات...</p>
-                                </div>
+                                <LoadingSpinner message="در حال بارگذاری محصولات..." />
                             ) : products.length > 0 ? (
                                 <div className={styles.productsGrid}>
                                     {products.map((product) => (

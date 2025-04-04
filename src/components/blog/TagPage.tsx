@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
-import { ErrorMessage } from '@/components/shared/ErrorMessage';
 import { blogService } from '@/services/blogService';
 import { BlogPost } from '@/types';
 import { UI_CONSTANTS } from '@/constants';
@@ -10,6 +9,8 @@ import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import { FaArrowRight } from 'react-icons/fa';
 import styles from './TagPage.module.scss';
 import logoImage from '@/assets/images/logo2.png';
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import ErrorMessage from "@/components/shared/ErrorMessage";
 
 const TagPage: React.FC = () => {
     const searchParams = useSearchParams();
@@ -71,9 +72,7 @@ const TagPage: React.FC = () => {
                 </div>
 
                 {loading ? (
-                    <div className={styles.loadingContainer}>
-                        <div className={styles.spinner}></div>
-                    </div>
+                    <LoadingSpinner />
                 ) : error ? (
                     <ErrorMessage message={error} />
                 ) : (

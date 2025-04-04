@@ -10,11 +10,13 @@ import styles from './productDetails.module.scss';
 import logo from '@/assets/images/logo2.png';
 import heroImage from "../../../../public/images/shop_hero.jpg";
 import { useCart } from '@/contexts/CartContext';
-import { FaPlus, FaMinus, FaTrash, FaArrowRight, FaSpinner, FaShoppingCart } from 'react-icons/fa';
+import { FaPlus, FaMinus, FaTrash, FaArrowRight, FaShoppingCart } from 'react-icons/fa';
 import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
 import { Product, ProductImage, Breadcrumb } from '@/types/shop';
 import { shopService } from '@/services/shopService';
 import { Toaster } from 'react-hot-toast';
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import ErrorMessage from "@/components/shared/ErrorMessage";
 
 const ProductDetailsPage: React.FC = () => {
     const router = useRouter();
@@ -124,10 +126,7 @@ const ProductDetailsPage: React.FC = () => {
         return (
             <div className={styles.productContainer}>
                 <Navbar logo={logo} />
-                <div className={styles.loadingContainer}>
-                    <FaSpinner className={styles.spinner} />
-                    <p>در حال بارگذاری محصول...</p>
-                </div>
+                <LoadingSpinner message="در حال بارگذاری محصول..." fullPage />
             </div>
         );
     }
@@ -137,7 +136,7 @@ const ProductDetailsPage: React.FC = () => {
             <div className={styles.productContainer}>
                 <Navbar logo={logo} />
                 <div className={styles.notFound}>
-                    <h2>محصول مورد نظر یافت نشد</h2>
+                    <ErrorMessage message="محصول مورد نظر یافت نشد" />
                     <Button
                         variant="primary"
                         onClick={goBack}

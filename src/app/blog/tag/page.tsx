@@ -1,6 +1,6 @@
 'use client';
 import React, { Suspense } from 'react';
-import { Loading } from '@/components/shared/Loading';
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
 const BlogTagClient = React.lazy(() =>
     import('@/components/blog/TagPage')
@@ -9,7 +9,7 @@ const BlogTagClient = React.lazy(() =>
 
 export default function BlogTagPage() {
     return (
-        <Suspense fallback={<Loading />}>
+        <Suspense fallback={<LoadingSpinner />}>
             <BlogTagClient />
         </Suspense>
     );

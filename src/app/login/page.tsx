@@ -3,11 +3,11 @@
 import React, {Suspense} from 'react';
 import LoginPage from '@/components/login/LoginPage';
 import { Toaster } from 'react-hot-toast';
-import {Loading} from "@/components/shared/Loading";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
 export default function Login() {
     return (
-        <Suspense fallback={<Loading />}>
+        <Suspense fallback={<LoadingSpinner />}>
             <Toaster position="top-center" />
             <LoginPage />
         </Suspense>

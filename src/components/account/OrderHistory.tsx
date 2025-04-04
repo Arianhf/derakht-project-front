@@ -4,9 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { userService } from '@/services/userService';
 import { Order } from '@/types/shop';
-import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
-import { FaSearch, FaSpinner } from 'react-icons/fa';
+import { toPersianNumber } from '@/utils/convertToPersianNumber';
+import { FaSearch } from 'react-icons/fa';
 import styles from './OrderHistory.module.scss';
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
 const OrderHistory: React.FC = () => {
     const router = useRouter();
@@ -169,10 +170,7 @@ const OrderHistory: React.FC = () => {
 
             <div className={styles.ordersContent}>
                 {loading ? (
-                    <div className={styles.loadingContainer}>
-                        <FaSpinner className={styles.spinner} />
-                        <p>در حال بارگذاری سفارش‌ها...</p>
-                    </div>
+                    <LoadingSpinner message="در حال بارگذاری سفارش‌ها..." />
                 ) : filteredOrders.length > 0 ? (
                     <>
                         <div className={styles.ordersTable}>

@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import BlogDetails from '@/components/blog/BlogDetails';
-import { Loading } from '@/components/shared/Loading';
-import { ErrorMessage } from '@/components/shared/ErrorMessage';
 import { blogService } from '@/services/blogService';
 import { BlogPost } from '@/types';
 import logo from '@/assets/images/logo2.png';
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import ErrorMessage from "@/components/shared/ErrorMessage";
 
 const BlogDetailPage: React.FC = () => {
   const router = useRouter();
@@ -37,7 +37,7 @@ const BlogDetailPage: React.FC = () => {
     }
   }, [blogId]);
 
-  if (loading) return <Loading />;
+  if (loading) return <LoadingSpinner message="در حال بارگذاری سفارش‌ها..." />;
   if (error) return <ErrorMessage message={error} />;
   if (!blog) return <ErrorMessage message="مقاله مورد نظر یافت نشد" />;
 

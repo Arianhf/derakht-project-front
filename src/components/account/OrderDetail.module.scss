@@ -34,37 +34,6 @@
   }
 }
 
-.loadingContainer, .errorContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 50px 0;
-  text-align: center;
-}
-
-.spinner {
-  font-size: 24px;
-  color: #345BC0;
-  animation: spin 1s linear infinite;
-  margin-bottom: 15px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.errorContainer h2 {
-  color: #d32f2f;
-  margin-bottom: 10px;
-}
-
-.errorContainer p {
-  color: #777;
-  margin-bottom: 20px;
-}
-
 .orderInfoCard {
   background-color: #f9f9f9;
   border-radius: 10px;

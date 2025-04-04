@@ -6,10 +6,12 @@ import Image from 'next/image';
 import styles from './orderConfirmation.module.scss';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import logo from '@/assets/images/logo2.png';
-import { FaCheckCircle, FaSpinner, FaHome, FaListAlt } from 'react-icons/fa';
+import { FaCheckCircle, FaHome, FaListAlt } from 'react-icons/fa';
 import { shopService } from '@/services/shopService';
 import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
 import { Order } from '@/types/shop';
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import ErrorMessage from "@/components/shared/ErrorMessage";
 
 const OrderConfirmationPage: React.FC = () => {
     const router = useRouter();
@@ -51,10 +53,7 @@ const OrderConfirmationPage: React.FC = () => {
         return (
             <div className={styles.confirmationContainer}>
                 <Navbar logo={logo} />
-                <div className={styles.loadingContainer}>
-                    <FaSpinner className={styles.spinner} />
-                    <p>در حال بارگذاری اطلاعات سفارش...</p>
-                </div>
+                <LoadingSpinner message="در حال بارگذاری اطلاعات سفارش..." fullPage />
             </div>
         );
     }
@@ -64,8 +63,7 @@ const OrderConfirmationPage: React.FC = () => {
             <div className={styles.confirmationContainer}>
                 <Navbar logo={logo} />
                 <div className={styles.errorContainer}>
-                    <h2>خطا در دریافت اطلاعات سفارش</h2>
-                    <p>{error || 'اطلاعات سفارش یافت نشد'}</p>
+                    <ErrorMessage message={error || 'اطلاعات سفارش یافت نشد'} />
                     <button
                         className={styles.actionButton}
                         onClick={handleContinueShopping}

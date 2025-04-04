@@ -22,18 +22,6 @@
   text-align: center;
 }
 
-.spinner {
-  animation: spin 1s linear infinite;
-  margin-bottom: 15px;
-  font-size: 32px;
-  color: #4caf50;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 .errorContainer {
   h2 {
     color: #f44336;

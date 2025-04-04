@@ -4,11 +4,11 @@ import Image from 'next/image';
 import { FaUserCircle, FaCalendarAlt, FaClock } from 'react-icons/fa';
 import styles from "./BlogPage.module.scss";
 import { blogService } from '@/services/blogService';
-import { Loading } from '../shared/Loading';
-import { ErrorMessage } from '../shared/ErrorMessage';
 import { BlogPost } from '@/types';
 import { UI_CONSTANTS } from '@/constants';
 import { formatJalaliDate, toPersianNumber } from "@/utils/convertToPersianNumber";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import ErrorMessage from "@/components/shared/ErrorMessage";
 
 // Updated TagList component with onTagClick handler
 interface TagListProps {
@@ -199,7 +199,7 @@ const BlogPostList: React.FC = () => {
     router.push(`/blog/tag?tag=${tag}`);
   };
 
-  if (loading) return <Loading />;
+  if (loading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} />;
   if ((blogs.length === 0) && (featuredBlogs.length === 0)) return <p className={styles.noBlogs}>هیچ مقاله‌ای یافت نشد.</p>;
 

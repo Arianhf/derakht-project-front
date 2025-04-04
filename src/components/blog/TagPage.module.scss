@@ -222,27 +222,6 @@
   margin-bottom: 15px;
 }
 
-.loadingContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 300px;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(0, 0, 0, 0.1);
-  border-radius: 50%;
-  border-top-color: #ff6f61;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 /* Responsive styles */
 @media (max-width: 768px) {
   .tagPageContainer {

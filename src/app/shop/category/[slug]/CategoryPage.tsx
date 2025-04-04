@@ -15,8 +15,8 @@ import { useCart } from '@/contexts/CartContext';
 import { Product, ShopFilters, Breadcrumb, ProductCategory } from '@/types/shop';
 import { shopService } from '@/services/shopService';
 import { categoryService } from '@/services/categoryService';
-import { FaSpinner } from 'react-icons/fa';
 import { Toaster } from 'react-hot-toast';
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
 interface CategoryPageProps {
     params: {
@@ -133,10 +133,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ params }) => {
 
                         <div className={styles.productsSection}>
                             {loading ? (
-                                <div className={styles.loaderContainer}>
-                                    <FaSpinner className={styles.spinner} />
-                                    <p>در حال بارگذاری محصولات...</p>
-                                </div>
+                                <LoadingSpinner message="در حال بارگذاری محصولات..." />
                             ) : products.length > 0 ? (
                                 <div className={styles.productsGrid}>
                                     {products.map((product) => (

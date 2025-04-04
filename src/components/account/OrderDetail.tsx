@@ -6,8 +6,10 @@ import Image from 'next/image';
 import { userService } from '@/services/userService';
 import { Order } from '@/types/shop';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
-import { FaArrowRight, FaSpinner, FaCheckCircle, FaTruck, FaBoxOpen, FaTimesCircle } from 'react-icons/fa';
+import { FaArrowRight, FaCheckCircle, FaTruck, FaBoxOpen, FaTimesCircle } from 'react-icons/fa';
 import styles from './OrderDetail.module.scss';
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import ErrorMessage from "@/components/shared/ErrorMessage";
 
 interface OrderDetailProps {
     orderId: string;
@@ -94,26 +96,20 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId }) => {
     };
 
     if (loading) {
-        return (
-            <div className={styles.loadingContainer}>
-                <FaSpinner className={styles.spinner} />
-                <p>در حال بارگذاری اطلاعات سفارش...</p>
-            </div>
-        );
+        return <LoadingSpinner message="در حال بارگذاری اطلاعات سفارش..." />;
     }
 
     if (error || !order) {
         return (
-            <div className={styles.errorContainer}>
-                <h2>خطا در دریافت اطلاعات سفارش</h2>
-                <p>{error || 'اطلاعات سفارش یافت نشد'}</p>
+            <>
+                <ErrorMessage message={error || 'اطلاعات سفارش یافت نشد'} />
                 <button
                     className={styles.backButton}
                     onClick={goBack}
                 >
                     <FaArrowRight /> بازگشت به سفارش‌ها
                 </button>
-            </div>
+            </>
         );
     }
 

@@ -1,0 +1,36 @@
+@import '../../../styles/globals.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-radius: $border-radius-md;
+  border-right: 3px solid #e74c3c;
+}
+
+.message {
+  color: #e74c3c;
+  margin-bottom: $spacing-md;
+  font-size: 16px;
+}
+
+.retryButton {
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: $border-radius-md;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: $font-primary;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-2px);
+  }
+}

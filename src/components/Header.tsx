@@ -5,12 +5,12 @@ import { FaUserCircle } from 'react-icons/fa';
 import { IconContext } from 'react-icons/lib';
 import { blogService } from '@/services/blogService';
 import { Navbar } from './shared/Navbar/Navbar';
-import { Loading } from './shared/Loading';
-import { ErrorMessage } from './shared/ErrorMessage';
 import { HeroPost } from '@/types';
 import Image from 'next/image';
 import logoImage from '../../public/images/logo2.png';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import ErrorMessage from "@/components/shared/ErrorMessage";
 
 const Header: React.FC = () => {
   const [heroPost, setHeroPost] = useState<HeroPost | null>(null);
@@ -40,7 +40,7 @@ const Header: React.FC = () => {
     }
   };
 
-  if (loading) return <Loading />;
+  if (loading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} />;
   if (!heroPost) return <div className={styles.noHero}>مقاله‌ای یافت نشد</div>;
 

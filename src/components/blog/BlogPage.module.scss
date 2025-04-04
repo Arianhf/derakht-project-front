@@ -2,7 +2,7 @@
 
 .blogPageContainer {
   direction: rtl;
-  min-height: $default-min-height;
+  min-height: 100vh;
   //background: $gradient-bg;
   padding-top: 30px; // Reduced from 100px to avoid cutting off content
   position: relative;
