@@ -1,22 +1,20 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useParams, useRouter } from 'next/navigation';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import { Button } from '@/components/shared/Button';
 import Breadcrumbs from '@/components/shop/Breadcrumbs';
 import styles from './productDetails.module.scss';
 import logo from '@/assets/images/logo2.png';
 import heroImage from "../../../../public/images/shop_hero.jpg";
-import { useCart } from '@/contexts/CartContext';
-import { FaPlus, FaMinus, FaTrash, FaArrowRight, FaShoppingCart } from 'react-icons/fa';
+import { FaPlus, FaMinus, FaTrash, FaArrowRight, FaSpinner, FaShoppingCart, FaChild } from 'react-icons/fa';
 import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
 import { Product, ProductImage, Breadcrumb } from '@/types/shop';
 import { shopService } from '@/services/shopService';
 import { Toaster } from 'react-hot-toast';
-import LoadingSpinner from "@/components/shared/LoadingSpinner";
-import ErrorMessage from "@/components/shared/ErrorMessage";
+import { useProductQuantity } from '@/hooks/useProductQuantity';
 
 const ProductDetailsPage: React.FC = () => {
     const router = useRouter();
@@ -31,20 +29,6 @@ const ProductDetailsPage: React.FC = () => {
     const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([
         { label: 'فروشگاه', href: '/shop' },
     ]);
-
-    const {
-        cartDetails,
-        addToCart,
-        increaseQuantity,
-        decreaseQuantity,
-        removeFromCart,
-    } = useCart();
-
-    useEffect(() => {
-        if (productSlug) {
-            fetchProduct();
-        }
-    }, [productSlug]);
 
     const fetchProduct = async () => {
         try {
@@ -71,7 +55,7 @@ const ProductDetailsPage: React.FC = () => {
 
             setBreadcrumbs(updatedBreadcrumbs);
 
-            // Set the feature image as the selected image
+            // Set feature image
             if (data.images && data.images.length > 0) {
                 const featureImage = data.images.find((img: ProductImage) => img.is_feature);
                 setSelectedImage(featureImage ? featureImage.image_url : data.images[0].image_url);
@@ -85,32 +69,23 @@ const ProductDetailsPage: React.FC = () => {
         }
     };
 
-    const getQuantityInCart = (): number => {
-        if (!product || !cartDetails) return 0;
-        const item = cartDetails.items.find(item => item.product.id === product.id);
-        return item ? item.quantity : 0;
-    };
-
-    const handleIncrease = async () => {
-        if (!product) return;
-        await increaseQuantity(product.id);
-    };
-
-    const handleDecrease = async () => {
-        if (!product) return;
-        const quantity = getQuantityInCart();
-        if (quantity > 1) {
-            await decreaseQuantity(product.id);
-        } else {
-            await removeFromCart(product.id);
+    // Use effect to fetch product on component mount
+    useEffect(() => {
+        if (productSlug) {
+            fetchProduct();
         }
-    };
+    }, [productSlug]);
 
-    const handleAddToCart = async () => {
-        if (!product || !product.is_available) return;
-        await addToCart(product.id);
-    };
+    // Use the product quantity hook
+    const {
+        quantity,
+        isInCart,
+        handleAddToCart,
+        handleIncreaseQuantity,
+        handleDecreaseQuantity
+    } = useProductQuantity(product || {} as Product);
 
+    // Comment submission handler
     const handleSubmitComment = () => {
         if (comment.trim()) {
             setComments((prev) => [...prev, comment.trim()]);
@@ -118,25 +93,36 @@ const ProductDetailsPage: React.FC = () => {
         }
     };
 
+    // Go back to shop
     const goBack = () => {
         router.push('/shop');
     };
 
+    // Image selection handler
+    const handleImageSelect = (image: string) => {
+        setSelectedImage(image);
+    };
+
+    // Render loading state
     if (loading) {
         return (
             <div className={styles.productContainer}>
                 <Navbar logo={logo} />
-                <LoadingSpinner message="در حال بارگذاری محصول..." fullPage />
+                <div className={styles.loadingContainer}>
+                    <FaSpinner className={styles.spinner} />
+                    <p>در حال بارگذاری محصول...</p>
+                </div>
             </div>
         );
     }
 
+    // Render not found state
     if (!product) {
         return (
             <div className={styles.productContainer}>
                 <Navbar logo={logo} />
                 <div className={styles.notFound}>
-                    <ErrorMessage message="محصول مورد نظر یافت نشد" />
+                    <h2>محصول مورد نظر یافت نشد</h2>
                     <Button
                         variant="primary"
                         onClick={goBack}
@@ -149,9 +135,6 @@ const ProductDetailsPage: React.FC = () => {
             </div>
         );
     }
-
-    const quantity = getQuantityInCart();
-    const isInCart = quantity > 0;
 
     return (
         <div className={styles.productContainer}>
@@ -176,7 +159,7 @@ const ProductDetailsPage: React.FC = () => {
                 <Breadcrumbs items={breadcrumbs} />
 
                 <div className={styles.productContent}>
-                    {/* Right Column: Product Image Gallery */}
+                    {/* Product Image Gallery */}
                     <div className={styles.productImageGallery}>
                         <div className={styles.mainImageContainer}>
                             {selectedImage ? (
@@ -208,7 +191,7 @@ const ProductDetailsPage: React.FC = () => {
                                     <div
                                         key={index}
                                         className={`${styles.thumbnail} ${selectedImage === image.image_url ? styles.activeThumbnail : ''}`}
-                                        onClick={() => setSelectedImage(image.image_url)}
+                                        onClick={() => handleImageSelect(image.image_url)}
                                     >
                                         <Image
                                             src={image.image_url}
@@ -222,7 +205,7 @@ const ProductDetailsPage: React.FC = () => {
                         )}
                     </div>
 
-                    {/* Left Column: Product Information & Controls */}
+                    {/* Product Details */}
                     <div className={styles.productDetails}>
                         <h1 className={styles.productTitle}>{product.title}</h1>
 
@@ -253,15 +236,17 @@ const ProductDetailsPage: React.FC = () => {
                                     <div className={styles.quantityControls}>
                                         <button
                                             className={styles.decreaseButton}
-                                            onClick={handleDecrease}
+                                            onClick={handleDecreaseQuantity}
                                             aria-label={quantity === 1 ? "حذف از سبد خرید" : "کاهش تعداد"}
                                         >
                                             {quantity === 1 ? <FaTrash /> : <FaMinus />}
                                         </button>
-                                        <span className={styles.quantityDisplay}>{toPersianNumber(quantity)}</span>
+                                        <span className={styles.quantityDisplay}>
+                                            {toPersianNumber(quantity)}
+                                        </span>
                                         <button
                                             className={styles.increaseButton}
-                                            onClick={handleIncrease}
+                                            onClick={handleIncreaseQuantity}
                                             aria-label="افزایش تعداد"
                                         >
                                             <FaPlus />
@@ -314,8 +299,6 @@ const ProductDetailsPage: React.FC = () => {
                         </Button>
                     </div>
                 </div>
-
-                {/* Related products section could be added here */}
 
                 {/* Back to shop button */}
                 <div className={styles.backToShopContainer}>

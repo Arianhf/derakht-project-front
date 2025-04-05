@@ -6,19 +6,21 @@ import Link from 'next/link';
 import styles from './ProductCard.module.scss';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import { Product } from '@/types/shop';
-import { FaShoppingCart, FaChild } from 'react-icons/fa';
+import { FaShoppingCart, FaChild, FaPlus, FaMinus, FaTrash } from 'react-icons/fa';
+import { useProductQuantity } from '@/hooks/useProductQuantity';
 
 interface ProductCardProps {
     product: Product;
-    onAddToCart: (e: React.MouseEvent) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
-    const handleAddToCart = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onAddToCart(e);
-    };
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+    const {
+        quantity,
+        isInCart,
+        handleAddToCart,
+        handleIncreaseQuantity,
+        handleDecreaseQuantity
+    } = useProductQuantity(product);
 
     return (
         <Link href={`/shop/${product.slug}`} className={styles.productCard}>
@@ -52,14 +54,50 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                 <p className={styles.productPrice}>
                     {toPersianNumber(product.price_in_toman.toLocaleString())} تومان
                 </p>
-                <button
-                    className={styles.addToCartButton}
-                    onClick={handleAddToCart}
-                    disabled={!product.is_available}
-                >
-                    <FaShoppingCart />
-                    <span>افزودن به سبد خرید</span>
-                </button>
+
+                {isInCart ? (
+                    <div className={styles.quantityControls}>
+                        <button
+                            className={styles.decreaseButton}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleDecreaseQuantity();
+                            }}
+                            aria-label={quantity === 1 ? "حذف از سبد خرید" : "کاهش تعداد"}
+                        >
+                            {quantity === 1 ? <FaTrash /> : <FaMinus />}
+                        </button>
+                        <span className={styles.quantityDisplay}>
+                            {toPersianNumber(quantity)}
+                        </span>
+                        <button
+                            className={styles.increaseButton}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleIncreaseQuantity();
+                            }}
+                            aria-label="افزایش تعداد"
+                        >
+                            <FaPlus />
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        className={styles.addToCartButton}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleAddToCart();
+                        }}
+                        disabled={!product.is_available}
+                        aria-label="افزودن به سبد خرید"
+                    >
+                        <FaShoppingCart />
+                        <span>افزودن به سبد خرید</span>
+                    </button>
+                )}
             </div>
         </Link>
     );
