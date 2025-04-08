@@ -55,11 +55,6 @@ const ShopPage = () => {
         fetchProducts(newFilters);
     };
 
-    const handleAddToCart = async (product: Product) => {
-        if (!product.is_available) return;
-        await addToCart(product.id);
-    };
-
     return (
         <div className={styles.shopContainer}>
             <Navbar logo={logo} />
@@ -102,7 +97,6 @@ const ShopPage = () => {
                                         <ProductCard
                                             key={product.id}
                                             product={product}
-                                            onAddToCart={() => handleAddToCart(product)}
                                         />
                                     ))}
                                 </div>

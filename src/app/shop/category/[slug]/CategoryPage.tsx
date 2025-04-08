@@ -89,13 +89,9 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ params }) => {
 
     const handleSearch = (searchTerm: string) => {
         const newFilters = { ...filters, searchTerm: searchTerm || undefined };
+
         setFilters(newFilters);
         fetchProducts(newFilters);
-    };
-
-    const handleAddToCart = async (product: Product) => {
-        if (!product.is_available) return;
-        await addToCart(product.id);
     };
 
     return (
@@ -140,7 +136,6 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ params }) => {
                                         <ProductCard
                                             key={product.id}
                                             product={product}
-                                            onAddToCart={() => handleAddToCart(product)}
                                         />
                                     ))}
                                 </div>

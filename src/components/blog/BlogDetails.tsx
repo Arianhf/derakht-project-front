@@ -1,15 +1,15 @@
-'use client';
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FaArrowRight, FaCalendarAlt, FaUserCircle, FaClock, FaComment } from 'react-icons/fa';
+import { FaArrowRight, FaCalendarAlt, FaUserCircle, FaClock, FaComment, FaStar } from 'react-icons/fa';
 import styles from './BlogDetails.module.scss';
 
 interface BlogDetailsProps {
     blog: {
         title: string;
+        subtitle?: string;
+        intro?: string;
         author: {
             first_name: string;
         };
@@ -23,6 +23,8 @@ interface BlogDetailsProps {
             };
             title?: string;
         };
+        featured?: boolean;
+        hero?: boolean;
     };
     logo: any;
 }
@@ -112,7 +114,20 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, logo }) => {
 
                 <article className={styles.blogArticle}>
                     <header className={styles.blogHeader}>
+                        {/* Added featured badge */}
+                        {blog.featured && (
+                            <div className={styles.featuredBadge}>
+                                <FaStar /> مقاله ویژه
+                            </div>
+                        )}
+
                         <h1 className={styles.blogTitle}>{blog.title}</h1>
+
+                        {/* Added subtitle */}
+                        {blog.subtitle && (
+                            <h2 className={styles.blogSubtitle}>{blog.subtitle}</h2>
+                        )}
+
                         <div className={styles.blogMeta}>
                             <div className={styles.metaItem}>
                                 <FaUserCircle size={18} />
@@ -162,8 +177,15 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, logo }) => {
                         </div>
                     )}
 
+                    {/* Added intro section */}
+                    {blog.intro && (
+                        <div className={styles.blogIntro}>
+                            <p>{blog.intro}</p>
+                        </div>
+                    )}
+
                     <div className={styles.blogContent}>
-                        {/* We need to use useEffect to run the processing client-side since DOMParser isn't available during SSR */}
+                        {/* We use body instead of content now */}
                         {typeof window !== 'undefined' ? (
                             <div dangerouslySetInnerHTML={{ __html: processContent(blog.content) }} />
                         ) : (

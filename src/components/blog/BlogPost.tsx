@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from 'next/image';
-import { FaUserCircle, FaCalendarAlt, FaClock } from 'react-icons/fa';
+import { FaUserCircle, FaCalendarAlt, FaClock, FaStar } from 'react-icons/fa';
 import styles from "./BlogPage.module.scss";
 import { blogService } from '@/services/blogService';
 import { BlogPost } from '@/types';
@@ -32,12 +32,84 @@ const TagList: React.FC<TagListProps> = ({ tags, onTagClick, className, tagClass
                   onTagClick(tag);
                 }}
             >
-          {tag}
-        </span>
+              {tag}
+            </span>
         ))}
       </div>
   );
 };
+
+// Enhanced Hero Post component with subtitle and intro
+interface HeroPostProps {
+  blog: BlogPost;
+  onNavigate: (id: number) => void;
+  onTagClick: (tag: string) => void;
+}
+
+const HeroPostCard: React.FC<HeroPostProps> = ({ blog, onNavigate, onTagClick }) => (
+    <div
+        className={styles.heroSection}
+        onClick={() => onNavigate(blog.id)}
+        style={{ cursor: 'pointer' }}
+    >
+      <Image
+          src={blog.header_image?.meta?.download_url || "/default-image.jpg"}
+          alt={blog.header_image?.title || blog.title}
+          className={styles.headerImage}
+          fill
+          priority
+          sizes="100vw"
+      />
+      <div className={styles.imageOverlay}></div>
+      <div className={styles.overlay}>
+        <div className={styles.heroContent}>
+          {blog.tags && blog.tags.length > 0 && (
+              <div className={styles.headerTags}>
+                {blog.tags.map((tag, index) => (
+                    <span
+                        key={index}
+                        className={styles.tag}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onTagClick(tag);
+                        }}
+                    >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+          )}
+          <h1 className={styles.headerTitle}>{blog.title}</h1>
+          {blog.subtitle && (
+              <p className={styles.headerSubtitle}>{blog.subtitle}</p>
+          )}
+          {blog.intro && (
+              <p className={styles.headerIntro}>{blog.intro}</p>
+          )}
+          <div className={styles.authorInfo}>
+            <FaUserCircle className={styles.authorIcon} />
+            <div className={styles.authorDetails}>
+              <div className={styles.authorName}>
+                نویسنده: {blog.owner?.first_name}
+              </div>
+              <div className={styles.authorMeta}>
+                <span>
+                  <FaCalendarAlt style={{ marginLeft: '5px' }} />
+                  نوشته شده در {formatJalaliDate(blog.jalali_date || "")}
+                </span>
+                {blog.reading_time && (
+                    <span>
+                      <FaClock style={{ marginLeft: '5px' }} />
+                      {toPersianNumber(blog.reading_time)} دقیقه مطالعه
+                    </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+);
 
 interface FeaturedBlogProps {
   blog: BlogPost;
@@ -52,7 +124,13 @@ const FeaturedBlogCard: React.FC<FeaturedBlogProps> = ({ blog, onNavigate, onTag
         style={{ cursor: "pointer" }}
     >
       <div className={styles.featuredContent}>
-        <h2 className={styles.featuredTitle}>{blog.title}</h2>
+        <h2 className={styles.featuredTitle}>
+          {blog.featured && <FaStar className={styles.featuredIcon} />}
+          {blog.title}
+        </h2>
+        {blog.subtitle && (
+            <p className={styles.featuredSubtitle}>{blog.subtitle}</p>
+        )}
         {blog.tags && blog.tags.length > 0 && (
             <TagList
                 tags={blog.tags}
@@ -61,6 +139,9 @@ const FeaturedBlogCard: React.FC<FeaturedBlogProps> = ({ blog, onNavigate, onTag
                 tagClassName={styles.featuredTag}
             />
         )}
+        {blog.intro && (
+            <p className={styles.featuredIntro}>{blog.intro}</p>
+        )}
         <div className={styles.authorInfo}>
           <div className={styles.authorDetails}>
             <div className={styles.authorName}>
@@ -68,15 +149,15 @@ const FeaturedBlogCard: React.FC<FeaturedBlogProps> = ({ blog, onNavigate, onTag
               نویسنده: {blog.owner?.first_name}
             </div>
             <div className={styles.blogMeta}>
-                      <span className={styles.blogMetaDetail}>
-                        <FaCalendarAlt style={{marginLeft: '5px'}}/>
-                        نوشته شده در {formatJalaliDate(blog.jalali_date || "")}
-                      </span>
+              <span className={styles.blogMetaDetail}>
+                <FaCalendarAlt style={{marginLeft: '5px'}}/>
+                نوشته شده در {formatJalaliDate(blog.jalali_date || "")}
+              </span>
               {blog.reading_time && (
                   <span className={styles.blogMetaDetail}>
-                          <FaClock style={{marginLeft: '5px'}}/>
+                    <FaClock style={{marginLeft: '5px'}}/>
                     {toPersianNumber(blog.reading_time)} دقیقه مطالعه
-                        </span>
+                  </span>
               )}
             </div>
           </div>
@@ -94,7 +175,7 @@ const FeaturedBlogCard: React.FC<FeaturedBlogProps> = ({ blog, onNavigate, onTag
       <div className={styles.featuredImageContainer}>
         <Image
             src={blog.header_image?.meta?.download_url || "/default-image.jpg"}
-            alt={blog.header_image?.title || "Featured Blog Image"}
+            alt={blog.header_image?.title || blog.title || "Featured Blog Image"}
             className={styles.featuredImage}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
@@ -123,11 +204,27 @@ const RegularBlogCard: React.FC<RegularBlogCardProps> = ({blog, onNavigate, onTa
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
+        {blog.featured && (
+            <span className={styles.cardFeaturedBadge}>
+            <FaStar />
+          </span>
+        )}
       </div>
       <div className={styles.blogCardContent}>
         <h3 className={styles.blogCardTitle}>{blog.title}</h3>
+        {blog.subtitle && (
+            <p className={styles.blogCardSubtitle}>{blog.subtitle}</p>
+        )}
         {blog.tags && blog.tags.length > 0 && (
-            <TagList tags={blog.tags} onTagClick={onTagClick} className={styles.blogCardTagContainer} tagClassName={styles.blogCardTag}/>
+            <TagList
+                tags={blog.tags}
+                onTagClick={onTagClick}
+                className={styles.blogCardTagContainer}
+                tagClassName={styles.blogCardTag}
+            />
+        )}
+        {blog.intro && (
+            <p className={styles.blogCardIntro}>{blog.intro}</p>
         )}
         <div className={styles.authorInfo}>
           <div className={styles.authorDetails}>
@@ -136,15 +233,15 @@ const RegularBlogCard: React.FC<RegularBlogCardProps> = ({blog, onNavigate, onTa
               نویسنده: {blog.owner?.first_name}
             </div>
             <div className={styles.blogMeta}>
-                      <span className={styles.blogMetaDetail}>
-                        <FaCalendarAlt style={{marginLeft: '5px'}}/>
-                        نوشته شده در {formatJalaliDate(blog.jalali_date || "")}
-                      </span>
+              <span className={styles.blogMetaDetail}>
+                <FaCalendarAlt style={{marginLeft: '5px'}}/>
+                نوشته شده در {formatJalaliDate(blog.jalali_date || "")}
+              </span>
               {blog.reading_time && (
                   <span className={styles.blogMetaDetail}>
-                          <FaClock style={{marginLeft: '5px'}}/>
+                    <FaClock style={{marginLeft: '5px'}}/>
                     {toPersianNumber(blog.reading_time)} دقیقه مطالعه
-                        </span>
+                  </span>
               )}
             </div>
           </div>
@@ -165,6 +262,7 @@ const RegularBlogCard: React.FC<RegularBlogCardProps> = ({blog, onNavigate, onTa
 const BlogPostList: React.FC = () => {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [featuredBlogs, setFeaturedBlogs] = useState<BlogPost[]>([]);
+  const [heroPost, setHeroPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -178,7 +276,19 @@ const BlogPostList: React.FC = () => {
         ]);
 
         setBlogs(regularPosts.items);
-        setFeaturedBlogs(featuredPosts.items);
+
+        // Filter featured posts that are not hero posts
+        const featured = featuredPosts.items.filter(post => post.featured && !post.hero);
+        setFeaturedBlogs(featured);
+
+        // Find the hero post
+        const hero = featuredPosts.items.find(post => post.hero);
+        if (hero) {
+          setHeroPost(hero);
+        } else if (featured.length > 0) {
+          setHeroPost(featured[0]);
+          setFeaturedBlogs(featured.slice(1));
+        }
       } catch (err) {
         console.error(err);
         setError(UI_CONSTANTS.ERROR_MESSAGE);
@@ -194,87 +304,34 @@ const BlogPostList: React.FC = () => {
     router.push(`/blog/${id}`);
   };
 
-  // New function to handle tag clicks
   const handleTagClick = (tag: string) => {
     router.push(`/blog/tag?tag=${tag}`);
   };
 
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} />;
-  if ((blogs.length === 0) && (featuredBlogs.length === 0)) return <p className={styles.noBlogs}>هیچ مقاله‌ای یافت نشد.</p>;
+  if ((blogs.length === 0) && (featuredBlogs.length === 0) && !heroPost) {
+    return <p className={styles.noBlogs}>هیچ مقاله‌ای یافت نشد.</p>;
+  }
 
   return (
       <div className={styles.blogPageContainer}>
         <div className={styles.contentWrapper}>
           {/* Hero Post */}
-          {featuredBlogs.length > 0 && (
-              <div
-                  className={styles.heroSection}
-                  onClick={() => handleNavigate(featuredBlogs[0].id)}
-                  style={{ cursor: "pointer" }}
-              >
-                <Image
-                    src={featuredBlogs[0].header_image?.meta?.download_url || "/default-image.jpg"}
-                    alt={featuredBlogs[0].title}
-                    className={styles.headerImage}
-                    fill
-                    priority
-                    sizes="100vw"
-                />
-                <div className={styles.imageOverlay}></div>
-                <div className={styles.overlay}>
-                  <div className={styles.heroContent}>
-                    {featuredBlogs[0].tags && featuredBlogs[0].tags.length > 0 && (
-                        <div className={styles.headerTags}>
-                          {featuredBlogs[0].tags.map((tag, index) => (
-                              <span
-                                  key={index}
-                                  className={styles.tag}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleTagClick(tag);
-                                  }}
-                              >
-                        {tag}
-                      </span>
-                          ))}
-                        </div>
-                    )}
-                    <h1 className={styles.headerTitle}>{featuredBlogs[0].title}</h1>
-                    {featuredBlogs[0].subtitle && (
-                        <p className={styles.headerSubtitle}>{featuredBlogs[0].subtitle}</p>
-                    )}
-                    <div className={styles.authorInfo}>
-                      <FaUserCircle className={styles.authorIcon} />
-                      <div className={styles.authorDetails}>
-                        <div className={styles.authorName}>
-                          نویسنده: {featuredBlogs[0].owner?.first_name}
-                        </div>
-                        <div className={styles.authorMeta}>
-                      <span>
-                        <FaCalendarAlt style={{ marginLeft: '5px' }} />
-                        نوشته شده در {formatJalaliDate(featuredBlogs[0].jalali_date || "")}
-                      </span>
-                          {featuredBlogs[0].reading_time && (
-                              <span>
-                          <FaClock style={{ marginLeft: '5px' }} />
-                                {toPersianNumber(featuredBlogs[0].reading_time)} دقیقه مطالعه
-                        </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          {heroPost && (
+              <HeroPostCard
+                  blog={heroPost}
+                  onNavigate={handleNavigate}
+                  onTagClick={handleTagClick}
+              />
           )}
 
-          {/* Featured Blogs Section - Skip the first one as it's in the hero section */}
-          {featuredBlogs.length > 1 && (
+          {/* Featured Blogs Section */}
+          {featuredBlogs.length > 0 && (
               <section className={styles.featuredSection}>
                 <h2 className={styles.sectionTitle}>مقالات ویژه</h2>
                 <div className={styles.featuredGrid}>
-                  {featuredBlogs.slice(1).map((blog) => (
+                  {featuredBlogs.map((blog) => (
                       <FeaturedBlogCard
                           key={blog.id}
                           blog={blog}
