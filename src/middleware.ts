@@ -7,11 +7,6 @@ export function middleware(req: NextRequest) {
     console.log(isAuthenticated);
     console.log(req.nextUrl.pathname);
 
-    // Redirect root to blog page
-    if (req.nextUrl.pathname === "/") {
-        return NextResponse.redirect(new URL("/blog", req.url));
-    }
-
     // Check authentication for protected routes
     if (!isAuthenticated &&
         (req.nextUrl.pathname !== "/login" &&

@@ -1,0 +1,677 @@
+@import '../../styles/globals.scss';
+
+.aboutContainer {
+  min-height: $default-min-height;
+  background: $gradient-bg;
+}
+
+.headerSection {
+  position: relative;
+  padding: 190px $spacing-md $spacing-xl;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  animation: fadeIn 1s ease-out;
+}
+
+.headerTitle {
+  display: inline-block;
+  position: relative;
+  font-size: $font-size-title;
+  font-weight: bold;
+  color: $dark-text;
+  margin-bottom: 25px;
+}
+
+.titleUnderline {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, $primary-color, $secondary-color, $accent-color);
+}
+
+.headerEmoji {
+  position: absolute;
+  font-size: 1.8rem;
+}
+
+.rainbowEmoji {
+  top: -35px;
+  right: 0;
+}
+
+.sparkleEmoji {
+  top: -25px;
+  right: 80px;
+  font-size: 1.3rem;
+}
+
+.headerDescription {
+  max-width: 800px;
+  margin: 0 auto;
+  font-size: $font-size-lg;
+  line-height: $line-height-base;
+  color: $light-text;
+}
+
+.emphasis {
+  font-weight: bold;
+  font-size: $font-size-xl;
+  color: $primary-color;
+}
+
+.storySection {
+  padding: $spacing-xl $spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 1s ease-out;
+  animation-delay: 0.3s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.storyCard {
+  background-color: rgba($card-bg, 0.8);
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-md;
+  position: relative;
+  overflow: hidden;
+}
+
+.decorCircle {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
+
+.yellowCircle {
+  background-color: rgba($secondary-color, 0.2);
+  top: -70px;
+  right: -70px;
+}
+
+.blueCircle {
+  background-color: rgba($primary-color, 0.2);
+  bottom: -70px;
+  left: -70px;
+}
+
+.storyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-lg;
+  position: relative;
+  z-index: 1;
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: row;
+  }
+}
+
+.storyText {
+  text-align: right;
+  order: 2;
+
+  @media (min-width: $breakpoint-md) {
+    width: 50%;
+    order: 1;
+  }
+}
+
+.storyTitle {
+  display: inline-block;
+  position: relative;
+  font-size: $font-size-xxl;
+  font-weight: bold;
+  color: $dark-text;
+  margin-bottom: 25px;
+}
+
+.storyTitleUnderline {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: $secondary-color;
+}
+
+.storyParagraph {
+  color: $light-text;
+  line-height: $line-height-base;
+  font-size: $font-size-base;
+  margin-bottom: $spacing-sm;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.storyImageContainer {
+  order: 1;
+  display: flex;
+  justify-content: center;
+
+  @media (min-width: $breakpoint-md) {
+    width: 50%;
+    order: 2;
+  }
+}
+
+.storyImageWrapper {
+  width: 250px;
+  height: 250px;
+  position: relative;
+
+  @media (min-width: $breakpoint-md) {
+    width: 350px;
+    height: 350px;
+  }
+}
+
+.storyImage {
+  object-fit: cover;
+  border-radius: 50%;
+  border: 8px solid $card-bg;
+  box-shadow: $shadow-md;
+}
+
+.missionSection {
+  padding: $spacing-xl $spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 1s ease-out;
+  animation-delay: 0.6s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.missionGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.missionCard {
+  padding: $spacing-lg;
+  border-radius: $border-radius-lg;
+  text-align: right;
+  position: relative;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+}
+
+.purpleCard {
+  background-color: rgba($primary-color, 0.1);
+}
+
+.tealCard {
+  background-color: rgba($secondary-color, 0.1);
+}
+
+.cornerTriangle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.purpleTriangle {
+  border-width: 0 50px 50px 0;
+  border-color: transparent rgba($primary-color, 0.3) transparent transparent;
+}
+
+.tealTriangle {
+  border-width: 0 50px 50px 0;
+  border-color: transparent rgba($secondary-color, 0.3) transparent transparent;
+}
+
+.missionIconContainer {
+  width: 70px;
+  height: 70px;
+  background-color: $card-bg;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-sm;
+}
+
+.purpleIcon {
+  color: $primary-color;
+}
+
+.tealIcon {
+  color: $secondary-color;
+}
+
+.missionTitle {
+  font-size: $font-size-xl;
+  font-weight: bold;
+  margin-bottom: $spacing-md;
+}
+
+.purpleTitle {
+  color: $primary-color;
+}
+
+.tealTitle {
+  color: $secondary-color;
+}
+
+.missionDescription {
+  color: $light-text;
+  line-height: $line-height-base;
+  font-size: $font-size-base;
+  margin-bottom: $spacing-sm;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.teamSection {
+  padding: $spacing-xl $spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 1s ease-out;
+  animation-delay: 0.9s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.teamCard {
+  background-color: rgba($card-bg, 0.8);
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-md;
+  text-align: right;
+}
+
+.teamTitle {
+  display: inline-block;
+  position: relative;
+  font-size: $font-size-xxl;
+  font-weight: bold;
+  color: $dark-text;
+  margin-bottom: $spacing-lg;
+}
+
+.teamTitleUnderline {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: $secondary-color;
+}
+
+.teamContent {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: row;
+  }
+}
+
+.teamDescription {
+  text-align: right;
+
+  @media (min-width: $breakpoint-md) {
+    width: 50%;
+  }
+}
+
+.teamParagraph {
+  color: $light-text;
+  line-height: $line-height-base;
+  font-size: $font-size-base;
+  margin-bottom: $spacing-md;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.teamRoles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+
+  @media (min-width: $breakpoint-md) {
+    width: 50%;
+  }
+}
+
+.roleItem {
+  text-align: center;
+}
+
+.roleIconContainer {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto $spacing-sm;
+}
+
+.yellowIconBg {
+  background-color: rgba($accent-color, 0.1);
+}
+
+.blueIconBg {
+  background-color: rgba($primary-color, 0.1);
+}
+
+.purpleIconBg {
+  background-color: rgba($secondary-color, 0.1);
+}
+
+.greenIconBg {
+  background-color: rgba($accent-color, 0.15);
+}
+
+.yellowIcon {
+  color: $accent-color;
+  font-size: 1.5rem;
+}
+
+.blueIcon {
+  color: $primary-color;
+  font-size: 1.5rem;
+}
+
+.purpleIcon {
+  color: $secondary-color;
+  font-size: 1.5rem;
+}
+
+.greenIcon {
+  color: darken($accent-color, 10%);
+  font-size: 1.5rem;
+}
+
+.roleTitle {
+  font-weight: bold;
+  color: $light-text;
+}
+
+.valuesSection {
+  padding: $spacing-xl $spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 1s ease-out;
+  animation-delay: 1.2s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.valuesSectionTitle {
+  position: relative;
+  font-size: $font-size-xxl;
+  font-weight: bold;
+  text-align: center;
+  color: $dark-text;
+  display: inline-block;
+  margin: 0 auto $spacing-xl;
+}
+
+.valuesTitleUnderline {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(to right, $primary-color, $secondary-color, $accent-color);
+}
+
+.valuesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-md;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.valueCard {
+  background-color: rgba($card-bg, 0.8);
+  border-radius: $border-radius-md;
+  padding: $spacing-md;
+  text-align: center;
+  box-shadow: $shadow-sm;
+  transition: $transition-base;
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.valueIconContainer {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto $spacing-md;
+}
+
+.valueTitle {
+  font-size: $font-size-lg;
+  font-weight: bold;
+  margin-bottom: $spacing-sm;
+}
+
+.valueDescription {
+  color: $light-text;
+  line-height: $line-height-base;
+}
+
+.approachSection {
+  padding: $spacing-xl $spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.approachCard {
+  background: linear-gradient(to right, $accent-color, lighten($accent-color, 15%));
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  color: $dark-text;
+  box-shadow: $shadow-md;
+  text-align: right;
+}
+
+.approachTitle {
+  font-size: $font-size-xxl;
+  font-weight: bold;
+  margin-bottom: $spacing-md;
+}
+
+.approachGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-md;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.approachItem {
+  margin-bottom: $spacing-md;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.approachItemTitle {
+  display: flex;
+  align-items: center;
+  font-size: $font-size-lg;
+  font-weight: bold;
+  margin-bottom: $spacing-sm;
+  border-right: 4px solid $primary-color;
+  padding-right: 12px;
+}
+
+.approachDescription {
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+}
+
+.invitationSection {
+  padding: $spacing-xl $spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.invitationCard {
+  background-color: rgba($card-bg, 0.8);
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-md;
+}
+
+.invitationTitle {
+  font-size: $font-size-xxl;
+  font-weight: bold;
+  color: $dark-text;
+  margin-bottom: $spacing-md;
+}
+
+.invitationDescription {
+  font-size: $font-size-lg;
+  color: $light-text;
+  line-height: $line-height-base;
+  max-width: 800px;
+  margin: 0 auto $spacing-md;
+}
+
+.invitationButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  justify-content: center;
+}
+
+.invitationButton {
+  padding: $spacing-sm $spacing-md;
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $border-radius-full;
+  font-size: $font-size-base;
+  font-weight: bold;
+  cursor: pointer;
+  transition: $transition-base;
+  text-decoration: none;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-3px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.tealButton {
+  background-color: $secondary-color;
+
+  &:hover {
+    background-color: darken($secondary-color, 10%);
+  }
+}
+
+.footer {
+  background-color: $dark-text;
+  color: white;
+  padding: $spacing-xl $spacing-md;
+  text-align: center;
+}
+
+.footerGrid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.footerColumn {
+  text-align: center;
+}
+
+.footerTitle {
+  font-size: $font-size-lg;
+  font-weight: bold;
+  margin-bottom: $spacing-sm;
+}
+
+.footerLinks {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.footerLink {
+  color: white;
+  text-decoration: none;
+  transition: $transition-fast;
+
+  &:hover {
+    color: $accent-color;
+  }
+}
+
+.footerDivider {
+  margin-top: $spacing-lg;
+  padding-top: $spacing-md;
+  border-top: 1px solid lighten($dark-text, 15%);
+}
+
+.copyright {
+  color: rgba(white, 0.7);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

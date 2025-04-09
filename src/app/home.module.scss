@@ -1,0 +1,567 @@
+@import '../styles/globals.scss';
+
+.homeContainer {
+  min-height: $default-min-height;
+  background: $gradient-bg;
+}
+
+.heroSection {
+  position: relative;
+  padding: 170px $spacing-md $spacing-xl;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 1s ease-out;
+}
+
+.heroContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: row;
+  }
+}
+
+.heroText {
+  text-align: right;
+  margin-bottom: $spacing-lg;
+  order: 2;
+
+  @media (min-width: $breakpoint-md) {
+    width: 50%;
+    margin-bottom: 0;
+    order: 1;
+  }
+}
+
+.heroTitle {
+  font-size: $font-size-xxl;
+  font-weight: bold;
+  color: $dark-text;
+  margin-bottom: $spacing-md;
+  position: relative;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-title;
+  }
+}
+
+.heroEmphasis {
+  display: block;
+  font-size: $font-size-title;
+  color: $primary-color;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: 3rem;
+  }
+}
+
+.sparkle {
+  position: absolute;
+  font-size: 1.5rem;
+  color: $secondary-color;
+}
+
+.sparkleTop {
+  top: -30px;
+  right: -20px;
+}
+
+.sparkleBottom {
+  bottom: -10px;
+  left: -15px;
+}
+
+.heroDescription {
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $light-text;
+  margin-bottom: $spacing-lg;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-lg;
+  }
+}
+
+.buttonContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  justify-content: flex-start;
+}
+
+.primaryButton {
+  padding: $spacing-sm $spacing-md;
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $border-radius-full;
+  font-size: $font-size-base;
+  font-weight: bold;
+  cursor: pointer;
+  transition: $transition-base;
+  box-shadow: $shadow-sm;
+  font-family: $font-primary;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-3px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.secondaryButton {
+  padding: $spacing-sm $spacing-md;
+  background-color: $secondary-color;
+  color: white;
+  border: none;
+  border-radius: $border-radius-full;
+  font-size: $font-size-base;
+  font-weight: bold;
+  cursor: pointer;
+  transition: $transition-base;
+  box-shadow: $shadow-sm;
+  font-family: $font-primary;
+
+  &:hover {
+    background-color: darken($secondary-color, 10%);
+    transform: translateY(-3px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.heroImageContainer {
+  order: 1;
+  position: relative;
+
+  @media (min-width: $breakpoint-md) {
+    width: 50%;
+    order: 2;
+  }
+}
+
+.heroImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 250px;
+
+  @media (min-width: $breakpoint-md) {
+    height: 400px;
+  }
+}
+
+.heroImage {
+  object-fit: cover;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+}
+
+.floatingCircle {
+  position: absolute;
+  border-radius: 50%;
+  box-shadow: $shadow-sm;
+}
+
+.yellowCircle {
+  width: 60px;
+  height: 60px;
+  background-color: rgba($accent-color, 0.6);
+  top: -30px;
+  right: -20px;
+  animation: bounce 3s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+.pinkCircle {
+  width: 50px;
+  height: 50px;
+  background-color: rgba($secondary-color, 0.6);
+  bottom: -25px;
+  left: -25px;
+  animation: bounce 3s ease-in-out infinite;
+}
+
+.blueCircle {
+  width: 40px;
+  height: 40px;
+  background-color: rgba($primary-color, 0.6);
+  top: 50%;
+  right: -15px;
+  animation: bounce 3s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.featuresSection {
+  padding: $spacing-xl $spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 1s ease-out;
+  animation-delay: 0.3s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.sectionTitle {
+  font-size: $font-size-title;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: $spacing-xl;
+  color: $dark-text;
+  position: relative;
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.titleUnderline {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, $primary-color, $secondary-color, $accent-color);
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.featureCard {
+  background-color: rgba($card-bg, 0.8);
+  padding: $spacing-md;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-sm;
+  text-align: center;
+  transition: $transition-base;
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.featureIconContainer {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto $spacing-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.purpleIcon {
+  background-color: rgba($primary-color, 0.1);
+  color: $primary-color;
+}
+
+.greenIcon {
+  background-color: rgba($accent-color, 0.1);
+  color: $accent-color;
+}
+
+.blueIcon {
+  background-color: rgba($primary-color, 0.1);
+  color: $primary-color;
+}
+
+.yellowIcon {
+  background-color: rgba($secondary-color, 0.1);
+  color: $secondary-color;
+}
+
+.featureTitle {
+  font-size: $font-size-lg;
+  font-weight: bold;
+  margin-bottom: $spacing-sm;
+}
+
+.purpleTitle {
+  color: $dark-text;
+}
+
+.greenTitle {
+  color: $accent-color;
+}
+
+.blueTitle {
+  color: $primary-color;
+}
+
+.yellowTitle {
+  color: $secondary-color;
+}
+
+.featureDescription {
+  color: $light-text;
+  line-height: $line-height-base;
+}
+
+.valuesSection {
+  padding: $spacing-xl $spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 1s ease-out;
+  animation-delay: 0.5s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.valuesContainer {
+  background-color: rgba($card-bg, 0.7);
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-md;
+  position: relative;
+  overflow: hidden;
+}
+
+.valuesTopBorder {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(to right, $primary-color, $secondary-color, $accent-color);
+}
+
+.valuesTitle {
+  font-size: $font-size-xxl;
+  font-weight: bold;
+  text-align: right;
+  margin-bottom: $spacing-lg;
+  color: $dark-text;
+}
+
+.valuesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-md;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.valueItem {
+  padding: $spacing-sm;
+  text-align: right;
+  border-radius: $border-radius-sm;
+  transition: $transition-fast;
+  border-right-width: 4px;
+  border-right-style: solid;
+  padding-right: $spacing-sm;
+}
+
+.purpleBorder {
+  border-right-color: $dark-text;
+
+  &:hover {
+    background-color: rgba($dark-text, 0.05);
+  }
+}
+
+.greenBorder {
+  border-right-color: $accent-color;
+
+  &:hover {
+    background-color: rgba($accent-color, 0.05);
+  }
+}
+
+.blueBorder {
+  border-right-color: $primary-color;
+
+  &:hover {
+    background-color: rgba($primary-color, 0.05);
+  }
+}
+
+.yellowBorder {
+  border-right-color: $secondary-color;
+
+  &:hover {
+    background-color: rgba($secondary-color, 0.05);
+  }
+}
+
+.valueTitle {
+  font-size: $font-size-lg;
+  font-weight: bold;
+  margin-bottom: $spacing-xs;
+}
+
+.purpleValueTitle {
+  color: $dark-text;
+}
+
+.greenValueTitle {
+  color: $accent-color;
+}
+
+.blueValueTitle {
+  color: $primary-color;
+}
+
+.yellowValueTitle {
+  color: $secondary-color;
+}
+
+.valueDescription {
+  color: $light-text;
+  line-height: $line-height-base;
+}
+
+.ctaSection {
+  padding: $spacing-xl $spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ctaCard {
+  background: linear-gradient(to right, $accent-color, lighten($accent-color, 15%));
+  border-radius: $border-radius-lg;
+  padding: $spacing-xl;
+  box-shadow: $shadow-md;
+  color: $dark-text;
+}
+
+.ctaTitle {
+  font-size: $font-size-xxl;
+  font-weight: bold;
+  margin-bottom: $spacing-md;
+}
+
+.ctaDescription {
+  font-size: $font-size-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.ctaButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  justify-content: center;
+}
+
+.ctaButton {
+  padding: $spacing-sm $spacing-md;
+  border-radius: $border-radius-full;
+  font-size: $font-size-base;
+  font-weight: bold;
+  cursor: pointer;
+  transition: $transition-base;
+  font-family: $font-primary;
+}
+
+.yellowButton {
+  background-color: $primary-color;
+  color: white;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-3px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.whiteButton {
+  background-color: white;
+  color: $primary-color;
+
+  &:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-3px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.footer {
+  background-color: $dark-text;
+  color: white;
+  padding: $spacing-xl $spacing-md;
+  text-align: center;
+}
+
+.footerGrid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.footerColumn {
+  text-align: center;
+}
+
+.footerTitle {
+  font-size: $font-size-lg;
+  font-weight: bold;
+  margin-bottom: $spacing-sm;
+}
+
+.footerLinks {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.footerLink {
+  color: white;
+  text-decoration: none;
+  transition: $transition-fast;
+
+  &:hover {
+    color: $accent-color;
+  }
+}
+
+.footerDivider {
+  margin-top: $spacing-lg;
+  padding-top: $spacing-md;
+  border-top: 1px solid lighten($dark-text, 15%);
+}
+
+.copyright {
+  color: rgba(white, 0.7);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}

@@ -55,8 +55,8 @@ const NavigationLinks: React.FC<NavigationLinksProps> = ({ pathname }) => {
                 <Link href="/blog" className={styles.navbarLink}>
                     <span className={pathname?.startsWith('/blog') ? styles.active : ''}>بلاگ</span>
                 </Link>
-                <Link href="/contact" className={styles.navbarLink}>
-                    <span className={pathname?.startsWith('/contact') ? styles.active : ''}>تماس با ما</span>
+                <Link href="/about" className={styles.navbarLink}>
+                    <span className={pathname?.startsWith('/about') ? styles.active : ''}>درباره ما</span>
                 </Link>
             </div>
 
