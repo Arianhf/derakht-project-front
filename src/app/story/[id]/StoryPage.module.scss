@@ -1,0 +1,463 @@
+@import '../../../styles/globals.scss';
+
+// Main Page Container
+.storyPage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: $gradient-bg;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.1;
+    background-image: $clouds;
+    background-repeat: repeat;
+    background-size: 300px 300px;
+    z-index: 0;
+  }
+}
+
+// Loading and Error States
+.loadingContainer,
+.errorContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 18px;
+  color: $dark-text;
+  padding: 20px;
+  text-align: center;
+}
+
+// Desktop Layout
+.desktopContent {
+  display: flex;
+  flex-direction: column;
+  padding: 140px 20px 15px;
+  max-width: 1200px;
+  gap: 20px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  height: 100vh; // Subtract navbar height
+}
+
+// Main container for input and image
+.mainContainer {
+  display: flex;
+  gap: 20px;
+  height: 70%;
+  width: 100%;
+}
+
+// Image container - Right panel
+.imageContainer {
+  width: 50%;
+  position: relative;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  height: 100%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.mainImage {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: $border-radius-lg;
+  transition: transform 1s ease;
+
+  &:hover {
+    transform: scale(1.03);
+  }
+}
+
+.pageIndicator {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  background-color: rgba($primary-color, 0.8);
+  color: white;
+  padding: 5px 15px;
+  border-radius: $border-radius-full;
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 2;
+  box-shadow: $shadow-sm;
+}
+
+
+// Story Input - Left panel
+.storyContainer {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: $card-bg;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  padding: 20px;
+  height: 100%;
+}
+
+.storyInput {
+  width: 100%;
+  flex: 1;
+  font-family: $font-primary;
+  font-size: 18px;
+  line-height: 1.6;
+  padding: 15px;
+  border: 1px solid #e8e8e8;
+  border-radius: $border-radius-md;
+  resize: none;
+  text-align: right;
+  direction: rtl;
+  color: $dark-text;
+  background-color: #fafafa;
+  margin-bottom: 20px;
+  min-height: 150px;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+
+  &::placeholder {
+    color: #aaa;
+  }
+}
+
+// Thumbnails at bottom
+.thumbnailsContainer {
+  width: 100%;
+  background-color: $card-bg;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  padding: 15px;
+  height: 25%;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.imageGallery {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 15px;
+  overflow-x: auto;
+  height: 100%;
+  padding: 5px;
+
+  // Custom scrollbar styling
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #bbb;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
+}
+
+.galleryItem {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 auto;
+  height: 100%;
+}
+
+.imageNumber {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: $primary-color;
+  color: white;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: $shadow-sm;
+  z-index: 2;
+}
+
+.galleryImage {
+  width: 120px !important;
+  height: 100% !important;
+  border-radius: $border-radius-md;
+  object-fit: cover;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
+
+  &.selected {
+    border-color: $primary-color;
+    transform: scale(1.05);
+    box-shadow: $shadow-md;
+  }
+
+  &:hover:not(.selected) {
+    transform: translateY(-3px);
+    box-shadow: $shadow-sm;
+  }
+}
+
+// Mobile Layout
+.mobileContent {
+  display: flex;
+  flex-direction: column;
+  padding: 100px 15px 30px;
+  gap: 20px;
+  max-width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.mobileImageContainer {
+  width: 100%;
+  position: relative;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  height: 100%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+}
+
+.mobileMainImage {
+  object-fit: cover;
+  border-radius: $border-radius-lg;
+}
+
+.mobileStoryContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: $card-bg;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  padding: 15px;
+}
+
+// Navigation Buttons
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  direction: rtl;
+}
+
+.prevButton,
+.nextButton {
+  padding: 10px 25px;
+  font-size: 16px;
+  border: none;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  font-family: $font-primary;
+  transition: all 0.3s ease;
+}
+
+.prevButton {
+  background-color: #e1e1e1;
+  color: $dark-text;
+
+  &:hover:not(:disabled) {
+    background-color: #d1d1d1;
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    background-color: #f1f1f1;
+    color: #aaa;
+    cursor: not-allowed;
+  }
+}
+
+.nextButton {
+  background-color: $primary-color;
+  color: white;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-2px);
+    box-shadow: $shadow-sm;
+  }
+}
+
+// Modal Styling
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: $card-bg;
+  padding: 30px;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
+  width: 90%;
+  max-width: 410px;
+  text-align: center;
+  position: relative;
+
+  h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: $dark-text;
+  }
+}
+
+.closeModalButton {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #f1f1f1;
+  border: none;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  line-height: 1;
+  color: #555;
+
+  &:hover {
+    background-color: #ddd;
+  }
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.cancelModalButton {
+  background-color: #e1e1e1;
+  color: #333;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: $font-primary;
+
+  &:hover {
+    background-color: #d1d1d1;
+  }
+}
+
+.storyNameInput {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #e1e1e1;
+  border-radius: $border-radius-md;
+  text-align: right;
+  direction: rtl;
+  margin-bottom: 20px;
+  font-family: $font-primary;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+}
+
+.modalButton {
+  background-color: $primary-color;
+  color: white;
+  font-size: 16px;
+  padding: 10px 25px;
+  border: none;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: $font-primary;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-2px);
+    box-shadow: $shadow-sm;
+  }
+}
+
+// Responsive Styles
+@media (max-width: $breakpoint-lg) {
+  .desktopContent {
+    padding: 120px 20px 30px;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .desktopContent {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    padding: 100px 15px 30px;
+  }
+
+  .rightContent,
+  .storyContainer,
+  .leftContent {
+    width: 100%;
+    max-height: none;
+  }
+
+  .storyInput {
+    height: 200px;
+  }
+
+  .imageGallery {
+    grid-template-columns: repeat(3, 1fr);
+    max-height: 400px;
+  }
+}

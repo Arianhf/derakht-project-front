@@ -1,15 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { Navbar } from '@/components/shared/Navbar/Navbar';
+import logo from '@/assets/images/logo2.png';
 import { storyService } from '@/services/storyService';
 import { Story } from '@/types/story';
-import Image from 'next/image';
-import logo from '@/assets/images/logo2.png';
-import { Navbar } from '@/components/shared/Navbar/Navbar';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
-import './story.scss';
 import StoryPreview from '@/components/story/StoryPreview';
+import styles from './StoryPage.module.scss';
+import {FaTimes} from "react-icons/fa";
 
 const StoryPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,6 +23,18 @@ const StoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
+
+  useEffect(() => {
+    // Check if we're in mobile view
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth <= 768);
+    };
+
+    handleResize(); // Set initial state
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchTemplate = async () => {
@@ -48,19 +61,15 @@ const StoryPage = () => {
     setTexts(newTexts);
   };
 
-  const handleNextImage = async () => {
-    if (!template) return;
-
-    const currentPart = template.parts[selectedIndex];
-    try {
-      if (selectedIndex < template.parts.length - 1) {
-        setSelectedIndex((prev) => prev + 1);
+  const handleNavigate = (direction: 'next' | 'prev') => {
+    if (direction === 'prev' && selectedIndex > 0) {
+      setSelectedIndex(selectedIndex - 1);
+    } else if (direction === 'next') {
+      if (selectedIndex < (template?.parts.length || 0) - 1) {
+        setSelectedIndex(selectedIndex + 1);
       } else {
         setIsModalOpen(true);
       }
-    } catch (err) {
-      console.error('Error saving part:', err);
-      alert('خطا در ذخیره قسمت داستان');
     }
   };
 
@@ -76,98 +85,157 @@ const StoryPage = () => {
     }
   };
 
-  if (loading) return <div>در حال بارگذاری...</div>;
-  if (error) return <div>{error}</div>;
-  if (!template) return <div>قالب داستان یافت نشد</div>;
+  if (loading) return <div className={styles.loadingContainer}>در حال بارگذاری...</div>;
+  if (error) return <div className={styles.errorContainer}>{error}</div>;
+  if (!template) return <div className={styles.errorContainer}>قالب داستان یافت نشد</div>;
 
   return (
-    <div className="story-page">
-      <Navbar logo={logo} />
-      <div className="page-content">
-        <div className="right-content">
-          <div className="image-container">
-            <Image
-              src={template.parts[selectedIndex]?.illustration || ''}
-              alt={`تصویر ${selectedIndex + 1}`}
-              className="story-image"
-              width={600}
-              height={400}
-              layout="responsive"
-            />
-          </div>
-        </div>
+      <div className={styles.storyPage}>
+        <Navbar logo={logo} />
 
-        <div className="story-container">
-          <textarea
-            value={texts[selectedIndex]}
-            onChange={handleTextChange}
-            placeholder="داستان خود را بنویسید..."
-            className="story-input"
-          />
-          <div className="button-container">
-            <button
-              className="prev-button"
-              onClick={() => setSelectedIndex((prev) => Math.max(0, prev - 1))}
-              disabled={selectedIndex === 0}
-            >
-              قبلی
-            </button>
-            <button className="submit-button" onClick={handleNextImage}>
-              {selectedIndex === template.parts.length - 1 ? 'پایان' : 'ادامه'}
-            </button>
-          </div>
-        </div>
-
-        <div className="left-content">
-          <div className="image-gallery">
-            {template.parts.map((part, index) => (
-              <div key={part.id} className="gallery-item">
-                {selectedIndex === index && (
-                  <span className="image-number">{toPersianNumber(index + 1)}</span>
-                )}
+        {isMobileView ? (
+            // Mobile View Layout
+            <div className={styles.mobileContent}>
+              <div className={styles.mobileImageContainer}>
                 <Image
-                  src={part.illustration || ''}
-                  alt={`تصویر ${index + 1}`}
-                  className={`gallery-image ${selectedIndex === index ? 'selected' : ''}`}
-                  onClick={() => setSelectedIndex(index)}
-                  width={100}
-                  height={100}
-                  layout="responsive"
+                    src={template.parts[selectedIndex]?.illustration || '/placeholder-image.jpg'}
+                    alt={`تصویر ${selectedIndex + 1}`}
+                    className={styles.mobileMainImage}
+                    width={500}
+                    height={350}
+                    layout="responsive"
                 />
+                <div className={styles.mobilePagination}>
+              <span className={styles.pageIndicator}>
+                {toPersianNumber(`${selectedIndex + 1} / ${template.parts.length}`)}
+              </span>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
-      {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>نام داستان را وارد کنید</h2>
-            <input
-              type="text"
-              value={storyName}
-              onChange={(e) => setStoryName(e.target.value)}
-              placeholder="نام داستان"
-              className="story-name-input"
+              <div className={styles.mobileStoryContainer}>
+            <textarea
+                value={texts[selectedIndex]}
+                onChange={handleTextChange}
+                placeholder="داستان خود را بنویسید..."
+                className={styles.storyInput}
             />
-            <button className="modal-button" onClick={handleFinishStory}>
-              تایید
-            </button>
-          </div>
-        </div>
-      )}
+                <div className={styles.buttonContainer}>
+                  <button
+                      className={styles.prevButton}
+                      onClick={() => handleNavigate('prev')}
+                      disabled={selectedIndex === 0}
+                  >
+                    قبلی
+                  </button>
+                  <button
+                      className={styles.nextButton}
+                      onClick={() => handleNavigate('next')}
+                  >
+                    {selectedIndex === template.parts.length - 1 ? "پایان" : "بعدی"}
+                  </button>
+                </div>
+              </div>
+            </div>
+        ) : (
+            // Desktop View Layout
+            <div className={styles.desktopContent}>
+              <div className={styles.mainContainer}>
+                <div className={styles.imageContainer}>
+                  <Image
+                      src={template.parts[selectedIndex]?.illustration || '/placeholder-image.jpg'}
+                      alt={`تصویر ${selectedIndex + 1}`}
+                      className={styles.mainImage}
+                      width={600}
+                      height={400}
+                      layout="responsive"
+                  />
+                  <div className={styles.pageIndicator}>
+                    <span>{toPersianNumber(`${template.parts.length} / ${selectedIndex + 1}`)}</span>
+                  </div>
+                </div>
+                <div className={styles.storyContainer}>
+              <textarea
+                  value={texts[selectedIndex]}
+                  onChange={handleTextChange}
+                  placeholder="داستان خود را بنویسید..."
+                  className={styles.storyInput}
+              />
+                  <div className={styles.buttonContainer}>
+                    <button
+                        className={styles.prevButton}
+                        onClick={() => handleNavigate('prev')}
+                        disabled={selectedIndex === 0}
+                    >
+                      قبلی
+                    </button>
+                    <button
+                        className={styles.nextButton}
+                        onClick={() => handleNavigate('next')}
+                    >
+                      {selectedIndex === template.parts.length - 1 ? "پایان" : "بعدی"}
+                    </button>
+                  </div>
+                </div>
 
-      <StoryPreview
-        parts={template.parts.map((part, index) => ({
-          illustration: part.illustration || "/placeholder-image.jpg", 
-          text: texts[index] || "متنی وارد نشده است.", 
-        }))}
-        isOpen={isPreviewOpen}
-        onClose={() => router.push('/stories')}
-      />
+              </div>
 
-    </div>
+              <div className={styles.thumbnailsContainer}>
+                <div className={styles.imageGallery}>
+                  {template.parts.map((part, index) => (
+                      <div key={part.id} className={styles.galleryItem}>
+                        {selectedIndex === index && (
+                            <span className={styles.imageNumber}>{toPersianNumber(index + 1)}</span>
+                        )}
+                        <Image
+                            src={part.illustration || '/placeholder-image.jpg'}
+                            alt={`تصویر ${index + 1}`}
+                            className={`${styles.galleryImage} ${selectedIndex === index ? styles.selected : ''}`}
+                            onClick={() => setSelectedIndex(index)}
+                            width={100}
+                            height={100}
+                        />
+                      </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+        )}
+
+        {isModalOpen && (
+            <div className={styles.modalOverlay}>
+              <div className={styles.modalContent}>
+                <h2>اسم این داستانی که نوشتی چیه؟</h2>
+                <input
+                    type="text"
+                    value={storyName}
+                    onChange={(e) => setStoryName(e.target.value)}
+                    placeholder="نام داستان"
+                    className={styles.storyNameInput}
+                />
+                <div className={styles.modalButtons}>
+                  <button className={styles.modalButton} onClick={handleFinishStory}>
+                    تایید
+                  </button>
+                  <button className={styles.cancelModalButton} onClick={() => setIsModalOpen(false)}>
+                    انصراف
+                  </button>
+                </div>
+                <button className={styles.closeModalButton} onClick={() => setIsModalOpen(false)}>
+                  <FaTimes/>
+                </button>
+              </div>
+            </div>
+        )}
+
+        <StoryPreview
+            parts={template.parts.map((part, index) => ({
+              illustration: part.illustration || "/placeholder-image.jpg",
+              text: texts[index] || "متنی وارد نشده است.",
+            }))}
+            isOpen={isPreviewOpen}
+            onClose={() => router.push('/stories')}
+        />
+      </div>
   );
 };
 

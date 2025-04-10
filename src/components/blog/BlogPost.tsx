@@ -124,10 +124,10 @@ const FeaturedBlogCard: React.FC<FeaturedBlogProps> = ({ blog, onNavigate, onTag
         style={{ cursor: "pointer" }}
     >
       <div className={styles.featuredContent}>
-        <h2 className={styles.featuredTitle}>
+        <div className={styles.featuredTitle}>
           {blog.featured && <FaStar className={styles.featuredIcon} />}
-          {blog.title}
-        </h2>
+          <h2>{blog.title}</h2>
+        </div>
         {blog.subtitle && (
             <p className={styles.featuredSubtitle}>{blog.subtitle}</p>
         )}

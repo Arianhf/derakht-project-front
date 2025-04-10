@@ -1,141 +1,398 @@
-.overlay {
+@import '../../styles/globals.scss';
+
+/* Modal overlay */
+.modalOverlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.75);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    backdrop-filter: blur(5px);
 }
 
-.content {
-    display: flex;
-    background: white;
-    border-radius: 20px;
-    width: 100%;
-    height: 100%;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-    padding: 0 20px;
-}
-
-.left {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.image {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    border-radius: 10px;
-}
-
-.right {
-    flex: 1;
+/* Main container */
+.previewContainer {
+    width: 90%;
+    height: 85%;
+    max-width: 1100px;
+    background-color: $card-bg;
+    border-radius: $border-radius-lg;
+    box-shadow: $shadow-lg;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Close button */
+.closeButton {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    display: flex;
     align-items: center;
-    padding: 20px;
-    text-align: right; /* ✅ Aligns content to the right */
-    direction: rtl; /* ✅ Ensures right-to-left text direction */
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    color: $dark-text;
+    z-index: 50;
+    transition: $transition-base;
+
+    &:hover {
+        background-color: white;
+        transform: scale(1.1);
+    }
 }
 
-/* ✅ Notepad Styling */
-/* ✅ Custom Scrollbar for the Notepad */
-.text {
-    width: 90%;
-    height: 80%;
-    background: linear-gradient(to bottom, #fff8dc 0%, #fff8dc 100%);
-    font-size: 22px;
-    line-height: 2.5;
-    font-family: "shoor-Medium", sans-serif;
-    direction: rtl;
-    text-align: right;
-    color: #333;
-    max-width: 80%;
-    word-wrap: break-word;
-    padding: 15px;
-    border-radius: 10px;
-    overflow-y: auto;
-    box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ddd;
-
-    /* ✅ Lined Paper Effect */
-    background-image: linear-gradient(transparent 34px, rgba(0, 0, 0, 0.1) 35px);
-    background-size: 100% 35px;
-    padding-right: 25px;
-
-    /* ✅ Custom Scrollbar */
-    scrollbar-width: thin; /* Firefox */
-    scrollbar-color: #a0a0a0 #f0f0f0; /* Scrollbar Thumb and Track */
+/* View mode toggle */
+.viewModeToggle {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    gap: 10px;
+    z-index: 50;
 }
 
-/* ✅ Custom Scrollbar for WebKit Browsers (Chrome, Safari, Edge) */
-.text::-webkit-scrollbar {
-    width: 8px; /* Make scrollbar thinner */
+.viewModeButton {
+    width: 36px;
+    height: 36px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: $dark-text;
+    transition: $transition-base;
+
+    &:hover {
+        background-color: white;
+        transform: scale(1.1);
+    }
+
+    &.active {
+        background-color: $primary-color;
+        color: white;
+    }
 }
 
-.text::-webkit-scrollbar-track {
-    background: #f0f0f0; /* Light gray track */
-    border-radius: 10px;
-}
-
-.text::-webkit-scrollbar-thumb {
-    background: #a0a0a0; /* Soft gray thumb */
-    border-radius: 10px;
-    border: 2px solid #f0f0f0; /* Creates spacing effect */
-}
-
-.text::-webkit-scrollbar-thumb:hover {
-    background: #888; /* Darker thumb on hover */
-}
-
-
-.buttonContainer {
+/* Header */
+.previewHeader {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding: 20px 60px; /* Extra padding to account for the absolute positioned buttons */
+    border-bottom: 1px solid #eee;
+    direction: rtl;
+
+    h2 {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0;
+        color: $dark-text;
+    }
+}
+
+.pageCount {
+    background-color: $primary-color;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px 12px;
+    border-radius: $border-radius-full;
+}
+
+/* Content area */
+.previewContent {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* Overlay view mode */
+.overlayView {
     width: 100%;
-    margin-top: 20px;
+    height: 100%;
+    position: relative;
+}
+
+.imageContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.storyImage {
+    object-fit: cover;
+    z-index: 1;
+}
+
+.gradientOverlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0.5) 70%,
+            rgba(0, 0, 0, 0.7) 100%
+    );
+    z-index: 2;
+}
+
+.textContainer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 3;
+    padding: 20px 30px 40px;
+    display: flex;
+    justify-content: center;
+}
+
+.storyText {
+    width: 90%;
+    max-height: 40vh;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: $border-radius-md;
+    padding: 20px;
+    color: $dark-text;
+    font-family: $font-primary;
+    font-size: 18px;
+    line-height: 1.8;
+    text-align: right;
+    direction: rtl;
+    overflow-y: auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+    }
+}
+
+/* Side by side view mode */
+.sideBySideView {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+}
+
+.imagePane {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: white;
+}
+
+.sideImage {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: $border-radius-md;
+}
+
+.textPane {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.sideText {
+    width: 100%;
+    height: 100%;
+    background-color: #fff8dc; /* Cream color for notebook effect */
+    padding: 20px;
+    border-radius: $border-radius-md;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e1e1e1;
+    overflow-y: auto;
+    text-align: right;
+    direction: rtl;
+    font-family: $font-primary;
+    font-size: 18px;
+    line-height: 1.8;
+    color: $dark-text;
+
+    /* Paper lines effect */
+    background-image: linear-gradient(transparent 29px, rgba(0, 0, 0, 0.1) 30px);
+    background-size: 100% 30px;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #f5f5f5;
+        border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #aaa;
+        border-radius: 10px;
+    }
+}
+
+/* Navigation Controls */
+.navigationControls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    border-top: 1px solid #eee;
     direction: rtl;
 }
 
 .prevButton,
 .nextButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     padding: 10px 20px;
-    font-size: 18px;
+    border-radius: $border-radius-md;
     border: none;
-    border-radius: 10px;
+    font-family: $font-primary;
+    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-family: "shoor-Medium", sans-serif;
+    transition: $transition-base;
 }
 
 .prevButton {
-    background-color: #ccc;
-    color: black;
-}
+    background-color: #e1e1e1;
+    color: $dark-text;
 
-.prevButton:hover {
-    background-color: #b0b0b0;
-}
+    &:hover:not(:disabled) {
+        background-color: #d1d1d1;
+        transform: translateY(-2px);
+    }
 
-.prevButton:disabled {
-    background-color: #ddd;
-    cursor: not-allowed;
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 }
 
 .nextButton {
-    background-color: #345BC0;
+    background-color: $primary-color;
     color: white;
+
+    &:hover {
+        background-color: darken($primary-color, 10%);
+        transform: translateY(-2px);
+        box-shadow: $shadow-sm;
+    }
 }
 
-.nextButton:hover {
-    background-color: #2b4aa0;
+.buttonIcon {
+    font-size: 14px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Responsive styles */
+@media (max-width: $breakpoint-md) {
+    .previewContainer {
+        width: 95%;
+        height: 90%;
+    }
+
+    .previewHeader {
+        padding: 15px 50px;
+    }
+
+    .sideBySideView {
+        flex-direction: column;
+    }
+
+    .imagePane, .textPane {
+        flex: none;
+    }
+
+    .imagePane {
+        height: 40%;
+        padding: 10px;
+    }
+
+    .textPane {
+        height: 60%;
+        padding: 10px;
+    }
+
+    .storyText, .sideText {
+        font-size: 16px;
+        line-height: 1.6;
+        padding: 15px;
+    }
+
+    .textContainer {
+        padding: 15px 20px 30px;
+    }
+}
+
+@media (max-width: $breakpoint-sm) {
+    .previewHeader {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 50px;
+
+        h2 {
+            font-size: 18px;
+        }
+    }
+
+    .viewModeToggle {
+        top: 60px;
+        right: 15px;
+    }
+
+    .storyText, .sideText {
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    .navigationControls {
+        padding: 12px 15px;
+    }
+
+    .prevButton, .nextButton {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
 }

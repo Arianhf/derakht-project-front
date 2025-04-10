@@ -217,6 +217,8 @@
   font-size: 26px;
   font-weight: bold;
   margin-bottom: $spacing-sm;
+  display: flex;
+  align-items: baseline;
   color: $dark-text;
 }
 
