@@ -67,27 +67,29 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({ parts, isOpen, onClose, isF
                 </button>
             )}
 
-            {/* View mode toggle */}
-            <div className={styles.viewModeToggle}>
-                <button
-                    className={`${styles.viewModeButton} ${viewMode === 'overlay' ? styles.active : ''}`}
-                    onClick={() => setViewMode('overlay')}
-                    title="نمایش متن روی تصویر"
-                >
-                    <FaLayerGroup />
-                </button>
-                <button
-                    className={`${styles.viewModeButton} ${viewMode === 'sideBySide' ? styles.active : ''}`}
-                    onClick={() => setViewMode('sideBySide')}
-                    title="نمایش متن کنار تصویر"
-                >
-                    <FaColumns />
-                </button>
-            </div>
-
             {/* Header with page indicator */}
             <div className={styles.previewHeader}>
                 <h2>پیش‌نمایش داستان</h2>
+            </div>
+
+            <div className={styles.previewConfig}>
+                {/* View mode toggle */}
+                <div className={styles.viewModeToggle}>
+                    <button
+                        className={`${styles.viewModeButton} ${viewMode === 'overlay' ? styles.active : ''}`}
+                        onClick={() => setViewMode('overlay')}
+                        title="نمایش متن روی تصویر"
+                    >
+                        <FaLayerGroup/>
+                    </button>
+                    <button
+                        className={`${styles.viewModeButton} ${viewMode === 'sideBySide' ? styles.active : ''}`}
+                        onClick={() => setViewMode('sideBySide')}
+                        title="نمایش متن کنار تصویر"
+                    >
+                        <FaColumns/>
+                    </button>
+                </div>
                 <div className={styles.pageCount}>
                     صفحه {currentIndex + 1} از {parts.length}
                 </div>
