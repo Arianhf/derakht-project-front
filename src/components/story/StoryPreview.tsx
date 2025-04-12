@@ -5,17 +5,29 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaTimes, FaArrowRight, FaArrowLeft, FaColumns, FaLayerGroup } from 'react-icons/fa';
 import styles from "./StoryPreview.module.scss";
+import { storyService } from '@/services/storyService';
+import { toast } from 'react-hot-toast';
 
 interface StoryPreviewProps {
     parts: { illustration: string; text: string }[];
     isOpen: boolean;
     onClose: () => void;
     isFullPage?: boolean;
+    storyId?: string;
+    storyTitle?: string;
 }
 
-const StoryPreview: React.FC<StoryPreviewProps> = ({ parts, isOpen, onClose, isFullPage = false }) => {
+const StoryPreview: React.FC<StoryPreviewProps> = ({
+                                                       parts,
+                                                       isOpen,
+                                                       onClose,
+                                                       isFullPage = false,
+                                                       storyId,
+                                                       storyTitle
+                                                   }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [viewMode, setViewMode] = useState<'overlay' | 'sideBySide'>('overlay');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
 
     // Reset page index and maintain view mode when opening/closing
@@ -40,12 +52,32 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({ parts, isOpen, onClose, isF
 
     if (!isOpen) return null;
 
+    const handleFinishStory = async () => {
+        if (!storyId || !storyTitle || isFullPage) {
+            // If no storyId or storyTitle provided, or if we're in full-page mode, just navigate
+            router.push('/story');
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            await storyService.finishStory(storyId, storyTitle);
+            toast.success('داستان با موفقیت ذخیره شد');
+            router.push('/story');
+        } catch (error) {
+            console.error('Error finishing story:', error);
+            toast.error('خطا در ذخیره‌سازی داستان');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const handleNext = () => {
         if (currentIndex < parts.length - 1) {
             setCurrentIndex(currentIndex + 1);
         } else {
             if (!isFullPage) {
-                router.push('/stories');
+                handleFinishStory();
             }
         }
     };
@@ -151,8 +183,9 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({ parts, isOpen, onClose, isF
                 <button
                     className={styles.nextButton}
                     onClick={handleNext}
+                    disabled={isSubmitting}
                 >
-                    <span>{isLastPage ? "پایان" : "بعدی"}</span>
+                    <span>{isLastPage ? (isSubmitting ? "در حال ذخیره..." : "پایان") : "بعدی"}</span>
                     {!isLastPage && <FaArrowLeft className={styles.buttonIcon} />}
                 </button>
             </div>

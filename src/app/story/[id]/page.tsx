@@ -11,6 +11,7 @@ import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import StoryPreview from '@/components/story/StoryPreview';
 import styles from './StoryPage.module.scss';
 import { FaTimes, FaEdit } from 'react-icons/fa';
+import { Toaster } from 'react-hot-toast';
 
 const StoryPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -135,6 +136,8 @@ const StoryPage = () => {
   return (
       <div className={styles.storyPage}>
         <Navbar logo={logo} />
+        <Toaster position="top-center" />
+
         {isMobileView ? (
             // Mobile View Layout
             <div className={styles.mobileContent}>
@@ -148,19 +151,19 @@ const StoryPage = () => {
                     layout="responsive"
                 />
                 <div className={styles.mobilePagination}>
-              <span className={styles.pageIndicator}>
-                {toPersianNumber(`${selectedIndex + 1} / ${template.parts.length}`)}
-              </span>
+                  <span className={styles.pageIndicator}>
+                    {toPersianNumber(`${selectedIndex + 1} / ${template.parts.length}`)}
+                  </span>
                 </div>
               </div>
 
               <div className={styles.mobileStoryContainer}>
-            <textarea
-                value={texts[selectedIndex]}
-                onChange={handleTextChange}
-                placeholder="داستان خود را بنویسید..."
-                className={styles.storyInput}
-            />
+                <textarea
+                    value={texts[selectedIndex]}
+                    onChange={handleTextChange}
+                    placeholder="داستان خود را بنویسید..."
+                    className={styles.storyInput}
+                />
                 <div className={styles.buttonContainer}>
                   <button
                       className={styles.prevButton}
@@ -196,12 +199,12 @@ const StoryPage = () => {
                   </div>
                 </div>
                 <div className={styles.storyContainer}>
-              <textarea
-                  value={texts[selectedIndex]}
-                  onChange={handleTextChange}
-                  placeholder="داستان خود را بنویسید..."
-                  className={styles.storyInput}
-              />
+                  <textarea
+                      value={texts[selectedIndex]}
+                      onChange={handleTextChange}
+                      placeholder="داستان خود را بنویسید..."
+                      className={styles.storyInput}
+                  />
                   <div className={styles.buttonContainer}>
                     <button
                         className={styles.prevButton}
@@ -274,7 +277,9 @@ const StoryPage = () => {
               text: texts[index] || "متنی وارد نشده است.",
             }))}
             isOpen={isPreviewOpen}
-            onClose={() => router.push('/stories')}
+            onClose={() => router.push('/story')}
+            storyId={id as string}
+            storyTitle={storyName}
         />
       </div>
   );

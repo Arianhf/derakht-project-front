@@ -3,7 +3,7 @@ import { StoryTemplate, StoryResponse, Story, StoryPart } from '@/types/story';
 
 export const storyService = {
   getAllStories: async (): Promise<StoryResponse<StoryTemplate>> => {
-    const response = await api.get('v2/stories/');
+    const response = await api.get('/stories/');
     return response.data;
   },
 
