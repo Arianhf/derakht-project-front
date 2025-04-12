@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import logo from '@/assets/images/logo2.png';
@@ -10,11 +10,14 @@ import { Story } from '@/types/story';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import StoryPreview from '@/components/story/StoryPreview';
 import styles from './StoryPage.module.scss';
-import {FaTimes} from "react-icons/fa";
+import { FaTimes, FaEdit } from 'react-icons/fa';
 
 const StoryPage = () => {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const mode = searchParams.get('mode') || 'edit'; // Default to edit mode if not specified
+
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [template, setTemplate] = useState<Story | null>(null);
   const [texts, setTexts] = useState<string[]>([]);
@@ -85,14 +88,53 @@ const StoryPage = () => {
     }
   };
 
+  const switchToEditMode = () => {
+    router.push(`/story/${id}?mode=edit`);
+  };
+
+  const switchToViewMode = () => {
+    router.push(`/story/${id}?mode=view`);
+  };
+
   if (loading) return <div className={styles.loadingContainer}>در حال بارگذاری...</div>;
   if (error) return <div className={styles.errorContainer}>{error}</div>;
   if (!template) return <div className={styles.errorContainer}>قالب داستان یافت نشد</div>;
 
+  // If mode is 'view' or 'preview', show the full-page preview
+  if (mode === 'view' || mode === 'preview') {
+    return (
+        <div className={styles.storyPage}>
+          <Navbar logo={logo} />
+
+          <div className={styles.fullPagePreviewContainer}>
+            <div className={styles.previewHeader}>
+              <h1 className={styles.storyTitle}>{template.title}</h1>
+              <button
+                  className={styles.editModeButton}
+                  onClick={switchToEditMode}
+              >
+                <FaEdit /> ویرایش داستان
+              </button>
+            </div>
+
+            <StoryPreview
+                parts={template.parts.map((part, index) => ({
+                  illustration: part.illustration || "/placeholder-image.jpg",
+                  text: texts[index] || "متنی وارد نشده است.",
+                }))}
+                isOpen={true}
+                onClose={() => router.push('/stories')}
+                isFullPage={true} // Pass a prop to indicate full-page mode
+            />
+          </div>
+        </div>
+    );
+  }
+
+  // Otherwise, show the edit mode
   return (
       <div className={styles.storyPage}>
         <Navbar logo={logo} />
-
         {isMobileView ? (
             // Mobile View Layout
             <div className={styles.mobileContent}>
@@ -176,7 +218,6 @@ const StoryPage = () => {
                     </button>
                   </div>
                 </div>
-
               </div>
 
               <div className={styles.thumbnailsContainer}>
