@@ -29,6 +29,7 @@
   font-size: 20px;
   font-weight: bold;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 // Individual navigation link
@@ -76,6 +77,13 @@
 .mobileMenuOverlay {
   display: none; // Hidden by default on desktop
 }
+
+@media (max-width: $breakpoint-lg) {
+  .navbarItems {
+    gap: 8px;
+  }
+}
+
 
 // Media query for mobile devices
 @media (max-width: $breakpoint-md) {

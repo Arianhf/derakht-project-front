@@ -37,7 +37,7 @@
 }
 
 .headerImage {
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 6s ease;
 }
 
@@ -312,7 +312,7 @@
 }
 
 .featuredImage {
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 1s ease;
 
   &:hover {
@@ -358,7 +358,7 @@
 }
 
 .blogCardImage {
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 0.8s ease;
 }
 

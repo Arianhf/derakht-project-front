@@ -26,7 +26,7 @@
 .contentWrapper {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 120px 20px 60px;
+  padding: 30px 20px 60px;
 }
 
 /* Navbar */
@@ -213,7 +213,7 @@
 }
 
 .headerImage {
-  object-fit: cover;
+  object-fit: contain;
 }
 
 /* Intro section - New style */
@@ -638,7 +638,7 @@
   }
 
   .contentWrapper {
-    padding-top: 100px;
+    padding-top: 30px;
   }
 
   .blogHeader {
@@ -665,7 +665,7 @@
 
   .featuredBadge {
     top: 10px;
-    right: 10px;
+    left: 10px;
     font-size: 12px;
     padding: 4px 10px;
   }

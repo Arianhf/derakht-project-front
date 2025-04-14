@@ -9,7 +9,7 @@ import logo from '@/assets/images/logo2.png';
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import ErrorMessage from "@/components/shared/ErrorMessage";
 import {Navbar} from '@/components/shared/Navbar/Navbar';
-import styles from '../page.module.scss';
+import styles from './page.module.scss';
 
 const BlogDetailPage: React.FC = () => {
     const router = useRouter();

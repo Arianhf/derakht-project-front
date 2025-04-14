@@ -1,7 +1,7 @@
-@import '../../../styles/globals.scss';
+@import '../../../../styles/globals.scss';
 
 // Main Page Container
-.storyPage {
+.illustratePage {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -50,7 +50,7 @@
   height: 100vh;
 }
 
-// Main container for input and image
+// Main container for text and upload
 .mainContainer {
   display: flex;
   gap: 20px;
@@ -58,90 +58,158 @@
   width: 100%;
 }
 
-// Image container - Right panel
-.imageContainer {
-  width: 70%;
+// Text Block - Left panel
+.textBlock {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  background-color: $card-bg;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  padding: 20px;
+  height: 100%;
+  position: relative;
+}
+
+.partTitle {
+  font-size: 26px;
+  font-weight: bold;
+  color: $dark-text;
+  margin-bottom: 15px;
+  padding-right: 15px;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 25px;
+    background-color: $secondary-color;
+    border-radius: 3px;
+  }
+}
+
+.partPrompt {
+  font-size: 22px;
+  color: $dark-text;
+  line-height: 1.8;
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  font-family: $font-primary;
+  text-align: right;
+  direction: rtl;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
+}
+
+// Upload Block - Right panel
+.uploadBlock {
+  width: 60%;
   position: relative;
   border-radius: $border-radius-lg;
   box-shadow: $shadow-md;
   overflow: hidden;
   height: 100%;
-  background-color: white;
+  background-color: $card-bg;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
 }
 
-.mainImage {
-  object-fit: contain;
-  max-width: 100%;
-  max-height: 100%;
+.uploadPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 3px dashed #cccccc;
   border-radius: $border-radius-lg;
-  transition: transform 1s ease;
+  color: $light-text;
+  cursor: pointer;
+  transition: all 0.3s ease;
 
   &:hover {
-    transform: scale(1.03);
+    border-color: $primary-color;
+    background-color: rgba($primary-color, 0.05);
+  }
+
+  p {
+    margin-top: 15px;
+    font-size: 16px;
   }
 }
 
-.pageIndicator {
-  position: absolute;
-  bottom: 15px;
-  left: 15px;
-  background-color: rgba($primary-color, 0.8);
-  color: white;
-  padding: 5px 15px;
-  border-radius: $border-radius-full;
-  font-size: 16px;
-  font-weight: bold;
-  z-index: 2;
+.uploadIcon {
+  font-size: 48px;
+  color: $primary-color;
+  margin-bottom: 15px;
+}
+
+.fileInput {
+  display: none;
+}
+
+.imagePreviewContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.imagePreview {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  border-radius: $border-radius-md;
   box-shadow: $shadow-sm;
 }
 
-
-// Story Input - Left panel
-.storyContainer {
-  width: 30%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background-color: $card-bg;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-md;
-  padding: 20px;
-  height: 100%;
-}
-
-.storyInput {
-  width: 100%;
-  flex: 1;
-  font-family: $font-primary;
-  font-size: 26px;
-  line-height: 1.6;
-  padding: 15px;
-  border: 1px solid #e8e8e8;
+.changeImageButton {
+  position: absolute;
+  bottom: 20px;
+  padding: 10px 20px;
+  background-color: rgba($primary-color, 0.8);
+  color: white;
+  border: none;
   border-radius: $border-radius-md;
-  resize: none;
-  text-align: right;
-  direction: rtl;
-  color: $dark-text;
-  background-color: #fafafa;
-  margin-bottom: 20px;
-  min-height: 150px;
+  cursor: pointer;
+  font-family: $font-primary;
+  transition: all 0.3s ease;
+  z-index: 2;
 
-  &:focus {
-    outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
-  }
-
-  &::placeholder {
-    color: #aaa;
+  &:hover {
+    background-color: $primary-color;
+    transform: translateY(-3px);
+    box-shadow: $shadow-md;
   }
 }
 
-// Thumbnails at bottom
+// Thumbnails container
 .thumbnailsContainer {
   width: 100%;
   background-color: $card-bg;
@@ -210,14 +278,16 @@
   z-index: 2;
 }
 
-.galleryImage {
-  width: 120px !important;
-  height: 100% !important;
+.galleryImageContainer {
+  width: 120px;
+  height: 80px;
   border-radius: $border-radius-md;
-  object-fit: cover;
   cursor: pointer;
   transition: all 0.3s ease;
   border: 3px solid transparent;
+  position: relative;
+  overflow: hidden;
+  background-color: #f5f5f7;
 
   &.selected {
     border-color: $primary-color;
@@ -231,57 +301,33 @@
   }
 }
 
-// Mobile Layout
-.mobileContent {
-  display: flex;
-  flex-direction: column;
-  padding: 85px 15px 30px;
-  gap: 20px;
-  max-width: 100%;
-  position: relative;
-  z-index: 1;
+.galleryImage {
+  object-fit: cover;
 }
 
-.mobileImageContainer {
+.emptyImagePlaceholder {
   width: 100%;
-  position: relative;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-md;
-  overflow: hidden;
   height: 100%;
-  background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-
-}
-
-.mobileMainImage {
-  object-fit: cover;
-  border-radius: $border-radius-lg;
-}
-
-.mobileStoryContainer {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background-color: $card-bg;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-md;
-  padding: 15px;
+  color: $light-text;
+  font-size: 24px;
 }
 
 // Navigation Buttons
-.buttonContainer {
+.navigationButtons {
   display: flex;
   justify-content: space-between;
   width: 100%;
+  margin-top: auto;
+  gap: 10px;
   direction: rtl;
 }
 
 .prevButton,
-.nextButton {
+.nextButton,
+.previewButton {
   padding: 10px 25px;
   font-size: 16px;
   border: none;
@@ -289,6 +335,10 @@
   cursor: pointer;
   font-family: $font-primary;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
 .prevButton {
@@ -313,6 +363,17 @@
 
   &:hover {
     background-color: darken($primary-color, 10%);
+    transform: translateY(-2px);
+    box-shadow: $shadow-sm;
+  }
+}
+
+.previewButton {
+  background-color: $secondary-color;
+  color: white;
+
+  &:hover {
+    background-color: darken($secondary-color, 10%);
     transform: translateY(-2px);
     box-shadow: $shadow-sm;
   }
@@ -424,111 +485,44 @@
   transition: all 0.3s ease;
   font-family: $font-primary;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: darken($primary-color, 10%);
     transform: translateY(-2px);
     box-shadow: $shadow-sm;
   }
-}
 
-// Responsive Styles
-@media (max-width: $breakpoint-xxl) {
-  .desktopContent {
-    padding: 140px 20px 30px;
-    max-width: 1400px;
+  &:disabled {
+    background-color: #b8b8b8;
+    cursor: not-allowed;
   }
 }
 
-
-@media (max-width: $breakpoint-xl) {
-  .desktopContent {
-    padding: 140px 20px 30px;
-    max-width: 1200px;
-  }
-}
-
-@media (max-width: $breakpoint-lg) {
-  .desktopContent {
-    padding: 120px 20px 30px;
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .desktopContent {
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-    padding: 85px 15px 30px;
-  }
-
-  .rightContent,
-  .storyContainer,
-  .leftContent {
-    width: 100%;
-    max-height: none;
-  }
-
-  .storyInput {
-    height: 200px;
-  }
-
-  .imageGallery {
-    grid-template-columns: repeat(3, 1fr);
-    max-height: 400px;
-  }
-}
-
-.fullPagePreviewContainer {
-  width: 100%;
-  height: 100vh;
+// Mobile View Styles
+.mobileContent {
   display: flex;
   flex-direction: column;
+  padding: 100px 15px 30px;
+  height: 100vh;
+  position: relative;
+  z-index: 1;
 }
 
-.previewHeader {
+.textContainer {
+  background-color: $card-bg;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.uploadContainer {
+  background-color: $card-bg;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  padding: 15px;
+  height: 250px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
-}
-
-.storyTitle {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: 0;
-}
-
-.editModeButton, .viewModeButton {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0.5rem 1rem;
-  background-color: #345BC0;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #2a4a9a;
-  }
-}
-
-.editModeHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: #f5f5f5;
-  border-bottom: 1px solid #ddd;
-}
-
-.editTitle {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: 0;
+  justify-content: center;
+  margin-bottom: 15px;
 }
