@@ -1,6 +1,7 @@
 // src/components/shared/Footer/Footer.tsx
 import React from 'react';
 import Link from 'next/link';
+import { FaInstagram } from 'react-icons/fa';
 import styles from './Footer.module.scss';
 
 export const Footer: React.FC = () => {
@@ -23,7 +24,13 @@ export const Footer: React.FC = () => {
                 <div className={styles.footerColumn}>
                     <h3 className={styles.footerTitle}>تماس با ما</h3>
                     <p>ایمیل: info@derakht.com</p>
-                    <p>تلفن: ۰۹۱۲۳۹۶۹۲۵۴</p>
+                    <p>تلفن:۰۹۱۲۳۹۶۹۲۵۴</p>
+                    <div className={styles.socialLinks}>
+                        <a href="https://instagram.com/derrakhtt" target="_blank" className={styles.socialLink}>
+                            <FaInstagram />
+                            <span>derrakhtt</span>
+                        </a>
+                    </div>
                 </div>
             </div>
             <div className={styles.footerDivider}>

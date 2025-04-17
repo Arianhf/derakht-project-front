@@ -6,6 +6,7 @@
   color: white;
   padding: $spacing-xl $spacing-md;
   text-align: center;
+  position: relative;
 }
 
 .footerGrid {
@@ -45,6 +46,29 @@
 
   &:hover {
     color: $accent-color;
+  }
+}
+
+.socialLinks {
+  margin-top: $spacing-md;
+  display: flex;
+  justify-content: center;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  color: white;
+  text-decoration: none;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background-color: rgba(white, 0.1);
+  transition: $transition-base;
+
+  &:hover {
+    background-color: $accent-color;
+    transform: translateY(-3px);
   }
 }
 
