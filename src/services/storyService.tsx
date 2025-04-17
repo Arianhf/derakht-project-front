@@ -46,5 +46,19 @@ export const storyService = {
   getApiStories: async (): Promise<StoryResponse<Story>> => {
     const response = await api.get('/stories/');
     return response.data;
-  }
+  },
+
+  uploadImageForPart: async (formData: FormData) => {
+    const response = await api.post('/stories/upload-part-image/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  finalizeStory: async (storyId: string, title: string) => {
+    const response = await api.post(`/stories/${storyId}/finalize/`, { title });
+    return response.data;
+  },
 };

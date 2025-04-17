@@ -1,10 +1,11 @@
+// src/app/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
+import Footer from '@/components/shared/Footer/Footer';
 import { FaBook, FaShoppingCart, FaPencilAlt, FaStar } from 'react-icons/fa';
 import styles from './home.module.scss';
 import logo from '@/assets/images/logo2.png';
@@ -184,32 +185,8 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className={styles.footer}>
-          <div className={styles.footerGrid}>
-            <div className={styles.footerColumn}>
-              <h3 className={styles.footerTitle}>درخت</h3>
-              <p>جایی برای رشد و شکوفایی خلاقیت کودکان</p>
-            </div>
-            <div className={styles.footerColumn}>
-              <h3 className={styles.footerTitle}>لینک‌های مهم</h3>
-              <ul className={styles.footerLinks}>
-                <li><Link href="/shop" className={styles.footerLink}>فروشگاه</Link></li>
-                <li><Link href="/blog" className={styles.footerLink}>بلاگ</Link></li>
-                <li><Link href="/template" className={styles.footerLink}>داستان‌سازی</Link></li>
-                <li><Link href="/about" className={styles.footerLink}>درباره ما</Link></li>
-              </ul>
-            </div>
-            <div className={styles.footerColumn}>
-              <h3 className={styles.footerTitle}>تماس با ما</h3>
-              <p>ایمیل: info@derakht.com</p>
-              <p>تلفن: ۰۲۱-۸۸۷۷۶۶۵۵</p>
-            </div>
-          </div>
-          <div className={styles.footerDivider}>
-            <p className={styles.copyright}>© تمامی حقوق برای درخت محفوظ است. ۱۴۰۴</p>
-          </div>
-        </footer>
+        {/* Use the shared Footer component */}
+        <Footer />
       </div>
   );
 };

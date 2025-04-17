@@ -79,18 +79,56 @@ const IllustrateStoryPage = () => {
     toast.success('تصویر با موفقیت آپلود شد');
   };
 
-  const handleNavigate = (direction: 'next' | 'prev') => {
+  const uploadCurrentImage = async () => {
+    // If there's no image for the current part, notify user and don't proceed
+    if (!images[currentIndex]) {
+      toast.error('لطفا برای این بخش تصویر آپلود کنید');
+      return false;
+    }
+
+    try {
+      setLoading(true);
+
+      // Create FormData for the current image
+      const formData = new FormData();
+      formData.append('part_position', currentIndex.toString());
+      formData.append('story_id', id as string);
+      formData.append('image', images[currentIndex] as File);
+
+      // Upload image for this part
+      await storyService.uploadImageForPart(formData);
+
+      toast.success('تصویر با موفقیت ذخیره شد');
+      return true;
+    } catch (err) {
+      console.error('Error uploading image:', err);
+      toast.error('خطا در آپلود تصویر');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNavigate = async (direction: 'next' | 'prev') => {
     if (direction === 'prev' && currentIndex > 0) {
+      // Simply go to previous part without validating
       setCurrentIndex(currentIndex - 1);
     } else if (direction === 'next') {
       if (currentIndex < (template?.parts.length || 0) - 1) {
-        setCurrentIndex(currentIndex + 1);
+        // Upload current image before proceeding to next part
+        const uploadSuccess = await uploadCurrentImage();
+        if (uploadSuccess) {
+          setCurrentIndex(currentIndex + 1);
+        }
       } else {
-        // Check if all images are uploaded
-        if (images.every(img => img !== null)) {
-          setIsModalOpen(true);
+        // We're at the last part, check if image is uploaded and show modal
+        if (images[currentIndex]) {
+          const uploadSuccess = await uploadCurrentImage();
+          if (uploadSuccess) {
+            setIsModalOpen(true);
+          }
         } else {
-          toast.error('لطفا برای تمام بخش‌ها تصویر آپلود کنید');
+          toast.error('لطفا برای این بخش تصویر آپلود کنید');
         }
       }
     }
@@ -113,20 +151,9 @@ const IllustrateStoryPage = () => {
     try {
       setLoading(true);
 
-      // Create FormData to send images
-      const formData = new FormData();
-      formData.append('title', storyName);
-      formData.append('story_template_id', template.id);
-
-      // Add all images to the FormData
-      images.forEach((image, index) => {
-        if (image) {
-          formData.append(`illustrations[${index}]`, image);
-        }
-      });
-
-      // Save the story with images
-      await storyService.createStory(formData);
+      // Since all images have already been uploaded,
+      // we just need to finalize the story with its title
+      const response = await storyService.finalizeStory(id as string, storyName);
 
       toast.success('داستان با موفقیت ذخیره شد');
       setIsModalOpen(false);

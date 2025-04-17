@@ -255,6 +255,7 @@
   /* Style for text alignment classes */
   :global(.text-center) {
     text-align: center;
+    margin-bottom: 15px;
   }
 
   /* Image styles within the blog content */
@@ -274,8 +275,8 @@
 
   /* Full width image */
   img:global(.full-width) {
-    width: 100%;
-    margin: 30px 0;
+    width: 70%;
+    margin: 30px auto;
     float: none;
     display: block;
   }
@@ -719,5 +720,11 @@
   .blogContent {
     padding: $spacing-sm;
     font-size: 16px;
+
+    img:global(.full-width) {
+      width: 100%;
+      float: none;
+      display: block;
+    }
   }
 }
