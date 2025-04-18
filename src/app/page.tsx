@@ -51,20 +51,20 @@ const HomePage = () => {
                 <span className={`${styles.sparkle} ${styles.sparkleBottom}`}>✨</span>
               </h1>
               <p className={styles.heroDescription}>
-                جایی برای شکوفایی خلاقیت، یادگیری و رشد کودکان شما. با درخت، داستان‌های خلاقانه بسازید، محصولات آموزشی کشف کنید و به دنیای شگفت‌انگیز کودکی سفر کنید.
+                برای خلق اثری ماندگار از کودکی. مناسب بچه‌های یک تا یک‌صد ساله.
               </p>
               <div className={styles.buttonContainer}>
                 <button
                     onClick={() => router.push('/template')}
                     className={styles.primaryButton}
                 >
-                  ساخت داستان
+                  برای قصه‌سازی
                 </button>
                 <button
                     onClick={() => router.push('/shop')}
                     className={styles.secondaryButton}
                 >
-                  فروشگاه
+                  برای خرید بسته قصه‌خوانی
                 </button>
               </div>
             </div>
@@ -91,7 +91,7 @@ const HomePage = () => {
         {/* Features Section */}
         <section className={styles.featuresSection} style={{ opacity: animateFeatures ? 1 : 0, transform: animateFeatures ? 'translateY(0)' : 'translateY(10px)' }}>
           <h2 className={styles.sectionTitle}>
-            <span>ما چه کاری انجام می‌دهیم؟</span>
+            <span>در درخت</span>
             <div className={styles.titleUnderline}></div>
           </h2>
 
@@ -101,7 +101,7 @@ const HomePage = () => {
                 <FaBook size={30} />
               </div>
               <h3 className={`${styles.featureTitle} ${styles.purpleTitle}`}>داستان‌های خلاقانه</h3>
-              <p className={styles.featureDescription}>کودکان با کمک تصاویر جذاب، داستان‌های خودشان را می‌سازند و خلاقیت‌شان را پرورش می‌دهند.</p>
+              <p className={styles.featureDescription}>می‌توانی قصه خودتان را بسازی</p>
             </div>
 
             <div className={styles.featureCard}>
@@ -109,7 +109,7 @@ const HomePage = () => {
                 <FaShoppingCart size={30} />
               </div>
               <h3 className={`${styles.featureTitle} ${styles.greenTitle}`}>فروشگاه آموزشی</h3>
-              <p className={styles.featureDescription}>محصولات آموزشی با کیفیت، اسباب‌بازی‌ها و کتاب‌های خلاقانه برای رشد و یادگیری کودکان.</p>
+              <p className={styles.featureDescription}>یک بسته کتابخوانی مناسب خود خودت داشته باشی.</p>
             </div>
 
             <div className={styles.featureCard}>
@@ -117,7 +117,7 @@ const HomePage = () => {
                 <FaPencilAlt size={30} />
               </div>
               <h3 className={`${styles.featureTitle} ${styles.blueTitle}`}>بلاگ آموزشی</h3>
-              <p className={styles.featureDescription}>مقالات و محتوای آموزشی برای والدین و مربیان تا در مسیر رشد کودکان راهنمایی شوند.</p>
+              <p className={styles.featureDescription}>مطالب هنری‌آموزشی‌ در بلاگ را بخوانی.</p>
             </div>
 
             <div className={styles.featureCard}>
@@ -125,7 +125,7 @@ const HomePage = () => {
                 <FaStar size={30} />
               </div>
               <h3 className={`${styles.featureTitle} ${styles.yellowTitle}`}>تجربه‌ای شگفت‌انگیز</h3>
-              <p className={styles.featureDescription}>محیطی امن و سرگرم‌کننده که در آن یادگیری با بازی و سرگرمی همراه است.</p>
+              <p className={styles.featureDescription}>می‌توانی قصه بخوانی.</p>
             </div>
           </div>
         </section>

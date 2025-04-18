@@ -7,6 +7,7 @@ import { Navbar } from '@/components/shared/Navbar/Navbar';
 import { FaUsers, FaBullseye, FaHeart, FaSeedling, FaSmile, FaBookReader, FaPuzzlePiece, FaShieldAlt } from 'react-icons/fa';
 import styles from './about.module.scss';
 import logo from '@/assets/images/logo2.png';
+import Footer from "@/components/shared/Footer/Footer";
 
 const AboutUsPage = () => {
     // Animation states for elements
@@ -76,14 +77,20 @@ const AboutUsPage = () => {
                                 <div className={styles.storyTitleUnderline}></div>
                             </h2>
                             <p className={styles.storyParagraph}>
-                                درخت از ایده‌ای ساده شروع شد: ایجاد فضایی که در آن کودکان بتوانند با استفاده از تخیل خود جهان‌های جدیدی خلق کنند.
+                                درخت از ایده‌ای ساده شروع شد: هرکس قصه‌ای برای تعریف‌کردن دارد.
                             </p>
                             <p className={styles.storyParagraph}>
-                                ما باور داریم که هر کودک داستان‌های منحصر به فردی در ذهن دارد که منتظر شکوفایی هستند. در سال ۱۴۰۳، گروهی از متخصصان آموزش کودک، برنامه‌نویسان و هنرمندان گرد هم آمدند تا پلتفرم درخت را ایجاد کنند.
+                                ما به بچه‌ها کمک می‌کنیم که جهان‌هایی که در ذهن دارند را در قصه‌ها ثبت کنند؛ قصه‌ای که
+                                در کتابخانه خودشان و در کتابخانه درخت به زندگی ادامه می‌دهد، به گوش باقی آدم‌ها می‌رسد و
+                                به آن‌ها تجربه‌ای جدید می‌بخشد.
                             </p>
                             <p className={styles.storyParagraph}>
-                                امروز، ما افتخار می‌کنیم که هزاران کودک و خانواده ایرانی با استفاده از ابزارهای درخت، لذت داستان‌سرایی و یادگیری خلاقانه را تجربه می‌کنند.
+                                و حالا در هر برگ این درخت قصه‌ای تازه زندگی می‌کند.
                             </p>
+                            <p className={styles.storyParagraph}>
+                                ما، چند نویسنده و نقاش حوزه کودک، چند برنامه‌نویس و چند متخصص آموزش کودک در سال ۱۴۰۳ کنار هم جمع شدیم تا این درخت را بسازیم.
+                            </p>
+
                         </div>
 
                         <div className={styles.storyImageContainer}>
@@ -112,10 +119,10 @@ const AboutUsPage = () => {
 
                         <h2 className={`${styles.missionTitle} ${styles.purpleTitle}`}>ماموریت ما</h2>
                         <p className={styles.missionDescription}>
-                            ماموریت ما ایجاد ابزارهایی است که کودکان را قادر می‌سازد داستان‌های خود را بسازند، خلاقیت خود را پرورش دهند و با روش‌های سرگرم‌کننده، مهارت‌های زبانی و تفکر خود را تقویت کنند.
+                            ماموریت ما راحت‌تر کردن مسیر فکر کردن و تخیل کردن و رساندن آن به خلق یک اثر است؛ اثری از امروز زندگی او که در درخت برای همیشه ماندگار می‌شود. ما باور داریم که قصه‌سازی ابزار ساده‌ایست که مهارت‌های کلامی، تفکر، خلاقیت را گسترش می‌دهد، ابزاری که زندگی را در دو قلمروی تخیل و واقعیت ساده و زیبا می‌کند.
                         </p>
                         <p className={styles.missionDescription}>
-                            ما می‌خواهیم به کودکان کمک کنیم تا به نویسندگان، متفکران و خالقان آینده تبدیل شوند.
+                            و البته ما می‌خواهیم به کودکان کمک کنیم تا به هنرمندان، متفکران و خالقان امروز و آینده تبدیل شوند.
                         </p>
                     </div>
 
@@ -137,56 +144,6 @@ const AboutUsPage = () => {
                 </div>
             </section>
 
-            {/* Our Team */}
-            <section className={styles.teamSection} style={{ opacity: isVisible.team ? 1 : 0, transform: isVisible.team ? 'translateY(0)' : 'translateY(10px)' }}>
-                <div className={styles.teamCard}>
-                    <h2 className={styles.teamTitle}>
-                        تیم ما
-                        <div className={styles.teamTitleUnderline}></div>
-                    </h2>
-
-                    <div className={styles.teamContent}>
-                        <div className={styles.teamDescription}>
-                            <p className={styles.teamParagraph}>
-                                تیم درخت متشکل از متخصصان آموزش کودک، روانشناسان، نویسندگان خلاق، طراحان و برنامه‌نویسان است که همگی با هدف مشترک فراهم آوردن تجربه‌ای شگفت‌انگیز برای کودکان گرد هم آمده‌اند.
-                            </p>
-                            <p className={styles.teamParagraph}>
-                                ما با عشق و اشتیاق کار می‌کنیم تا ابزارها و محتوایی ایجاد کنیم که الهام‌بخش، آموزنده و سرگرم‌کننده باشد. فلسفه ما این است که یادگیری باید لذت‌بخش باشد و کودکان در محیطی امن و حمایت‌کننده رشد کنند.
-                            </p>
-                        </div>
-
-                        <div className={styles.teamRoles}>
-                            <div className={styles.roleItem}>
-                                <div className={`${styles.roleIconContainer} ${styles.yellowIconBg}`}>
-                                    <FaUsers className={styles.yellowIcon} />
-                                </div>
-                                <h3 className={styles.roleTitle}>متخصصان آموزشی</h3>
-                            </div>
-
-                            <div className={styles.roleItem}>
-                                <div className={`${styles.roleIconContainer} ${styles.blueIconBg}`}>
-                                    <FaBookReader className={styles.blueIcon} />
-                                </div>
-                                <h3 className={styles.roleTitle}>نویسندگان خلاق</h3>
-                            </div>
-
-                            <div className={styles.roleItem}>
-                                <div className={`${styles.roleIconContainer} ${styles.purpleIconBg}`}>
-                                    <FaPuzzlePiece className={styles.purpleIcon} />
-                                </div>
-                                <h3 className={styles.roleTitle}>طراحان هنری</h3>
-                            </div>
-
-                            <div className={styles.roleItem}>
-                                <div className={`${styles.roleIconContainer} ${styles.greenIconBg}`}>
-                                    <FaShieldAlt className={styles.greenIcon} />
-                                </div>
-                                <h3 className={styles.roleTitle}>متخصصان امنیت</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             {/* Our Values */}
             <section className={styles.valuesSection} style={{ opacity: isVisible.values ? 1 : 0, transform: isVisible.values ? 'translateY(0)' : 'translateY(10px)' }}>
@@ -230,43 +187,6 @@ const AboutUsPage = () => {
                 </div>
             </section>
 
-            {/* Our Approach */}
-            <section className={styles.approachSection}>
-                <div className={styles.approachCard}>
-                    <h2 className={styles.approachTitle}>رویکرد ما</h2>
-
-                    <div className={styles.approachGrid}>
-                        <div className={styles.approachItem}>
-                            <h3 className={styles.approachItemTitle}>یادگیری فعال</h3>
-                            <p className={styles.approachDescription}>
-                                کودکان در درخت، مصرف‌کننده منفعل محتوا نیستند بلکه سازندگان فعال آن هستند. رویکرد ما مبتنی بر یادگیری از طریق انجام دادن است.
-                            </p>
-                        </div>
-
-                        <div className={styles.approachItem}>
-                            <h3 className={styles.approachItemTitle}>محتوای بومی و فرهنگی</h3>
-                            <p className={styles.approachDescription}>
-                                محتوای ما متناسب با فرهنگ و ارزش‌های ایرانی طراحی شده تا کودکان با مفاهیم آشنا و قابل درک ارتباط برقرار کنند.
-                            </p>
-                        </div>
-
-                        <div className={styles.approachItem}>
-                            <h3 className={styles.approachItemTitle}>فناوری در خدمت آموزش</h3>
-                            <p className={styles.approachDescription}>
-                                ما از فناوری به عنوان ابزاری برای غنی‌سازی تجربه یادگیری استفاده می‌کنیم، نه جایگزینی برای تعامل انسانی.
-                            </p>
-                        </div>
-
-                        <div className={styles.approachItem}>
-                            <h3 className={styles.approachItemTitle}>همراهی والدین</h3>
-                            <p className={styles.approachDescription}>
-                                ما والدین را بخش مهمی از فرآیند یادگیری می‌دانیم و ابزارهایی برای مشارکت آنها در این سفر فراهم می‌کنیم.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             {/* Invitation */}
             <section className={styles.invitationSection}>
                 <div className={styles.invitationCard}>
@@ -279,39 +199,15 @@ const AboutUsPage = () => {
                         <Link href="/shop" className={styles.invitationButton}>
                             دیدن محصولات
                         </Link>
-                        <Link href="/about" className={`${styles.invitationButton} ${styles.tealButton}`}>
-                            درباره ما
+                        <Link href="/template" className={`${styles.invitationButton} ${styles.tealButton}`}>
+                            شروع به قصه‌سازی
                         </Link>
                     </div>
                 </div>
             </section>
 
             {/* Footer */}
-            <footer className={styles.footer}>
-                <div className={styles.footerGrid}>
-                    <div className={styles.footerColumn}>
-                        <h3 className={styles.footerTitle}>درخت</h3>
-                        <p>جایی برای رشد و شکوفایی خلاقیت کودکان</p>
-                    </div>
-                    <div className={styles.footerColumn}>
-                        <h3 className={styles.footerTitle}>لینک‌های مهم</h3>
-                        <ul className={styles.footerLinks}>
-                            <li><Link href="/shop" className={styles.footerLink}>فروشگاه</Link></li>
-                            <li><Link href="/blog" className={styles.footerLink}>بلاگ</Link></li>
-                            <li><Link href="/template" className={styles.footerLink}>داستان‌سازی</Link></li>
-                            <li><Link href="/about" className={styles.footerLink}>تماس با ما</Link></li>
-                        </ul>
-                    </div>
-                    <div className={styles.footerColumn}>
-                        <h3 className={styles.footerTitle}>تماس با ما</h3>
-                        <p>ایمیل: info@derakht.com</p>
-                        <p>تلفن: ۰۲۱-۸۸۷۷۶۶۵۵</p>
-                    </div>
-                </div>
-                <div className={styles.footerDivider}>
-                    <p className={styles.copyright}>© تمامی حقوق برای درخت محفوظ است. ۱۴۰۴</p>
-                </div>
-            </footer>
+            <Footer/>
         </div>
     );
 };

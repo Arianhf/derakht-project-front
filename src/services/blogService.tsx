@@ -2,7 +2,7 @@ import api from './api';
 import { BlogPost, HeroPost } from '@/types';
 
 export const blogService = {
-    getHeroPost: async (): Promise<HeroPost> => {
+    getHeroPosts: async (): Promise<BlogServiceResponse<BlogPost>> => {
         const response = await api.get('v2/posts/hero/');
         return response.data;
     },

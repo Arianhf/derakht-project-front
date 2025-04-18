@@ -331,6 +331,12 @@ img {
   margin-bottom: 15px;
 }
 
+.text-end {
+  text-align: left;
+  float: left;
+}
+
+
 .mb-1 { margin-bottom: $spacing-xs; }
 .mb-2 { margin-bottom: $spacing-sm; }
 .mb-3 { margin-bottom: $spacing-md; }
@@ -362,3 +368,4 @@ img {
   background-repeat: repeat;
   background-size: 80px 80px;
 }
+

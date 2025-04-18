@@ -9,6 +9,7 @@ import { UI_CONSTANTS } from '@/constants';
 import { formatJalaliDate, toPersianNumber } from "@/utils/convertToPersianNumber";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import ErrorMessage from "@/components/shared/ErrorMessage";
+import HeroCarousel from "./HeroCarousel"; // Import our new carousel component
 
 // Updated TagList component with onTagClick handler
 interface TagListProps {
@@ -39,78 +40,7 @@ const TagList: React.FC<TagListProps> = ({ tags, onTagClick, className, tagClass
   );
 };
 
-// Enhanced Hero Post component with subtitle and intro
-interface HeroPostProps {
-  blog: BlogPost;
-  onNavigate: (id: number) => void;
-  onTagClick: (tag: string) => void;
-}
-
-const HeroPostCard: React.FC<HeroPostProps> = ({ blog, onNavigate, onTagClick }) => (
-    <div
-        className={styles.heroSection}
-        onClick={() => onNavigate(blog.id)}
-        style={{ cursor: 'pointer' }}
-    >
-      <Image
-          src={blog.header_image?.meta?.download_url || "/default-image.jpg"}
-          alt={blog.header_image?.title || blog.title}
-          className={styles.headerImage}
-          fill
-          priority
-          sizes="100vw"
-      />
-      <div className={styles.imageOverlay}></div>
-      <div className={styles.overlay}>
-        <div className={styles.heroContent}>
-          {blog.tags && blog.tags.length > 0 && (
-              <div className={styles.headerTags}>
-                {blog.tags.map((tag, index) => (
-                    <span
-                        key={index}
-                        className={styles.tag}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onTagClick(tag);
-                        }}
-                    >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-          )}
-          <h1 className={styles.headerTitle}>{blog.title}</h1>
-          {blog.subtitle && (
-              <p className={styles.headerSubtitle}>{blog.subtitle}</p>
-          )}
-          {blog.intro && (
-              <p className={styles.headerIntro}>{blog.intro}</p>
-          )}
-          <div className={styles.authorInfo}>
-            <FaUserCircle className={styles.authorIcon} />
-            <div className={styles.authorDetails}>
-              <div className={styles.authorName}>
-                نویسنده: {blog.owner?.first_name}
-              </div>
-              <div className={styles.authorMeta}>
-                <span>
-                  <FaCalendarAlt style={{ marginLeft: '5px' }} />
-                  نوشته شده در {formatJalaliDate(blog.jalali_date || "")}
-                </span>
-                {blog.reading_time && (
-                    <span>
-                      <FaClock style={{ marginLeft: '5px' }} />
-                      {toPersianNumber(blog.reading_time)} دقیقه مطالعه
-                    </span>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-);
-
+// Featured Blog Card component
 interface FeaturedBlogProps {
   blog: BlogPost;
   onNavigate: (id: number) => void;
@@ -259,10 +189,12 @@ const RegularBlogCard: React.FC<RegularBlogCardProps> = ({blog, onNavigate, onTa
     </div>
 );
 
+
+// Main BlogPostList component
 const BlogPostList: React.FC = () => {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [featuredBlogs, setFeaturedBlogs] = useState<BlogPost[]>([]);
-  const [heroPost, setHeroPost] = useState<BlogPost | null>(null);
+  const [heroPosts, setHeroPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -270,25 +202,23 @@ const BlogPostList: React.FC = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const [regularPosts, featuredPosts] = await Promise.all([
+        setLoading(true);
+        // Fetch all three types of blog posts in parallel
+        const [regularPosts, featuredPosts, heroPostsResponse] = await Promise.all([
           blogService.getAllPosts(),
-          blogService.getFeaturedPosts()
+          blogService.getFeaturedPosts(),
+          blogService.getHeroPosts() // Updated to use the new API that returns multiple hero posts
         ]);
 
         setBlogs(regularPosts.items);
 
         // Filter featured posts that are not hero posts
-        const featured = featuredPosts.items.filter(post => post.featured && !post.hero);
+        const featured = featuredPosts.items.filter(post =>
+            post.featured && !post.hero);
         setFeaturedBlogs(featured);
 
-        // Find the hero post
-        const hero = featuredPosts.items.find(post => post.hero);
-        if (hero) {
-          setHeroPost(hero);
-        } else if (featured.length > 0) {
-          setHeroPost(featured[0]);
-          setFeaturedBlogs(featured.slice(1));
-        }
+        // Set hero posts from the updated API
+        setHeroPosts(heroPostsResponse.items || []);
       } catch (err) {
         console.error(err);
         setError(UI_CONSTANTS.ERROR_MESSAGE);
@@ -310,18 +240,19 @@ const BlogPostList: React.FC = () => {
 
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} />;
-  if ((blogs.length === 0) && (featuredBlogs.length === 0) && !heroPost) {
+
+  // If there are no blog posts of any kind, show empty state
+  if (blogs.length === 0 && featuredBlogs.length === 0 && heroPosts.length === 0) {
     return <p className={styles.noBlogs}>هیچ مقاله‌ای یافت نشد.</p>;
   }
 
   return (
       <div className={styles.blogPageContainer}>
         <div className={styles.contentWrapper}>
-          {/* Hero Post */}
-          {heroPost && (
-              <HeroPostCard
-                  blog={heroPost}
-                  onNavigate={handleNavigate}
+          {/* Hero Carousel - renders multiple hero posts */}
+          {heroPosts.length > 0 && (
+              <HeroCarousel
+                  heroPosts={heroPosts}
                   onTagClick={handleTagClick}
               />
           )}

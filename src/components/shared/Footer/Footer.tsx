@@ -17,7 +17,7 @@ export const Footer: React.FC = () => {
                     <ul className={styles.footerLinks}>
                         <li><Link href="/shop" className={styles.footerLink}>فروشگاه</Link></li>
                         <li><Link href="/blog" className={styles.footerLink}>بلاگ</Link></li>
-                        <li><Link href="/template" className={styles.footerLink}>داستان‌سازی</Link></li>
+                        <li><Link href="/`template`" className={styles.footerLink}>داستان‌سازی</Link></li>
                         <li><Link href="/about" className={styles.footerLink}>درباره ما</Link></li>
                     </ul>
                 </div>
