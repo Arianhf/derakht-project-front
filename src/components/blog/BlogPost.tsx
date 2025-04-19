@@ -1,3 +1,5 @@
+// src/components/blog/BlogPost.tsx
+
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from 'next/image';
@@ -9,7 +11,8 @@ import { UI_CONSTANTS } from '@/constants';
 import { formatJalaliDate, toPersianNumber } from "@/utils/convertToPersianNumber";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import ErrorMessage from "@/components/shared/ErrorMessage";
-import HeroCarousel from "./HeroCarousel"; // Import our new carousel component
+import HeroCarousel from "./HeroCarousel";
+import CategoriesSection from "./CategoriesSection";
 
 // Updated TagList component with onTagClick handler
 interface TagListProps {
@@ -207,7 +210,7 @@ const BlogPostList: React.FC = () => {
         const [regularPosts, featuredPosts, heroPostsResponse] = await Promise.all([
           blogService.getAllPosts(),
           blogService.getFeaturedPosts(),
-          blogService.getHeroPosts() // Updated to use the new API that returns multiple hero posts
+          blogService.getHeroPosts()
         ]);
 
         setBlogs(regularPosts.items);
@@ -256,6 +259,9 @@ const BlogPostList: React.FC = () => {
                   onTagClick={handleTagClick}
               />
           )}
+
+          {/* Categories Section - NEW COMPONENT */}
+          <CategoriesSection />
 
           {/* Featured Blogs Section */}
           {featuredBlogs.length > 0 && (

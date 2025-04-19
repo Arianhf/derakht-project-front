@@ -1,0 +1,51 @@
+// src/components/blog/CategoriesSection.module.scss
+@import '../../styles/globals.scss';
+
+.categoriesSection {
+  margin-bottom: $spacing-xl;
+}
+
+.sectionTitle {
+  position: relative;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: $spacing-lg;
+  color: $dark-text;
+  padding-right: 15px;
+
+  &:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 25px;
+    background-color: $accent-color;
+    border-radius: 3px;
+  }
+}
+
+.categoriesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: $spacing-lg;
+}
+
+@media (max-width: $breakpoint-md) {
+  .sectionTitle {
+    font-size: 24px;
+  }
+
+  .categoriesGrid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: $spacing-md;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .categoriesGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-sm;
+  }
+}
