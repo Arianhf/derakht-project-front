@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaArrowRight, FaCalendarAlt, FaUserCircle, FaClock, FaComment, FaStar } from 'react-icons/fa';
 import styles from './BlogDetails.module.scss';
+import RelatedPosts from './RelatedPosts';
+import { RelatedPost } from '@/services/blogService';
 
 interface BlogDetailsProps {
     blog: {
@@ -26,10 +28,11 @@ interface BlogDetailsProps {
         featured?: boolean;
         hero?: boolean;
     };
+    relatedPosts?: RelatedPost[];
     logo: any;
 }
 
-const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, logo }) => {
+const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, relatedPosts = [], logo }) => {
     const router = useRouter();
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState<Array<{author: string, date: string, text: string}>>([]);
@@ -228,6 +231,10 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, logo }) => {
                         <button type="submit" className={styles.submitButton}>ارسال نظر</button>
                     </form>
                 </section>
+
+                {relatedPosts.length > 0 && (
+                    <RelatedPosts posts={relatedPosts} />
+                )}
             </div>
         </div>
     );
