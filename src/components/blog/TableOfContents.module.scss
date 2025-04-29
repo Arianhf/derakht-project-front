@@ -1,0 +1,122 @@
+// src/components/blog/TableOfContents.module.scss
+@import '../../styles/globals.scss';
+
+.tocContainer {
+  position: relative;
+  background-color: rgba($primary-color, 0.05);
+  border-radius: $border-radius-md;
+  padding: $spacing-md;
+  margin: $spacing-lg $spacing-lg;
+  border-right: 4px solid $primary-color;
+}
+
+.tocTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: $primary-color;
+  margin-bottom: $spacing-md;
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &:before {
+    content: '📋';
+    margin-left: $spacing-sm;
+    font-size: 22px;
+  }
+}
+
+.tocList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tocItem {
+  padding-right: $spacing-sm;
+  position: relative;
+  transition: $transition-base;
+
+  &:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 15px;
+    background-color: $accent-color;
+    border-radius: 3px;
+  }
+}
+
+.tocLink {
+  color: $dark-text;
+  padding: 0 $spacing-sm;
+  text-decoration: none;
+  transition: $transition-base;
+
+  &:hover {
+    background-color: rgba($primary-color, 0.1);
+    color: $primary-color;
+  }
+}
+
+// Indentation for different heading levels
+.level1 {
+  margin-right: 0;
+  font-weight: bold;
+
+  &:before {
+    background-color: $primary-color;
+    height: 20px;
+  }
+}
+
+.level2 {
+  margin-right: $spacing-md;
+
+  &:before {
+    background-color: $secondary-color;
+  }
+}
+
+.level3 {
+  margin-right: $spacing-lg;
+  font-size: 14px;
+
+  &:before {
+    background-color: $accent-color;
+    height: 12px;
+  }
+}
+
+.level4 {
+  margin-right: $spacing-xl;
+  font-size: 14px;
+  color: $light-text;
+
+  &:before {
+    background-color: lighten($accent-color, 10%);
+    height: 10px;
+  }
+}
+
+// Responsive styles
+@media (max-width: $breakpoint-md) {
+  .tocContainer {
+    padding: $spacing-sm;
+  }
+
+  .level2 {
+    margin-right: $spacing-sm;
+  }
+
+  .level3 {
+    margin-right: $spacing-md;
+  }
+
+  .level4 {
+    margin-right: $spacing-lg;
+  }
+}

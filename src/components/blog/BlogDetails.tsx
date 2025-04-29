@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { FaArrowRight, FaCalendarAlt, FaUserCircle, FaClock, FaComment, FaStar } from 'react-icons/fa';
 import styles from './BlogDetails.module.scss';
 import RelatedPosts from './RelatedPosts';
 import { RelatedPost } from '@/services/blogService';
+import TableOfContents from './TableOfContents';
 
 interface BlogDetailsProps {
     blog: {
@@ -36,59 +36,80 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, relatedPosts = [], logo
     const router = useRouter();
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState<Array<{author: string, date: string, text: string}>>([]);
+    const [processedContent, setProcessedContent] = useState(blog.content);
 
     // Function to process the blog content
-    const processContent = (content: string) => {
-        // Create a DOM parser to work with the HTML
-        if (typeof window !== 'undefined') {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(content, 'text/html');
+    useEffect(() => {
+        const processContent = (content: string) => {
+            // Create a DOM parser to work with the HTML
+            if (typeof window !== 'undefined') {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(content, 'text/html');
 
-            // Function to check if an element is a right or left aligned image
-            const isFloatedImage = (element: Element) => {
-                if (element.tagName === 'IMG') {
-                    const classNames = element.className.split(' ');
-                    return classNames.includes('right') || classNames.includes('left');
-                }
-                return false;
-            };
+                // Add IDs to headings for the table of contents
+                const headings = doc.querySelectorAll('h1, h2, h3, h4');
+                headings.forEach((heading, index) => {
+                    // Skip the main title (usually the first h1)
+                    if (heading.tagName === 'H1' && index === 0) return;
 
-            // Find consecutive floated images with no substantial content between them
-            const paragraphs = doc.querySelectorAll('p');
+                    // Generate a unique ID for this heading if it doesn't have one
+                    if (!heading.id) {
+                        const headingText = heading.textContent || `heading-${index}`;
+                        heading.id = headingText
+                            .toLowerCase()
+                            .replace(/[^\w\s]/g, '')  // Remove special characters
+                            .replace(/\s+/g, '-');    // Replace spaces with hyphens
+                    }
+                });
 
-            for (let i = 0; i < paragraphs.length; i++) {
-                const paragraph = paragraphs[i];
-                const images = paragraph.querySelectorAll('img');
+                // Function to check if an element is a right or left aligned image
+                const isFloatedImage = (element: Element) => {
+                    if (element.tagName === 'IMG') {
+                        const classNames = element.className.split(' ');
+                        return classNames.includes('right') || classNames.includes('left');
+                    }
+                    return false;
+                };
 
-                // If this paragraph contains a floated image
-                if (images.length > 0 && isFloatedImage(images[0])) {
-                    // Check if the next paragraph also starts with a floated image
-                    if (i < paragraphs.length - 1) {
-                        const nextParagraph = paragraphs[i + 1];
-                        const nextImages = nextParagraph.querySelectorAll('img');
+                // Find consecutive floated images with no substantial content between them
+                const paragraphs = doc.querySelectorAll('p');
 
-                        if (nextImages.length > 0 && isFloatedImage(nextImages[0])) {
-                            // There's a floated image in the next paragraph
-                            // Check if there's enough text content in this paragraph
-                            const textContent = paragraph.textContent?.trim() || '';
+                for (let i = 0; i < paragraphs.length; i++) {
+                    const paragraph = paragraphs[i];
+                    const images = paragraph.querySelectorAll('img');
 
-                            // If there's not enough text to provide spacing
-                            if (textContent.length < 100) {
-                                // Insert a break-float div to clear the floats
-                                const breakDiv = document.createElement('div');
-                                breakDiv.className = 'break-float';
-                                paragraph.appendChild(breakDiv);
+                    // If this paragraph contains a floated image
+                    if (images.length > 0 && isFloatedImage(images[0])) {
+                        // Check if the next paragraph also starts with a floated image
+                        if (i < paragraphs.length - 1) {
+                            const nextParagraph = paragraphs[i + 1];
+                            const nextImages = nextParagraph.querySelectorAll('img');
+
+                            if (nextImages.length > 0 && isFloatedImage(nextImages[0])) {
+                                // There's a floated image in the next paragraph
+                                // Check if there's enough text content in this paragraph
+                                const textContent = paragraph.textContent?.trim() || '';
+
+                                // If there's not enough text to provide spacing
+                                if (textContent.length < 100) {
+                                    // Insert a break-float div to clear the floats
+                                    const breakDiv = document.createElement('div');
+                                    breakDiv.className = 'break-float';
+                                    paragraph.appendChild(breakDiv);
+                                }
                             }
                         }
                     }
                 }
+
+                return doc.body.innerHTML;
             }
 
-            return doc.body.innerHTML;
-        }
+            return content;
+        };
 
-        return content;
-    };
+        setProcessedContent(processContent(blog.content));
+    }, [blog.content]);
 
     const handleCommentSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -187,13 +208,12 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, relatedPosts = [], logo
                         </div>
                     )}
 
+                    {/* Table of Contents - Added here */}
+                    <TableOfContents content={processedContent} />
+
                     <div className={styles.blogContent}>
-                        {/* We use body instead of content now */}
-                        {typeof window !== 'undefined' ? (
-                            <div dangerouslySetInnerHTML={{ __html: processContent(blog.content) }} />
-                        ) : (
-                            <div dangerouslySetInnerHTML={{ __html: blog.content }} />
-                        )}
+                        {/* We use the processedContent now */}
+                        <div dangerouslySetInnerHTML={{ __html: processedContent }} />
                     </div>
                 </article>
 
