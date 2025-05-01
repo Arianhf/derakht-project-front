@@ -31,6 +31,7 @@ interface Template {
   description: string;
   activity_type: string;
   template_parts: TemplatePart[];
+  cover_image: string | null;
 }
 
 interface TemplateResponse {
@@ -160,11 +161,25 @@ const TemplatePage = () => {
                           className={`${styles.storyCard} ${isLoading ? styles.disabled : ''}`}
                           onClick={() => !isLoading && startStory(template.id)}
                       >
-                        <div className={styles.iconContainer}>
-                          {selectedTemplate === "story" ? <FaBook className={styles.storyIcon} /> : <FaPaintBrush className={styles.storyIcon} />}
+                        <div className={styles.cardContent}>
+                          {template.cover_image ? (
+                              <div className={styles.coverImageContainer}>
+                                <Image
+                                    src={template.cover_image}
+                                    alt={template.title}
+                                    width={180}
+                                    height={120}
+                                    className={styles.coverImage}
+                                />
+                              </div>
+                          ) : (
+                              <div className={styles.iconContainer}>
+                                {selectedTemplate === "story" ? <FaBook className={styles.storyIcon} /> : <FaPaintBrush className={styles.storyIcon} />}
+                              </div>
+                          )}
+                          <h3 className={styles.storyTitle}>{template.title}</h3>
+                          <p className={styles.storyDescription}>{template.description}</p>
                         </div>
-                        <h3 className={styles.storyTitle}>{template.title}</h3>
-                        <p className={styles.storyDescription}>{template.description}</p>
                       </div>
                   ))}
                 </div>
