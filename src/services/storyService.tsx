@@ -1,3 +1,4 @@
+// src/services/storyService.tsx
 import api from './api';
 import { StoryTemplate, StoryResponse, Story, StoryPart } from '@/types/story';
 
@@ -11,7 +12,7 @@ export const storyService = {
     const response = await api.get(`/stories/${id}/`);
     return response.data;
   },
-  
+
   createStory: async (storyData: FormData): Promise<StoryTemplate> => {
     const response = await api.post('v2/stories/', storyData, {
       headers: {
@@ -61,4 +62,30 @@ export const storyService = {
     const response = await api.post(`/stories/${storyId}/finalize/`, { title });
     return response.data;
   },
+
+  // Upload cover image for a story
+  uploadStoryCoverImage: async (storyId: string, imageFile: File): Promise<Story> => {
+    const formData = new FormData();
+    formData.append('cover_image', imageFile);
+
+    const response = await api.post(`/api/stories/${storyId}/upload_cover/`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  // Upload background image for a story
+  uploadStoryBackgroundImage: async (storyId: string, imageFile: File): Promise<Story> => {
+    const formData = new FormData();
+    formData.append('background_image', imageFile);
+
+    const response = await api.post(`/api/stories/${storyId}/upload_background/`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  }
 };

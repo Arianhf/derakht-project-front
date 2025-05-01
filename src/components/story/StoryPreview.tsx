@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { FaTimes, FaArrowRight, FaArrowLeft, FaColumns, FaLayerGroup } from 'react-icons/fa';
+import { FaTimes, FaArrowRight, FaArrowLeft, FaColumns, FaLayerGroup, FaImage, FaCog } from 'react-icons/fa';
 import styles from "./StoryPreview.module.scss";
 import { storyService } from '@/services/storyService';
 import { toast } from 'react-hot-toast';
@@ -15,6 +15,10 @@ interface StoryPreviewProps {
     isFullPage?: boolean;
     storyId?: string;
     storyTitle?: string;
+    coverImage?: string | null;
+    backgroundImage?: string | null;
+    onCoverImageUpload?: (file: File) => void;
+    onBackgroundImageUpload?: (file: File) => void;
 }
 
 const StoryPreview: React.FC<StoryPreviewProps> = ({
@@ -23,11 +27,16 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                        onClose,
                                                        isFullPage = false,
                                                        storyId,
-                                                       storyTitle
+                                                       storyTitle,
+                                                       coverImage,
+                                                       backgroundImage,
+                                                       onCoverImageUpload,
+                                                       onBackgroundImageUpload
                                                    }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [viewMode, setViewMode] = useState<'overlay' | 'sideBySide'>('overlay');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
     const router = useRouter();
 
     // Reset page index and maintain view mode when opening/closing
@@ -88,6 +97,20 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
         }
     };
 
+    const handleCoverImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0 || !storyId || !onCoverImageUpload) return;
+
+        const file = e.target.files[0];
+        onCoverImageUpload(file);
+    };
+
+    const handleBackgroundImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0 || !storyId || !onBackgroundImageUpload) return;
+
+        const file = e.target.files[0];
+        onBackgroundImageUpload(file);
+    };
+
     const isLastPage = currentIndex === parts.length - 1;
 
     const previewContent = (
@@ -102,6 +125,15 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
             {/* Header with page indicator */}
             <div className={styles.previewHeader}>
                 <h2>پیش‌نمایش داستان</h2>
+                {storyId && (
+                    <button
+                        className={styles.settingsButton}
+                        onClick={() => setIsSettingsModalOpen(true)}
+                        title="تنظیمات داستان"
+                    >
+                        <FaCog />
+                    </button>
+                )}
             </div>
 
             <div className={styles.previewConfig}>
@@ -128,7 +160,10 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
             </div>
 
             {/* Content area - changes based on view mode */}
-            <div className={`${styles.previewContent} ${styles[viewMode]}`}>
+            <div
+                className={`${styles.previewContent} ${styles[viewMode]}`}
+                style={backgroundImage ? { backgroundImage: `url(${backgroundImage})` } : {}}
+            >
                 {viewMode === 'overlay' ? (
                     // Overlay mode
                     <div className={styles.overlayView}>
@@ -189,6 +224,90 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                     {!isLastPage && <FaArrowLeft className={styles.buttonIcon} />}
                 </button>
             </div>
+
+            {/* Settings Modal */}
+            {isSettingsModalOpen && (
+                <div className={styles.modalOverlay} onClick={() => setIsSettingsModalOpen(false)}>
+                    <div className={styles.settingsModal} onClick={(e) => e.stopPropagation()}>
+                        <h3 className={styles.settingsTitle}>تنظیمات داستان</h3>
+                        <button
+                            className={styles.closeModalButton}
+                            onClick={() => setIsSettingsModalOpen(false)}
+                        >
+                            <FaTimes />
+                        </button>
+
+                        <div className={styles.settingsContent}>
+                            <div className={styles.settingItem}>
+                                <label htmlFor="cover-image-upload">تصویر جلد:</label>
+                                <div className={styles.imagePreviewUpload}>
+                                    {coverImage ? (
+                                        <div className={styles.imagePreviewContainer}>
+                                            <Image
+                                                src={coverImage}
+                                                alt="تصویر جلد"
+                                                width={120}
+                                                height={80}
+                                                className={styles.imagePreview}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className={styles.noImage}>بدون تصویر</div>
+                                    )}
+                                    <input
+                                        id="cover-image-upload"
+                                        type="file"
+                                        accept="image/*"
+                                        className={styles.fileInput}
+                                        onChange={handleCoverImageUpload}
+                                    />
+                                    <label htmlFor="cover-image-upload" className={styles.uploadButton}>
+                                        انتخاب تصویر
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className={styles.settingItem}>
+                                <label htmlFor="background-image-upload">تصویر پس‌زمینه:</label>
+                                <div className={styles.imagePreviewUpload}>
+                                    {backgroundImage ? (
+                                        <div className={styles.imagePreviewContainer}>
+                                            <Image
+                                                src={backgroundImage}
+                                                alt="تصویر پس‌زمینه"
+                                                width={120}
+                                                height={80}
+                                                className={styles.imagePreview}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className={styles.noImage}>بدون تصویر</div>
+                                    )}
+                                    <input
+                                        id="background-image-upload"
+                                        type="file"
+                                        accept="image/*"
+                                        className={styles.fileInput}
+                                        onChange={handleBackgroundImageUpload}
+                                    />
+                                    <label htmlFor="background-image-upload" className={styles.uploadButton}>
+                                        انتخاب تصویر
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className={styles.modalFooter}>
+                            <button
+                                className={styles.modalButton}
+                                onClick={() => setIsSettingsModalOpen(false)}
+                            >
+                                بستن
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 

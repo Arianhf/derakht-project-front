@@ -11,7 +11,7 @@ import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import StoryPreview from '@/components/story/StoryPreview';
 import styles from './StoryPage.module.scss';
 import { FaTimes, FaEdit } from 'react-icons/fa';
-import { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
 
 const StoryPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +28,8 @@ const StoryPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
+  const [coverImage, setCoverImage] = useState<string | null>(null);
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if we're in mobile view
@@ -48,6 +50,15 @@ const StoryPage = () => {
         const response = await storyService.getStoryById(id);
         setTemplate(response);
         setTexts(response.parts.map((part) => part.text || ''));
+
+        // Set cover and background images if available
+        if (response.cover_image) {
+          setCoverImage(response.cover_image);
+        }
+
+        if (response.background_image) {
+          setBackgroundImage(response.background_image);
+        }
       } catch (err) {
         setError('خطا در دریافت قالب داستان');
         console.error(err);
@@ -89,6 +100,38 @@ const StoryPage = () => {
     }
   };
 
+  const handleCoverImageUpload = async (file: File) => {
+    if (!id) return;
+
+    try {
+      setLoading(true);
+      const response = await storyService.uploadStoryCoverImage(id, file);
+      setCoverImage(response.cover_image);
+      toast.success('تصویر جلد با موفقیت آپلود شد');
+    } catch (error) {
+      console.error('Error uploading cover image:', error);
+      toast.error('خطا در آپلود تصویر جلد');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBackgroundImageUpload = async (file: File) => {
+    if (!id) return;
+
+    try {
+      setLoading(true);
+      const response = await storyService.uploadStoryBackgroundImage(id, file);
+      setBackgroundImage(response.background_image);
+      toast.success('تصویر پس‌زمینه با موفقیت آپلود شد');
+    } catch (error) {
+      console.error('Error uploading background image:', error);
+      toast.error('خطا در آپلود تصویر پس‌زمینه');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const switchToEditMode = () => {
     router.push(`/story/${id}?mode=edit`);
   };
@@ -105,7 +148,7 @@ const StoryPage = () => {
   if (mode === 'view' || mode === 'preview') {
     return (
         <div className={styles.storyPage}>
-          <Navbar logo={logo} />
+          <Toaster position="top-center" />
 
           <div className={styles.fullPagePreviewContainer}>
             <div className={styles.previewHeader}>
@@ -125,7 +168,13 @@ const StoryPage = () => {
                 }))}
                 isOpen={true}
                 onClose={() => router.push('/stories')}
-                isFullPage={true} // Pass a prop to indicate full-page mode
+                isFullPage={true}
+                storyId={id as string}
+                storyTitle={template.title}
+                coverImage={coverImage}
+                backgroundImage={backgroundImage}
+                onCoverImageUpload={handleCoverImageUpload}
+                onBackgroundImageUpload={handleBackgroundImageUpload}
             />
           </div>
         </div>
@@ -151,19 +200,19 @@ const StoryPage = () => {
                     layout="responsive"
                 />
                 <div className={styles.mobilePagination}>
-                  <span className={styles.pageIndicator}>
-                    {toPersianNumber(`${selectedIndex + 1} / ${template.parts.length}`)}
-                  </span>
+              <span className={styles.pageIndicator}>
+                {toPersianNumber(`${selectedIndex + 1} / ${template.parts.length}`)}
+              </span>
                 </div>
               </div>
 
               <div className={styles.mobileStoryContainer}>
-                <textarea
-                    value={texts[selectedIndex]}
-                    onChange={handleTextChange}
-                    placeholder="داستان خود را بنویسید..."
-                    className={styles.storyInput}
-                />
+            <textarea
+                value={texts[selectedIndex]}
+                onChange={handleTextChange}
+                placeholder="داستان خود را بنویسید..."
+                className={styles.storyInput}
+            />
                 <div className={styles.buttonContainer}>
                   <button
                       className={styles.prevButton}
@@ -171,6 +220,12 @@ const StoryPage = () => {
                       disabled={selectedIndex === 0}
                   >
                     قبلی
+                  </button>
+                  <button
+                      className={styles.viewModeButton}
+                      onClick={switchToViewMode}
+                  >
+                    پیش‌نمایش
                   </button>
                   <button
                       className={styles.nextButton}
@@ -212,6 +267,12 @@ const StoryPage = () => {
                         disabled={selectedIndex === 0}
                     >
                       قبلی
+                    </button>
+                    <button
+                        className={styles.viewModeButton}
+                        onClick={switchToViewMode}
+                    >
+                      پیش‌نمایش
                     </button>
                     <button
                         className={styles.nextButton}
@@ -280,6 +341,10 @@ const StoryPage = () => {
             onClose={() => router.push('/story')}
             storyId={id as string}
             storyTitle={storyName}
+            coverImage={coverImage}
+            backgroundImage={backgroundImage}
+            onCoverImageUpload={handleCoverImageUpload}
+            onBackgroundImageUpload={handleBackgroundImageUpload}
         />
       </div>
   );

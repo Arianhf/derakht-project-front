@@ -278,10 +278,12 @@
   justify-content: space-between;
   width: 100%;
   direction: rtl;
+  gap: 10px;
 }
 
 .prevButton,
-.nextButton {
+.nextButton,
+.viewModeButton {
   padding: 10px 25px;
   font-size: 16px;
   border: none;
@@ -304,6 +306,17 @@
     background-color: #f1f1f1;
     color: #aaa;
     cursor: not-allowed;
+  }
+}
+
+.viewModeButton {
+  background-color: $secondary-color;
+  color: white;
+
+  &:hover {
+    background-color: darken($secondary-color, 10%);
+    transform: translateY(-2px);
+    box-shadow: $shadow-sm;
   }
 }
 
@@ -492,6 +505,7 @@
   padding: 1rem 2rem;
   background-color: #fff;
   border-bottom: 1px solid #eee;
+  z-index: 1;
 }
 
 .storyTitle {
@@ -501,14 +515,15 @@
 }
 
 .editModeButton, .viewModeButton {
+  font-family: $font-primary;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0.5rem 1rem;
+  padding: 1rem 1rem;
   background-color: #345BC0;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: $border-radius-lg;
   cursor: pointer;
   font-size: 0.9rem;
   transition: background-color 0.2s;

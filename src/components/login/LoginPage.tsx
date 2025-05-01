@@ -42,7 +42,16 @@ const LoginPage: React.FC = () => {
                 // Handle login
                 await loginService.login(email, password);
                 toast.success('با موفقیت وارد شدید');
-                router.push(redirectPath);
+
+                // Check if there was a pending template selection
+                const pendingTemplateString = localStorage.getItem('pendingTemplate');
+                if (pendingTemplateString) {
+                    // We'll let the template page handle the pending template
+                    // Just make sure we're redirecting to the template page
+                    router.push(redirectPath);
+                } else {
+                    router.push(redirectPath);
+                }
             } else {
                 // Handle signup
                 if (password !== confirmPassword) {
@@ -91,6 +100,12 @@ const LoginPage: React.FC = () => {
                 </div>
 
                 <h1 className={styles.title}>{isLogin ? 'ورود به حساب کاربری' : 'ایجاد حساب کاربری'}</h1>
+
+                {redirectPath !== '/' && isLogin && (
+                    <div className={styles.redirectMessage}>
+                        برای ادامه، لطفا وارد حساب کاربری خود شوید
+                    </div>
+                )}
 
                 <form className={styles.form} onSubmit={handleSubmit}>
                     <div className={styles.formGroup}>

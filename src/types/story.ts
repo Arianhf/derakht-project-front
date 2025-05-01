@@ -1,3 +1,4 @@
+// src/types/story.ts
 export interface StoryResponse<T> {
     count: number;
     next: string | null;
@@ -11,6 +12,7 @@ export interface StoryTemplate {
     description: string;
     activity_type: 'WRITE_FOR_DRAWING' | string;
     template_parts: TemplatePart[];
+    cover_image: string | null;
 }
 
 export interface TemplatePart {
@@ -37,4 +39,6 @@ export interface Story {
     parts: StoryPart[];
     story_template: string;
     title: string;
+    cover_image: string | null;
+    background_image: string | null;
 }

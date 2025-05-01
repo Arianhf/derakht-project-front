@@ -125,3 +125,55 @@
 .backButton:hover {
   background-color: #0056b3;
 }
+
+/* Add these styles to your template.module.scss file */
+
+/* Disabled state for story cards */
+.storyCard.disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  pointer-events: none;
+  position: relative;
+}
+
+.storyCard.disabled::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+}
+
+/* Disabled state for back button */
+.backButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background-color: #ccc;
+}
+
+/* Optional: Add a loading indicator for when story is starting */
+.storyCard.disabled .iconContainer {
+  position: relative;
+}
+
+.storyCard.disabled .iconContainer::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0, 123, 255, 0.3);
+  border-top: 3px solid #007BFF;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}

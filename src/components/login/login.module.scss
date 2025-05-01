@@ -1,3 +1,5 @@
+/* Keeping your original CSS and just adding the redirectMessage style */
+
 .container {
   display: flex;
   flex-direction: column;
@@ -55,6 +57,21 @@
   margin-bottom: 25px;
   color: #2B463C;
   text-align: center;
+}
+
+/* New style for redirect message */
+.redirectMessage {
+  background-color: rgba(52, 91, 192, 0.1);
+  color: #345BC0;
+  padding: 12px 15px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 15px;
+  border-right: 3px solid #345BC0;
+  width: 100%;
+  max-width: 450px;
+  direction: rtl;
 }
 
 .form {
@@ -205,5 +222,10 @@
   .button {
     font-size: 16px;
     padding: 12px;
+  }
+
+  .redirectMessage {
+    font-size: 14px;
+    padding: 10px;
   }
 }
