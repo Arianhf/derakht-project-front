@@ -68,7 +68,7 @@ export const storyService = {
     const formData = new FormData();
     formData.append('cover_image', imageFile);
 
-    const response = await api.post(`/api/stories/${storyId}/upload_cover/`, formData, {
+    const response = await api.post(`/stories/${storyId}/upload_cover/`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -81,7 +81,7 @@ export const storyService = {
     const formData = new FormData();
     formData.append('background_image', imageFile);
 
-    const response = await api.post(`/api/stories/${storyId}/upload_background/`, formData, {
+    const response = await api.post(`/stories/${storyId}/upload_background/`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

@@ -6,7 +6,7 @@ import styles from './Footer.module.scss';
 
 export const Footer: React.FC = () => {
     return (
-        <footer className={styles.footer}>
+            <footer className={styles.footer}>
             <div className={styles.footerGrid}>
                 <div className={styles.footerColumn}>
                     <h3 className={styles.footerTitle}>درخت</h3>
@@ -17,7 +17,7 @@ export const Footer: React.FC = () => {
                     <ul className={styles.footerLinks}>
                         <li><Link href="/shop" className={styles.footerLink}>فروشگاه</Link></li>
                         <li><Link href="/blog" className={styles.footerLink}>بلاگ</Link></li>
-                        <li><Link href="/`template`" className={styles.footerLink}>داستان‌سازی</Link></li>
+                        <li><Link href="/template" className={styles.footerLink}>داستان‌سازی</Link></li>
                         <li><Link href="/about" className={styles.footerLink}>درباره ما</Link></li>
                     </ul>
                 </div>

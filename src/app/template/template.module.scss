@@ -1,27 +1,69 @@
+@import '../../styles/globals.scss';
+
 .templateContainer {
   min-height: 100vh;
-  background: linear-gradient(180deg, #FFDDE1, #D4F1F4, #FFF7E5) !important;
+  background: $gradient-bg;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-family: 'shoor-Medium', sans-serif;
+  position: relative;
+  justify-content: space-between; // Ensures footer sticks to bottom
+
+  // Add the clouds background pattern
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.1;
+    background-image: $clouds;
+    background-repeat: repeat;
+    background-size: 300px 300px;
+    z-index: 0;
+  }
 }
 
 .contentWrapper {
   text-align: center;
-  padding: 20px;
+  padding: 150px 20px 60px; // Increased top padding to add more space from navbar
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  flex: 1; // This will make it take available space
+
+  @media (max-width: $breakpoint-md) {
+    padding: 130px 15px 40px;
+  }
 }
 
 .selectionContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .title {
   font-size: 32px;
   margin-bottom: 30px;
+  color: $dark-text;
+  font-weight: bold;
+  position: relative;
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(to right, $primary-color, $secondary-color);
+    border-radius: 3px;
+  }
 }
 
 /* Image Selection */
@@ -29,35 +71,111 @@
   display: flex;
   justify-content: center;
   gap: 30px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+  margin-bottom: 20px; // Add bottom margin to avoid the transparent section
+
+  @media (max-width: $breakpoint-md) {
+    gap: 20px;
+  }
 }
 
 .imageContainer {
   cursor: pointer;
   text-align: center;
-  transition: transform 0.3s ease;
-}
+  transition: $transition-base;
+  border-radius: $border-radius-lg;
+  position: relative;
+  overflow: hidden;
+  width: 30%;
+  min-width: 250px;
 
-.imageContainer:hover {
-  transform: scale(1.05);
+  @media (max-width: $breakpoint-md) {
+    width: 45%;
+    min-width: 200px;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: $shadow-lg;
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 70%, rgba(0,0,0,0.6) 100%);
+    opacity: 0;
+    transition: $transition-base;
+  }
+
+  &:hover:after {
+    opacity: 1;
+  }
 }
 
 .templateImage {
-  width: 480px;
+  width: 100%;
   height: auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: $border-radius-lg;
+  transition: $transition-base;
+
+  &:hover {
+    transform: scale(1.05);
+  }
 }
 
 .imageLabel {
-  font-size: 16px;
-  margin-top: 8px;
-  color: #333;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  color: white;
+  font-size: 18px;
   font-weight: bold;
+  z-index: 2;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: $transition-base;
+
+  .imageContainer:hover & {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Selected Template Section */
 .selectedTemplate {
   text-align: center;
+  animation: fadeIn 0.5s ease-out;
+
+  h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: $dark-text;
+    margin-bottom: 30px;
+    position: relative;
+    display: inline-block;
+
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(to right, $primary-color, $secondary-color);
+      border-radius: 3px;
+    }
+  }
 }
 
 .storyList {
@@ -65,152 +183,148 @@
   gap: 20px;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 40px;
 }
 
 /* Story Cards */
 .storyCard {
-  width: 220px;
+  width: 280px;
+  height: 380px;
   background: white;
-  border-radius: 12px;
-  padding: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
   overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: $transition-base;
   cursor: pointer;
-  text-align: center;
   display: flex;
   flex-direction: column;
-}
 
-.storyCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
+  @media (max-width: $breakpoint-md) {
+    width: 45%;
+    min-width: 240px;
+    height: 350px;
+  }
 
-.iconContainer {
-  width: 100%;
-  height: 120px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f5f5f5;
-  border-radius: 8px;
-  margin-bottom: 12px;
-}
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
+    max-width: 300px;
+    height: 320px;
+  }
 
-.storyIcon {
-  font-size: 30px;
-  color: #007BFF;
-}
-
-.storyTitle {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-.storyDescription {
-  font-size: 14px;
-  color: #666;
-  text-align: center;
-  flex-grow: 1;
-}
-
-.backButton {
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
-  background-color: #007BFF;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-family: 'shoor-Medium', sans-serif;
-}
-
-.backButton:hover {
-  background-color: #0056b3;
-}
-
-.backButton:disabled {
-  opacity: 0.7;
-  cursor: wait;
-  background-color: #ccc;
-}
-
-.storyCard:hover .coverImage {
-  transform: scale(1.05);
-}
-
-/* Disabled state for story cards */
-.storyCard.disabled {
-  opacity: 0.7;
-  cursor: wait;
-  pointer-events: none;
-  position: relative;
-}
-
-.storyCard.disabled::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-}
-
-/* Optional: Add a loading indicator for when story is starting */
-.storyCard.disabled .iconContainer {
-  position: relative;
-}
-
-.storyCard.disabled .iconContainer::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(0, 123, 255, 0.3);
-  border-top: 3px solid #007BFF;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: $shadow-lg;
+  }
 }
 
 .cardContent {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 15px;
+  padding: 20px;
 }
 
-/* Cover Image Container */
+.iconContainer {
+  width: 100%;
+  height: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f7;
+  border-radius: $border-radius-md;
+  margin-bottom: 20px;
+}
+
+.storyIcon {
+  font-size: 48px;
+  color: $primary-color;
+}
+
 .coverImageContainer {
   width: 100%;
-  height: 120px;
+  height: 160px;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  border-radius: 8px;
-  margin-bottom: 12px;
+  border-radius: $border-radius-md;
+  margin-bottom: 20px;
 }
 
 .coverImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
-  transition: transform 0.3s ease;
+  transition: $transition-base;
+
+  .storyCard:hover & {
+    transform: scale(1.05);
+  }
+}
+
+.storyTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: $dark-text;
+  margin-bottom: 12px;
+}
+
+.storyDescription {
+  font-size: 16px;
+  color: $light-text;
+  text-align: right;
+  line-height: 1.6;
+  flex-grow: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.backButton {
+  margin-top: 30px;
+  padding: 12px 25px;
+  font-size: 16px;
+  border: none;
+  border-radius: $border-radius-md;
+  background-color: #e0e0e0;
+  color: $dark-text;
+  cursor: pointer;
+  transition: $transition-base;
+  font-family: $font-primary;
+
+  &:hover:not(:disabled) {
+    background-color: #d0d0d0;
+    transform: translateY(-3px);
+    box-shadow: $shadow-sm;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+/* Disabled state for story cards */
+.storyCard.disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  pointer-events: none;
+  position: relative;
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: $border-radius-lg;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
