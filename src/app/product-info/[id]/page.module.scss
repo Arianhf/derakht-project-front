@@ -1,0 +1,41 @@
+@import '../../../styles/globals.scss';
+
+.pageWrapper {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: $gradient-bg;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    opacity: 0.1;
+    background-image: $clouds;
+    background-repeat: repeat;
+    background-size: 300px 300px;
+  }
+}
+
+.mainContent {
+  min-height: $default-min-height;
+  padding-top: 120px;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: $breakpoint-md) {
+  .mainContent {
+    padding-top: 100px;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .mainContent {
+    padding-top: 80px;
+  }
+}
