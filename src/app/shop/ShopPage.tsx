@@ -9,7 +9,7 @@ import ProductFilters from '@/components/shop/ProductFilters';
 import Breadcrumbs from '@/components/shop/Breadcrumbs';
 import styles from './shop.module.scss';
 import logo from '@/assets/images/logo2.png';
-import heroImage from "../../../public/images/shop_hero.jpg";
+import heroImage from "../../../public/images/shop_bg.png";
 import { useCart } from '@/contexts/CartContext';
 import { Product, ShopFilters, Breadcrumb } from '@/types/shop';
 import { shopService } from '@/services/shopService';

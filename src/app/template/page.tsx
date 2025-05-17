@@ -18,7 +18,7 @@ import paintStoryImage from '../../../public/images/paintStory.jpg';
 import finishStoryImage from '../../../public/images/finishStory.jpg';
 
 // Icons
-import { FaPaintBrush, FaPen } from 'react-icons/fa';
+import { FaPaintBrush, FaPen, FaClock } from 'react-icons/fa';
 
 interface TemplatePart {
   id: string;
@@ -146,20 +146,38 @@ const TemplatePage = () => {
               <div className={styles.selectionContainer}>
                 <h1 className={styles.title}>یک قالب انتخاب کنید</h1>
                 <div className={styles.imageOptions}>
-                  <div className={styles.imageContainer}>
+                  {/* Write Story option */}
+                  <div
+                      onClick={() => setSelectedTemplate("story")}
+                      className={styles.imageContainer}
+                  >
+                    <div className={styles.comingSoonOverlay}>
+                      <div className={styles.comingSoonContent}>
+                        <FaClock className={styles.comingSoonIcon} />
+                        <span className={styles.comingSoonText}>به زودی</span>
+                      </div>
+                    </div>
                     <Image
-                        src={finishStoryImage}
-                        alt="تمام داستان"
+                        src={writeStoryImage}
+                        alt="نوشتن داستان"
                         className={styles.templateImage}
                         width={400}
                         height={300}
                     />
-                    <div className={styles.imageLabel}>داستان کامل</div>
+                    <div className={styles.imageLabel}>نوشتن داستان</div>
                   </div>
+
+                  {/* Draw Story option */}
                   <div
                       onClick={() => setSelectedTemplate("drawing")}
                       className={styles.imageContainer}
                   >
+                    <div className={styles.comingSoonOverlay}>
+                      <div className={styles.comingSoonContent}>
+                        <FaClock className={styles.comingSoonIcon} />
+                        <span className={styles.comingSoonText}>به زودی</span>
+                      </div>
+                    </div>
                     <Image
                         src={paintStoryImage}
                         alt="کشیدن عکس"
@@ -169,18 +187,23 @@ const TemplatePage = () => {
                     />
                     <div className={styles.imageLabel}>کشیدن عکس</div>
                   </div>
-                  <div
-                      onClick={() => setSelectedTemplate("story")}
-                      className={styles.imageContainer}
-                  >
+
+                  {/* Complete Story option with Coming Soon overlay */}
+                  <div className={`${styles.imageContainer} ${styles.comingSoonContainer}`}>
+                    <div className={styles.comingSoonOverlay}>
+                      <div className={styles.comingSoonContent}>
+                        <FaClock className={styles.comingSoonIcon} />
+                        <span className={styles.comingSoonText}>به زودی</span>
+                      </div>
+                    </div>
                     <Image
-                        src={writeStoryImage}
-                        alt="نوشتن داستان"
+                        src={finishStoryImage}
+                        alt="تمام داستان"
                         className={styles.templateImage}
                         width={400}
                         height={300}
                     />
-                    <div className={styles.imageLabel}>نوشتن داستان</div>
+                    <div className={styles.imageLabel}>داستان کامل</div>
                   </div>
                 </div>
               </div>
