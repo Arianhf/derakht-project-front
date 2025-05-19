@@ -10,7 +10,7 @@ interface CartItem {
     product: {
         id: string;
         title: string;
-        price_in_toman: number;
+        price: number;
         feature_image?: string;
     };
     quantity: number;
@@ -93,7 +93,7 @@ const CartDropdown: React.FC = () => {
                                             <div className={styles.cartItemInfo}>
                                                 <p className={styles.cartItemTitle}>{item.product.title}</p>
                                                 <span className={styles.cartItemPrice}>
-                                                    {toPersianNumber(item.product.price_in_toman.toLocaleString())} تومان x {toPersianNumber(item.quantity)}
+                                                    {toPersianNumber(item.product.price.toLocaleString())} تومان x {toPersianNumber(item.quantity)}
                                                 </span>
                                             </div>
                                         </div>

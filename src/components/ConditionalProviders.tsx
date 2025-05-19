@@ -1,9 +1,11 @@
+// src/components/ConditionalProviders.tsx
 'use client';
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { CartProvider } from '@/contexts/CartContext';
 import { UserProvider } from '@/contexts/UserContext';
+import { FeatureFlagProvider } from '@/contexts/FeatureFlagContext';
 
 interface ConditionalProvidersProps {
     children: React.ReactNode;
@@ -24,8 +26,8 @@ export const ConditionalProviders: React.FC<ConditionalProvidersProps> = ({ chil
         pathname?.startsWith('/cart') ||
         pathname?.startsWith('/checkout');
 
-    // Start with the children
-    let content = <>{children}</>;
+    // Start with the children wrapped in FeatureFlagProvider (always needed)
+    let content = <FeatureFlagProvider>{children}</FeatureFlagProvider>;
 
     // Wrap with CartProvider if needed
     if (needsCartProvider) {

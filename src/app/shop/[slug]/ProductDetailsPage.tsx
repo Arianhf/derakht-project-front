@@ -222,7 +222,7 @@ const ProductDetailsPage: React.FC = () => {
                         </div>
 
                         <p className={styles.productPrice}>
-                            {formatPrice(product.price_in_toman, true)}
+                            {formatPrice(product.price, true)}
                         </p>
 
                         <div

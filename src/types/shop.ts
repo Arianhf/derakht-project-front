@@ -23,7 +23,6 @@ export interface Product {
     title: string;
     description: string;
     price: number;
-    price_in_toman: number;
     stock: number;
     sku: string;
     is_available: boolean;

@@ -62,7 +62,7 @@ const CartPage: React.FC = () => {
                                     <div className={styles.cartItemDetails}>
                                         <h3 className={styles.cartItemTitle}>{item.product.title}</h3>
                                         <p className={styles.cartItemPrice}>
-                                            قیمت واحد: {toPersianNumber(item.product.price_in_toman)} تومان
+                                            قیمت واحد: {toPersianNumber(item.product.price)} تومان
                                         </p>
                                         <p className={styles.cartItemTotalPrice}>
                                             مجموع: {toPersianNumber(item.total_price)} تومان

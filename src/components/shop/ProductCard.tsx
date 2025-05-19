@@ -52,7 +52,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <div className={styles.productInfo}>
                 <h3 className={styles.productTitle}>{product.title}</h3>
                 <p className={styles.productPrice}>
-                    {toPersianNumber(product.price_in_toman.toLocaleString())} تومان
+                    {toPersianNumber(product.price.toLocaleString())} تومان
                 </p>
 
                 {isInCart ? (

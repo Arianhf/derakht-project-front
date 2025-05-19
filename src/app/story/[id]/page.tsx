@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
+import FeatureProtectedRoute from '@/components/shared/FeatureProtectedRoute';
 import logo from '@/assets/images/logo2.png';
 import { storyService } from '@/services/storyService';
 import { Story } from '@/types/story';
@@ -350,4 +351,10 @@ const StoryPage = () => {
   );
 };
 
-export default StoryPage;
+export default function ProtectedStoryPage() {
+  return (
+      <FeatureProtectedRoute featureName="story_creation">
+        <StoryPage />
+      </FeatureProtectedRoute>
+  );
+}
