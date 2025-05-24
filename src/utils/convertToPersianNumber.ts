@@ -6,7 +6,7 @@
  * @param addCommas - Whether to add commas every 3 digits or not
  * @returns String with Persian digits
  */
-export const toPersianNumber = (input: string | number, addCommas: boolean = true): string => {
+export const toPersianNumber = (input: string | number, addCommas: boolean = false): string => {
     const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
 
     // First convert to string and add commas if needed

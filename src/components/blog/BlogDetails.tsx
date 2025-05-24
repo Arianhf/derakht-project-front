@@ -6,6 +6,7 @@ import styles from './BlogDetails.module.scss';
 import RelatedPosts from './RelatedPosts';
 import { RelatedPost } from '@/services/blogService';
 import TableOfContents from './TableOfContents';
+import {toPersianNumber} from "@/utils/convertToPersianNumber";
 
 interface BlogDetailsProps {
     blog: {
@@ -160,13 +161,13 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, relatedPosts = [], logo
                             {blog.jalali_date && (
                                 <div className={styles.metaItem}>
                                     <FaCalendarAlt size={16} />
-                                    <span>{blog.jalali_date}</span>
+                                    <span>{toPersianNumber(blog.jalali_date || "") }</span>
                                 </div>
                             )}
                             {blog.reading_time && (
                                 <div className={styles.metaItem}>
                                     <FaClock size={16} />
-                                    <span>{blog.reading_time} دقیقه مطالعه</span>
+                                    <span>{toPersianNumber(blog.reading_time || "")} دقیقه مطالعه</span>
                                 </div>
                             )}
                         </div>

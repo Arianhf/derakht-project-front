@@ -312,7 +312,7 @@ const CheckoutPage: React.FC = () => {
                                     <p>{shippingInfo.fullName}</p>
                                     <p>{shippingInfo.address}</p>
                                     <p>{shippingInfo.city}، {shippingInfo.province}</p>
-                                    <p>کد پستی: {toPersianNumber(shippingInfo.postalCode)}</p>
+                                        <p>کد پستی: {toPersianNumber(shippingInfo.postalCode)}</p>
                                     <p>شماره تماس: {toPersianNumber(shippingInfo.phoneNumber)}</p>
                                     <button
                                         className={styles.editButton}

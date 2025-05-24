@@ -48,27 +48,27 @@ export const PaymentMethod: React.FC<PaymentMethodProps> = ({
                         </div>
                     </label>
 
-                    <label
-                        className={`${styles.paymentOption} ${method === 'cash' ? styles.selected : ''}`}
-                    >
-                        <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="cash"
-                            checked={method === 'cash'}
-                            onChange={() => setMethod('cash')}
-                            className={styles.radioInput}
-                        />
-                        <div className={styles.optionContent}>
-                            <div className={styles.optionIcon}>
-                                <FaMoneyBillWave />
-                            </div>
-                            <div className={styles.optionDetails}>
-                                <h3>پرداخت در محل</h3>
-                                <p>پرداخت هنگام تحویل سفارش</p>
-                            </div>
-                        </div>
-                    </label>
+                    {/*<label*/}
+                    {/*    className={`${styles.paymentOption} ${method === 'cash' ? styles.selected : ''}`}*/}
+                    {/*>*/}
+                    {/*    <input*/}
+                    {/*        type="radio"*/}
+                    {/*        name="paymentMethod"*/}
+                    {/*        value="cash"*/}
+                    {/*        checked={method === 'cash'}*/}
+                    {/*        onChange={() => setMethod('cash')}*/}
+                    {/*        className={styles.radioInput}*/}
+                    {/*    />*/}
+                    {/*    <div className={styles.optionContent}>*/}
+                    {/*        <div className={styles.optionIcon}>*/}
+                    {/*            <FaMoneyBillWave />*/}
+                    {/*        </div>*/}
+                    {/*        <div className={styles.optionDetails}>*/}
+                    {/*            <h3>پرداخت در محل</h3>*/}
+                    {/*            <p>پرداخت هنگام تحویل سفارش</p>*/}
+                    {/*        </div>*/}
+                    {/*    </div>*/}
+                    {/*</label>*/}
                 </div>
 
                 <div className={styles.formActions}>
