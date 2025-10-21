@@ -1,5 +1,6 @@
 // src/app/layout.tsx
 import { ConditionalProviders } from "@/components/ConditionalProviders";
+import { UserProvider } from "@/contexts/UserContext";
 import ClarityAnalytics from "@/components/Clarity";
 import "./globals.scss";
 import { Metadata } from 'next';
@@ -17,8 +18,10 @@ export default function RootLayout({
     return (
         <html lang="fa" dir="rtl">
         <body>
-        <ClarityAnalytics />
-        <ConditionalProviders>{children}</ConditionalProviders>
+        <UserProvider>
+            <ClarityAnalytics />
+            <ConditionalProviders>{children}</ConditionalProviders>
+        </UserProvider>
         </body>
         </html>
     );
