@@ -1,13 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
-import { FaUser, FaShoppingBag, FaSignOutAlt, FaHome, FaSpinner } from 'react-icons/fa';
+import { FaUser, FaShoppingBag, FaSignOutAlt, FaHome } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
 import { Toaster } from 'react-hot-toast';
+import ConfirmDialog from '@/components/shared/ConfirmDialog/ConfirmDialog';
 import styles from './AccountLayout.module.scss';
 import logo from '@/assets/images/logo2.png';
 
@@ -19,11 +19,28 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
     const { user, loading, logout } = useUser();
     const router = useRouter();
     const pathname = usePathname();
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-    const handleLogout = () => {
+    const handleLogoutClick = () => {
+        setShowLogoutConfirm(true);
+    };
+
+    const handleLogoutConfirm = () => {
+        setShowLogoutConfirm(false);
         logout();
         router.push('/login');
     };
+
+    const handleLogoutCancel = () => {
+        setShowLogoutConfirm(false);
+    };
+
+    // Handle redirect to log in if not authenticated
+    React.useEffect(() => {
+        if (!loading && !user) {
+            router.push('/login');
+        }
+    }, [user, loading, router]);
 
     if (loading) {
         return (
@@ -35,7 +52,6 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
     }
 
     if (!user) {
-        router.push('/login');
         return null;
     }
 
@@ -49,6 +65,16 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
         <div className={styles.accountContainer}>
             <Navbar logo={logo} />
             <Toaster position="top-center" />
+
+            <ConfirmDialog
+                isOpen={showLogoutConfirm}
+                title="خروج از حساب کاربری"
+                message="آیا مطمئن هستید که می‌خواهید از حساب خود خارج شوید؟"
+                confirmText="بله، خارج شو"
+                cancelText="انصراف"
+                onConfirm={handleLogoutConfirm}
+                onCancel={handleLogoutCancel}
+            />
 
             <div className={styles.contentContainer}>
                 <div className={styles.sidebar}>
@@ -78,7 +104,7 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
                                 </li>
                             ))}
                             <li>
-                                <button onClick={handleLogout} className={styles.logoutButton}>
+                                <button onClick={handleLogoutClick} className={styles.logoutButton}>
                                     <span className={styles.navIcon}><FaSignOutAlt /></span>
                                     <span>خروج</span>
                                 </button>
