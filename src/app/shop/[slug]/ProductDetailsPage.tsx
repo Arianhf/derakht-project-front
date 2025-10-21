@@ -6,6 +6,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import { Button } from '@/components/shared/Button';
 import Breadcrumbs from '@/components/shop/Breadcrumbs';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import styles from './productDetails.module.scss';
 import logo from '@/assets/images/logo2.png';
 import heroImage from "../../../../public/images/shop_bg.png";
@@ -24,6 +26,7 @@ const ProductDetailsPage: React.FC = () => {
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [isImageLoading, setIsImageLoading] = useState(false);
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState<string[]>([]);
     const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([
@@ -98,9 +101,17 @@ const ProductDetailsPage: React.FC = () => {
         router.push('/shop');
     };
 
-    // Image selection handler
+    // Image selection handler with loading state
     const handleImageSelect = (image: string) => {
+        if (image === selectedImage) return; // Don't reload the same image
+
+        setIsImageLoading(true);
         setSelectedImage(image);
+    };
+
+    // Handle image load complete
+    const handleImageLoadComplete = () => {
+        setIsImageLoading(false);
     };
 
     // Render loading state
@@ -163,13 +174,26 @@ const ProductDetailsPage: React.FC = () => {
                     <div className={styles.productImageGallery}>
                         <div className={styles.mainImageContainer}>
                             {selectedImage ? (
-                                <Image
-                                    src={selectedImage}
-                                    alt={product.title}
-                                    fill
-                                    sizes="(max-width: 768px) 100vw, 50vw"
-                                    className={styles.mainImage}
-                                />
+                                <>
+                                    {isImageLoading && (
+                                        <div className={styles.skeletonOverlay}>
+                                            <Skeleton
+                                                height="100%"
+                                                width="100%"
+                                                borderRadius="12px"
+                                            />
+                                        </div>
+                                    )}
+                                    <Image
+                                        src={selectedImage}
+                                        alt={product.title}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, 50vw"
+                                        className={`${styles.mainImage} ${isImageLoading ? styles.imageLoading : ''}`}
+                                        onLoad={handleImageLoadComplete}
+                                        priority
+                                    />
+                                </>
                             ) : (
                                 <div className={styles.noImage}>
                                     تصویر موجود نیست

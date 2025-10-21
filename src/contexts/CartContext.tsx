@@ -60,9 +60,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await shopService.addToCart(productId, quantity);
       await refreshCart();
       toast.success('محصول به سبد خرید اضافه شد');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding to cart:', error);
-      toast.error('خطا در افزودن محصول به سبد خرید');
+      // Extract error message from API response
+      const errorMessage = error.response?.data?.error || error.response?.data?.detail || 'خطا در افزودن محصول به سبد خرید';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -74,9 +76,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await shopService.removeFromCart(productId);
       await refreshCart();
       toast.success('محصول از سبد خرید حذف شد');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error removing from cart:', error);
-      toast.error('خطا در حذف محصول از سبد خرید');
+      const errorMessage = error.response?.data?.error || error.response?.data?.detail || 'خطا در حذف محصول از سبد خرید';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -90,9 +93,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await shopService.updateCartItemQuantity(productId, item.quantity + 1);
         await refreshCart();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error increasing quantity:', error);
-      toast.error('خطا در افزایش تعداد محصول');
+      const errorMessage = error.response?.data?.error || error.response?.data?.detail || 'خطا در افزایش تعداد محصول';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -108,9 +112,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else if (item && item.quantity === 1) {
         await removeFromCart(productId);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error decreasing quantity:', error);
-      toast.error('خطا در کاهش تعداد محصول');
+      const errorMessage = error.response?.data?.error || error.response?.data?.detail || 'خطا در کاهش تعداد محصول';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

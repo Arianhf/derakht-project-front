@@ -577,3 +577,45 @@
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+// Skeleton overlay for image loading
+.skeletonOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+// Hide image while loading
+.imageLoading {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+// Smooth transition when image loads
+.mainImage {
+  transition: opacity 0.3s ease;
+}
+
+// Active thumbnail styling (enhanced for better UX)
+.activeThumbnail {
+  border: 3px solid #345BC0 !important;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(52, 91, 192, 0.3);
+}
+
+// Thumbnail hover effect
+.thumbnail {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 3px solid transparent;
+
+  &:hover:not(.activeThumbnail) {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+}

@@ -37,50 +37,29 @@ export const useProductQuantity = (product: Product) => {
     const isInCart = quantity > 0;
 
     // Add to cart handler
-    const handleAddToCart = () => {
-        // Only add if product is available
+    const handleAddToCart = async () => {
         if (product && product.is_available) {
-            try {
-                addToCart(product.id);
-                toast.success('محصول به سبد خرید اضافه شد');
-            } catch (error) {
-                console.error('Error adding to cart:', error);
-                toast.error('خطا در افزودن محصول به سبد خرید');
-            }
+            await addToCart(product.id);
         } else {
             toast.error('این محصول در حال حاضر موجود نیست');
         }
     };
 
     // Increase quantity handler
-    const handleIncreaseQuantity = () => {
-        // Only increase if product is available
+    const handleIncreaseQuantity = async () => {
         if (product && product.is_available) {
-            try {
-                increaseQuantity(product.id);
-            } catch (error) {
-                console.error('Error increasing quantity:', error);
-                toast.error('خطا در افزایش تعداد محصول');
-            }
+            await increaseQuantity(product.id);
         }
     };
 
     // Decrease quantity handler
-    const handleDecreaseQuantity = () => {
+    const handleDecreaseQuantity = async () => {
         if (!product) return;
 
-        try {
-            // If quantity is 1, remove from cart
-            if (quantity === 1) {
-                removeFromCart(product.id);
-                toast.success('محصول از سبد خرید حذف شد');
-            } else {
-                // Otherwise, decrease quantity
-                decreaseQuantity(product.id);
-            }
-        } catch (error) {
-            console.error('Error decreasing quantity:', error);
-            toast.error('خطا در کاهش تعداد محصول');
+        if (quantity === 1) {
+            await removeFromCart(product.id);
+        } else {
+            await decreaseQuantity(product.id);
         }
     };
 
