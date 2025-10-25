@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { loginService } from '@/services/loginService';
+import { useUser } from '@/contexts/UserContext';
 import styles from './login.module.scss';
 import logo from '@/assets/images/logo2.png';
 import { toast } from 'react-hot-toast';
@@ -23,6 +24,7 @@ const LoginPage: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const redirectPath = searchParams.get('redirect') || '/';
+    const { fetchUser } = useUser();
 
     useEffect(() => {
         // Check if user is already logged in
@@ -42,6 +44,9 @@ const LoginPage: React.FC = () => {
                 // Handle login
                 await loginService.login(email, password);
                 toast.success('با موفقیت وارد شدید');
+
+                // Fetch user data to ensure UserContext is hydrated before redirect
+                await fetchUser();
 
                 // Check if there was a pending template selection
                 const pendingTemplateString = localStorage.getItem('pendingTemplate');
@@ -64,6 +69,10 @@ const LoginPage: React.FC = () => {
 
                 await loginService.signup(email, password, confirmPassword, age);
                 toast.success('ثبت نام با موفقیت انجام شد');
+
+                // Fetch user data to ensure UserContext is hydrated before redirect
+                await fetchUser();
+
                 router.push(redirectPath);
             }
         } catch (err: any) {
