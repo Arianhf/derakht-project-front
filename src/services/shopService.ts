@@ -173,8 +173,20 @@ export const shopService = {
         const anonymousCartId = shopService.getAnonymousCartId();
 
         if (anonymousCartId) {
-            await api.post('/shop/cart/merge/', { anonymous_cart_id: anonymousCartId });
-            Cookies.remove('anonymous_cart_id'); // Clear the cookie after merging
+            // First, check if the cart has any items
+            try {
+                const cartDetails = await shopService.getCartDetails();
+
+                // Only merge if cart has items
+                if (cartDetails && cartDetails.items && cartDetails.items.length > 0) {
+                    await api.post('/shop/cart/merge/', { anonymous_cart_id: anonymousCartId });
+                }
+            } catch (error) {
+                console.error('Error checking cart before merge:', error);
+            } finally {
+                // Always clear the cookie after attempting merge or if cart is empty
+                Cookies.remove('anonymous_cart_id');
+            }
         }
     },
 
