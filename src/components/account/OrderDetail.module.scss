@@ -74,6 +74,7 @@
 .orderStatus {
   display: flex;
   align-items: center;
+  gap: 15px;
 }
 
 .statusBadge {
@@ -117,6 +118,37 @@
 .statusIconDelivered,
 .statusIconCanceled {
   font-size: 16px;
+}
+
+.paymentButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'shoor-Medium', sans-serif;
+
+  &:hover:not(:disabled) {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  svg {
+    font-size: 16px;
+  }
 }
 
 .orderSection {
