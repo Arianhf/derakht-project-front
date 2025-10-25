@@ -4,12 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { userService } from '@/services/userService';
+import { shopService } from '@/services/shopService';
 import { Order } from '@/types/shop';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
-import { FaArrowRight, FaCheckCircle, FaTruck, FaBoxOpen, FaTimesCircle } from 'react-icons/fa';
+import { FaArrowRight, FaCheckCircle, FaTruck, FaBoxOpen, FaTimesCircle, FaCreditCard } from 'react-icons/fa';
 import styles from './OrderDetail.module.scss';
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import ErrorMessage from "@/components/shared/ErrorMessage";
+import toast, { Toaster } from 'react-hot-toast';
 
 interface OrderDetailProps {
     orderId: string;
@@ -20,6 +22,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId }) => {
     const [order, setOrder] = useState<Order | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [paymentProcessing, setPaymentProcessing] = useState(false);
 
     useEffect(() => {
         if (orderId) {
@@ -86,13 +89,34 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId }) => {
     };
 
     const formatPrice = (amount: number): string => {
-        // Convert to toman from rial
-        const tomanAmount = Math.round(amount / 10000);
+        // Convert to toman from rial (1 Toman = 10 Rials)
+        const tomanAmount = Math.round(amount / 10);
         return toPersianNumber(tomanAmount.toLocaleString()) + ' تومان';
     };
 
     const goBack = () => {
         router.push('/account/orders');
+    };
+
+    const handlePayment = async () => {
+        if (!order) return;
+
+        try {
+            setPaymentProcessing(true);
+            const paymentResponse = await shopService.requestPayment(order.id, "zarinpal_sdk");
+
+            if (paymentResponse.payment_url) {
+                // Redirect to payment gateway
+                window.location.href = paymentResponse.payment_url;
+            } else {
+                toast.error('خطا در ایجاد درخواست پرداخت');
+            }
+        } catch (err: any) {
+            console.error('Error requesting payment:', err);
+            toast.error('خطا در اتصال به درگاه پرداخت');
+        } finally {
+            setPaymentProcessing(false);
+        }
     };
 
     if (loading) {
@@ -115,6 +139,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId }) => {
 
     return (
         <div className={styles.orderDetailContainer}>
+            <Toaster position="top-center" />
             <div className={styles.header}>
                 <h1 className={styles.pageTitle}>جزئیات سفارش</h1>
                 <button
@@ -140,6 +165,16 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId }) => {
                             {getStatusIcon(order.status)}
                             <span>{getStatusText(order.status)}</span>
                         </div>
+                        {order.status.toLowerCase() === 'pending' && (
+                            <button
+                                className={styles.paymentButton}
+                                onClick={handlePayment}
+                                disabled={paymentProcessing}
+                            >
+                                <FaCreditCard />
+                                {paymentProcessing ? 'در حال انتقال...' : 'پرداخت سفارش'}
+                            </button>
+                        )}
                     </div>
                 </div>
 
