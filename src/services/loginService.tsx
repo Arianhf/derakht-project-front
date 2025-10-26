@@ -1,7 +1,8 @@
-// src/services/loginService.tsx with anonymous cart merging
+// src/services/loginService.tsx with anonymous cart merging and error handling
 import api from "./api";
 import Cookies from "js-cookie";
 import { shopService } from "./shopService";
+import { StandardErrorResponse } from "@/types/error";
 
 export const loginService = {
     signup: async (email: string, password: string, confirmPassword: string, age: number) => {
@@ -20,7 +21,9 @@ export const loginService = {
 
             return response.data;
         } catch (error: any) {
-            throw error.response?.data || { message: "Signup failed" };
+            // Error is already transformed to StandardErrorResponse by axios interceptor
+            // Just re-throw it for the calling code to handle
+            throw error;
         }
     },
 
@@ -51,7 +54,9 @@ export const loginService = {
 
             return response.data;
         } catch (error: any) {
-            throw error.response?.data || { message: "Login failed" };
+            // Error is already transformed to StandardErrorResponse by axios interceptor
+            // Just re-throw it for the calling code to handle
+            throw error;
         }
     },
 
