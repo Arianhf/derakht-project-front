@@ -13,6 +13,8 @@ import StoryPreview from '@/components/story/StoryPreview';
 import styles from './StoryPage.module.scss';
 import { FaTimes, FaEdit } from 'react-icons/fa';
 import { Toaster, toast } from 'react-hot-toast';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const StoryPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -31,6 +33,8 @@ const StoryPage = () => {
   const [isMobileView, setIsMobileView] = useState(false);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  const [mainImageLoading, setMainImageLoading] = useState(true);
+  const [thumbnailsLoading, setThumbnailsLoading] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     // Check if we're in mobile view
@@ -43,6 +47,11 @@ const StoryPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Reset main image loading when selectedIndex changes
+  useEffect(() => {
+    setMainImageLoading(true);
+  }, [selectedIndex]);
+
   useEffect(() => {
     const fetchTemplate = async () => {
       if (!id) return;
@@ -51,6 +60,13 @@ const StoryPage = () => {
         const response = await storyService.getStoryById(id);
         setTemplate(response);
         setTexts(response.parts.map((part) => part.text || ''));
+
+        // Initialize thumbnails loading state
+        const initialThumbnailsLoading: Record<number, boolean> = {};
+        response.parts.forEach((_, index) => {
+          initialThumbnailsLoading[index] = true;
+        });
+        setThumbnailsLoading(initialThumbnailsLoading);
 
         // Set cover and background images if available
         if (response.cover_image) {
@@ -192,6 +208,15 @@ const StoryPage = () => {
             // Mobile View Layout
             <div className={styles.mobileContent}>
               <div className={styles.mobileImageContainer}>
+                {mainImageLoading && (
+                  <div className={styles.skeletonContainer}>
+                    <Skeleton
+                      height={350}
+                      width="100%"
+                      borderRadius={12}
+                    />
+                  </div>
+                )}
                 <Image
                     src={template.parts[selectedIndex]?.illustration || '/placeholder-image.jpg'}
                     alt={`تصویر ${selectedIndex + 1}`}
@@ -199,6 +224,8 @@ const StoryPage = () => {
                     width={500}
                     height={350}
                     layout="responsive"
+                    onLoadingComplete={() => setMainImageLoading(false)}
+                    style={{ display: mainImageLoading ? 'none' : 'block' }}
                 />
                 <div className={styles.mobilePagination}>
               <span className={styles.pageIndicator}>
@@ -242,6 +269,15 @@ const StoryPage = () => {
             <div className={styles.desktopContent}>
               <div className={styles.mainContainer}>
                 <div className={styles.imageContainer}>
+                  {mainImageLoading && (
+                    <div className={styles.skeletonContainer}>
+                      <Skeleton
+                        height={400}
+                        width="100%"
+                        borderRadius={12}
+                      />
+                    </div>
+                  )}
                   <Image
                       src={template.parts[selectedIndex]?.illustration || '/placeholder-image.jpg'}
                       alt={`تصویر ${selectedIndex + 1}`}
@@ -249,6 +285,8 @@ const StoryPage = () => {
                       width={600}
                       height={400}
                       layout="responsive"
+                      onLoadingComplete={() => setMainImageLoading(false)}
+                      style={{ display: mainImageLoading ? 'none' : 'block' }}
                   />
                   <div className={styles.pageIndicator}>
                     <span>{toPersianNumber(`${template.parts.length} / ${selectedIndex + 1}`)}</span>
@@ -292,6 +330,14 @@ const StoryPage = () => {
                         {selectedIndex === index && (
                             <span className={styles.imageNumber}>{toPersianNumber(index + 1)}</span>
                         )}
+                        {thumbnailsLoading[index] && (
+                          <Skeleton
+                            width={120}
+                            height={100}
+                            borderRadius={8}
+                            className={styles.thumbnailSkeleton}
+                          />
+                        )}
                         <Image
                             src={part.illustration || '/placeholder-image.jpg'}
                             alt={`تصویر ${index + 1}`}
@@ -299,6 +345,10 @@ const StoryPage = () => {
                             onClick={() => setSelectedIndex(index)}
                             width={100}
                             height={100}
+                            onLoadingComplete={() => {
+                              setThumbnailsLoading(prev => ({ ...prev, [index]: false }));
+                            }}
+                            style={{ display: thumbnailsLoading[index] ? 'none' : 'block' }}
                         />
                       </div>
                   ))}

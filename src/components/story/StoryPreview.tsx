@@ -7,6 +7,8 @@ import { FaTimes, FaArrowRight, FaArrowLeft, FaColumns, FaLayerGroup, FaImage, F
 import styles from "./StoryPreview.module.scss";
 import { storyService } from '@/services/storyService';
 import { toast } from 'react-hot-toast';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 interface StoryPreviewProps {
     parts: { illustration: string; text: string }[];
@@ -37,6 +39,9 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
     const [viewMode, setViewMode] = useState<'overlay' | 'sideBySide'>('overlay');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+    const [imageLoading, setImageLoading] = useState(true);
+    const [coverImageLoading, setCoverImageLoading] = useState(true);
+    const [backgroundImageLoading, setBackgroundImageLoading] = useState(true);
     const router = useRouter();
 
     // Reset page index and maintain view mode when opening/closing
@@ -45,6 +50,24 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
             setCurrentIndex(0);
         }
     }, [isOpen]);
+
+    // Reset image loading when currentIndex changes
+    useEffect(() => {
+        setImageLoading(true);
+    }, [currentIndex]);
+
+    // Reset cover and background image loading states when they change
+    useEffect(() => {
+        if (coverImage) {
+            setCoverImageLoading(true);
+        }
+    }, [coverImage]);
+
+    useEffect(() => {
+        if (backgroundImage) {
+            setBackgroundImageLoading(true);
+        }
+    }, [backgroundImage]);
 
     // Prevent background scrolling when modal is open and not in full-page mode
     useEffect(() => {
@@ -168,11 +191,22 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                     // Overlay mode
                     <div className={styles.overlayView}>
                         <div className={styles.imageContainer}>
+                            {imageLoading && (
+                                <div className={styles.skeletonWrapper}>
+                                    <Skeleton
+                                        width="100%"
+                                        height="100%"
+                                        style={{ position: 'absolute', top: 0, left: 0 }}
+                                    />
+                                </div>
+                            )}
                             <Image
                                 src={parts[currentIndex]?.illustration || "/placeholder-image.jpg"}
                                 alt={`تصویر داستان - صفحه ${currentIndex + 1}`}
                                 fill
                                 className={styles.storyImage}
+                                onLoadingComplete={() => setImageLoading(false)}
+                                style={{ display: imageLoading ? 'none' : 'block' }}
                             />
                             <div className={styles.gradientOverlay}></div>
                             <div className={styles.textContainer}>
@@ -186,6 +220,13 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                     // Side by side mode
                     <div className={styles.sideBySideView}>
                         <div className={styles.imagePane}>
+                            {imageLoading && (
+                                <Skeleton
+                                    height={400}
+                                    width="100%"
+                                    borderRadius={12}
+                                />
+                            )}
                             <Image
                                 src={parts[currentIndex]?.illustration || "/placeholder-image.jpg"}
                                 alt={`تصویر داستان - صفحه ${currentIndex + 1}`}
@@ -193,6 +234,8 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                 height={400}
                                 layout="responsive"
                                 className={styles.sideImage}
+                                onLoadingComplete={() => setImageLoading(false)}
+                                style={{ display: imageLoading ? 'none' : 'block' }}
                             />
                         </div>
                         <div className={styles.textPane}>
@@ -243,12 +286,21 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                 <div className={styles.imagePreviewUpload}>
                                     {coverImage ? (
                                         <div className={styles.imagePreviewContainer}>
+                                            {coverImageLoading && (
+                                                <Skeleton
+                                                    width={120}
+                                                    height={80}
+                                                    borderRadius={8}
+                                                />
+                                            )}
                                             <Image
                                                 src={coverImage}
                                                 alt="تصویر جلد"
                                                 width={120}
                                                 height={80}
                                                 className={styles.imagePreview}
+                                                onLoadingComplete={() => setCoverImageLoading(false)}
+                                                style={{ display: coverImageLoading ? 'none' : 'block' }}
                                             />
                                         </div>
                                     ) : (
@@ -272,12 +324,21 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                 <div className={styles.imagePreviewUpload}>
                                     {backgroundImage ? (
                                         <div className={styles.imagePreviewContainer}>
+                                            {backgroundImageLoading && (
+                                                <Skeleton
+                                                    width={120}
+                                                    height={80}
+                                                    borderRadius={8}
+                                                />
+                                            )}
                                             <Image
                                                 src={backgroundImage}
                                                 alt="تصویر پس‌زمینه"
                                                 width={120}
                                                 height={80}
                                                 className={styles.imagePreview}
+                                                onLoadingComplete={() => setBackgroundImageLoading(false)}
+                                                style={{ display: backgroundImageLoading ? 'none' : 'block' }}
                                             />
                                         </div>
                                     ) : (
