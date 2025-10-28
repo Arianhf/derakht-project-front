@@ -37,6 +37,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
     const [viewMode, setViewMode] = useState<'overlay' | 'sideBySide'>('overlay');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+    const [imageLoadingStates, setImageLoadingStates] = useState<{ [key: string]: boolean }>({});
     const router = useRouter();
 
     // Reset page index and maintain view mode when opening/closing
@@ -111,6 +112,10 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
         onBackgroundImageUpload(file);
     };
 
+    const handleImageLoad = (imageKey: string) => {
+        setImageLoadingStates(prev => ({ ...prev, [imageKey]: true }));
+    };
+
     const isLastPage = currentIndex === parts.length - 1;
 
     const previewContent = (
@@ -168,11 +173,16 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                     // Overlay mode
                     <div className={styles.overlayView}>
                         <div className={styles.imageContainer}>
+                            {!imageLoadingStates[`overlay-${currentIndex}`] && (
+                                <div className={styles.skeleton} style={{ width: '100%', height: '100%', position: 'absolute' }} />
+                            )}
                             <Image
                                 src={parts[currentIndex]?.illustration || "/placeholder-image.jpg"}
                                 alt={`تصویر داستان - صفحه ${currentIndex + 1}`}
                                 fill
                                 className={styles.storyImage}
+                                onLoad={() => handleImageLoad(`overlay-${currentIndex}`)}
+                                style={{ display: imageLoadingStates[`overlay-${currentIndex}`] ? 'block' : 'none' }}
                             />
                             <div className={styles.gradientOverlay}></div>
                             <div className={styles.textContainer}>
@@ -186,6 +196,9 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                     // Side by side mode
                     <div className={styles.sideBySideView}>
                         <div className={styles.imagePane}>
+                            {!imageLoadingStates[`sidebyside-${currentIndex}`] && (
+                                <div className={styles.skeleton} style={{ width: '100%', height: '400px' }} />
+                            )}
                             <Image
                                 src={parts[currentIndex]?.illustration || "/placeholder-image.jpg"}
                                 alt={`تصویر داستان - صفحه ${currentIndex + 1}`}
@@ -193,6 +206,8 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                 height={400}
                                 layout="responsive"
                                 className={styles.sideImage}
+                                onLoad={() => handleImageLoad(`sidebyside-${currentIndex}`)}
+                                style={{ display: imageLoadingStates[`sidebyside-${currentIndex}`] ? 'block' : 'none' }}
                             />
                         </div>
                         <div className={styles.textPane}>
@@ -243,12 +258,17 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                 <div className={styles.imagePreviewUpload}>
                                     {coverImage ? (
                                         <div className={styles.imagePreviewContainer}>
+                                            {!imageLoadingStates['cover-preview'] && (
+                                                <div className={styles.skeleton} style={{ width: '120px', height: '80px', position: 'absolute' }} />
+                                            )}
                                             <Image
                                                 src={coverImage}
                                                 alt="تصویر جلد"
                                                 width={120}
                                                 height={80}
                                                 className={styles.imagePreview}
+                                                onLoad={() => handleImageLoad('cover-preview')}
+                                                style={{ display: imageLoadingStates['cover-preview'] ? 'block' : 'none' }}
                                             />
                                         </div>
                                     ) : (
@@ -272,12 +292,17 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                 <div className={styles.imagePreviewUpload}>
                                     {backgroundImage ? (
                                         <div className={styles.imagePreviewContainer}>
+                                            {!imageLoadingStates['background-preview'] && (
+                                                <div className={styles.skeleton} style={{ width: '120px', height: '80px', position: 'absolute' }} />
+                                            )}
                                             <Image
                                                 src={backgroundImage}
                                                 alt="تصویر پس‌زمینه"
                                                 width={120}
                                                 height={80}
                                                 className={styles.imagePreview}
+                                                onLoad={() => handleImageLoad('background-preview')}
+                                                style={{ display: imageLoadingStates['background-preview'] ? 'block' : 'none' }}
                                             />
                                         </div>
                                     ) : (

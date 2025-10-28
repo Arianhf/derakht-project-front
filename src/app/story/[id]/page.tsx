@@ -31,6 +31,7 @@ const StoryPage = () => {
   const [isMobileView, setIsMobileView] = useState(false);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  const [imageLoadingStates, setImageLoadingStates] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     // Check if we're in mobile view
@@ -141,6 +142,10 @@ const StoryPage = () => {
     router.push(`/story/${id}?mode=view`);
   };
 
+  const handleImageLoad = (imageKey: string) => {
+    setImageLoadingStates(prev => ({ ...prev, [imageKey]: true }));
+  };
+
   if (loading) return <div className={styles.loadingContainer}>در حال بارگذاری...</div>;
   if (error) return <div className={styles.errorContainer}>{error}</div>;
   if (!template) return <div className={styles.errorContainer}>قالب داستان یافت نشد</div>;
@@ -192,6 +197,9 @@ const StoryPage = () => {
             // Mobile View Layout
             <div className={styles.mobileContent}>
               <div className={styles.mobileImageContainer}>
+                {!imageLoadingStates[`mobile-${selectedIndex}`] && (
+                    <div className={styles.skeleton} style={{ width: '100%', height: '350px' }} />
+                )}
                 <Image
                     src={template.parts[selectedIndex]?.illustration || '/placeholder-image.jpg'}
                     alt={`تصویر ${selectedIndex + 1}`}
@@ -199,6 +207,8 @@ const StoryPage = () => {
                     width={500}
                     height={350}
                     layout="responsive"
+                    onLoad={() => handleImageLoad(`mobile-${selectedIndex}`)}
+                    style={{ display: imageLoadingStates[`mobile-${selectedIndex}`] ? 'block' : 'none' }}
                 />
                 <div className={styles.mobilePagination}>
               <span className={styles.pageIndicator}>
@@ -242,6 +252,9 @@ const StoryPage = () => {
             <div className={styles.desktopContent}>
               <div className={styles.mainContainer}>
                 <div className={styles.imageContainer}>
+                  {!imageLoadingStates[`desktop-main-${selectedIndex}`] && (
+                      <div className={styles.skeleton} style={{ width: '100%', height: '100%', position: 'absolute' }} />
+                  )}
                   <Image
                       src={template.parts[selectedIndex]?.illustration || '/placeholder-image.jpg'}
                       alt={`تصویر ${selectedIndex + 1}`}
@@ -249,6 +262,8 @@ const StoryPage = () => {
                       width={600}
                       height={400}
                       layout="responsive"
+                      onLoad={() => handleImageLoad(`desktop-main-${selectedIndex}`)}
+                      style={{ display: imageLoadingStates[`desktop-main-${selectedIndex}`] ? 'block' : 'none' }}
                   />
                   <div className={styles.pageIndicator}>
                     <span>{toPersianNumber(`${template.parts.length} / ${selectedIndex + 1}`)}</span>
@@ -292,6 +307,9 @@ const StoryPage = () => {
                         {selectedIndex === index && (
                             <span className={styles.imageNumber}>{toPersianNumber(index + 1)}</span>
                         )}
+                        {!imageLoadingStates[`thumbnail-${index}`] && (
+                            <div className={styles.skeleton} style={{ width: '120px', height: '100%', minHeight: '100px' }} />
+                        )}
                         <Image
                             src={part.illustration || '/placeholder-image.jpg'}
                             alt={`تصویر ${index + 1}`}
@@ -299,6 +317,8 @@ const StoryPage = () => {
                             onClick={() => setSelectedIndex(index)}
                             width={100}
                             height={100}
+                            onLoad={() => handleImageLoad(`thumbnail-${index}`)}
+                            style={{ display: imageLoadingStates[`thumbnail-${index}`] ? 'block' : 'none' }}
                         />
                       </div>
                   ))}
