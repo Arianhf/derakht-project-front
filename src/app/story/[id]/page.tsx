@@ -198,7 +198,7 @@ const StoryPage = () => {
             <div className={styles.mobileContent}>
               <div className={styles.mobileImageContainer}>
                 {!imageLoadingStates[`mobile-${selectedIndex}`] && (
-                    <div className={styles.skeleton} style={{ width: '100%', height: '350px' }} />
+                    <div className={styles.skeleton} style={{ width: '100%', height: '350px', position: 'absolute' }} />
                 )}
                 <Image
                     src={template.parts[selectedIndex]?.illustration || '/placeholder-image.jpg'}
@@ -206,9 +206,8 @@ const StoryPage = () => {
                     className={styles.mobileMainImage}
                     width={500}
                     height={350}
-                    layout="responsive"
+                    style={{ width: '100%', height: 'auto', opacity: imageLoadingStates[`mobile-${selectedIndex}`] ? 1 : 0 }}
                     onLoad={() => handleImageLoad(`mobile-${selectedIndex}`)}
-                    style={{ display: imageLoadingStates[`mobile-${selectedIndex}`] ? 'block' : 'none' }}
                 />
                 <div className={styles.mobilePagination}>
               <span className={styles.pageIndicator}>
@@ -253,7 +252,7 @@ const StoryPage = () => {
               <div className={styles.mainContainer}>
                 <div className={styles.imageContainer}>
                   {!imageLoadingStates[`desktop-main-${selectedIndex}`] && (
-                      <div className={styles.skeleton} style={{ width: '100%', height: '100%', position: 'absolute' }} />
+                      <div className={styles.skeleton} style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
                   )}
                   <Image
                       src={template.parts[selectedIndex]?.illustration || '/placeholder-image.jpg'}
@@ -261,9 +260,8 @@ const StoryPage = () => {
                       className={styles.mainImage}
                       width={600}
                       height={400}
-                      layout="responsive"
+                      style={{ width: '100%', height: 'auto', opacity: imageLoadingStates[`desktop-main-${selectedIndex}`] ? 1 : 0, transition: 'opacity 0.3s ease' }}
                       onLoad={() => handleImageLoad(`desktop-main-${selectedIndex}`)}
-                      style={{ display: imageLoadingStates[`desktop-main-${selectedIndex}`] ? 'block' : 'none' }}
                   />
                   <div className={styles.pageIndicator}>
                     <span>{toPersianNumber(`${template.parts.length} / ${selectedIndex + 1}`)}</span>
@@ -308,7 +306,7 @@ const StoryPage = () => {
                             <span className={styles.imageNumber}>{toPersianNumber(index + 1)}</span>
                         )}
                         {!imageLoadingStates[`thumbnail-${index}`] && (
-                            <div className={styles.skeleton} style={{ width: '120px', height: '100%', minHeight: '100px' }} />
+                            <div className={styles.skeleton} style={{ width: '120px', height: '100%', minHeight: '100px', position: 'absolute' }} />
                         )}
                         <Image
                             src={part.illustration || '/placeholder-image.jpg'}
@@ -317,8 +315,8 @@ const StoryPage = () => {
                             onClick={() => setSelectedIndex(index)}
                             width={100}
                             height={100}
+                            style={{ opacity: imageLoadingStates[`thumbnail-${index}`] ? 1 : 0, transition: 'opacity 0.3s ease' }}
                             onLoad={() => handleImageLoad(`thumbnail-${index}`)}
-                            style={{ display: imageLoadingStates[`thumbnail-${index}`] ? 'block' : 'none' }}
                         />
                       </div>
                   ))}

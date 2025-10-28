@@ -174,15 +174,15 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                     <div className={styles.overlayView}>
                         <div className={styles.imageContainer}>
                             {!imageLoadingStates[`overlay-${currentIndex}`] && (
-                                <div className={styles.skeleton} style={{ width: '100%', height: '100%', position: 'absolute' }} />
+                                <div className={styles.skeleton} style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: 5 }} />
                             )}
                             <Image
                                 src={parts[currentIndex]?.illustration || "/placeholder-image.jpg"}
                                 alt={`تصویر داستان - صفحه ${currentIndex + 1}`}
                                 fill
                                 className={styles.storyImage}
+                                style={{ opacity: imageLoadingStates[`overlay-${currentIndex}`] ? 1 : 0, transition: 'opacity 0.3s ease' }}
                                 onLoad={() => handleImageLoad(`overlay-${currentIndex}`)}
-                                style={{ display: imageLoadingStates[`overlay-${currentIndex}`] ? 'block' : 'none' }}
                             />
                             <div className={styles.gradientOverlay}></div>
                             <div className={styles.textContainer}>
@@ -197,17 +197,16 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                     <div className={styles.sideBySideView}>
                         <div className={styles.imagePane}>
                             {!imageLoadingStates[`sidebyside-${currentIndex}`] && (
-                                <div className={styles.skeleton} style={{ width: '100%', height: '400px' }} />
+                                <div className={styles.skeleton} style={{ width: '100%', height: '400px', position: 'absolute' }} />
                             )}
                             <Image
                                 src={parts[currentIndex]?.illustration || "/placeholder-image.jpg"}
                                 alt={`تصویر داستان - صفحه ${currentIndex + 1}`}
                                 width={500}
                                 height={400}
-                                layout="responsive"
                                 className={styles.sideImage}
+                                style={{ width: '100%', height: 'auto', opacity: imageLoadingStates[`sidebyside-${currentIndex}`] ? 1 : 0, transition: 'opacity 0.3s ease' }}
                                 onLoad={() => handleImageLoad(`sidebyside-${currentIndex}`)}
-                                style={{ display: imageLoadingStates[`sidebyside-${currentIndex}`] ? 'block' : 'none' }}
                             />
                         </div>
                         <div className={styles.textPane}>
@@ -257,9 +256,9 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                 <label htmlFor="cover-image-upload">تصویر جلد:</label>
                                 <div className={styles.imagePreviewUpload}>
                                     {coverImage ? (
-                                        <div className={styles.imagePreviewContainer}>
+                                        <div className={styles.imagePreviewContainer} style={{ position: 'relative' }}>
                                             {!imageLoadingStates['cover-preview'] && (
-                                                <div className={styles.skeleton} style={{ width: '120px', height: '80px', position: 'absolute' }} />
+                                                <div className={styles.skeleton} style={{ width: '120px', height: '80px', position: 'absolute', top: 0, left: 0 }} />
                                             )}
                                             <Image
                                                 src={coverImage}
@@ -267,8 +266,8 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                 width={120}
                                                 height={80}
                                                 className={styles.imagePreview}
+                                                style={{ opacity: imageLoadingStates['cover-preview'] ? 1 : 0, transition: 'opacity 0.3s ease' }}
                                                 onLoad={() => handleImageLoad('cover-preview')}
-                                                style={{ display: imageLoadingStates['cover-preview'] ? 'block' : 'none' }}
                                             />
                                         </div>
                                     ) : (
@@ -291,9 +290,9 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                 <label htmlFor="background-image-upload">تصویر پس‌زمینه:</label>
                                 <div className={styles.imagePreviewUpload}>
                                     {backgroundImage ? (
-                                        <div className={styles.imagePreviewContainer}>
+                                        <div className={styles.imagePreviewContainer} style={{ position: 'relative' }}>
                                             {!imageLoadingStates['background-preview'] && (
-                                                <div className={styles.skeleton} style={{ width: '120px', height: '80px', position: 'absolute' }} />
+                                                <div className={styles.skeleton} style={{ width: '120px', height: '80px', position: 'absolute', top: 0, left: 0 }} />
                                             )}
                                             <Image
                                                 src={backgroundImage}
@@ -301,8 +300,8 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                 width={120}
                                                 height={80}
                                                 className={styles.imagePreview}
+                                                style={{ opacity: imageLoadingStates['background-preview'] ? 1 : 0, transition: 'opacity 0.3s ease' }}
                                                 onLoad={() => handleImageLoad('background-preview')}
-                                                style={{ display: imageLoadingStates['background-preview'] ? 'block' : 'none' }}
                                             />
                                         </div>
                                     ) : (
