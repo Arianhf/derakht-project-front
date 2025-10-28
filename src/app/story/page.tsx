@@ -42,7 +42,7 @@ const StoriesPage: React.FC = () => {
                     stories.map((story) => (
                         <div key={story.id} className={styles.storyCard}>
                             <Image
-                                src={story.parts[0]?.illustration || placeholderImage}
+                                src={story.cover_image || placeholderImage}
                                 alt={story.title}
                                 width={300}
                                 height={200}
