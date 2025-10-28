@@ -1,75 +1,171 @@
+@import '../../styles/globals.scss';
+
 .container {
-    min-height: 100vh;
-    background: linear-gradient(180deg, #ffdde1, #d4f1f4, #fff7e5);
-    padding: 40px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    direction: rtl;
+  min-height: $default-min-height;
+  background: $gradient-bg;
+  padding: $spacing-xl $spacing-md;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  direction: rtl;
+  position: relative;
+  z-index: 0;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: $clouds;
+    z-index: -1;
+    opacity: 0.1;
   }
-  
-  .title {
-    font-size: 32px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #2b463c;
+}
+
+.title {
+  font-size: $font-size-title;
+  font-weight: bold;
+  margin-bottom: $spacing-lg;
+  color: $dark-text;
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $spacing-lg;
+  width: 100%;
+  max-width: 1200px;
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.storyCard {
+  background: $card-bg;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  transition: $transition-base;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.storyCard:hover {
+  transform: translateY(-5px);
+  box-shadow: $shadow-lg;
+}
+
+.storyImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 1px solid rgba($primary-color, 0.1);
+}
+
+.storyTitle {
+  font-size: $font-size-xl;
+  font-weight: bold;
+  margin: $spacing-md $spacing-md $spacing-sm;
+  color: $dark-text;
+}
+
+.storyExcerpt {
+  font-size: $font-size-base;
+  color: $light-text;
+  padding: 0 $spacing-md;
+  margin-bottom: $spacing-md;
+  flex: 1;
+  line-height: $line-height-base;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-sm;
+  padding: 0 $spacing-md $spacing-md;
+  justify-content: center;
+  align-items: center;
+}
+
+.viewButton {
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-base;
+  cursor: pointer;
+  transition: $transition-base;
+  font-family: $font-primary;
+  flex: 1;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-2px);
   }
-  
+}
+
+.editButton {
+  background-color: $accent-color;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  transition: $transition-base;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 45px;
+
+  &:hover {
+    background-color: darken($accent-color, 10%);
+    transform: translateY(-2px);
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.loading, .error, .noStories {
+  text-align: center;
+  font-size: $font-size-lg;
+  color: $light-text;
+  padding: $spacing-xl;
+}
+
+.error {
+  color: $secondary-color;
+}
+
+/* Responsive styles */
+@media screen and (max-width: $breakpoint-md) {
   .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    width: 100%;
-    max-width: 1200px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: $spacing-md;
   }
-  
-  .storyCard {
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.3s ease;
-    cursor: pointer;
-    text-align: center;
-    padding-bottom: 15px;
+
+  .title {
+    font-size: $font-size-xxl;
   }
-  
-  .storyCard:hover {
-    transform: translateY(-5px);
+}
+
+@media screen and (max-width: $breakpoint-sm) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
   }
-  
-  .storyImage {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
+
+  .container {
+    padding: $spacing-lg $spacing-sm;
   }
-  
-  .storyTitle {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 15px 0 10px;
-    color: #2b463c;
-  }
-  
-  .storyExcerpt {
-    font-size: 16px;
-    color: #555;
-    padding: 0 15px;
-    margin-bottom: 10px;
-  }
-  
-  .readMoreButton {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .readMoreButton:hover {
-    background-color: #218838;
-  }
+}
   
