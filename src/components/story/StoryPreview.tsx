@@ -205,6 +205,9 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                 alt={`تصویر داستان - صفحه ${currentIndex + 1}`}
                                 fill
                                 className={styles.storyImage}
+                                quality={85}
+                                priority
+                                sizes="95vw"
                                 onLoadingComplete={() => setImageLoading(false)}
                                 style={{ display: imageLoading ? 'none' : 'block' }}
                             />
@@ -232,10 +235,12 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                 alt={`تصویر داستان - صفحه ${currentIndex + 1}`}
                                 width={500}
                                 height={400}
-                                layout="responsive"
                                 className={styles.sideImage}
+                                quality={85}
+                                priority
+                                sizes="(max-width: 768px) 100vw, 66vw"
                                 onLoadingComplete={() => setImageLoading(false)}
-                                style={{ display: imageLoading ? 'none' : 'block' }}
+                                style={{ display: imageLoading ? 'none' : 'block', width: '100%', height: 'auto' }}
                             />
                         </div>
                         <div className={styles.textPane}>
@@ -299,6 +304,8 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                 width={120}
                                                 height={80}
                                                 className={styles.imagePreview}
+                                                quality={80}
+                                                sizes="120px"
                                                 onLoadingComplete={() => setCoverImageLoading(false)}
                                                 style={{ display: coverImageLoading ? 'none' : 'block' }}
                                             />
@@ -337,6 +344,8 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                 width={120}
                                                 height={80}
                                                 className={styles.imagePreview}
+                                                quality={80}
+                                                sizes="120px"
                                                 onLoadingComplete={() => setBackgroundImageLoading(false)}
                                                 style={{ display: backgroundImageLoading ? 'none' : 'block' }}
                                             />

@@ -223,9 +223,11 @@ const StoryPage = () => {
                     className={styles.mobileMainImage}
                     width={500}
                     height={350}
-                    layout="responsive"
+                    quality={85}
+                    priority
+                    sizes="(max-width: 768px) 100vw, 500px"
                     onLoadingComplete={() => setMainImageLoading(false)}
-                    style={{ display: mainImageLoading ? 'none' : 'block' }}
+                    style={{ display: mainImageLoading ? 'none' : 'block', width: '100%', height: 'auto' }}
                 />
                 <div className={styles.mobilePagination}>
               <span className={styles.pageIndicator}>
@@ -284,9 +286,11 @@ const StoryPage = () => {
                       className={styles.mainImage}
                       width={600}
                       height={400}
-                      layout="responsive"
+                      quality={85}
+                      priority
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
                       onLoadingComplete={() => setMainImageLoading(false)}
-                      style={{ display: mainImageLoading ? 'none' : 'block' }}
+                      style={{ display: mainImageLoading ? 'none' : 'block', width: '100%', height: 'auto' }}
                   />
                   <div className={styles.pageIndicator}>
                     <span>{toPersianNumber(`${template.parts.length} / ${selectedIndex + 1}`)}</span>
@@ -343,8 +347,10 @@ const StoryPage = () => {
                             alt={`تصویر ${index + 1}`}
                             className={`${styles.galleryImage} ${selectedIndex === index ? styles.selected : ''}`}
                             onClick={() => setSelectedIndex(index)}
-                            width={100}
+                            width={120}
                             height={100}
+                            quality={75}
+                            sizes="120px"
                             onLoadingComplete={() => {
                               setThumbnailsLoading(prev => ({ ...prev, [index]: false }));
                             }}
