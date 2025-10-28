@@ -210,9 +210,16 @@
   z-index: 2;
 }
 
+.thumbnailWrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+}
+
 .galleryImage {
-  width: 120px !important;
-  height: 100% !important;
+  width: 100px !important;
+  height: 100px !important;
   border-radius: $border-radius-md;
   object-fit: cover;
   cursor: pointer;

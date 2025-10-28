@@ -208,7 +208,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                 quality={85}
                                 priority
                                 sizes="95vw"
-                                onLoadingComplete={() => setImageLoading(false)}
+                                onLoad={() => setImageLoading(false)}
                                 style={{ display: imageLoading ? 'none' : 'block' }}
                             />
                             <div className={styles.gradientOverlay}></div>
@@ -239,7 +239,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                 quality={85}
                                 priority
                                 sizes="(max-width: 768px) 100vw, 66vw"
-                                onLoadingComplete={() => setImageLoading(false)}
+                                onLoad={() => setImageLoading(false)}
                                 style={{ display: imageLoading ? 'none' : 'block', width: '100%', height: 'auto' }}
                             />
                         </div>
@@ -306,7 +306,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                 className={styles.imagePreview}
                                                 quality={80}
                                                 sizes="120px"
-                                                onLoadingComplete={() => setCoverImageLoading(false)}
+                                                onLoad={() => setCoverImageLoading(false)}
                                                 style={{ display: coverImageLoading ? 'none' : 'block' }}
                                             />
                                         </div>
@@ -346,7 +346,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                 className={styles.imagePreview}
                                                 quality={80}
                                                 sizes="120px"
-                                                onLoadingComplete={() => setBackgroundImageLoading(false)}
+                                                onLoad={() => setBackgroundImageLoading(false)}
                                                 style={{ display: backgroundImageLoading ? 'none' : 'block' }}
                                             />
                                         </div>

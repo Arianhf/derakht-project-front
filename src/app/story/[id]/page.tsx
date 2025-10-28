@@ -226,7 +226,7 @@ const StoryPage = () => {
                     quality={85}
                     priority
                     sizes="(max-width: 768px) 100vw, 500px"
-                    onLoadingComplete={() => setMainImageLoading(false)}
+                    onLoad={() => setMainImageLoading(false)}
                     style={{ display: mainImageLoading ? 'none' : 'block', width: '100%', height: 'auto' }}
                 />
                 <div className={styles.mobilePagination}>
@@ -289,7 +289,7 @@ const StoryPage = () => {
                       quality={85}
                       priority
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
-                      onLoadingComplete={() => setMainImageLoading(false)}
+                      onLoad={() => setMainImageLoading(false)}
                       style={{ display: mainImageLoading ? 'none' : 'block', width: '100%', height: 'auto' }}
                   />
                   <div className={styles.pageIndicator}>
@@ -334,28 +334,30 @@ const StoryPage = () => {
                         {selectedIndex === index && (
                             <span className={styles.imageNumber}>{toPersianNumber(index + 1)}</span>
                         )}
-                        {thumbnailsLoading[index] && (
-                          <Skeleton
-                            width={120}
-                            height={100}
-                            borderRadius={8}
-                            className={styles.thumbnailSkeleton}
+                        <div className={styles.thumbnailWrapper}>
+                          {thumbnailsLoading[index] && (
+                            <Skeleton
+                              width={100}
+                              height={100}
+                              borderRadius={8}
+                              className={styles.thumbnailSkeleton}
+                            />
+                          )}
+                          <Image
+                              src={part.illustration || '/placeholder-image.jpg'}
+                              alt={`تصویر ${index + 1}`}
+                              className={`${styles.galleryImage} ${selectedIndex === index ? styles.selected : ''}`}
+                              onClick={() => setSelectedIndex(index)}
+                              width={100}
+                              height={100}
+                              quality={75}
+                              sizes="100px"
+                              onLoad={() => {
+                                setThumbnailsLoading(prev => ({ ...prev, [index]: false }));
+                              }}
+                              style={{ display: thumbnailsLoading[index] ? 'none' : 'block' }}
                           />
-                        )}
-                        <Image
-                            src={part.illustration || '/placeholder-image.jpg'}
-                            alt={`تصویر ${index + 1}`}
-                            className={`${styles.galleryImage} ${selectedIndex === index ? styles.selected : ''}`}
-                            onClick={() => setSelectedIndex(index)}
-                            width={120}
-                            height={100}
-                            quality={75}
-                            sizes="120px"
-                            onLoadingComplete={() => {
-                              setThumbnailsLoading(prev => ({ ...prev, [index]: false }));
-                            }}
-                            style={{ display: thumbnailsLoading[index] ? 'none' : 'block' }}
-                        />
+                        </div>
                       </div>
                   ))}
                 </div>
