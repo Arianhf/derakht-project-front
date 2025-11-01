@@ -7,12 +7,16 @@ import styles from "./stories.module.scss";
 import { storyService } from "@/services/storyService";
 import { Story } from "@/types/story";
 import placeholderImage from "@/assets/images/story.png";
+import StoryPreview from "@/components/story/StoryPreview";
+import { toast, Toaster } from 'react-hot-toast';
 
 const StoriesPage: React.FC = () => {
     const router = useRouter();
     const [stories, setStories] = useState<Story[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [selectedStory, setSelectedStory] = useState<Story | null>(null);
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
     useEffect(() => {
         const fetchStories = async () => {
@@ -29,11 +33,50 @@ const StoriesPage: React.FC = () => {
         fetchStories();
     }, []);
 
+    const handleViewStory = (story: Story) => {
+        setSelectedStory(story);
+        setIsPreviewOpen(true);
+    };
+
+    const handleCoverImageUpload = async (file: File) => {
+        if (!selectedStory) return;
+
+        try {
+            const response = await storyService.uploadStoryCoverImage(selectedStory.id, file);
+            setSelectedStory(response);
+            // Update the story in the list
+            setStories(stories.map(s => s.id === response.id ? response : s));
+            toast.success('تصویر جلد با موفقیت آپلود شد');
+        } catch (error) {
+            console.error('Error uploading cover image:', error);
+            toast.error('خطا در آپلود تصویر جلد');
+        }
+    };
+
+    const handleColorChange = async (backgroundColor?: string, fontColor?: string) => {
+        if (!selectedStory) return;
+
+        try {
+            const response = await storyService.setStoryConfig(selectedStory.id, {
+                background_color: backgroundColor || null,
+                font_color: fontColor || null
+            });
+            setSelectedStory(response);
+            // Update the story in the list
+            setStories(stories.map(s => s.id === response.id ? response : s));
+            toast.success('رنگ‌ها با موفقیت ذخیره شدند');
+        } catch (error) {
+            console.error('Error updating story colors:', error);
+            toast.error('خطا در ذخیره رنگ‌ها');
+        }
+    };
+
     if (loading) return <p className={styles.loading}>در حال بارگذاری...</p>;
     if (error) return <p className={styles.error}>{error}</p>;
 
     return (
         <div className={styles.container}>
+            <Toaster position="top-center" />
             <h1 className={styles.title}>داستان‌های شما</h1>
             <div className={styles.grid}>
                 {stories.length === 0 ? (
@@ -53,7 +96,7 @@ const StoriesPage: React.FC = () => {
                             <div className={styles.actions}>
                                 <button
                                     className={styles.viewButton}
-                                    onClick={() => router.push(`/story/${story.id}?mode=view`)}
+                                    onClick={() => handleViewStory(story)}
                                 >
                                     مشاهده داستان
                                 </button>
@@ -71,6 +114,26 @@ const StoriesPage: React.FC = () => {
                     ))
                 )}
             </div>
+
+            {/* Story Preview Modal */}
+            {selectedStory && (
+                <StoryPreview
+                    parts={selectedStory.parts.map((part) => ({
+                        illustration: part.illustration || "/placeholder-image.jpg",
+                        text: part.text || "متنی وارد نشده است.",
+                    }))}
+                    isOpen={isPreviewOpen}
+                    onClose={() => setIsPreviewOpen(false)}
+                    storyId={selectedStory.id}
+                    storyTitle={selectedStory.title}
+                    coverImage={selectedStory.cover_image}
+                    backgroundColor={selectedStory.background_color}
+                    fontColor={selectedStory.font_color}
+                    onCoverImageUpload={handleCoverImageUpload}
+                    onColorChange={handleColorChange}
+                    modalTitle={selectedStory.title}
+                />
+            )}
         </div>
     );
 };

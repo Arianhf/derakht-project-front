@@ -20,6 +20,7 @@ interface StoryPreviewProps {
     fontColor?: string | null;
     onCoverImageUpload?: (file: File) => void;
     onColorChange?: (backgroundColor?: string, fontColor?: string) => void;
+    modalTitle?: string; // Custom title for the modal header
 }
 
 // Preset colors for background
@@ -51,7 +52,8 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                        backgroundColor,
                                                        fontColor,
                                                        onCoverImageUpload,
-                                                       onColorChange
+                                                       onColorChange,
+                                                       modalTitle
                                                    }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [viewMode, setViewMode] = useState<'overlay' | 'sideBySide'>('overlay');
@@ -178,7 +180,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
 
             {/* Header with page indicator */}
             <div className={styles.previewHeader}>
-                <h2>پیش‌نمایش داستان</h2>
+                <h2>{modalTitle || 'پیش‌نمایش داستان'}</h2>
                 {storyId && (
                     <button
                         className={styles.settingsButton}
