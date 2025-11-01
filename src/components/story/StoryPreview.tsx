@@ -60,6 +60,32 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
     const [imageLoadingStates, setImageLoadingStates] = useState<{ [key: string]: boolean }>({});
     const router = useRouter();
 
+    // Helper function to convert hex color to rgba with opacity
+    const hexToRgba = (hex: string, alpha: number): string => {
+        // Remove # if present
+        hex = hex.replace('#', '');
+
+        // Handle 3-digit hex
+        if (hex.length === 3) {
+            hex = hex.split('').map(char => char + char).join('');
+        }
+
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    };
+
+    // Generate line pattern based on font color
+    const getLinePattern = (color: string | null): string => {
+        if (!color) {
+            return 'linear-gradient(transparent 29px, rgba(0, 0, 0, 0.1) 30px)';
+        }
+        const lineColor = hexToRgba(color, 0.15);
+        return `linear-gradient(transparent 29px, ${lineColor} 30px)`;
+    };
+
     // Reset page index and maintain view mode when opening/closing
     useEffect(() => {
         if (!isOpen) {
@@ -188,13 +214,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
             </div>
 
             {/* Content area - changes based on view mode */}
-            <div
-                className={`${styles.previewContent} ${styles[viewMode]}`}
-                style={{
-                    backgroundColor: backgroundColor || undefined,
-                    color: fontColor || undefined
-                }}
-            >
+            <div className={`${styles.previewContent} ${styles[viewMode]}`}>
                 {viewMode === 'overlay' ? (
                     // Overlay mode
                     <div className={styles.overlayView}>
@@ -212,7 +232,13 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                             />
                             <div className={styles.gradientOverlay}></div>
                             <div className={styles.textContainer}>
-                                <div className={styles.storyText}>
+                                <div
+                                    className={styles.storyText}
+                                    style={{
+                                        backgroundColor: backgroundColor || 'rgba(255, 255, 255, 0.5)',
+                                        color: fontColor || '#2B463C'
+                                    }}
+                                >
                                     {parts[currentIndex]?.text || "متنی وارد نشده است."}
                                 </div>
                             </div>
@@ -236,7 +262,15 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                             />
                         </div>
                         <div className={styles.textPane}>
-                            <div className={styles.sideText}>
+                            <div
+                                className={styles.sideText}
+                                style={{
+                                    backgroundColor: backgroundColor || '#fff8dc',
+                                    color: fontColor || '#2B463C',
+                                    backgroundImage: getLinePattern(fontColor),
+                                    backgroundSize: '100% 30px'
+                                }}
+                            >
                                 {parts[currentIndex]?.text || "متنی وارد نشده است."}
                             </div>
                         </div>
