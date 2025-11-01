@@ -40,5 +40,6 @@ export interface Story {
     story_template: string;
     title: string;
     cover_image: string | null;
-    background_image: string | null;
+    background_color: string | null;
+    font_color: string | null;
 }

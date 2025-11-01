@@ -16,10 +16,30 @@ interface StoryPreviewProps {
     storyId?: string;
     storyTitle?: string;
     coverImage?: string | null;
-    backgroundImage?: string | null;
+    backgroundColor?: string | null;
+    fontColor?: string | null;
     onCoverImageUpload?: (file: File) => void;
-    onBackgroundImageUpload?: (file: File) => void;
+    onColorChange?: (backgroundColor?: string, fontColor?: string) => void;
+    modalTitle?: string; // Custom title for the modal header
 }
+
+// Preset colors for background
+const BACKGROUND_PRESET_COLORS = [
+    { color: '#FFFFFF', label: 'سفید' },
+    { color: '#FFF9F5', label: 'کرم روشن' },
+    { color: '#E8F6FF', label: 'آبی روشن' },
+    { color: '#FFF7E5', label: 'زرد روشن' },
+    { color: '#2B463C', label: 'سبز تیره' },
+];
+
+// Preset colors for font
+const FONT_PRESET_COLORS = [
+    { color: '#2B463C', label: 'سبز تیره' },
+    { color: '#000000', label: 'مشکی' },
+    { color: '#FFFFFF', label: 'سفید' },
+    { color: '#345BC0', label: 'آبی' },
+    { color: '#FF6F61', label: 'مرجانی' },
+];
 
 const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                        parts,
@@ -29,9 +49,11 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                        storyId,
                                                        storyTitle,
                                                        coverImage,
-                                                       backgroundImage,
+                                                       backgroundColor,
+                                                       fontColor,
                                                        onCoverImageUpload,
-                                                       onBackgroundImageUpload
+                                                       onColorChange,
+                                                       modalTitle
                                                    }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [viewMode, setViewMode] = useState<'overlay' | 'sideBySide'>('overlay');
@@ -39,6 +61,32 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
     const [imageLoadingStates, setImageLoadingStates] = useState<{ [key: string]: boolean }>({});
     const router = useRouter();
+
+    // Helper function to convert hex color to rgba with opacity
+    const hexToRgba = (hex: string, alpha: number): string => {
+        // Remove # if present
+        hex = hex.replace('#', '');
+
+        // Handle 3-digit hex
+        if (hex.length === 3) {
+            hex = hex.split('').map(char => char + char).join('');
+        }
+
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    };
+
+    // Generate line pattern based on font color
+    const getLinePattern = (color: string | null): string => {
+        if (!color) {
+            return 'linear-gradient(transparent 29px, rgba(0, 0, 0, 0.1) 30px)';
+        }
+        const lineColor = hexToRgba(color, 0.15);
+        return `linear-gradient(transparent 29px, ${lineColor} 30px)`;
+    };
 
     // Reset page index and maintain view mode when opening/closing
     useEffect(() => {
@@ -105,11 +153,14 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
         onCoverImageUpload(file);
     };
 
-    const handleBackgroundImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || e.target.files.length === 0 || !storyId || !onBackgroundImageUpload) return;
+    const handleColorChange = (type: 'background' | 'font', color: string) => {
+        if (!onColorChange) return;
 
-        const file = e.target.files[0];
-        onBackgroundImageUpload(file);
+        if (type === 'background') {
+            onColorChange(color, fontColor || undefined);
+        } else {
+            onColorChange(backgroundColor || undefined, color);
+        }
     };
 
     const handleImageLoad = (imageKey: string) => {
@@ -129,7 +180,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
 
             {/* Header with page indicator */}
             <div className={styles.previewHeader}>
-                <h2>پیش‌نمایش داستان</h2>
+                <h2>{modalTitle || 'پیش‌نمایش داستان'}</h2>
                 {storyId && (
                     <button
                         className={styles.settingsButton}
@@ -165,10 +216,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
             </div>
 
             {/* Content area - changes based on view mode */}
-            <div
-                className={`${styles.previewContent} ${styles[viewMode]}`}
-                style={backgroundImage ? { backgroundImage: `url(${backgroundImage})` } : {}}
-            >
+            <div className={`${styles.previewContent} ${styles[viewMode]}`}>
                 {viewMode === 'overlay' ? (
                     // Overlay mode
                     <div className={styles.overlayView}>
@@ -186,7 +234,13 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                             />
                             <div className={styles.gradientOverlay}></div>
                             <div className={styles.textContainer}>
-                                <div className={styles.storyText}>
+                                <div
+                                    className={styles.storyText}
+                                    style={{
+                                        backgroundColor: backgroundColor || 'rgba(255, 255, 255, 0.5)',
+                                        color: fontColor || '#2B463C'
+                                    }}
+                                >
                                     {parts[currentIndex]?.text || "متنی وارد نشده است."}
                                 </div>
                             </div>
@@ -210,7 +264,15 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                             />
                         </div>
                         <div className={styles.textPane}>
-                            <div className={styles.sideText}>
+                            <div
+                                className={styles.sideText}
+                                style={{
+                                    backgroundColor: backgroundColor || '#fff8dc',
+                                    color: fontColor || '#2B463C',
+                                    backgroundImage: getLinePattern(fontColor),
+                                    backgroundSize: '100% 30px'
+                                }}
+                            >
                                 {parts[currentIndex]?.text || "متنی وارد نشده است."}
                             </div>
                         </div>
@@ -287,36 +349,90 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                             </div>
 
                             <div className={styles.settingItem}>
-                                <label htmlFor="background-image-upload">تصویر پس‌زمینه:</label>
-                                <div className={styles.imagePreviewUpload}>
-                                    {backgroundImage ? (
-                                        <div className={styles.imagePreviewContainer} style={{ position: 'relative' }}>
-                                            {!imageLoadingStates['background-preview'] && (
-                                                <div className={styles.skeleton} style={{ width: '120px', height: '80px', position: 'absolute', top: 0, left: 0 }} />
-                                            )}
-                                            <Image
-                                                src={backgroundImage}
-                                                alt="تصویر پس‌زمینه"
-                                                width={120}
-                                                height={80}
-                                                className={styles.imagePreview}
-                                                style={{ opacity: imageLoadingStates['background-preview'] ? 1 : 0, transition: 'opacity 0.3s ease' }}
-                                                onLoad={() => handleImageLoad('background-preview')}
+                                <label htmlFor="background-color-picker">رنگ پس‌زمینه:</label>
+                                <div className={styles.colorPickerContainer}>
+                                    {/* Preset colors */}
+                                    <div className={styles.presetColors}>
+                                        {BACKGROUND_PRESET_COLORS.map((preset) => (
+                                            <button
+                                                key={preset.color}
+                                                className={`${styles.presetColorCircle} ${backgroundColor === preset.color ? styles.active : ''}`}
+                                                style={{ backgroundColor: preset.color }}
+                                                onClick={() => handleColorChange('background', preset.color)}
+                                                title={preset.label}
                                             />
-                                        </div>
-                                    ) : (
-                                        <div className={styles.noImage}>بدون تصویر</div>
-                                    )}
-                                    <input
-                                        id="background-image-upload"
-                                        type="file"
-                                        accept="image/*"
-                                        className={styles.fileInput}
-                                        onChange={handleBackgroundImageUpload}
-                                    />
-                                    <label htmlFor="background-image-upload" className={styles.uploadButton}>
-                                        انتخاب تصویر
-                                    </label>
+                                        ))}
+                                    </div>
+
+                                    {/* Custom color picker */}
+                                    <div className={styles.customColorInputs}>
+                                        <input
+                                            id="background-color-picker"
+                                            type="color"
+                                            value={backgroundColor || '#FFFFFF'}
+                                            onChange={(e) => handleColorChange('background', e.target.value)}
+                                            className={styles.colorInput}
+                                        />
+                                        <input
+                                            type="text"
+                                            value={backgroundColor || ''}
+                                            onChange={(e) => handleColorChange('background', e.target.value)}
+                                            placeholder="#FFFFFF"
+                                            className={styles.colorTextInput}
+                                        />
+                                        {backgroundColor && (
+                                            <button
+                                                onClick={() => onColorChange && onColorChange(undefined, fontColor || undefined)}
+                                                className={styles.clearButton}
+                                            >
+                                                پاک کردن
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className={styles.settingItem}>
+                                <label htmlFor="font-color-picker">رنگ متن:</label>
+                                <div className={styles.colorPickerContainer}>
+                                    {/* Preset colors */}
+                                    <div className={styles.presetColors}>
+                                        {FONT_PRESET_COLORS.map((preset) => (
+                                            <button
+                                                key={preset.color}
+                                                className={`${styles.presetColorCircle} ${fontColor === preset.color ? styles.active : ''}`}
+                                                style={{ backgroundColor: preset.color }}
+                                                onClick={() => handleColorChange('font', preset.color)}
+                                                title={preset.label}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    {/* Custom color picker */}
+                                    <div className={styles.customColorInputs}>
+                                        <input
+                                            id="font-color-picker"
+                                            type="color"
+                                            value={fontColor || '#000000'}
+                                            onChange={(e) => handleColorChange('font', e.target.value)}
+                                            className={styles.colorInput}
+                                        />
+                                        <input
+                                            type="text"
+                                            value={fontColor || ''}
+                                            onChange={(e) => handleColorChange('font', e.target.value)}
+                                            placeholder="#000000"
+                                            className={styles.colorTextInput}
+                                        />
+                                        {fontColor && (
+                                            <button
+                                                onClick={() => onColorChange && onColorChange(backgroundColor || undefined, undefined)}
+                                                className={styles.clearButton}
+                                            >
+                                                پاک کردن
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
