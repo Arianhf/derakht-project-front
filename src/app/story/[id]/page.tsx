@@ -30,7 +30,8 @@ const StoryPage = () => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
   const [coverImage, setCoverImage] = useState<string | null>(null);
-  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  const [backgroundColor, setBackgroundColor] = useState<string | null>(null);
+  const [fontColor, setFontColor] = useState<string | null>(null);
   const [imageLoadingStates, setImageLoadingStates] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
@@ -53,13 +54,17 @@ const StoryPage = () => {
         setTemplate(response);
         setTexts(response.parts.map((part) => part.text || ''));
 
-        // Set cover and background images if available
+        // Set cover image and colors if available
         if (response.cover_image) {
           setCoverImage(response.cover_image);
         }
 
-        if (response.background_image) {
-          setBackgroundImage(response.background_image);
+        if (response.background_color) {
+          setBackgroundColor(response.background_color);
+        }
+
+        if (response.font_color) {
+          setFontColor(response.font_color);
         }
       } catch (err) {
         setError('خطا در دریافت قالب داستان');
@@ -118,19 +123,20 @@ const StoryPage = () => {
     }
   };
 
-  const handleBackgroundImageUpload = async (file: File) => {
+  const handleColorChange = async (newBackgroundColor?: string, newFontColor?: string) => {
     if (!id) return;
 
     try {
-      setLoading(true);
-      const response = await storyService.uploadStoryBackgroundImage(id, file);
-      setBackgroundImage(response.background_image);
-      toast.success('تصویر پس‌زمینه با موفقیت آپلود شد');
+      const response = await storyService.setStoryConfig(id, {
+        background_color: newBackgroundColor || null,
+        font_color: newFontColor || null
+      });
+      setBackgroundColor(response.background_color);
+      setFontColor(response.font_color);
+      toast.success('رنگ‌ها با موفقیت ذخیره شدند');
     } catch (error) {
-      console.error('Error uploading background image:', error);
-      toast.error('خطا در آپلود تصویر پس‌زمینه');
-    } finally {
-      setLoading(false);
+      console.error('Error updating story colors:', error);
+      toast.error('خطا در ذخیره رنگ‌ها');
     }
   };
 
@@ -178,9 +184,10 @@ const StoryPage = () => {
                 storyId={id as string}
                 storyTitle={template.title}
                 coverImage={coverImage}
-                backgroundImage={backgroundImage}
+                backgroundColor={backgroundColor}
+                fontColor={fontColor}
                 onCoverImageUpload={handleCoverImageUpload}
-                onBackgroundImageUpload={handleBackgroundImageUpload}
+                onColorChange={handleColorChange}
             />
           </div>
         </div>
@@ -361,9 +368,10 @@ const StoryPage = () => {
             storyId={id as string}
             storyTitle={storyName}
             coverImage={coverImage}
-            backgroundImage={backgroundImage}
+            backgroundColor={backgroundColor}
+            fontColor={fontColor}
             onCoverImageUpload={handleCoverImageUpload}
-            onBackgroundImageUpload={handleBackgroundImageUpload}
+            onColorChange={handleColorChange}
         />
       </div>
   );

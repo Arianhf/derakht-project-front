@@ -76,16 +76,12 @@ export const storyService = {
     return response.data;
   },
 
-  // Upload background image for a story
-  uploadStoryBackgroundImage: async (storyId: string, imageFile: File): Promise<Story> => {
-    const formData = new FormData();
-    formData.append('background_image', imageFile);
-
-    const response = await api.post(`/stories/${storyId}/upload_background/`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+  // Set story configuration (colors)
+  setStoryConfig: async (
+    storyId: string,
+    config: { background_color?: string | null; font_color?: string | null }
+  ): Promise<Story> => {
+    const response = await api.post(`/stories/${storyId}/set_config/`, config);
     return response.data;
   }
 };

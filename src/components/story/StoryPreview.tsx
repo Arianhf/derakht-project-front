@@ -16,9 +16,10 @@ interface StoryPreviewProps {
     storyId?: string;
     storyTitle?: string;
     coverImage?: string | null;
-    backgroundImage?: string | null;
+    backgroundColor?: string | null;
+    fontColor?: string | null;
     onCoverImageUpload?: (file: File) => void;
-    onBackgroundImageUpload?: (file: File) => void;
+    onColorChange?: (backgroundColor?: string, fontColor?: string) => void;
 }
 
 const StoryPreview: React.FC<StoryPreviewProps> = ({
@@ -29,9 +30,10 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                        storyId,
                                                        storyTitle,
                                                        coverImage,
-                                                       backgroundImage,
+                                                       backgroundColor,
+                                                       fontColor,
                                                        onCoverImageUpload,
-                                                       onBackgroundImageUpload
+                                                       onColorChange
                                                    }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [viewMode, setViewMode] = useState<'overlay' | 'sideBySide'>('overlay');
@@ -105,11 +107,14 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
         onCoverImageUpload(file);
     };
 
-    const handleBackgroundImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || e.target.files.length === 0 || !storyId || !onBackgroundImageUpload) return;
+    const handleColorChange = (type: 'background' | 'font', color: string) => {
+        if (!onColorChange) return;
 
-        const file = e.target.files[0];
-        onBackgroundImageUpload(file);
+        if (type === 'background') {
+            onColorChange(color, fontColor || undefined);
+        } else {
+            onColorChange(backgroundColor || undefined, color);
+        }
     };
 
     const handleImageLoad = (imageKey: string) => {
@@ -167,7 +172,10 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
             {/* Content area - changes based on view mode */}
             <div
                 className={`${styles.previewContent} ${styles[viewMode]}`}
-                style={backgroundImage ? { backgroundImage: `url(${backgroundImage})` } : {}}
+                style={{
+                    backgroundColor: backgroundColor || undefined,
+                    color: fontColor || undefined
+                }}
             >
                 {viewMode === 'overlay' ? (
                     // Overlay mode
@@ -287,36 +295,58 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                             </div>
 
                             <div className={styles.settingItem}>
-                                <label htmlFor="background-image-upload">تصویر پس‌زمینه:</label>
-                                <div className={styles.imagePreviewUpload}>
-                                    {backgroundImage ? (
-                                        <div className={styles.imagePreviewContainer} style={{ position: 'relative' }}>
-                                            {!imageLoadingStates['background-preview'] && (
-                                                <div className={styles.skeleton} style={{ width: '120px', height: '80px', position: 'absolute', top: 0, left: 0 }} />
-                                            )}
-                                            <Image
-                                                src={backgroundImage}
-                                                alt="تصویر پس‌زمینه"
-                                                width={120}
-                                                height={80}
-                                                className={styles.imagePreview}
-                                                style={{ opacity: imageLoadingStates['background-preview'] ? 1 : 0, transition: 'opacity 0.3s ease' }}
-                                                onLoad={() => handleImageLoad('background-preview')}
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className={styles.noImage}>بدون تصویر</div>
-                                    )}
+                                <label htmlFor="background-color-picker">رنگ پس‌زمینه:</label>
+                                <div className={styles.colorPickerContainer}>
                                     <input
-                                        id="background-image-upload"
-                                        type="file"
-                                        accept="image/*"
-                                        className={styles.fileInput}
-                                        onChange={handleBackgroundImageUpload}
+                                        id="background-color-picker"
+                                        type="color"
+                                        value={backgroundColor || '#FFFFFF'}
+                                        onChange={(e) => handleColorChange('background', e.target.value)}
+                                        className={styles.colorInput}
                                     />
-                                    <label htmlFor="background-image-upload" className={styles.uploadButton}>
-                                        انتخاب تصویر
-                                    </label>
+                                    <input
+                                        type="text"
+                                        value={backgroundColor || ''}
+                                        onChange={(e) => handleColorChange('background', e.target.value)}
+                                        placeholder="#FFFFFF"
+                                        className={styles.colorTextInput}
+                                    />
+                                    {backgroundColor && (
+                                        <button
+                                            onClick={() => onColorChange && onColorChange(undefined, fontColor || undefined)}
+                                            className={styles.clearButton}
+                                        >
+                                            پاک کردن
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className={styles.settingItem}>
+                                <label htmlFor="font-color-picker">رنگ متن:</label>
+                                <div className={styles.colorPickerContainer}>
+                                    <input
+                                        id="font-color-picker"
+                                        type="color"
+                                        value={fontColor || '#000000'}
+                                        onChange={(e) => handleColorChange('font', e.target.value)}
+                                        className={styles.colorInput}
+                                    />
+                                    <input
+                                        type="text"
+                                        value={fontColor || ''}
+                                        onChange={(e) => handleColorChange('font', e.target.value)}
+                                        placeholder="#000000"
+                                        className={styles.colorTextInput}
+                                    />
+                                    {fontColor && (
+                                        <button
+                                            onClick={() => onColorChange && onColorChange(backgroundColor || undefined, undefined)}
+                                            className={styles.clearButton}
+                                        >
+                                            پاک کردن
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>
