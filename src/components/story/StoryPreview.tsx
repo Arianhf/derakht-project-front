@@ -22,6 +22,24 @@ interface StoryPreviewProps {
     onColorChange?: (backgroundColor?: string, fontColor?: string) => void;
 }
 
+// Preset colors for background
+const BACKGROUND_PRESET_COLORS = [
+    { color: '#FFFFFF', label: 'سفید' },
+    { color: '#FFF9F5', label: 'کرم روشن' },
+    { color: '#E8F6FF', label: 'آبی روشن' },
+    { color: '#FFF7E5', label: 'زرد روشن' },
+    { color: '#2B463C', label: 'سبز تیره' },
+];
+
+// Preset colors for font
+const FONT_PRESET_COLORS = [
+    { color: '#2B463C', label: 'سبز تیره' },
+    { color: '#000000', label: 'مشکی' },
+    { color: '#FFFFFF', label: 'سفید' },
+    { color: '#345BC0', label: 'آبی' },
+    { color: '#FF6F61', label: 'مرجانی' },
+];
+
 const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                        parts,
                                                        isOpen,
@@ -297,56 +315,88 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                             <div className={styles.settingItem}>
                                 <label htmlFor="background-color-picker">رنگ پس‌زمینه:</label>
                                 <div className={styles.colorPickerContainer}>
-                                    <input
-                                        id="background-color-picker"
-                                        type="color"
-                                        value={backgroundColor || '#FFFFFF'}
-                                        onChange={(e) => handleColorChange('background', e.target.value)}
-                                        className={styles.colorInput}
-                                    />
-                                    <input
-                                        type="text"
-                                        value={backgroundColor || ''}
-                                        onChange={(e) => handleColorChange('background', e.target.value)}
-                                        placeholder="#FFFFFF"
-                                        className={styles.colorTextInput}
-                                    />
-                                    {backgroundColor && (
-                                        <button
-                                            onClick={() => onColorChange && onColorChange(undefined, fontColor || undefined)}
-                                            className={styles.clearButton}
-                                        >
-                                            پاک کردن
-                                        </button>
-                                    )}
+                                    {/* Preset colors */}
+                                    <div className={styles.presetColors}>
+                                        {BACKGROUND_PRESET_COLORS.map((preset) => (
+                                            <button
+                                                key={preset.color}
+                                                className={`${styles.presetColorCircle} ${backgroundColor === preset.color ? styles.active : ''}`}
+                                                style={{ backgroundColor: preset.color }}
+                                                onClick={() => handleColorChange('background', preset.color)}
+                                                title={preset.label}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    {/* Custom color picker */}
+                                    <div className={styles.customColorInputs}>
+                                        <input
+                                            id="background-color-picker"
+                                            type="color"
+                                            value={backgroundColor || '#FFFFFF'}
+                                            onChange={(e) => handleColorChange('background', e.target.value)}
+                                            className={styles.colorInput}
+                                        />
+                                        <input
+                                            type="text"
+                                            value={backgroundColor || ''}
+                                            onChange={(e) => handleColorChange('background', e.target.value)}
+                                            placeholder="#FFFFFF"
+                                            className={styles.colorTextInput}
+                                        />
+                                        {backgroundColor && (
+                                            <button
+                                                onClick={() => onColorChange && onColorChange(undefined, fontColor || undefined)}
+                                                className={styles.clearButton}
+                                            >
+                                                پاک کردن
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 
                             <div className={styles.settingItem}>
                                 <label htmlFor="font-color-picker">رنگ متن:</label>
                                 <div className={styles.colorPickerContainer}>
-                                    <input
-                                        id="font-color-picker"
-                                        type="color"
-                                        value={fontColor || '#000000'}
-                                        onChange={(e) => handleColorChange('font', e.target.value)}
-                                        className={styles.colorInput}
-                                    />
-                                    <input
-                                        type="text"
-                                        value={fontColor || ''}
-                                        onChange={(e) => handleColorChange('font', e.target.value)}
-                                        placeholder="#000000"
-                                        className={styles.colorTextInput}
-                                    />
-                                    {fontColor && (
-                                        <button
-                                            onClick={() => onColorChange && onColorChange(backgroundColor || undefined, undefined)}
-                                            className={styles.clearButton}
-                                        >
-                                            پاک کردن
-                                        </button>
-                                    )}
+                                    {/* Preset colors */}
+                                    <div className={styles.presetColors}>
+                                        {FONT_PRESET_COLORS.map((preset) => (
+                                            <button
+                                                key={preset.color}
+                                                className={`${styles.presetColorCircle} ${fontColor === preset.color ? styles.active : ''}`}
+                                                style={{ backgroundColor: preset.color }}
+                                                onClick={() => handleColorChange('font', preset.color)}
+                                                title={preset.label}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    {/* Custom color picker */}
+                                    <div className={styles.customColorInputs}>
+                                        <input
+                                            id="font-color-picker"
+                                            type="color"
+                                            value={fontColor || '#000000'}
+                                            onChange={(e) => handleColorChange('font', e.target.value)}
+                                            className={styles.colorInput}
+                                        />
+                                        <input
+                                            type="text"
+                                            value={fontColor || ''}
+                                            onChange={(e) => handleColorChange('font', e.target.value)}
+                                            placeholder="#000000"
+                                            className={styles.colorTextInput}
+                                        />
+                                        {fontColor && (
+                                            <button
+                                                onClick={() => onColorChange && onColorChange(backgroundColor || undefined, undefined)}
+                                                className={styles.clearButton}
+                                            >
+                                                پاک کردن
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
