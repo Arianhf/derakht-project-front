@@ -85,7 +85,7 @@ const CheckoutPage: React.FC = () => {
 
                     if (result.status === 'success') {
                         toast.success('پرداخت با موفقیت انجام شد');
-                        await clearCart(true);  // Clear the cart after successful payment
+                        await clearCart(false);  // Clear the cart without refreshing (redirecting away)
                         router.push(`/shop/order-confirmation/${returnedOrderId}`);
                     } else {
                         // Backend verification failed
@@ -93,10 +93,14 @@ const CheckoutPage: React.FC = () => {
                         const resultErrorMessage = encodeURIComponent(result.error_message || errorMessage);
                         router.push(`/shop/payment-failed?order_id=${returnedOrderId}&error_code=${resultErrorCode}&error_message=${resultErrorMessage}`);
                     }
-                } catch (err: any) {
+                } catch (err: unknown) {
                     console.error('Error verifying payment:', err);
-                    // Redirect to payment failed page with generic error
-                    router.push(`/shop/payment-failed?order_id=${returnedOrderId}&error_code=api_error&error_message=${encodeURIComponent('خطا در تایید پرداخت')}`);
+                    // Extract error message safely
+                    const errorMessage = err && typeof err === 'object' && 'message' in err
+                        ? String((err as { message?: string }).message)
+                        : 'خطا در تایید پرداخت';
+                    // Redirect to payment failed page with error details
+                    router.push(`/shop/payment-failed?order_id=${returnedOrderId}&error_code=api_error&error_message=${encodeURIComponent(errorMessage)}`);
                 } finally {
                     setLoading(false);
                 }
@@ -184,17 +188,22 @@ const CheckoutPage: React.FC = () => {
                 }
             } else {
                 // For cash on delivery, just proceed to confirmation
-                await clearCart(true);
+                await clearCart(false);  // Clear the cart without refreshing (redirecting away)
                 router.push(`/shop/order-confirmation/${order.id}`);
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error placing order:', err);
+
+            // Extract error message safely
+            const errorMessage = err && typeof err === 'object' && 'message' in err
+                ? String((err as { message?: string }).message)
+                : 'خطا در ثبت سفارش';
 
             // Instead of just setting an error, redirect to payment failed page
             if (orderId) {
-                router.push(`/shop/payment-failed?order_id=${orderId}&error_code=order_processing&error_message=${encodeURIComponent(err.message || 'خطا در ثبت سفارش')}`);
+                router.push(`/shop/payment-failed?order_id=${orderId}&error_code=order_processing&error_message=${encodeURIComponent(errorMessage)}`);
             } else {
-                setError(err.message || 'خطا در ثبت سفارش. لطفا مجددا تلاش کنید.');
+                setError(`${errorMessage}. لطفا مجددا تلاش کنید.`);
             }
         } finally {
             setLoading(false);

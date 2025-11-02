@@ -155,20 +155,22 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, relatedPosts = [], logo
                         )}
 
                         <div className={styles.blogMeta}>
-                            <div className={styles.metaItem}>
-                                <FaUserCircle size={18} />
-                                <span className={styles.author}>{blog.author?.first_name || 'نویسنده'}</span>
-                            </div>
+                            {blog.author && (
+                                <div className={styles.metaItem}>
+                                    <FaUserCircle size={18} />
+                                    <span className={styles.author}>{blog.author.first_name || 'نویسنده'}</span>
+                                </div>
+                            )}
                             {blog.jalali_date && (
                                 <div className={styles.metaItem}>
                                     <FaCalendarAlt size={16} />
-                                    <span>{toPersianNumber(blog.jalali_date || "") }</span>
+                                    <span>{toPersianNumber(blog.jalali_date)}</span>
                                 </div>
                             )}
                             {blog.reading_time && (
                                 <div className={styles.metaItem}>
                                     <FaClock size={16} />
-                                    <span>{toPersianNumber(blog.reading_time || "")} دقیقه مطالعه</span>
+                                    <span>{toPersianNumber(blog.reading_time)} دقیقه مطالعه</span>
                                 </div>
                             )}
                         </div>

@@ -10,7 +10,7 @@ export function middleware(req: NextRequest) {
     // Define protected routes that should require authentication
     const protectedRoutes = [
         '/account',          // Account management
-        '/checkout',         // Checkout process
+        '/shop/checkout',    // Checkout process
         '/story/create',     // Creating new stories
         '/story/edit'        // Editing stories
     ];
@@ -38,7 +38,7 @@ export const config = {
         '/account/:path*',
         '/story/create/:path*',
         '/story/edit/:path*',
-        '/checkout/:path*',
+        '/shop/checkout/:path*',
         '/login',
     ],
 };
