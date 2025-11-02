@@ -86,7 +86,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
     };
 
     // Generate line pattern based on font color
-    const getLinePattern = (color: string | null): string => {
+    const getLinePattern = (color: string | null | undefined): string => {
         if (!color) {
             return 'linear-gradient(transparent 29px, rgba(0, 0, 0, 0.1) 30px)';
         }

@@ -112,7 +112,7 @@ function transformAxiosErrorToStandard(error: AxiosError): StandardErrorResponse
             message: responseData.message,
             userMessage: responseData.userMessage,
             details: responseData.details,
-            severity: responseData.severity,
+            severity: responseData.severity as 'error' | 'warning' | 'info',
             timestamp: responseData.timestamp,
             requestId: responseData.requestId,
         };
