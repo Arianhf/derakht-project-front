@@ -27,9 +27,9 @@ const TagList: React.FC<TagListProps> = ({ tags, onTagClick, className, tagClass
 
   return (
       <div className={className || styles.tagContainer}>
-        {tags.map((tag, index) => (
+        {tags.map((tag) => (
             <span
-                key={index}
+                key={tag}
                 className={tagClassName || styles.tag}
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent event from bubbling up
@@ -223,7 +223,6 @@ const BlogPostList: React.FC = () => {
         // Set hero posts from the updated API
         setHeroPosts(heroPostsResponse.items || []);
       } catch (err) {
-        console.error(err);
         setError(UI_CONSTANTS.ERROR_MESSAGE);
       } finally {
         setLoading(false);

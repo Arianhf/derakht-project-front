@@ -28,7 +28,7 @@ const ProductDetailsPage: React.FC = () => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [isImageLoading, setIsImageLoading] = useState(false);
     const [comment, setComment] = useState('');
-    const [comments, setComments] = useState<string[]>([]);
+    const [comments, setComments] = useState<Array<{ id: string; text: string }>>([]);
     const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([
         { label: 'فروشگاه', href: '/shop' },
     ]);
@@ -66,7 +66,7 @@ const ProductDetailsPage: React.FC = () => {
                 setSelectedImage(data.feature_image);
             }
         } catch (error) {
-            console.error('Error fetching product:', error);
+            // Error fetching product - silently handle in production
         } finally {
             setLoading(false);
         }
@@ -91,7 +91,11 @@ const ProductDetailsPage: React.FC = () => {
     // Comment submission handler
     const handleSubmitComment = () => {
         if (comment.trim()) {
-            setComments((prev) => [...prev, comment.trim()]);
+            const newComment = {
+                id: `${Date.now()}-${Math.random()}`,
+                text: comment.trim()
+            };
+            setComments((prev) => [...prev, newComment]);
             setComment('');
         }
     };
@@ -213,7 +217,7 @@ const ProductDetailsPage: React.FC = () => {
                             <div className={styles.thumbnailsContainer}>
                                 {product.images.map((image, index) => (
                                     <div
-                                        key={index}
+                                        key={image.id || image.image_url}
                                         className={`${styles.thumbnail} ${selectedImage === image.image_url ? styles.activeThumbnail : ''}`}
                                         onClick={() => handleImageSelect(image.image_url)}
                                     >
@@ -301,9 +305,9 @@ const ProductDetailsPage: React.FC = () => {
                             <p className={styles.noComments}>هنوز نظری ثبت نشده است. اولین نفری باشید که نظر می‌دهد!</p>
                         ) : (
                             <ul className={styles.commentsList}>
-                                {comments.map((cmt, index) => (
-                                    <li key={index} className={styles.commentItem}>
-                                        {cmt}
+                                {comments.map((cmt) => (
+                                    <li key={cmt.id} className={styles.commentItem}>
+                                        {cmt.text}
                                     </li>
                                 ))}
                             </ul>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FaArrowRight, FaCalendarAlt, FaUserCircle, FaClock, FaComment, FaStar } from 'react-icons/fa';
 import styles from './BlogDetails.module.scss';
@@ -30,13 +30,13 @@ interface BlogDetailsProps {
         hero?: boolean;
     };
     relatedPosts?: RelatedPost[];
-    logo: any;
+    logo: StaticImageData | string;
 }
 
 const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, relatedPosts = [], logo }) => {
     const router = useRouter();
     const [comment, setComment] = useState('');
-    const [comments, setComments] = useState<Array<{author: string, date: string, text: string}>>([]);
+    const [comments, setComments] = useState<Array<{id: string; author: string; date: string; text: string}>>([]);
     const [processedContent, setProcessedContent] = useState(blog.content);
 
     // Function to process the blog content
@@ -116,6 +116,7 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, relatedPosts = [], logo
         e.preventDefault();
         if (comment.trim()) {
             const newComment = {
+                id: `${Date.now()}-${Math.random()}`,
                 author: 'کاربر',
                 date: new Date().toLocaleDateString('fa-IR'),
                 text: comment
@@ -174,9 +175,9 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, relatedPosts = [], logo
 
                         {blog.tags && blog.tags.length > 0 && (
                             <div className={styles.tagContainer}>
-                                {blog.tags.map((tag, index) => (
+                                {blog.tags.map((tag) => (
                                     <span
-                                        key={index}
+                                        key={tag}
                                         className={styles.tag}
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -227,13 +228,13 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, relatedPosts = [], logo
 
                     {comments.length > 0 ? (
                         <div className={styles.commentsList}>
-                            {comments.map((comment, index) => (
-                                <div key={index} className={styles.commentItem}>
+                            {comments.map((cmt) => (
+                                <div key={cmt.id} className={styles.commentItem}>
                                     <div className={styles.commentHeader}>
-                                        <span className={styles.commentAuthor}>{comment.author}</span>
-                                        <span className={styles.commentDate}>{comment.date}</span>
+                                        <span className={styles.commentAuthor}>{cmt.author}</span>
+                                        <span className={styles.commentDate}>{cmt.date}</span>
                                     </div>
-                                    <p className={styles.commentText}>{comment.text}</p>
+                                    <p className={styles.commentText}>{cmt.text}</p>
                                 </div>
                             ))}
                         </div>

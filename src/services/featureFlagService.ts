@@ -19,7 +19,7 @@ export const featureFlagService = {
             const response = await api.get('/v2/feature-flags/');
             return response.data.results || [];
         } catch (error) {
-            console.error('Error fetching feature flags:', error);
+            // Error fetching feature flags - fall back to local flags
             return getLocalFeatureFlags();
         }
     },
@@ -44,8 +44,8 @@ export const featureFlagService = {
             const response = await api.get(`/v2/feature-flags/${featureName}/`);
             return response.data.enabled || false;
         } catch (error) {
-            console.error(`Error checking feature flag ${featureName}:`, error);
-            return false; // Default to disabled if there's an error
+            // Error checking feature flag - default to disabled
+            return false;
         }
     }
 };

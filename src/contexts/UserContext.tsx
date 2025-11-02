@@ -45,7 +45,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const userData = await userService.getCurrentUser();
             setUser(userData);
         } catch (error) {
-            console.error('Error fetching user:', error);
+            // Error fetching user - silently handle in production
             setUser(null);
         } finally {
             setLoading(false);
@@ -59,7 +59,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUser(updatedUser);
             toast.success('اطلاعات پروفایل با موفقیت به‌روزرسانی شد');
         } catch (error) {
-            console.error('Error updating profile:', error);
             toast.error('خطا در به‌روزرسانی اطلاعات');
             throw error;
         } finally {
@@ -79,7 +78,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             await fetchUser(); // Refresh user data
             toast.success('آدرس با موفقیت ذخیره شد');
         } catch (error) {
-            console.error('Error updating address:', error);
             toast.error('خطا در ذخیره آدرس');
             throw error;
         } finally {

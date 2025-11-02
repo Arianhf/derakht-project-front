@@ -30,6 +30,7 @@ const ShopPage = () => {
 
     useEffect(() => {
         fetchProducts(filters);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchProducts = async (appliedFilters: ShopFilters) => {
@@ -38,7 +39,7 @@ const ShopPage = () => {
             const data = await shopService.getProducts(appliedFilters);
             setProducts(data.results || []);
         } catch (error) {
-            console.error('Error fetching products:', error);
+            // Error fetching products - silently handle in production
         } finally {
             setLoading(false);
         }
