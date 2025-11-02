@@ -15,7 +15,7 @@ interface CartContextType {
   removeFromCart: (productId: string) => Promise<void>;
   increaseQuantity: (productId: string) => Promise<void>;
   decreaseQuantity: (productId: string) => Promise<void>;
-  clearCart: (refreshCart: boolean) => Promise<void>;
+  clearCart: (shouldRefresh?: boolean) => Promise<void>;
   refreshCart: () => Promise<void>;
 }
 
@@ -133,11 +133,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const clearCart = async (skipRefresh = false) => {
+  const clearCart = async (shouldRefresh: boolean = true) => {
     try {
       setLoading(true);
       await shopService.clearCart();
-      if (!skipRefresh) {
+      if (shouldRefresh) {
         await refreshCart();
       } else {
         setCartDetails(null);

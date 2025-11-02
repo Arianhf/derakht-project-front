@@ -58,12 +58,14 @@ const ProductDetailsPage: React.FC = () => {
 
             setBreadcrumbs(updatedBreadcrumbs);
 
-            // Set feature image
+            // Set feature image with proper fallback handling
             if (data.images && data.images.length > 0) {
                 const featureImage = data.images.find((img: ProductImage) => img.is_feature);
-                setSelectedImage(featureImage ? featureImage.image_url : data.images[0].image_url);
+                setSelectedImage(featureImage ? featureImage.image_url : data.images[0]?.image_url || null);
             } else if (data.feature_image) {
                 setSelectedImage(data.feature_image);
+            } else {
+                setSelectedImage(null);
             }
         } catch (error) {
             // Error fetching product - silently handle in production

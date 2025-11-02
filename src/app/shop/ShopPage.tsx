@@ -29,8 +29,8 @@ const ShopPage = () => {
     ];
 
     useEffect(() => {
-        fetchProducts(filters);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // Fetch products on mount with initial filters
+        fetchProducts({ sort: 'newest' });
     }, []);
 
     const fetchProducts = async (appliedFilters: ShopFilters) => {
