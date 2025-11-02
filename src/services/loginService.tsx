@@ -20,7 +20,7 @@ export const loginService = {
             }
 
             return response.data;
-        } catch (error: any) {
+        } catch (error: unknown) {
             // Error is already transformed to StandardErrorResponse by axios interceptor
             // Just re-throw it for the calling code to handle
             throw error;
@@ -47,13 +47,12 @@ export const loginService = {
                 try {
                     await shopService.mergeAnonymousCart();
                 } catch (cartError) {
-                    console.error("Error merging carts:", cartError);
-                    // We don't want the login to fail if cart merging fails
+                    // Error merging carts - don't fail login
                 }
             }
 
             return response.data;
-        } catch (error: any) {
+        } catch (error: unknown) {
             // Error is already transformed to StandardErrorResponse by axios interceptor
             // Just re-throw it for the calling code to handle
             throw error;

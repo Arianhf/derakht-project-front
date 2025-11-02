@@ -28,7 +28,7 @@ export const FeatureFlagProvider: React.FC<{ children: ReactNode }> = ({ childre
 
                 setFlags(flagsMap);
             } catch (error) {
-                console.error('Error loading feature flags:', error);
+                // Error loading feature flags - silently handle in production
             } finally {
                 setLoading(false);
             }

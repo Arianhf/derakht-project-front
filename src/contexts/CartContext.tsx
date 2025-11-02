@@ -44,7 +44,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await shopService.getCartDetails();
       setCartDetails(data);
     } catch (error) {
-      console.error('Error fetching cart:', error);
+      // Error fetching cart - silently handle in production
     } finally {
       setLoading(false);
     }
@@ -60,10 +60,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await shopService.addToCart(productId, quantity);
       await refreshCart();
       toast.success('محصول به سبد خرید اضافه شد');
-    } catch (error: any) {
-      console.error('Error adding to cart:', error);
+    } catch (error: unknown) {
       // Extract error message from API response
-      const errorMessage = error.response?.data?.error || error.response?.data?.detail || 'خطا در افزودن محصول به سبد خرید';
+      let errorMessage = 'خطا در افزودن محصول به سبد خرید';
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { error?: string; detail?: string } } };
+        errorMessage = axiosError.response?.data?.error || axiosError.response?.data?.detail || errorMessage;
+      }
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -76,9 +79,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await shopService.removeFromCart(productId);
       await refreshCart();
       toast.success('محصول از سبد خرید حذف شد');
-    } catch (error: any) {
-      console.error('Error removing from cart:', error);
-      const errorMessage = error.response?.data?.error || error.response?.data?.detail || 'خطا در حذف محصول از سبد خرید';
+    } catch (error: unknown) {
+      let errorMessage = 'خطا در حذف محصول از سبد خرید';
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { error?: string; detail?: string } } };
+        errorMessage = axiosError.response?.data?.error || axiosError.response?.data?.detail || errorMessage;
+      }
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -93,9 +99,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await shopService.updateCartItemQuantity(productId, item.quantity + 1);
         await refreshCart();
       }
-    } catch (error: any) {
-      console.error('Error increasing quantity:', error);
-      const errorMessage = error.response?.data?.error || error.response?.data?.detail || 'خطا در افزایش تعداد محصول';
+    } catch (error: unknown) {
+      let errorMessage = 'خطا در افزایش تعداد محصول';
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { error?: string; detail?: string } } };
+        errorMessage = axiosError.response?.data?.error || axiosError.response?.data?.detail || errorMessage;
+      }
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -112,9 +121,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else if (item && item.quantity === 1) {
         await removeFromCart(productId);
       }
-    } catch (error: any) {
-      console.error('Error decreasing quantity:', error);
-      const errorMessage = error.response?.data?.error || error.response?.data?.detail || 'خطا در کاهش تعداد محصول';
+    } catch (error: unknown) {
+      let errorMessage = 'خطا در کاهش تعداد محصول';
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { error?: string; detail?: string } } };
+        errorMessage = axiosError.response?.data?.error || axiosError.response?.data?.detail || errorMessage;
+      }
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -132,7 +144,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       toast.success('سبد خرید خالی شد');
     } catch (error) {
-      console.error('Error clearing cart:', error);
       toast.error('خطا در خالی کردن سبد خرید');
     } finally {
       setLoading(false);

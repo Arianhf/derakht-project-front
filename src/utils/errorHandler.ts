@@ -42,7 +42,7 @@ export class ErrorHandler {
    * @param options - Additional options for error handling
    * @returns Processed error with user-friendly message
    */
-  handle(error: any, options: ErrorHandlerOptions = {}): ProcessedError {
+  handle(error: unknown, options: ErrorHandlerOptions = {}): ProcessedError {
     const {
       showToast = true,
       logError: shouldLog = true,
@@ -76,7 +76,7 @@ export class ErrorHandler {
    * @returns Processed error with field errors
    */
   handleFormError(
-    error: any,
+    error: unknown,
     options: ErrorHandlerOptions = {}
   ): ProcessedError {
     const processedError = this.handle(error, { ...options, showToast: false });
@@ -96,7 +96,7 @@ export class ErrorHandler {
    * @param error - Any error object
    * @returns Standardized error response
    */
-  private transformError(error: any): StandardErrorResponse {
+  private transformError(error: unknown): StandardErrorResponse {
     // Already in standard format
     if (this.isStandardError(error)) {
       return error;
@@ -137,7 +137,7 @@ export class ErrorHandler {
    * Transform Axios error to standard format
    * Handles various backend response formats
    */
-  private transformAxiosError(error: any): StandardErrorResponse {
+  private transformAxiosError(error: unknown): StandardErrorResponse {
     const responseData = error.response?.data;
     const status = error.response?.status;
 
@@ -323,7 +323,7 @@ export class ErrorHandler {
   /**
    * Check if error is already in standard format
    */
-  private isStandardError(error: any): error is StandardErrorResponse {
+  private isStandardError(error: unknown): error is StandardErrorResponse {
     return (
       error &&
       typeof error.code === 'string' &&
@@ -433,7 +433,7 @@ export class ErrorHandler {
   /**
    * Log error to console and error tracking service
    */
-  private logError(originalError: any, processedError: ProcessedError): void {
+  private logError(originalError: unknown, processedError: ProcessedError): void {
     logError({
       originalError,
       processedError,
@@ -456,7 +456,7 @@ export const errorHandler = new ErrorHandler();
  * Handle API error and show toast
  */
 export function handleApiError(
-  error: any,
+  error: unknown,
   options?: ErrorHandlerOptions
 ): ProcessedError {
   return errorHandler.handle(error, options);
@@ -466,7 +466,7 @@ export function handleApiError(
  * Handle form validation error
  */
 export function handleFormError(
-  error: any,
+  error: unknown,
   options?: ErrorHandlerOptions
 ): ProcessedError {
   return errorHandler.handleFormError(error, options);
@@ -476,7 +476,7 @@ export function handleFormError(
  * Get user-friendly error message without showing toast
  */
 export function getErrorMessage(
-  error: any,
+  error: unknown,
   fallbackMessage?: string
 ): string {
   const processed = errorHandler.handle(error, {
@@ -490,7 +490,7 @@ export function getErrorMessage(
 /**
  * Check if an error is retryable
  */
-export function isRetryableError(error: any): boolean {
+export function isRetryableError(error: unknown): boolean {
   const processed = errorHandler.handle(error, {
     showToast: false,
     logError: false,

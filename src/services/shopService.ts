@@ -182,7 +182,7 @@ export const shopService = {
                     await api.post('/shop/cart/merge/', { anonymous_cart_id: anonymousCartId });
                 }
             } catch (error) {
-                console.error('Error checking cart before merge:', error);
+                // Error checking cart before merge - silently handle in production
             } finally {
                 // Always clear the cookie after attempting merge or if cart is empty
                 Cookies.remove('anonymous_cart_id');
@@ -192,7 +192,10 @@ export const shopService = {
 
     checkout: async (shippingInfo: ShippingInfo) => {
         const anonymousCartId = shopService.getAnonymousCartId();
-        const payload: any = {
+        const payload: {
+            shipping_info: ShippingInfo;
+            anonymous_cart_id?: string;
+        } = {
             shipping_info: shippingInfo,
         };
 
@@ -219,16 +222,17 @@ export const shopService = {
             });
 
             return response.data;
-        } catch (error: any) {
-            console.error('Error verifying payment:', error);
-
+        } catch (error: unknown) {
             // Extract error details from the API response if available
             let errorCode = 'unknown';
             let errorMessage = 'خطا در تایید پرداخت';
 
-            if (error.response && error.response.data) {
-                errorCode = error.response.data.error_code || errorCode;
-                errorMessage = error.response.data.error_message || errorMessage;
+            if (error && typeof error === 'object' && 'response' in error) {
+                const axiosError = error as { response?: { data?: { error_code?: string; error_message?: string } } };
+                if (axiosError.response?.data) {
+                    errorCode = axiosError.response.data.error_code || errorCode;
+                    errorMessage = axiosError.response.data.error_message || errorMessage;
+                }
             }
 
             // Throw a structured error object that includes error details

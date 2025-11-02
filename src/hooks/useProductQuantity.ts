@@ -31,7 +31,7 @@ export const useProductQuantity = (product: Product) => {
 
         // Return quantity or 0 if not found
         return cartItem ? cartItem.quantity : 0;
-    }, [cartDetails, product?.id]);
+    }, [cartDetails, product]);
 
     // Check if product is in cart
     const isInCart = quantity > 0;
