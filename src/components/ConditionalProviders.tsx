@@ -4,7 +4,6 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { CartProvider } from '@/contexts/CartContext';
-import { UserProvider } from '@/contexts/UserContext';
 import { FeatureFlagProvider } from '@/contexts/FeatureFlagContext';
 
 interface ConditionalProvidersProps {
@@ -20,12 +19,6 @@ export const ConditionalProviders: React.FC<ConditionalProvidersProps> = ({ chil
         pathname?.startsWith('/cart') ||
         pathname?.startsWith('/checkout');
 
-    const needsUserProvider =
-        pathname?.startsWith('/account') ||
-        pathname?.startsWith('/shop') ||
-        pathname?.startsWith('/cart') ||
-        pathname?.startsWith('/checkout');
-
     // Start with the children wrapped in FeatureFlagProvider (always needed)
     let content = <FeatureFlagProvider>{children}</FeatureFlagProvider>;
 
@@ -34,10 +27,8 @@ export const ConditionalProviders: React.FC<ConditionalProvidersProps> = ({ chil
         content = <CartProvider>{content}</CartProvider>;
     }
 
-    // Wrap with UserProvider if needed
-    if (needsUserProvider) {
-        content = <UserProvider>{content}</UserProvider>;
-    }
+    // UserProvider is already provided at the root level in layout.tsx
+    // No need to wrap it again here to avoid double provider wrapping
 
     return content;
 };
