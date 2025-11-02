@@ -102,6 +102,20 @@ export class ErrorHandler {
       return error;
     }
 
+    // Type guard for axios-like errors
+    const isAxiosError = (err: unknown): err is { response?: { data: unknown }; request?: unknown; code?: string; message?: string } => {
+      return typeof err === 'object' && err !== null;
+    };
+
+    if (!isAxiosError(error)) {
+      // Handle non-object errors
+      return {
+        code: ErrorCode.UNKNOWN_ERROR,
+        message: String(error),
+        severity: 'error' as ErrorSeverity,
+      };
+    }
+
     // Axios error response
     if (error.response?.data) {
       return this.transformAxiosError(error);
@@ -137,44 +151,44 @@ export class ErrorHandler {
    * Transform Axios error to standard format
    * Handles various backend response formats
    */
-  private transformAxiosError(error: unknown): StandardErrorResponse {
-    const responseData = error.response?.data;
+  private transformAxiosError(error: { response?: { data: unknown; status?: number } }): StandardErrorResponse {
+    const responseData = error.response?.data as Record<string, unknown> | undefined;
     const status = error.response?.status;
 
     // Check if backend already sends standard format
-    if (responseData.code && responseData.message) {
+    if (responseData && typeof responseData.code === 'string' && typeof responseData.message === 'string') {
       return {
         code: responseData.code,
         message: responseData.message,
-        userMessage: responseData.userMessage,
-        details: responseData.details,
-        severity: responseData.severity || 'error',
-        timestamp: responseData.timestamp,
-        requestId: responseData.requestId,
+        userMessage: typeof responseData.userMessage === 'string' ? responseData.userMessage : undefined,
+        details: responseData.details as Record<string, unknown> | undefined,
+        severity: (responseData.severity as ErrorSeverity) || 'error',
+        timestamp: typeof responseData.timestamp === 'string' ? responseData.timestamp : undefined,
+        requestId: typeof responseData.requestId === 'string' ? responseData.requestId : undefined,
       };
     }
 
     // Handle common backend error formats
     // Format 1: { error: "message" }
-    if (responseData.error) {
+    if (responseData && typeof responseData.error === 'string') {
       return this.inferErrorFromMessage(responseData.error, status);
     }
 
     // Format 2: { detail: "message" }
-    if (responseData.detail) {
+    if (responseData && typeof responseData.detail === 'string') {
       return this.inferErrorFromMessage(responseData.detail, status);
     }
 
     // Format 3: { message: "message" }
-    if (responseData.message) {
+    if (responseData && typeof responseData.message === 'string') {
       return this.inferErrorFromMessage(responseData.message, status);
     }
 
     // Format 4: { error_code: "...", error_message: "..." } (existing format)
-    if (responseData.error_code || responseData.error_message) {
+    if (responseData && (responseData.error_code || responseData.error_message)) {
       return {
-        code: this.normalizeErrorCode(responseData.error_code) || ErrorCode.UNKNOWN_ERROR,
-        message: responseData.error_message || 'Unknown error',
+        code: this.normalizeErrorCode(typeof responseData.error_code === 'string' ? responseData.error_code : undefined) || ErrorCode.UNKNOWN_ERROR,
+        message: typeof responseData.error_message === 'string' ? responseData.error_message : 'Unknown error',
         severity: 'error' as ErrorSeverity,
       };
     }
@@ -325,10 +339,14 @@ export class ErrorHandler {
    */
   private isStandardError(error: unknown): error is StandardErrorResponse {
     return (
-      error &&
-      typeof error.code === 'string' &&
-      typeof error.message === 'string' &&
-      typeof error.severity === 'string'
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      'message' in error &&
+      'severity' in error &&
+      typeof (error as StandardErrorResponse).code === 'string' &&
+      typeof (error as StandardErrorResponse).message === 'string' &&
+      typeof (error as StandardErrorResponse).severity === 'string'
     );
   }
 
