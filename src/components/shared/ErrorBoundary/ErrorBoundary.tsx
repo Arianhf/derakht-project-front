@@ -9,6 +9,7 @@
 
 import React, { Component, ReactNode } from 'react';
 import { logError } from '@/utils/errorLogger';
+import { ErrorCategory } from '@/types/error';
 import styles from './ErrorBoundary.module.css';
 
 interface ErrorBoundaryProps {
@@ -54,7 +55,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
         code: 'REACT_ERROR',
         userMessage: 'خطایی در نمایش صفحه رخ داد',
         severity: 'error',
-        category: 'UNKNOWN' as any,
+        category: ErrorCategory.UNKNOWN,
         retryable: false,
       },
       timestamp: new Date().toISOString(),

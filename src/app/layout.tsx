@@ -2,6 +2,7 @@
 import { ConditionalProviders } from "@/components/ConditionalProviders";
 import { UserProvider } from "@/contexts/UserContext";
 import ClarityAnalytics from "@/components/Clarity";
+import ErrorBoundary from "@/components/shared/ErrorBoundary/ErrorBoundary";
 import "./globals.scss";
 import { Metadata } from 'next';
 
@@ -18,10 +19,12 @@ export default function RootLayout({
     return (
         <html lang="fa" dir="rtl">
         <body>
-        <UserProvider>
-            <ClarityAnalytics />
-            <ConditionalProviders>{children}</ConditionalProviders>
-        </UserProvider>
+        <ErrorBoundary>
+            <UserProvider>
+                <ClarityAnalytics />
+                <ConditionalProviders>{children}</ConditionalProviders>
+            </UserProvider>
+        </ErrorBoundary>
         </body>
         </html>
     );
