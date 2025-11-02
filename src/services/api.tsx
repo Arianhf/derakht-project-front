@@ -8,6 +8,15 @@ function getBaseUrl() {
     if (process.env.NEXT_PUBLIC_BASE_URL) {
         return process.env.NEXT_PUBLIC_BASE_URL;
     }
+
+    // Warn if NEXT_PUBLIC_BASE_URL is not set
+    if (process.env.NODE_ENV === 'development') {
+        console.warn(
+            'NEXT_PUBLIC_BASE_URL environment variable is not set. Falling back to "/api". ' +
+            'Please set NEXT_PUBLIC_BASE_URL in your .env file for proper API configuration.'
+        );
+    }
+
     return '/api';
 }
 
@@ -73,10 +82,27 @@ api.interceptors.response.use(
 );
 
 /**
+ * Backend error response structure (can vary)
+ */
+interface BackendErrorResponse {
+    code?: string;
+    message?: string;
+    userMessage?: string;
+    details?: Record<string, unknown>;
+    severity?: string;
+    timestamp?: string;
+    requestId?: string;
+    error?: string;
+    detail?: string;
+    error_code?: string;
+    error_message?: string;
+}
+
+/**
  * Transform Axios error to StandardErrorResponse
  */
 function transformAxiosErrorToStandard(error: AxiosError): StandardErrorResponse {
-    const responseData = error.response?.data as any;
+    const responseData = error.response?.data as BackendErrorResponse | undefined;
     const status = error.response?.status;
 
     // Check if backend already sends standard format

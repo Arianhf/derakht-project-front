@@ -41,6 +41,11 @@ const FONT_PRESET_COLORS = [
     { color: '#FF6F61', label: 'مرجانی' },
 ];
 
+// Skeleton loader component for images
+const ImageSkeleton: React.FC<{ style?: React.CSSProperties }> = ({ style }) => (
+    <div className={styles.skeleton} style={style} />
+);
+
 const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                        parts,
                                                        isOpen,
@@ -60,6 +65,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
     const [imageLoadingStates, setImageLoadingStates] = useState<{ [key: string]: boolean }>({});
+    const settingsModalRef = React.useRef<HTMLDivElement>(null);
     const router = useRouter();
 
     // Helper function to convert hex color to rgba with opacity
@@ -107,6 +113,42 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
             document.body.style.overflow = 'auto';
         };
     }, [isOpen, isFullPage]);
+
+    // Focus management for settings modal
+    useEffect(() => {
+        if (isSettingsModalOpen && settingsModalRef.current) {
+            // Focus the settings modal when it opens
+            const focusableElements = settingsModalRef.current.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            if (focusableElements.length > 0) {
+                (focusableElements[0] as HTMLElement).focus();
+            }
+
+            // Trap focus within the modal
+            const handleKeyDown = (e: KeyboardEvent) => {
+                if (e.key === 'Escape') {
+                    setIsSettingsModalOpen(false);
+                }
+
+                if (e.key === 'Tab') {
+                    const firstElement = focusableElements[0] as HTMLElement;
+                    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+                    if (e.shiftKey && document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    } else if (!e.shiftKey && document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+            };
+
+            document.addEventListener('keydown', handleKeyDown);
+            return () => document.removeEventListener('keydown', handleKeyDown);
+        }
+    }, [isSettingsModalOpen]);
 
     if (!isOpen) return null;
 
@@ -173,14 +215,18 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
         <div className={`${styles.previewContainer} ${isFullPage ? styles.fullPageContainer : ''}`}>
             {/* Close button - only show in modal mode */}
             {!isFullPage && (
-                <button className={styles.closeButton} onClick={onClose}>
+                <button
+                    className={styles.closeButton}
+                    onClick={onClose}
+                    aria-label="بستن پیش‌نمایش"
+                >
                     <FaTimes />
                 </button>
             )}
 
             {/* Header with page indicator */}
             <div className={styles.previewHeader}>
-                <h2>{modalTitle || 'پیش‌نمایش داستان'}</h2>
+                <h2 id="preview-modal-title">{modalTitle || 'پیش‌نمایش داستان'}</h2>
                 {storyId && (
                     <button
                         className={styles.settingsButton}
@@ -222,7 +268,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                     <div className={styles.overlayView}>
                         <div className={styles.imageContainer}>
                             {!imageLoadingStates[`overlay-${currentIndex}`] && (
-                                <div className={styles.skeleton} style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: 5 }} />
+                                <ImageSkeleton style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: 5 }} />
                             )}
                             <Image
                                 src={parts[currentIndex]?.illustration || "/placeholder-image.jpg"}
@@ -251,7 +297,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                     <div className={styles.sideBySideView}>
                         <div className={styles.imagePane}>
                             {!imageLoadingStates[`sidebyside-${currentIndex}`] && (
-                                <div className={styles.skeleton} style={{ width: '100%', height: '400px', position: 'absolute' }} />
+                                <ImageSkeleton style={{ width: '100%', height: '400px', position: 'absolute' }} />
                             )}
                             <Image
                                 src={parts[currentIndex]?.illustration || "/placeholder-image.jpg"}
@@ -303,12 +349,23 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
 
             {/* Settings Modal */}
             {isSettingsModalOpen && (
-                <div className={styles.modalOverlay} onClick={() => setIsSettingsModalOpen(false)}>
-                    <div className={styles.settingsModal} onClick={(e) => e.stopPropagation()}>
-                        <h3 className={styles.settingsTitle}>تنظیمات داستان</h3>
+                <div
+                    className={styles.modalOverlay}
+                    onClick={() => setIsSettingsModalOpen(false)}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="settings-modal-title"
+                >
+                    <div
+                        ref={settingsModalRef}
+                        className={styles.settingsModal}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3 id="settings-modal-title" className={styles.settingsTitle}>تنظیمات داستان</h3>
                         <button
                             className={styles.closeModalButton}
                             onClick={() => setIsSettingsModalOpen(false)}
+                            aria-label="بستن تنظیمات"
                         >
                             <FaTimes />
                         </button>
@@ -320,7 +377,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                     {coverImage ? (
                                         <div className={styles.imagePreviewContainer} style={{ position: 'relative' }}>
                                             {!imageLoadingStates['cover-preview'] && (
-                                                <div className={styles.skeleton} style={{ width: '120px', height: '80px', position: 'absolute', top: 0, left: 0 }} />
+                                                <ImageSkeleton style={{ width: '120px', height: '80px', position: 'absolute', top: 0, left: 0 }} />
                                             )}
                                             <Image
                                                 src={coverImage}
@@ -458,7 +515,12 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
 
     // Otherwise, render with the modal overlay
     return (
-        <div className={styles.modalOverlay}>
+        <div
+            className={styles.modalOverlay}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="preview-modal-title"
+        >
             {previewContent}
         </div>
     );
