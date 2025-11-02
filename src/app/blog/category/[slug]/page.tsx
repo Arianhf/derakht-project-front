@@ -1,207 +1,169 @@
-// src/app/blog/category/[slug]/page.tsx
-'use client';
-
-import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React from 'react';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import Footer from '@/components/shared/Footer/Footer';
-import { blogService, BlogCategory } from '@/services/blogService';
-import { BlogPost } from '@/types';
-import { toPersianNumber } from '@/utils/convertToPersianNumber';
-import { FaArrowRight } from 'react-icons/fa';
-import LoadingSpinner from "@/components/shared/LoadingSpinner";
-import ErrorMessage from "@/components/shared/ErrorMessage";
+import { blogService } from '@/services/blogService';
+import CategoryPageClient from '@/components/blog/CategoryPageClient';
 import logoImage from '@/assets/images/logo2.png';
-import Image from 'next/image';
 import styles from './page.module.scss';
 
-const CategoryPage: React.FC = () => {
-    const params = useParams();
-    const router = useRouter();
-    const categorySlug = params?.slug as string;
+interface CategoryPageProps {
+    params: {
+        slug: string;
+    };
+}
 
-    const [blogs, setBlogs] = useState<BlogPost[]>([]);
-    const [category, setCategory] = useState<BlogCategory | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+// Generate metadata for SEO
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+    try {
+        const categoriesResponse = await blogService.getAllCategories();
+        const category = categoriesResponse.items.find(cat => cat.slug === params.slug);
 
-    useEffect(() => {
-        if (!categorySlug) {
-            router.push('/blog');
-            return;
+        if (!category) {
+            return {
+                title: 'دسته‌بندی یافت نشد',
+            };
         }
 
-        const fetchCategoryAndPosts = async () => {
-            try {
-                setLoading(true);
+        const metaTitle = category.meta_title || `${category.name} | بلاگ درخت`;
+        const metaDescription = category.meta_description || category.description || `مقالات دسته‌بندی ${category.name}`;
+        const canonicalUrl = `https://derakht.com/blog/category/${category.slug}`;
 
-                // Fetch all categories to find the current one
-                const categoriesResponse = await blogService.getAllCategories();
-                const foundCategory = categoriesResponse.items.find(cat => cat.slug === categorySlug);
-
-                if (!foundCategory) {
-                    setError('دسته‌بندی مورد نظر یافت نشد.');
-                    setLoading(false);
-                    return;
-                }
-
-                setCategory(foundCategory);
-
-                // Fetch posts for this category
-                const postsResponse = await blogService.getPostsByCategory(categorySlug);
-                setBlogs(postsResponse.items);
-            } catch (err) {
-                console.error(err);
-                setError('مشکلی در دریافت اطلاعات رخ داده است.');
-            } finally {
-                setLoading(false);
-            }
+        return {
+            title: metaTitle,
+            description: metaDescription,
+            openGraph: {
+                type: 'website',
+                title: metaTitle,
+                description: metaDescription,
+                url: canonicalUrl,
+                siteName: 'درخت',
+                locale: 'fa_IR',
+                images: category.icon ? [
+                    {
+                        url: category.icon,
+                        width: 800,
+                        height: 600,
+                        alt: category.name,
+                    },
+                ] : undefined,
+            },
+            twitter: {
+                card: 'summary_large_image',
+                title: metaTitle,
+                description: metaDescription,
+                images: category.icon ? [category.icon] : undefined,
+            },
+            alternates: {
+                canonical: canonicalUrl,
+            },
+            robots: {
+                index: true,
+                follow: true,
+                googleBot: {
+                    index: true,
+                    follow: true,
+                },
+            },
         };
+    } catch (error) {
+        console.error('Error generating metadata:', error);
+        return {
+            title: 'دسته‌بندی | بلاگ درخت',
+        };
+    }
+}
 
-        fetchCategoryAndPosts();
-    }, [categorySlug, router]);
+const CategoryPage = async ({ params }: CategoryPageProps) => {
+    let category;
+    let blogs;
 
-    const handleNavigate = (id: number) => {
-        router.push(`/blog/${id}`);
+    try {
+        // Fetch categories and posts in parallel
+        const [categoriesResponse, postsResponse] = await Promise.all([
+            blogService.getAllCategories(),
+            blogService.getPostsByCategory(params.slug),
+        ]);
+
+        category = categoriesResponse.items.find(cat => cat.slug === params.slug);
+
+        if (!category) {
+            notFound();
+        }
+
+        blogs = postsResponse.items;
+    } catch (error) {
+        console.error('Error fetching category data:', error);
+        notFound();
+    }
+
+    // Structured Data for Category Page
+    const structuredData = {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: category.name,
+        description: category.description || `مقالات دسته‌بندی ${category.name}`,
+        url: `https://derakht.com/blog/category/${category.slug}`,
+        publisher: {
+            '@type': 'Organization',
+            name: 'درخت',
+            logo: {
+                '@type': 'ImageObject',
+                url: 'https://derakht.com/logo.png',
+            },
+        },
+        inLanguage: 'fa-IR',
     };
 
-    const handleTagClick = (tag: string) => {
-        router.push(`/blog/tag?tag=${tag}`);
+    // Breadcrumb structured data
+    const breadcrumbData = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'خانه',
+                item: 'https://derakht.com',
+            },
+            {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'بلاگ',
+                item: 'https://derakht.com/blog',
+            },
+            {
+                '@type': 'ListItem',
+                position: 3,
+                name: category.name,
+                item: `https://derakht.com/blog/category/${category.slug}`,
+            },
+        ],
     };
-
-    if (loading) return (
-        <div className={styles.pageWrapper}>
-            <Navbar logo={logoImage} />
-            <div className={styles.container}>
-                <LoadingSpinner message="در حال بارگذاری مقالات..." />
-            </div>
-            <Footer />
-        </div>
-    );
-
-    if (error || !category) return (
-        <div className={styles.pageWrapper}>
-            <Navbar logo={logoImage} />
-            <div className={styles.container}>
-                <ErrorMessage message={error || 'دسته‌بندی مورد نظر یافت نشد.'} />
-            </div>
-            <Footer />
-        </div>
-    );
 
     return (
-        <div className={styles.pageWrapper}>
-            <Navbar logo={logoImage} />
+        <>
+            {/* Structured Data Scripts */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+            />
 
-            <div className={styles.container}>
-                <div className={styles.categoryHeader}>
-                    <div className={styles.categoryHeaderContent}>
-                        <h1 className={styles.categoryTitle}>{category.name}</h1>
-
-                        {category.description && (
-                            <p className={styles.categoryDescription}>{category.description}</p>
-                        )}
-
-                        <div className={styles.categoryMeta}>
-              <span className={styles.postCount}>
-                {toPersianNumber(blogs.length)} مقاله در این دسته‌بندی
-              </span>
-                        </div>
-                    </div>
-
-                    {category.icon && (
-                        <div className={styles.categoryImageWrapper}>
-                            <Image
-                                src={category.icon}
-                                alt={category.name}
-                                className={styles.categoryImage}
-                                width={120}
-                                height={120}
-                            />
-                        </div>
-                    )}
-                </div>
-
-                <div className={styles.controlsBar}>
-                    <button
-                        onClick={() => router.push('/blog')}
-                        className={styles.backButton}
-                    >
-                        <FaArrowRight className={styles.backIcon} />
-                        بازگشت به همه مقالات
-                    </button>
-                </div>
-
-                {blogs.length > 0 ? (
-                    <div className={styles.blogsGrid}>
-                        {blogs.map((blog) => (
-                            <div
-                                key={blog.id}
-                                className={styles.blogCard}
-                                onClick={() => handleNavigate(blog.id)}
-                            >
-                                <div className={styles.imageContainer}>
-                                    <Image
-                                        src={blog.header_image?.meta?.download_url || "/default-image.jpg"}
-                                        alt={blog.title || "Blog Image"}
-                                        className={styles.blogImage}
-                                        fill
-                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                    />
-                                </div>
-                                <div className={styles.blogContent}>
-                                    <h3 className={styles.blogTitle}>{blog.title}</h3>
-                                    {blog.tags && blog.tags.length > 0 && (
-                                        <div className={styles.tagContainer}>
-                                            {blog.tags.map((tag, index) => (
-                                                <span
-                                                    key={index}
-                                                    className={styles.tag}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleTagClick(tag);
-                                                    }}
-                                                >
-                          {tag}
-                        </span>
-                                            ))}
-                                        </div>
-                                    )}
-                                    <p className={styles.blogMeta}>
-                                        نوشته شده توسط{" "}
-                                        <span className={styles.authorName}>
-                      {blog.owner?.first_name}
-                    </span>{" "}
-                                        · {blog.jalali_date || "تاریخ نامشخص"}
-                                    </p>
-                                    <button
-                                        className={styles.readButton}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleNavigate(blog.id);
-                                        }}
-                                    >
-                                        مطالعه
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className={styles.emptyState}>
-                        <p className={styles.emptyMessage}>مقاله‌ای در این دسته‌بندی یافت نشد.</p>
-                        <button
-                            className={styles.backButton}
-                            onClick={() => router.push('/blog')}
-                        >
-                            بازگشت به همه مقالات
-                        </button>
-                    </div>
-                )}
+            <div className={styles.pageWrapper}>
+                <Navbar logo={logoImage} />
+                <CategoryPageClient
+                    category={category}
+                    initialBlogs={blogs}
+                    categorySlug={params.slug}
+                />
+                <Footer />
             </div>
-
-            <Footer />
-        </div>
+        </>
     );
 };
 
