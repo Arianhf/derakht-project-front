@@ -9,16 +9,17 @@ import logoImage from '@/assets/images/logo2.png';
 import styles from './page.module.scss';
 
 interface CategoryPageProps {
-    params: {
+    params: Promise<{
         slug: string;
-    };
+    }>;
 }
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
     try {
+        const { slug } = await params;
         const categoriesResponse = await blogService.getAllCategories();
-        const category = categoriesResponse.items.find(cat => cat.slug === params.slug);
+        const category = categoriesResponse.items.find(cat => cat.slug === slug);
 
         if (!category) {
             return {
@@ -76,6 +77,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 }
 
 const CategoryPage = async ({ params }: CategoryPageProps) => {
+    const { slug } = await params;
     let category;
     let blogs;
 
@@ -83,10 +85,10 @@ const CategoryPage = async ({ params }: CategoryPageProps) => {
         // Fetch categories and posts in parallel
         const [categoriesResponse, postsResponse] = await Promise.all([
             blogService.getAllCategories(),
-            blogService.getPostsByCategory(params.slug),
+            blogService.getPostsByCategory(slug),
         ]);
 
-        category = categoriesResponse.items.find(cat => cat.slug === params.slug);
+        category = categoriesResponse.items.find(cat => cat.slug === slug);
 
         if (!category) {
             notFound();
@@ -159,7 +161,7 @@ const CategoryPage = async ({ params }: CategoryPageProps) => {
                 <CategoryPageClient
                     category={category}
                     initialBlogs={blogs}
-                    categorySlug={params.slug}
+                    categorySlug={slug}
                 />
                 <Footer />
             </div>

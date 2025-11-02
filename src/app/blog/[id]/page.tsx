@@ -9,15 +9,16 @@ import Footer from '@/components/shared/Footer/Footer';
 import styles from './page.module.scss';
 
 interface BlogDetailPageProps {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: BlogDetailPageProps): Promise<Metadata> {
     try {
-        const blog = await blogService.getPostById(params.id);
+        const { id } = await params;
+        const blog = await blogService.getPostById(id);
 
         if (!blog) {
             return {
@@ -87,14 +88,15 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
 
 // Fetch blog data server-side
 const BlogDetailPage = async ({ params }: BlogDetailPageProps) => {
+    const { id } = await params;
     let blog;
     let relatedPosts;
 
     try {
         // Fetch blog details and related posts in parallel
         [blog, relatedPosts] = await Promise.all([
-            blogService.getPostById(params.id),
-            blogService.getRelatedPosts(params.id).catch(() => []),
+            blogService.getPostById(id),
+            blogService.getRelatedPosts(id).catch(() => []),
         ]);
 
         if (!blog) {
