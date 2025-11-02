@@ -30,7 +30,10 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         // Add auth token if available
-        const token = Cookies.get("access_token") || localStorage.getItem("access_token");
+        const cookieToken = Cookies.get("access_token");
+        const localStorageToken = typeof window !== 'undefined' ? localStorage.getItem("access_token") : null;
+        const token = cookieToken || localStorageToken;
+
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }

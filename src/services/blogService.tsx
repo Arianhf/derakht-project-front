@@ -1,5 +1,5 @@
 import api from './api';
-import { BlogPost, HeroPost } from '@/types';
+import { BlogPost, HeroPost, Category } from '@/types';
 
 export const blogService = {
     getHeroPosts: async (): Promise<BlogServiceResponse<BlogPost>> => {
@@ -17,8 +17,13 @@ export const blogService = {
         return response.data;
     },
 
-    getPostById: async (id: string) => {
+    getPostById: async (id: string): Promise<BlogPost> => {
         const response = await api.get(`v2/posts/${id}/`);
+        return response.data;
+    },
+
+    getPostBySlug: async (slug: string): Promise<BlogPost> => {
+        const response = await api.get(`v2/posts/${slug}/`);
         return response.data;
     },
 
@@ -41,6 +46,12 @@ export const blogService = {
     getRelatedPosts: async (postId: string): Promise<RelatedPost[]> => {
         const response = await api.get(`v2/related-posts/${postId}`);
         return response.data;
+    },
+
+    // New function to get all post slugs for sitemap
+    getAllPostSlugs: async (): Promise<PostSlugResponse[]> => {
+        const response = await api.get('v2/posts/slugs/');
+        return response.data.items || response.data;
     },
 }
 
@@ -70,6 +81,8 @@ export interface BlogCategory {
     description?: string;
     icon?: string;
     post_count?: number;
+    meta_title?: string;
+    meta_description?: string;
 }
 
 export interface CategoryServiceResponse {
@@ -77,4 +90,9 @@ export interface CategoryServiceResponse {
     total: number;
     page: number;
     size: number;
+}
+
+export interface PostSlugResponse {
+    slug: string;
+    updated_date?: string;
 }
