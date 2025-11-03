@@ -29,6 +29,12 @@ export interface BlogSearchResult extends BaseSearchResult {
   featured: boolean;
   hero: boolean;
   reading_time: number;
+  header_image?: {
+    meta?: {
+      download_url: string;
+    };
+    title?: string;
+  } | null;
 }
 
 /**
@@ -41,6 +47,13 @@ export interface ProductSearchResult extends BaseSearchResult {
   sku: string;
   stock: number;
   is_available: boolean;
+  feature_image?: string | null;
+  images?: Array<{
+    id: string;
+    image_url: string;
+    alt_text: string;
+    is_feature: boolean;
+  }>;
 }
 
 /**

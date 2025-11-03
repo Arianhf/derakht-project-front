@@ -1,7 +1,10 @@
 import { Suspense } from 'react';
 import SearchResults from '@/components/search/SearchResults';
 import LoadingSpinner from '@/components/shared/LoadingSpinner/LoadingSpinner';
+import { Navbar } from '@/components/shared/Navbar/Navbar';
+import logoImage from '@/assets/images/logo2.png';
 import type { Metadata } from 'next';
+import styles from './page.module.scss';
 
 export const metadata: Metadata = {
   title: 'جستجو | درخت',
@@ -14,14 +17,19 @@ export const metadata: Metadata = {
  */
 export default function SearchPage() {
   return (
-    <Suspense
-      fallback={
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '50px' }}>
-          <LoadingSpinner />
-        </div>
-      }
-    >
-      <SearchResults />
-    </Suspense>
+    <div className={styles.searchPageWrapper}>
+      <Navbar logo={logoImage} />
+      <main className={styles.mainContent}>
+        <Suspense
+          fallback={
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '50px' }}>
+              <LoadingSpinner />
+            </div>
+          }
+        >
+          <SearchResults />
+        </Suspense>
+      </main>
+    </div>
   );
 }

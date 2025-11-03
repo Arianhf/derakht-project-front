@@ -2,8 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { SearchResult, isBlogResult, isProductResult } from '@/types/search';
-import { FaBook, FaShoppingBag, FaClock, FaCalendar, FaTag } from 'react-icons/fa';
+import { FaBook, FaShoppingBag, FaClock, FaCalendar, FaTag, FaImage } from 'react-icons/fa';
 import styles from './SearchResultCard.module.scss';
 
 interface SearchResultCardProps {
@@ -15,10 +16,19 @@ interface SearchResultCardProps {
  * Displays a unified card for both blog and product search results
  */
 const SearchResultCard: React.FC<SearchResultCardProps> = ({ result }) => {
-  const { title, description, url, similarity } = result;
+  const { title, description, url } = result;
 
-  // Format similarity as percentage
-  const relevancePercentage = Math.round(similarity * 100);
+  // Get image URL based on result type
+  const getImageUrl = (): string | null => {
+    if (isBlogResult(result)) {
+      return result.header_image?.meta?.download_url || null;
+    } else if (isProductResult(result)) {
+      return result.feature_image || result.images?.[0]?.image_url || null;
+    }
+    return null;
+  };
+
+  const imageUrl = getImageUrl();
 
   // Render blog-specific details
   const renderBlogDetails = () => {
@@ -74,39 +84,58 @@ const SearchResultCard: React.FC<SearchResultCardProps> = ({ result }) => {
 
   return (
     <Link href={url} className={styles.card}>
-      <div className={styles.header}>
-        <div className={styles.typeIndicator}>
-          {isBlogResult(result) ? (
-            <>
-              <FaBook className={styles.typeIcon} />
-              <span>مقاله</span>
-            </>
+      <div className={styles.cardContent}>
+        {/* Image Section */}
+        <div className={styles.imageContainer}>
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt={title}
+              width={200}
+              height={150}
+              className={styles.image}
+              objectFit="cover"
+            />
           ) : (
-            <>
-              <FaShoppingBag className={styles.typeIcon} />
-              <span>محصول</span>
-            </>
+            <div className={styles.noImage}>
+              <FaImage />
+            </div>
           )}
         </div>
-        <div className={styles.relevance}>
-          <span className={styles.relevanceLabel}>مرتبط:</span>
-          <span className={styles.relevanceValue}>{relevancePercentage}%</span>
+
+        {/* Content Section */}
+        <div className={styles.contentSection}>
+          <div className={styles.header}>
+            <div className={styles.typeIndicator}>
+              {isBlogResult(result) ? (
+                <>
+                  <FaBook className={styles.typeIcon} />
+                  <span>مقاله</span>
+                </>
+              ) : (
+                <>
+                  <FaShoppingBag className={styles.typeIcon} />
+                  <span>محصول</span>
+                </>
+              )}
+            </div>
+          </div>
+
+          <h3 className={styles.title}>{title}</h3>
+
+          {isBlogResult(result) && result.subtitle && (
+            <p className={styles.subtitle}>{result.subtitle}</p>
+          )}
+
+          <p className={styles.description}>
+            {description.length > 200
+              ? `${description.substring(0, 200)}...`
+              : description}
+          </p>
+
+          {isBlogResult(result) ? renderBlogDetails() : renderProductDetails()}
         </div>
       </div>
-
-      <h3 className={styles.title}>{title}</h3>
-
-      {isBlogResult(result) && result.subtitle && (
-        <p className={styles.subtitle}>{result.subtitle}</p>
-      )}
-
-      <p className={styles.description}>
-        {description.length > 200
-          ? `${description.substring(0, 200)}...`
-          : description}
-      </p>
-
-      {isBlogResult(result) ? renderBlogDetails() : renderProductDetails()}
     </Link>
   );
 };

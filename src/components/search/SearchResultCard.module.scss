@@ -22,17 +22,59 @@
   }
 }
 
-.header {
+.cardContent {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $spacing-md;
-  gap: $spacing-sm;
+  gap: $spacing-lg;
 
   @media (max-width: $breakpoint-sm) {
     flex-direction: column;
-    align-items: flex-start;
+    gap: $spacing-md;
   }
+}
+
+.imageContainer {
+  flex-shrink: 0;
+  width: 200px;
+  height: 150px;
+  border-radius: $border-radius-sm;
+  overflow: hidden;
+
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
+    height: 200px;
+  }
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+
+  .card:hover & {
+    transform: scale(1.05);
+  }
+}
+
+.noImage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba($primary-color, 0.1);
+  color: rgba($primary-color, 0.4);
+  font-size: 3rem;
+}
+
+.contentSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  margin-bottom: $spacing-sm;
 }
 
 .typeIndicator {
@@ -46,26 +88,6 @@
 
 .typeIcon {
   font-size: 1.1rem;
-}
-
-.relevance {
-  display: flex;
-  align-items: center;
-  gap: $spacing-xs;
-  font-size: 0.85rem;
-  color: $light-text;
-}
-
-.relevanceLabel {
-  font-weight: 500;
-}
-
-.relevanceValue {
-  font-weight: 700;
-  color: $accent-color;
-  background: rgba($accent-color, 0.1);
-  padding: 2px 8px;
-  border-radius: $border-radius-sm;
 }
 
 .title {
