@@ -20,18 +20,14 @@ export const FeatureFlagProvider: React.FC<{ children: ReactNode }> = ({ childre
         const fetchFlags = async () => {
             try {
                 const featureFlags = await featureFlagService.getAllFlags();
-                console.log('📦 Feature flags fetched:', featureFlags);
-
                 const flagsMap: Record<string, boolean> = {};
 
                 featureFlags.forEach(flag => {
                     flagsMap[flag.name] = flag.enabled;
                 });
 
-                console.log('✅ Feature flags map:', flagsMap);
                 setFlags(flagsMap);
             } catch (error) {
-                console.error('❌ Error loading feature flags:', error);
                 // Error loading feature flags - silently handle in production
             } finally {
                 setLoading(false);
@@ -50,9 +46,7 @@ export const FeatureFlagProvider: React.FC<{ children: ReactNode }> = ({ childre
             }
         }
 
-        const enabled = flags[featureName] || false;
-        console.log(`🔍 Feature "${featureName}" is ${enabled ? 'ENABLED' : 'DISABLED'}`);
-        return enabled;
+        return flags[featureName] || false;
     };
 
     return (

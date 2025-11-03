@@ -17,24 +17,19 @@ export const featureFlagService = {
 
         try {
             const response = await api.get('/v2/feature-flags/');
-            console.log('🌐 API Response from /v2/feature-flags/:', response.data);
 
             // Backend returns array directly, not paginated response
             if (Array.isArray(response.data)) {
-                console.log('📋 Feature flags loaded:', response.data);
                 return response.data;
             }
 
             // Fallback: check if response has paginated structure
             if (response.data.results && Array.isArray(response.data.results)) {
-                console.log('📋 Feature flags loaded from results:', response.data.results);
                 return response.data.results;
             }
 
-            console.warn('⚠️ Unexpected API response format:', response.data);
             return [];
         } catch (error) {
-            console.error('❌ Error fetching feature flags from API:', error);
             // Error fetching feature flags - fall back to local flags
             return getLocalFeatureFlags();
         }
