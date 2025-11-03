@@ -1,9 +1,5 @@
 # Stage 1: Build the Next.js application
 FROM node:18-alpine AS builder
-
-# Install necessary dependencies for Next.js SWC on Alpine
-RUN apk add --no-cache libc6-compat
-
 WORKDIR /app
 
 # Install dependencies
