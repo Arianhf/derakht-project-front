@@ -29,7 +29,7 @@ export interface BlogSearchResult extends BaseSearchResult {
   featured: boolean;
   hero: boolean;
   reading_time: number;
-  header_image?: {
+  header_image?: string | {
     meta?: {
       download_url: string;
     };

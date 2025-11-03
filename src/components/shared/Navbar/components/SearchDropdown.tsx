@@ -33,6 +33,10 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
 
   const getImageUrl = (result: SearchResult): string | null => {
     if (isBlogResult(result)) {
+      // Handle both string and object formats for header_image
+      if (typeof result.header_image === 'string') {
+        return result.header_image;
+      }
       return result.header_image?.meta?.download_url || null;
     } else if (isProductResult(result)) {
       return result.feature_image || result.images?.[0]?.image_url || null;
