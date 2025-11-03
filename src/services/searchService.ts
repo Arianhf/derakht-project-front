@@ -26,7 +26,7 @@ const searchService = {
     });
 
     const response = await apiClient.get<GlobalSearchResponse>(
-      `/search/?${queryParams.toString()}`
+      `/v2/search/?${queryParams.toString()}`
     );
 
     return response.data;
