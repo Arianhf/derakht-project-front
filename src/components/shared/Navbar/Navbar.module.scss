@@ -124,6 +124,20 @@
   }
 }
 
+.searchButton {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: $transition-base;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
 .searchIcon {
   color: $light-text;
   font-size: 16px;
