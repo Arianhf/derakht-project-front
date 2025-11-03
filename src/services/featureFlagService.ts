@@ -17,7 +17,18 @@ export const featureFlagService = {
 
         try {
             const response = await api.get('/v2/feature-flags/');
-            return response.data.results || [];
+
+            // Backend returns array directly, not paginated response
+            if (Array.isArray(response.data)) {
+                return response.data;
+            }
+
+            // Fallback: check if response has paginated structure
+            if (response.data.results && Array.isArray(response.data.results)) {
+                return response.data.results;
+            }
+
+            return [];
         } catch (error) {
             // Error fetching feature flags - fall back to local flags
             return getLocalFeatureFlags();
