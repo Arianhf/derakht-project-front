@@ -92,6 +92,10 @@
   gap: 25px;
 }
 
+.searchBarContainer {
+  position: relative;
+}
+
 .searchBar {
   display: flex;
   align-items: center;
@@ -121,6 +125,20 @@
   &::placeholder {
     font-family: $font-primary;
     color: $light-text;
+  }
+}
+
+.searchButton {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: $transition-base;
+
+  &:hover {
+    transform: scale(1.1);
   }
 }
 

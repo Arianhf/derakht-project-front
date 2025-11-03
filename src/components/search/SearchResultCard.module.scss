@@ -1,0 +1,171 @@
+@import '@/styles/globals.scss';
+
+.card {
+  display: block;
+  background: $card-bg;
+  border: 2px solid rgba($primary-color, 0.2);
+  border-radius: $border-radius-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.15);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-md;
+  }
+}
+
+.cardContent {
+  display: flex;
+  gap: $spacing-lg;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+}
+
+.imageContainer {
+  flex-shrink: 0;
+  width: 200px;
+  height: 150px;
+  border-radius: $border-radius-sm;
+  overflow: hidden;
+
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
+    height: 200px;
+  }
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+
+  .card:hover & {
+    transform: scale(1.05);
+  }
+}
+
+.noImage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba($primary-color, 0.1);
+  color: rgba($primary-color, 0.4);
+  font-size: 3rem;
+}
+
+.contentSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  margin-bottom: $spacing-sm;
+}
+
+.typeIndicator {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $primary-color;
+}
+
+.typeIcon {
+  font-size: 1.1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $dark-text;
+  margin-bottom: $spacing-sm;
+  line-height: 1.4;
+
+  @media (max-width: $breakpoint-sm) {
+    font-size: 1.25rem;
+  }
+}
+
+.subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $primary-color;
+  margin-bottom: $spacing-sm;
+  line-height: 1.5;
+}
+
+.description {
+  font-size: 0.95rem;
+  color: $dark-text;
+  line-height: 1.7;
+  margin-bottom: $spacing-md;
+
+  @media (max-width: $breakpoint-sm) {
+    font-size: 0.9rem;
+  }
+}
+
+.metadata {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-md;
+  padding-top: $spacing-sm;
+  border-top: 1px solid rgba($primary-color, 0.2);
+
+  @media (max-width: $breakpoint-sm) {
+    gap: $spacing-sm;
+  }
+}
+
+.metadataItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: 0.85rem;
+  color: $light-text;
+
+  .icon {
+    color: $primary-color;
+  }
+}
+
+.price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: $secondary-color;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: $border-radius-full;
+  background: $primary-color;
+  color: $card-bg;
+
+  &.badgeSuccess {
+    background: $accent-color;
+  }
+
+  &.badgeError {
+    background: #ff4444;
+  }
+}
