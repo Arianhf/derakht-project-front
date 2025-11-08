@@ -240,6 +240,7 @@
   max-width: 100%;
   position: relative;
   z-index: 1;
+  min-height: 100vh;
 }
 
 .mobileImageContainer {
@@ -270,6 +271,8 @@
   border-radius: $border-radius-lg;
   box-shadow: $shadow-md;
   padding: 15px;
+  flex: 1;
+  margin-bottom: 20px;
 }
 
 // Navigation Buttons
