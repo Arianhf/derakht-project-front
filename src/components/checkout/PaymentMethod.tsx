@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import styles from './PaymentMethod.module.scss';
-import { FaMoneyBillWave, FaCreditCard, FaArrowRight } from 'react-icons/fa';
+import { FaMoneyBillWave, FaCreditCard, FaArrowRight, FaExchangeAlt } from 'react-icons/fa';
 
 interface PaymentMethodProps {
-    selectedMethod: 'online' | 'cash';
-    onSubmit: (method: 'online' | 'cash') => void;
+    selectedMethod: 'online' | 'cash' | 'card_to_card';
+    onSubmit: (method: 'online' | 'cash' | 'card_to_card') => void;
     onBack: () => void;
 }
 
@@ -13,7 +13,7 @@ export const PaymentMethod: React.FC<PaymentMethodProps> = ({
                                                                 onSubmit,
                                                                 onBack
                                                             }) => {
-    const [method, setMethod] = useState<'online' | 'cash'>(selectedMethod);
+    const [method, setMethod] = useState<'online' | 'cash' | 'card_to_card'>(selectedMethod);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,26 +27,48 @@ export const PaymentMethod: React.FC<PaymentMethodProps> = ({
             <form onSubmit={handleSubmit} className={styles.form}>
                 <div className={styles.paymentOptions}>
                     <label
-                        className={`${styles.paymentOption} ${method === 'online' ? styles.selected : ''}`}
+                        className={`${styles.paymentOption} ${method === 'card_to_card' ? styles.selected : ''}`}
                     >
                         <input
                             type="radio"
                             name="paymentMethod"
-                            value="online"
-                            checked={method === 'online'}
-                            onChange={() => setMethod('online')}
+                            value="card_to_card"
+                            checked={method === 'card_to_card'}
+                            onChange={() => setMethod('card_to_card')}
                             className={styles.radioInput}
                         />
                         <div className={styles.optionContent}>
                             <div className={styles.optionIcon}>
-                                <FaCreditCard />
+                                <FaExchangeAlt />
                             </div>
                             <div className={styles.optionDetails}>
-                                <h3>پرداخت آنلاین</h3>
-                                <p>پرداخت از طریق درگاه بانکی</p>
+                                <h3>کارت به کارت</h3>
+                                <p>انتقال وجه به شماره کارت</p>
                             </div>
                         </div>
                     </label>
+
+                    {/*<label*/}
+                    {/*    className={`${styles.paymentOption} ${method === 'online' ? styles.selected : ''}`}*/}
+                    {/*>*/}
+                    {/*    <input*/}
+                    {/*        type="radio"*/}
+                    {/*        name="paymentMethod"*/}
+                    {/*        value="online"*/}
+                    {/*        checked={method === 'online'}*/}
+                    {/*        onChange={() => setMethod('online')}*/}
+                    {/*        className={styles.radioInput}*/}
+                    {/*    />*/}
+                    {/*    <div className={styles.optionContent}>*/}
+                    {/*        <div className={styles.optionIcon}>*/}
+                    {/*            <FaCreditCard />*/}
+                    {/*        </div>*/}
+                    {/*        <div className={styles.optionDetails}>*/}
+                    {/*            <h3>پرداخت آنلاین</h3>*/}
+                    {/*            <p>پرداخت از طریق درگاه بانکی</p>*/}
+                    {/*        </div>*/}
+                    {/*    </div>*/}
+                    {/*</label>*/}
 
                     {/*<label*/}
                     {/*    className={`${styles.paymentOption} ${method === 'cash' ? styles.selected : ''}`}*/}

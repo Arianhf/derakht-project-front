@@ -78,10 +78,11 @@ export interface ShippingInfo {
 }
 
 export interface PaymentInfo {
-    method: 'online' | 'cash';
+    method: 'online' | 'cash' | 'card_to_card';
     transaction_id?: string;
     payment_date?: string;
     status: 'pending' | 'completed' | 'failed';
+    receipt_image?: string;
 }
 
 export interface TrackingInfo {

@@ -244,6 +244,18 @@ export const shopService = {
         }
     },
 
+    uploadPaymentReceipt: async (orderId: string, receiptImage: File) => {
+        const formData = new FormData();
+        formData.append('payment_receipt', receiptImage);
+        formData.append('order_id', orderId);
+
+        const response = await api.post('/shop/payments/upload-receipt/', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    },
 
     getOrderById: async (orderId: string) => {
         const response = await api.get(`/shop/orders/${orderId}/`);
