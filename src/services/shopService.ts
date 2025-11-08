@@ -246,7 +246,7 @@ export const shopService = {
 
     uploadPaymentReceipt: async (orderId: string, receiptImage: File) => {
         const formData = new FormData();
-        formData.append('receipt_image', receiptImage);
+        formData.append('payment_receipt', receiptImage);
         formData.append('order_id', orderId);
 
         const response = await api.post('/shop/payments/upload-receipt/', formData, {
