@@ -30,6 +30,9 @@
   font-weight: bold;
   transition: all 0.3s ease;
   white-space: nowrap;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 // Individual navigation link
