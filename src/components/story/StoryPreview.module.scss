@@ -672,14 +672,14 @@
 //}
 
 // Show rotation prompt on mobile in portrait mode
-@media (max-width: $breakpoint-md) and (orientation: portrait) {
+@media (max-height: 900px) and (orientation: portrait) {
     .rotationPrompt {
         display: flex !important;
     }
 }
 
-// Mobile landscape optimizations
-@media (max-width: $breakpoint-md) and (orientation: landscape) {
+// Mobile landscape optimizations - use max-height to catch all phones in landscape
+@media (max-height: 600px) and (orientation: landscape) {
     .modalOverlay {
         align-items: center;
         padding: 5px;
@@ -825,8 +825,8 @@
     }
 }
 
-// Additional small screen adjustments (in landscape)
-@media (max-width: $breakpoint-sm) and (orientation: landscape) {
+// Additional very small height adjustments (in landscape) - for smaller phones
+@media (max-height: 450px) and (orientation: landscape) {
     .viewModeButton, .settingsButton, .closeButton {
         width: 28px;
         height: 28px;
