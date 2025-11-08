@@ -417,14 +417,10 @@
   font-size: 18px;
 }
 
-@media (max-width: $breakpoint-lg) {
-  .navbar {
-    padding: 12px 20px;
-  }
-
-    .navbarItems {
-    gap: 30px;
-    font-size: 18px;
+@media (max-width: 1300px) {
+  .searchBar {
+    width: 160px;
+    padding: 8px 12px;
   }
 
   .logo {
@@ -432,8 +428,27 @@
     height: 60px !important;
   }
 
+  .rightSection {
+    gap: 15px;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .navbar {
+    padding: 12px 20px;
+  }
+
+  .logo {
+    width: 100px !important;
+    height: 50px !important;
+  }
+
   .searchBar {
-    width: 180px;
+    width: 140px;
+  }
+
+  .rightSection {
+    gap: 12px;
   }
 }
 
