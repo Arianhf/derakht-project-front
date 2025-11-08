@@ -30,6 +30,50 @@
     animation: fadeIn 0.3s ease-out;
 }
 
+/* Rotation prompt - hidden by default */
+.rotationPrompt {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: $card-bg;
+    z-index: 9999;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 30px;
+    gap: 20px;
+
+    h3 {
+        font-size: 24px;
+        color: $dark-text;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    p {
+        font-size: 16px;
+        color: $light-text;
+        margin: 0;
+        max-width: 300px;
+        line-height: 1.6;
+    }
+}
+
+.rotationIcon {
+    color: $primary-color;
+    animation: rotate-hint 2s ease-in-out infinite;
+}
+
+@keyframes rotate-hint {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+}
+
 /* Close button */
 .closeButton {
     position: absolute;
@@ -627,7 +671,15 @@
 //    }
 //}
 
-@media (max-width: $breakpoint-md) {
+// Show rotation prompt on mobile in portrait mode
+@media (max-width: $breakpoint-md) and (orientation: portrait) {
+    .rotationPrompt {
+        display: flex !important;
+    }
+}
+
+// Mobile landscape optimizations
+@media (max-width: $breakpoint-md) and (orientation: landscape) {
     .modalOverlay {
         align-items: flex-start;
     }
@@ -640,20 +692,35 @@
     }
 
     .previewHeader {
-        padding: 15px 50px;
+        padding: 10px 50px;
+
+        h2 {
+            font-size: 18px;
+        }
+    }
+
+    .previewConfig {
+        padding: 8px 15px;
+    }
+
+    .pageCount {
+        font-size: 12px;
+        padding: 4px 10px;
     }
 
     .settingsModal {
         width: 95%;
         padding: 20px;
+        max-height: 90vh;
+        overflow-y: auto;
     }
 
     .imagePreviewUpload {
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
     }
 
-    // Overlay view adjustments for mobile
+    // Overlay view - works well in landscape
     .overlayView {
         height: 100%;
     }
@@ -668,118 +735,52 @@
     }
 
     .textContainer {
-        padding: 15px 15px 25px;
+        padding: 10px 15px 20px;
         width: 100%;
     }
 
     .storyText {
         width: 95%;
-        max-height: 35vh;
-        font-size: 16px;
+        max-height: 40vh;
+        font-size: 14px;
         line-height: 1.6;
-        padding: 15px;
+        padding: 12px;
     }
 
-    // Side-by-side view adjustments for mobile
+    // Side-by-side view - keep horizontal in landscape
     .sideBySideView {
-        flex-direction: column;
+        flex-direction: row;
         height: 100%;
     }
 
     .imagePane {
-        flex: none;
-        width: 100%;
-        height: 45%;
-        padding: 10px 10px 5px 10px;
+        flex: 2;
+        width: auto;
+        height: 100%;
+        padding: 10px 10px 10px 0;
     }
 
     .sideImage {
-        border-radius: $border-radius-md;
+        border-radius: 0 $border-radius-md $border-radius-md 0;
         max-height: 100%;
     }
 
     .textPane {
-        flex: none;
-        width: 100%;
-        height: 55%;
-        padding: 5px 10px 10px 10px;
-    }
-
-    .sideText {
-        font-size: 16px;
-        line-height: 1.6;
-        padding: 15px;
-        border-radius: $border-radius-md;
-    }
-}
-
-@media (max-width: $breakpoint-sm) {
-    .previewHeader {
-        flex-direction: column;
-        gap: 10px;
-        padding: 12px 50px;
-
-        h2 {
-            font-size: 18px;
-        }
-    }
-
-    .previewConfig {
-        padding: 10px 15px;
-    }
-
-    .viewModeToggle {
-        gap: 8px;
-    }
-
-    .viewModeButton, .settingsButton {
-        width: 32px;
-        height: 32px;
-        font-size: 14px;
-    }
-
-    .closeButton {
-        width: 32px;
-        height: 32px;
-        font-size: 16px;
-    }
-
-    .pageCount {
-        font-size: 12px;
-        padding: 4px 10px;
-    }
-
-    .overlayView {
+        flex: 1;
+        width: auto;
         height: 100%;
-    }
-
-    .textContainer {
-        padding: 10px 10px 20px;
-    }
-
-    .storyText {
-        max-height: 30vh;
-        font-size: 14px;
-        padding: 12px;
-    }
-
-    .imagePane {
-        height: 40%;
-        padding: 8px 8px 4px 8px;
-    }
-
-    .textPane {
-        height: 60%;
-        padding: 4px 8px 8px 8px;
+        padding: 10px 0 10px 10px;
     }
 
     .sideText {
         font-size: 14px;
+        line-height: 1.6;
         padding: 12px;
+        border-radius: $border-radius-md 0 0 $border-radius-md;
     }
 
     .navigationControls {
-        padding: 12px 15px;
+        padding: 10px 20px;
     }
 
     .prevButton, .nextButton {
@@ -791,6 +792,27 @@
     .buttonIcon {
         font-size: 12px;
     }
+}
+
+// Additional small screen adjustments (in landscape)
+@media (max-width: $breakpoint-sm) and (orientation: landscape) {
+    .viewModeButton, .settingsButton, .closeButton {
+        width: 30px;
+        height: 30px;
+        font-size: 13px;
+    }
+
+    .previewHeader {
+        padding: 8px 45px;
+
+        h2 {
+            font-size: 16px;
+        }
+    }
+
+    .previewConfig {
+        padding: 6px 12px;
+    }
 
     .settingsTitle {
         font-size: 18px;
@@ -799,6 +821,11 @@
     .uploadButton {
         font-size: 12px;
         padding: 6px 12px;
+    }
+
+    .storyText, .sideText {
+        font-size: 13px;
+        padding: 10px;
     }
 }
 

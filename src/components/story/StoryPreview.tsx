@@ -213,6 +213,18 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
 
     const previewContent = (
         <div className={`${styles.previewContainer} ${isFullPage ? styles.fullPageContainer : ''}`}>
+            {/* Rotation prompt for mobile portrait mode */}
+            <div className={styles.rotationPrompt}>
+                <div className={styles.rotationIcon}>
+                    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                        <rect x="20" y="10" width="40" height="60" rx="4" stroke="currentColor" strokeWidth="3" fill="none"/>
+                        <path d="M35 35 L45 35 L45 45 M45 35 L40 40" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                </div>
+                <h3>لطفاً گوشی خود را بچرخانید</h3>
+                <p>برای بهترین تجربه مشاهده، دستگاه خود را به حالت افقی بچرخانید</p>
+            </div>
+
             {/* Close button - only show in modal mode */}
             {!isFullPage && (
                 <button
