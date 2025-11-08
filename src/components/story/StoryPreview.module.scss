@@ -13,6 +13,7 @@
     align-items: center;
     z-index: 1000;
     backdrop-filter: blur(5px);
+    overflow: auto;
 }
 
 /* Main container */
@@ -627,6 +628,17 @@
 //}
 
 @media (max-width: $breakpoint-md) {
+    .modalOverlay {
+        align-items: flex-start;
+    }
+
+    .previewContainer {
+        width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
     .previewHeader {
         padding: 15px 50px;
     }
@@ -641,32 +653,63 @@
         align-items: center;
     }
 
-    .sideBySideView {
-        flex-direction: column;
+    // Overlay view adjustments for mobile
+    .overlayView {
+        height: 100%;
     }
 
-    .imagePane, .textPane {
-        flex: none;
+    .imageContainer {
+        width: 100%;
+        height: 100%;
     }
 
-    .imagePane {
-        height: 40%;
-        padding: 10px;
+    .gradientOverlay {
+        width: 100%;
     }
 
-    .textPane {
-        height: 60%;
-        padding: 10px;
+    .textContainer {
+        padding: 15px 15px 25px;
+        width: 100%;
     }
 
-    .storyText, .sideText {
+    .storyText {
+        width: 95%;
+        max-height: 35vh;
         font-size: 16px;
         line-height: 1.6;
         padding: 15px;
     }
 
-    .textContainer {
-        padding: 15px 20px 30px;
+    // Side-by-side view adjustments for mobile
+    .sideBySideView {
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .imagePane {
+        flex: none;
+        width: 100%;
+        height: 45%;
+        padding: 10px 10px 5px 10px;
+    }
+
+    .sideImage {
+        border-radius: $border-radius-md;
+        max-height: 100%;
+    }
+
+    .textPane {
+        flex: none;
+        width: 100%;
+        height: 55%;
+        padding: 5px 10px 10px 10px;
+    }
+
+    .sideText {
+        font-size: 16px;
+        line-height: 1.6;
+        padding: 15px;
+        border-radius: $border-radius-md;
     }
 }
 
@@ -681,12 +724,56 @@
         }
     }
 
-    .viewModeToggle {
-        top: 60px;
-        right: 15px;
+    .previewConfig {
+        padding: 10px 15px;
     }
 
-    .storyText, .sideText {
+    .viewModeToggle {
+        gap: 8px;
+    }
+
+    .viewModeButton, .settingsButton {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    .closeButton {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+
+    .pageCount {
+        font-size: 12px;
+        padding: 4px 10px;
+    }
+
+    .overlayView {
+        height: 100%;
+    }
+
+    .textContainer {
+        padding: 10px 10px 20px;
+    }
+
+    .storyText {
+        max-height: 30vh;
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    .imagePane {
+        height: 40%;
+        padding: 8px 8px 4px 8px;
+    }
+
+    .textPane {
+        height: 60%;
+        padding: 4px 8px 8px 8px;
+    }
+
+    .sideText {
         font-size: 14px;
         padding: 12px;
     }
@@ -698,6 +785,11 @@
     .prevButton, .nextButton {
         padding: 8px 15px;
         font-size: 14px;
+        gap: 6px;
+    }
+
+    .buttonIcon {
+        font-size: 12px;
     }
 
     .settingsTitle {
