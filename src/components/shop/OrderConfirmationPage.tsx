@@ -98,11 +98,12 @@ const OrderConfirmationPage: React.FC = () => {
                         <div className={styles.infoRow}>
                             <span className={styles.infoLabel}>وضعیت سفارش:</span>
                             <span className={styles.infoValue}>
-                {order.status === 'pending' && 'در انتظار پرداخت'}
-                                {order.status === 'processing' && 'در حال پردازش'}
-                                {order.status === 'shipped' && 'ارسال شده'}
-                                {order.status === 'delivered' && 'تحویل داده شده'}
-                                {order.status === 'canceled' && 'لغو شده'}
+                {order.status.toLowerCase() === 'pending' && 'در انتظار پرداخت'}
+                                {order.status.toLowerCase() === 'confirmed' && 'تایید شده'}
+                                {order.status.toLowerCase() === 'processing' && 'در حال پردازش'}
+                                {order.status.toLowerCase() === 'shipped' && 'ارسال شده'}
+                                {order.status.toLowerCase() === 'delivered' && 'تحویل داده شده'}
+                                {order.status.toLowerCase() === 'canceled' && 'لغو شده'}
               </span>
                         </div>
 
@@ -115,8 +116,19 @@ const OrderConfirmationPage: React.FC = () => {
 
                         <div className={styles.infoRow}>
                             <span className={styles.infoLabel}>آدرس ارسال:</span>
-                            <span className={styles.infoValue}>{order.shipping_address}</span>
+                            <span className={styles.infoValue}>
+                {order.shipping_info
+                  ? `${order.shipping_info.address}, ${order.shipping_info.city}, ${order.shipping_info.province}`
+                  : order.shipping_address || 'نامشخص'}
+              </span>
                         </div>
+
+                        {order.shipping_info?.recipient_name && (
+                            <div className={styles.infoRow}>
+                                <span className={styles.infoLabel}>نام گیرنده:</span>
+                                <span className={styles.infoValue}>{order.shipping_info.recipient_name}</span>
+                            </div>
+                        )}
 
                         <div className={styles.infoRow}>
                             <span className={styles.infoLabel}>شماره تماس:</span>
