@@ -30,9 +30,6 @@
   font-weight: bold;
   transition: all 0.3s ease;
   white-space: nowrap;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
 }
 
 // Individual navigation link
@@ -81,6 +78,15 @@
   display: none; // Hidden by default on desktop
 }
 
+// Center navigation on desktop/tablet screens (above mobile breakpoint)
+@media (min-width: calc($breakpoint-md + 1px)) {
+  .navbarItems {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
 @media (max-width: 1300px) {
   .navbarItems {
     gap: 20px;
@@ -109,8 +115,6 @@
   .navbarItems {
     position: fixed;
     top: 0;
-    left: auto; // Reset the desktop centering
-    transform: none; // Reset the desktop centering
     right: -100%; // Start off-screen
     width: 80%;
     max-width: 300px;
