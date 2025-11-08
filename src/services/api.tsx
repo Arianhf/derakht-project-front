@@ -65,11 +65,17 @@ const refreshAccessToken = async (): Promise<string> => {
         );
 
         const newAccessToken = response.data.access;
+        const newRefreshToken = response.data.refresh; // New refresh token if rotation is enabled
 
         // Update tokens in storage
         if (typeof window !== 'undefined') {
             localStorage.setItem("access_token", newAccessToken);
             Cookies.set("access_token", newAccessToken, { expires: 1 }); // 1 day
+
+            // Update refresh token if backend sent a new one (rotation enabled)
+            if (newRefreshToken) {
+                localStorage.setItem("refresh_token", newRefreshToken);
+            }
         }
 
         return newAccessToken;
