@@ -10,6 +10,7 @@ import { useUser } from '@/contexts/UserContext';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import { ShippingForm } from '@/components/checkout/ShippingForm';
 import { PaymentMethod } from '@/components/checkout/PaymentMethod';
+import { CardToCardPayment } from '@/components/checkout/CardToCardPayment';
 import { OrderSummary } from '@/components/checkout/OrderSummary';
 import { Toaster } from 'react-hot-toast';
 import { FaArrowRight, FaSpinner, FaEdit } from 'react-icons/fa';
@@ -20,6 +21,7 @@ import toast from 'react-hot-toast';
 enum CheckoutStep {
     SHIPPING = 'shipping',
     PAYMENT = 'payment',
+    CARD_TO_CARD = 'card_to_card',
     REVIEW = 'review',
 }
 
@@ -44,7 +46,8 @@ const CheckoutPage: React.FC = () => {
         phoneNumber: '',
     });
 
-    const [paymentMethod, setPaymentMethod] = useState<'online' | 'cash'>('online');
+    const [paymentMethod, setPaymentMethod] = useState<'online' | 'cash' | 'card_to_card'>('card_to_card');
+    const [receiptImage, setReceiptImage] = useState<File | null>(null);
 
     useEffect(() => {
         // Redirect to cart if there are no items
@@ -141,9 +144,25 @@ const CheckoutPage: React.FC = () => {
         window.scrollTo(0, 0);
     };
 
-    const handlePaymentSubmit = (method: 'online' | 'cash') => {
+    const handlePaymentSubmit = (method: 'online' | 'cash' | 'card_to_card') => {
         setPaymentMethod(method);
+        // If card-to-card is selected, go to card-to-card step
+        if (method === 'card_to_card') {
+            setCurrentStep(CheckoutStep.CARD_TO_CARD);
+        } else {
+            setCurrentStep(CheckoutStep.REVIEW);
+        }
+        window.scrollTo(0, 0);
+    };
+
+    const handleCardToCardSubmit = (receipt: File) => {
+        setReceiptImage(receipt);
         setCurrentStep(CheckoutStep.REVIEW);
+        window.scrollTo(0, 0);
+    };
+
+    const handleBackToCardToCard = () => {
+        setCurrentStep(CheckoutStep.CARD_TO_CARD);
         window.scrollTo(0, 0);
     };
 
@@ -186,6 +205,14 @@ const CheckoutPage: React.FC = () => {
                     // If we can't get payment URL, redirect to payment failed page
                     router.push(`/shop/payment-failed?order_id=${order.id}&error_code=payment_init_failed&error_message=${encodeURIComponent('خطا در ایجاد درخواست پرداخت')}`);
                 }
+            } else if (paymentMethod === 'card_to_card') {
+                // For card-to-card payment, upload receipt and proceed to confirmation
+                if (receiptImage) {
+                    await shopService.uploadPaymentReceipt(order.id, receiptImage);
+                }
+                await clearCart(false);  // Clear the cart without refreshing (redirecting away)
+                toast.success('سفارش شما با موفقیت ثبت شد. پس از بررسی رسید، سفارش شما تایید خواهد شد.');
+                router.push(`/shop/order-confirmation/${order.id}`);
             } else {
                 // For cash on delivery, just proceed to confirmation
                 await clearCart(false);  // Clear the cart without refreshing (redirecting away)
@@ -286,16 +313,22 @@ const CheckoutPage: React.FC = () => {
                 <h1 className={styles.pageTitle}>تکمیل خرید</h1>
 
                 <div className={styles.checkoutSteps}>
-                    <div className={`${styles.step} ${currentStep === CheckoutStep.SHIPPING ? styles.active : ''} ${currentStep === CheckoutStep.PAYMENT || currentStep === CheckoutStep.REVIEW ? styles.completed : ''}`}>
+                    <div className={`${styles.step} ${currentStep === CheckoutStep.SHIPPING ? styles.active : ''} ${currentStep === CheckoutStep.PAYMENT || currentStep === CheckoutStep.CARD_TO_CARD || currentStep === CheckoutStep.REVIEW ? styles.completed : ''}`}>
                         <span className={styles.stepNumber}>1</span>
                         <span className={styles.stepTitle}>اطلاعات ارسال</span>
                     </div>
-                    <div className={`${styles.step} ${currentStep === CheckoutStep.PAYMENT ? styles.active : ''} ${currentStep === CheckoutStep.REVIEW ? styles.completed : ''}`}>
+                    <div className={`${styles.step} ${currentStep === CheckoutStep.PAYMENT ? styles.active : ''} ${currentStep === CheckoutStep.CARD_TO_CARD || currentStep === CheckoutStep.REVIEW ? styles.completed : ''}`}>
                         <span className={styles.stepNumber}>2</span>
                         <span className={styles.stepTitle}>روش پرداخت</span>
                     </div>
+                    {paymentMethod === 'card_to_card' && (
+                        <div className={`${styles.step} ${currentStep === CheckoutStep.CARD_TO_CARD ? styles.active : ''} ${currentStep === CheckoutStep.REVIEW ? styles.completed : ''}`}>
+                            <span className={styles.stepNumber}>3</span>
+                            <span className={styles.stepTitle}>پرداخت کارت به کارت</span>
+                        </div>
+                    )}
                     <div className={`${styles.step} ${currentStep === CheckoutStep.REVIEW ? styles.active : ''}`}>
-                        <span className={styles.stepNumber}>3</span>
+                        <span className={styles.stepNumber}>{paymentMethod === 'card_to_card' ? '4' : '3'}</span>
                         <span className={styles.stepTitle}>بررسی سفارش</span>
                     </div>
                 </div>
@@ -309,6 +342,13 @@ const CheckoutPage: React.FC = () => {
                                 selectedMethod={paymentMethod}
                                 onSubmit={handlePaymentSubmit}
                                 onBack={handleBackToShipping}
+                            />
+                        )}
+
+                        {currentStep === CheckoutStep.CARD_TO_CARD && (
+                            <CardToCardPayment
+                                onSubmit={handleCardToCardSubmit}
+                                onBack={handleBackToPayment}
                             />
                         )}
 
@@ -333,10 +373,19 @@ const CheckoutPage: React.FC = () => {
 
                                 <div className={styles.reviewSection}>
                                     <h3>روش پرداخت</h3>
-                                    <p>{paymentMethod === 'online' ? 'پرداخت آنلاین' : 'پرداخت در محل'}</p>
+                                    <p>
+                                        {paymentMethod === 'online' && 'پرداخت آنلاین'}
+                                        {paymentMethod === 'cash' && 'پرداخت در محل'}
+                                        {paymentMethod === 'card_to_card' && 'کارت به کارت'}
+                                    </p>
+                                    {paymentMethod === 'card_to_card' && receiptImage && (
+                                        <div className={styles.receiptPreview}>
+                                            <p>رسید پرداخت آپلود شده ✓</p>
+                                        </div>
+                                    )}
                                     <button
                                         className={styles.editButton}
-                                        onClick={handleBackToPayment}
+                                        onClick={paymentMethod === 'card_to_card' ? handleBackToCardToCard : handleBackToPayment}
                                     >
                                         ویرایش
                                     </button>
@@ -355,7 +404,8 @@ const CheckoutPage: React.FC = () => {
                                                 در حال پردازش...
                                             </>
                                         ) : (
-                                            paymentMethod === 'online' ? 'پرداخت و ثبت سفارش' : 'ثبت سفارش'
+                                            paymentMethod === 'online' ? 'پرداخت و ثبت سفارش' :
+                                            paymentMethod === 'card_to_card' ? 'ثبت سفارش' : 'ثبت سفارش'
                                         )}
                                     </button>
                                 </div>
