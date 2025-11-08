@@ -109,6 +109,8 @@
   .navbarItems {
     position: fixed;
     top: 0;
+    left: auto; // Reset the desktop centering
+    transform: none; // Reset the desktop centering
     right: -100%; // Start off-screen
     width: 80%;
     max-width: 300px;
