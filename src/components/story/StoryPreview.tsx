@@ -65,6 +65,8 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
     const [imageLoadingStates, setImageLoadingStates] = useState<{ [key: string]: boolean }>({});
+    const [isMobile, setIsMobile] = useState(false);
+    const [mobilePageIndex, setMobilePageIndex] = useState(0); // Index for mobile pagination (0 = first image, 1 = first text, 2 = second image, etc.)
     const settingsModalRef = React.useRef<HTMLDivElement>(null);
     const router = useRouter();
 
@@ -94,10 +96,32 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
         return `linear-gradient(transparent 29px, ${lineColor} 30px)`;
     };
 
+    // Mobile pagination helper functions
+    const getTotalMobilePages = () => parts.length * 2; // Each part has 2 pages: image and text
+
+    const getCurrentPartIndex = () => Math.floor(mobilePageIndex / 2);
+
+    const isImagePage = () => mobilePageIndex % 2 === 0;
+
+    const getMobilePageType = (): 'image' | 'text' => isImagePage() ? 'image' : 'text';
+
+    // Mobile detection
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     // Reset page index and maintain view mode when opening/closing
     useEffect(() => {
         if (!isOpen) {
             setCurrentIndex(0);
+            setMobilePageIndex(0);
         }
     }, [isOpen]);
 
@@ -173,18 +197,39 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
     };
 
     const handleNext = () => {
-        if (currentIndex < parts.length - 1) {
-            setCurrentIndex(currentIndex + 1);
+        if (isMobile) {
+            // Mobile pagination: navigate through image/text pages
+            if (mobilePageIndex < getTotalMobilePages() - 1) {
+                setMobilePageIndex(mobilePageIndex + 1);
+            } else {
+                // Last mobile page - finish story
+                if (!isFullPage) {
+                    handleFinishStory();
+                }
+            }
         } else {
-            if (!isFullPage) {
-                handleFinishStory();
+            // Desktop: navigate through parts
+            if (currentIndex < parts.length - 1) {
+                setCurrentIndex(currentIndex + 1);
+            } else {
+                if (!isFullPage) {
+                    handleFinishStory();
+                }
             }
         }
     };
 
     const handlePrev = () => {
-        if (currentIndex > 0) {
-            setCurrentIndex(currentIndex - 1);
+        if (isMobile) {
+            // Mobile pagination: go back through image/text pages
+            if (mobilePageIndex > 0) {
+                setMobilePageIndex(mobilePageIndex - 1);
+            }
+        } else {
+            // Desktop: go back through parts
+            if (currentIndex > 0) {
+                setCurrentIndex(currentIndex - 1);
+            }
         }
     };
 
@@ -209,7 +254,9 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
         setImageLoadingStates(prev => ({ ...prev, [imageKey]: true }));
     };
 
-    const isLastPage = currentIndex === parts.length - 1;
+    const isLastPage = isMobile
+        ? mobilePageIndex === getTotalMobilePages() - 1
+        : currentIndex === parts.length - 1;
 
     const previewContent = (
         <div className={`${styles.previewContainer} ${isFullPage ? styles.fullPageContainer : ''}`}>
@@ -239,90 +286,136 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
             </div>
 
             <div className={styles.previewConfig}>
-                {/* View mode toggle */}
-                <div className={styles.viewModeToggle}>
-                    <button
-                        className={`${styles.viewModeButton} ${viewMode === 'overlay' ? styles.active : ''}`}
-                        onClick={() => setViewMode('overlay')}
-                        title="نمایش متن روی تصویر"
-                    >
-                        <FaLayerGroup/>
-                    </button>
-                    <button
-                        className={`${styles.viewModeButton} ${viewMode === 'sideBySide' ? styles.active : ''}`}
-                        onClick={() => setViewMode('sideBySide')}
-                        title="نمایش متن کنار تصویر"
-                    >
-                        <FaColumns/>
-                    </button>
-                </div>
+                {/* View mode toggle - hide on mobile */}
+                {!isMobile && (
+                    <div className={styles.viewModeToggle}>
+                        <button
+                            className={`${styles.viewModeButton} ${viewMode === 'overlay' ? styles.active : ''}`}
+                            onClick={() => setViewMode('overlay')}
+                            title="نمایش متن روی تصویر"
+                        >
+                            <FaLayerGroup/>
+                        </button>
+                        <button
+                            className={`${styles.viewModeButton} ${viewMode === 'sideBySide' ? styles.active : ''}`}
+                            onClick={() => setViewMode('sideBySide')}
+                            title="نمایش متن کنار تصویر"
+                        >
+                            <FaColumns/>
+                        </button>
+                    </div>
+                )}
                 <div className={styles.pageCount}>
-                    صفحه {currentIndex + 1} از {parts.length}
+                    {isMobile ? (
+                        <>صفحه {mobilePageIndex + 1} از {getTotalMobilePages()}</>
+                    ) : (
+                        <>صفحه {currentIndex + 1} از {parts.length}</>
+                    )}
                 </div>
             </div>
 
-            {/* Content area - changes based on view mode */}
-            <div className={`${styles.previewContent} ${styles[viewMode]}`}>
-                {viewMode === 'overlay' ? (
-                    // Overlay mode
-                    <div className={styles.overlayView}>
-                        <div className={styles.imageContainer}>
-                            {!imageLoadingStates[`overlay-${currentIndex}`] && (
-                                <ImageSkeleton style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: 5 }} />
-                            )}
-                            <Image
-                                src={parts[currentIndex]?.illustration || "/placeholder-image.jpg"}
-                                alt={`تصویر داستان - صفحه ${currentIndex + 1}`}
-                                fill
-                                className={styles.storyImage}
-                                style={{ opacity: imageLoadingStates[`overlay-${currentIndex}`] ? 1 : 0, transition: 'opacity 0.3s ease' }}
-                                onLoad={() => handleImageLoad(`overlay-${currentIndex}`)}
-                            />
-                            <div className={styles.gradientOverlay}></div>
-                            <div className={styles.textContainer}>
+            {/* Content area - changes based on view mode or mobile pagination */}
+            <div className={`${styles.previewContent} ${isMobile ? styles.mobileView : styles[viewMode]}`}>
+                {isMobile ? (
+                    // Mobile single-page view: show either image or text
+                    <div className={styles.mobilePageView}>
+                        {getMobilePageType() === 'image' ? (
+                            // Show only image
+                            <div className={styles.mobileImagePage}>
+                                {!imageLoadingStates[`mobile-${mobilePageIndex}`] && (
+                                    <ImageSkeleton style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
+                                )}
+                                <Image
+                                    src={parts[getCurrentPartIndex()]?.illustration || "/placeholder-image.jpg"}
+                                    alt={`تصویر داستان - صفحه ${mobilePageIndex + 1}`}
+                                    fill
+                                    className={styles.storyImage}
+                                    style={{ opacity: imageLoadingStates[`mobile-${mobilePageIndex}`] ? 1 : 0, transition: 'opacity 0.3s ease' }}
+                                    onLoad={() => handleImageLoad(`mobile-${mobilePageIndex}`)}
+                                />
+                            </div>
+                        ) : (
+                            // Show only text
+                            <div className={styles.mobileTextPage}>
                                 <div
-                                    className={styles.storyText}
+                                    className={styles.mobileTextContent}
                                     style={{
-                                        backgroundColor: backgroundColor || 'rgba(255, 255, 255, 0.5)',
-                                        color: fontColor || '#2B463C'
+                                        backgroundColor: backgroundColor || '#fff8dc',
+                                        color: fontColor || '#2B463C',
+                                        backgroundImage: getLinePattern(fontColor),
+                                        backgroundSize: '100% 30px'
                                     }}
                                 >
-                                    {parts[currentIndex]?.text || "متنی وارد نشده است."}
+                                    {parts[getCurrentPartIndex()]?.text || "متنی وارد نشده است."}
                                 </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 ) : (
-                    // Side by side mode
-                    <div className={styles.sideBySideView}>
-                        <div className={styles.imagePane}>
-                            {!imageLoadingStates[`sidebyside-${currentIndex}`] && (
-                                <ImageSkeleton style={{ width: '100%', height: '400px', position: 'absolute' }} />
-                            )}
-                            <Image
-                                src={parts[currentIndex]?.illustration || "/placeholder-image.jpg"}
-                                alt={`تصویر داستان - صفحه ${currentIndex + 1}`}
-                                width={500}
-                                height={400}
-                                className={styles.sideImage}
-                                style={{ width: '100%', height: 'auto', opacity: imageLoadingStates[`sidebyside-${currentIndex}`] ? 1 : 0, transition: 'opacity 0.3s ease' }}
-                                onLoad={() => handleImageLoad(`sidebyside-${currentIndex}`)}
-                            />
-                        </div>
-                        <div className={styles.textPane}>
-                            <div
-                                className={styles.sideText}
-                                style={{
-                                    backgroundColor: backgroundColor || '#fff8dc',
-                                    color: fontColor || '#2B463C',
-                                    backgroundImage: getLinePattern(fontColor),
-                                    backgroundSize: '100% 30px'
-                                }}
-                            >
-                                {parts[currentIndex]?.text || "متنی وارد نشده است."}
+                    // Desktop view modes
+                    <>
+                        {viewMode === 'overlay' ? (
+                            // Overlay mode
+                            <div className={styles.overlayView}>
+                                <div className={styles.imageContainer}>
+                                    {!imageLoadingStates[`overlay-${currentIndex}`] && (
+                                        <ImageSkeleton style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: 5 }} />
+                                    )}
+                                    <Image
+                                        src={parts[currentIndex]?.illustration || "/placeholder-image.jpg"}
+                                        alt={`تصویر داستان - صفحه ${currentIndex + 1}`}
+                                        fill
+                                        className={styles.storyImage}
+                                        style={{ opacity: imageLoadingStates[`overlay-${currentIndex}`] ? 1 : 0, transition: 'opacity 0.3s ease' }}
+                                        onLoad={() => handleImageLoad(`overlay-${currentIndex}`)}
+                                    />
+                                    <div className={styles.gradientOverlay}></div>
+                                    <div className={styles.textContainer}>
+                                        <div
+                                            className={styles.storyText}
+                                            style={{
+                                                backgroundColor: backgroundColor || 'rgba(255, 255, 255, 0.5)',
+                                                color: fontColor || '#2B463C'
+                                            }}
+                                        >
+                                            {parts[currentIndex]?.text || "متنی وارد نشده است."}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        ) : (
+                            // Side by side mode
+                            <div className={styles.sideBySideView}>
+                                <div className={styles.imagePane}>
+                                    {!imageLoadingStates[`sidebyside-${currentIndex}`] && (
+                                        <ImageSkeleton style={{ width: '100%', height: '400px', position: 'absolute' }} />
+                                    )}
+                                    <Image
+                                        src={parts[currentIndex]?.illustration || "/placeholder-image.jpg"}
+                                        alt={`تصویر داستان - صفحه ${currentIndex + 1}`}
+                                        width={500}
+                                        height={400}
+                                        className={styles.sideImage}
+                                        style={{ width: '100%', height: 'auto', opacity: imageLoadingStates[`sidebyside-${currentIndex}`] ? 1 : 0, transition: 'opacity 0.3s ease' }}
+                                        onLoad={() => handleImageLoad(`sidebyside-${currentIndex}`)}
+                                    />
+                                </div>
+                                <div className={styles.textPane}>
+                                    <div
+                                        className={styles.sideText}
+                                        style={{
+                                            backgroundColor: backgroundColor || '#fff8dc',
+                                            color: fontColor || '#2B463C',
+                                            backgroundImage: getLinePattern(fontColor),
+                                            backgroundSize: '100% 30px'
+                                        }}
+                                    >
+                                        {parts[currentIndex]?.text || "متنی وارد نشده است."}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
 
@@ -331,7 +424,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                 <button
                     className={styles.prevButton}
                     onClick={handlePrev}
-                    disabled={currentIndex === 0}
+                    disabled={isMobile ? mobilePageIndex === 0 : currentIndex === 0}
                 >
                     <FaArrowRight className={styles.buttonIcon} />
                     <span>قبلی</span>
