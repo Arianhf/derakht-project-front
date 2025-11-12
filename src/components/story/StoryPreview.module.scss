@@ -13,6 +13,7 @@
     align-items: center;
     z-index: 1000;
     backdrop-filter: blur(5px);
+    overflow: auto;
 }
 
 /* Main container */
@@ -27,6 +28,50 @@
     overflow: hidden;
     position: relative;
     animation: fadeIn 0.3s ease-out;
+}
+
+/* Rotation prompt - hidden by default */
+.rotationPrompt {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: $card-bg;
+    z-index: 9999;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 30px;
+    gap: 20px;
+
+    h3 {
+        font-size: 24px;
+        color: $dark-text;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    p {
+        font-size: 16px;
+        color: $light-text;
+        margin: 0;
+        max-width: 300px;
+        line-height: 1.6;
+    }
+}
+
+.rotationIcon {
+    color: $primary-color;
+    animation: rotate-hint 2s ease-in-out infinite;
+}
+
+@keyframes rotate-hint {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
 }
 
 /* Close button */
@@ -626,87 +671,202 @@
 //    }
 //}
 
-@media (max-width: $breakpoint-md) {
+// Show rotation prompt on mobile in portrait mode
+@media (max-height: 900px) and (orientation: portrait) {
+    .rotationPrompt {
+        display: flex !important;
+    }
+}
+
+// Mobile landscape optimizations - use max-height to catch all phones in landscape
+@media (max-height: 600px) and (orientation: landscape) {
+    .modalOverlay {
+        align-items: center;
+        padding: 5px;
+    }
+
+    .previewContainer {
+        width: calc(100% - 10px);
+        max-width: calc(100% - 10px);
+        height: calc(100vh - 10px);
+        max-height: calc(100vh - 10px);
+        border-radius: $border-radius-sm;
+        margin: auto;
+    }
+
     .previewHeader {
-        padding: 15px 50px;
+        padding: 6px 50px;
+        min-height: auto;
+
+        h2 {
+            font-size: 16px;
+        }
+    }
+
+    .previewConfig {
+        padding: 5px 15px;
+    }
+
+    .viewModeButton, .settingsButton {
+        width: 30px;
+        height: 30px;
+        font-size: 13px;
+    }
+
+    .closeButton {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+        top: 10px;
+        left: 10px;
+    }
+
+    .pageCount {
+        font-size: 11px;
+        padding: 3px 8px;
     }
 
     .settingsModal {
         width: 95%;
         padding: 20px;
+        max-height: 90vh;
+        overflow-y: auto;
     }
 
     .imagePreviewUpload {
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
     }
 
-    .sideBySideView {
-        flex-direction: column;
+    .previewContent {
+        flex: 1;
+        min-height: 0; // Important for flex children to respect parent height
+        overflow: hidden;
     }
 
-    .imagePane, .textPane {
-        flex: none;
+    // Overlay view - works well in landscape
+    .overlayView {
+        height: 100%;
     }
 
-    .imagePane {
-        height: 40%;
-        padding: 10px;
+    .imageContainer {
+        width: 100%;
+        height: 100%;
     }
 
-    .textPane {
-        height: 60%;
-        padding: 10px;
-    }
-
-    .storyText, .sideText {
-        font-size: 16px;
-        line-height: 1.6;
-        padding: 15px;
+    .gradientOverlay {
+        width: 100%;
     }
 
     .textContainer {
-        padding: 15px 20px 30px;
-    }
-}
-
-@media (max-width: $breakpoint-sm) {
-    .previewHeader {
-        flex-direction: column;
-        gap: 10px;
-        padding: 12px 50px;
-
-        h2 {
-            font-size: 18px;
-        }
+        padding: 8px 12px 10px;
+        width: 100%;
     }
 
-    .viewModeToggle {
-        top: 60px;
-        right: 15px;
+    .storyText {
+        width: 95%;
+        max-height: 30vh;
+        font-size: 13px;
+        line-height: 1.5;
+        padding: 10px;
     }
 
-    .storyText, .sideText {
-        font-size: 14px;
-        padding: 12px;
+    // Side-by-side view - keep horizontal in landscape
+    .sideBySideView {
+        flex-direction: row;
+        height: 100%;
+        padding: 8px;
+    }
+
+    .imagePane {
+        flex: 2;
+        width: auto;
+        height: 100%;
+        padding: 0 4px 0 0;
+        min-width: 0; // Prevent flex overflow
+    }
+
+    .sideImage {
+        border-radius: $border-radius-sm;
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+
+    .textPane {
+        flex: 1;
+        width: auto;
+        height: 100%;
+        padding: 0 0 0 4px;
+        min-width: 0; // Prevent flex overflow
+    }
+
+    .sideText {
+        font-size: 13px;
+        line-height: 1.5;
+        padding: 10px;
+        border-radius: $border-radius-sm;
+        height: 100%;
+        overflow-y: auto;
     }
 
     .navigationControls {
-        padding: 12px 15px;
+        padding: 6px 15px;
     }
 
     .prevButton, .nextButton {
-        padding: 8px 15px;
-        font-size: 14px;
+        padding: 6px 12px;
+        font-size: 13px;
+        gap: 5px;
+    }
+
+    .buttonIcon {
+        font-size: 11px;
+    }
+}
+
+// Additional very small height adjustments (in landscape) - for smaller phones
+@media (max-height: 450px) and (orientation: landscape) {
+    .viewModeButton, .settingsButton, .closeButton {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+
+    .previewHeader {
+        padding: 5px 40px;
+
+        h2 {
+            font-size: 14px;
+        }
+    }
+
+    .previewConfig {
+        padding: 4px 12px;
     }
 
     .settingsTitle {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .uploadButton {
+        font-size: 11px;
+        padding: 5px 10px;
+    }
+
+    .storyText, .sideText {
         font-size: 12px;
-        padding: 6px 12px;
+        padding: 8px;
+        line-height: 1.4;
+    }
+
+    .navigationControls {
+        padding: 5px 12px;
+    }
+
+    .prevButton, .nextButton {
+        padding: 5px 10px;
+        font-size: 12px;
     }
 }
 
