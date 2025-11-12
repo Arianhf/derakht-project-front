@@ -124,6 +124,7 @@ const StoriesPage: React.FC = () => {
                     }))}
                     isOpen={isPreviewOpen}
                     onClose={() => setIsPreviewOpen(false)}
+                    readOnly={true}
                     storyId={selectedStory.id}
                     storyTitle={selectedStory.title}
                     coverImage={selectedStory.cover_image}
