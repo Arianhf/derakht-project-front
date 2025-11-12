@@ -730,16 +730,22 @@
 }
 
 .mobileImagePage {
-    position: relative;
     flex: 1;
     width: 100%;
     overflow: hidden;
     background-color: #f5f5f5;
     min-height: 300px; // Ensure minimum height for image display
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
 
-    .storyImage {
-        object-fit: contain;
-    }
+.mobileStoryImage {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 100%;
+    object-fit: contain;
 }
 
 .mobileTextPage {

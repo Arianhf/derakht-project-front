@@ -323,13 +323,14 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                             // Show only image
                             <div className={styles.mobileImagePage}>
                                 {!imageLoadingStates[`mobile-${mobilePageIndex}`] && (
-                                    <ImageSkeleton style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
+                                    <ImageSkeleton style={{ width: '100%', height: '100%' }} />
                                 )}
                                 <Image
                                     src={parts[getCurrentPartIndex()]?.illustration || "/placeholder-image.jpg"}
                                     alt={`تصویر داستان - صفحه ${mobilePageIndex + 1}`}
-                                    fill
-                                    className={styles.storyImage}
+                                    width={800}
+                                    height={600}
+                                    className={styles.mobileStoryImage}
                                     style={{ opacity: imageLoadingStates[`mobile-${mobilePageIndex}`] ? 1 : 0, transition: 'opacity 0.3s ease' }}
                                     onLoad={() => handleImageLoad(`mobile-${mobilePageIndex}`)}
                                 />
