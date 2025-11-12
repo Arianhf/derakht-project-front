@@ -13,6 +13,7 @@ interface StoryPreviewProps {
     isOpen: boolean;
     onClose: () => void;
     isFullPage?: boolean;
+    readOnly?: boolean; // When true, prevents data submission (view-only mode)
     storyId?: string;
     storyTitle?: string;
     coverImage?: string | null;
@@ -51,6 +52,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                        isOpen,
                                                        onClose,
                                                        isFullPage = false,
+                                                       readOnly = false,
                                                        storyId,
                                                        storyTitle,
                                                        coverImage,
@@ -177,8 +179,14 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
     if (!isOpen) return null;
 
     const handleFinishStory = async () => {
+        // If in read-only mode (viewing only), just close without submitting
+        if (readOnly) {
+            onClose();
+            return;
+        }
+
+        // If no storyId or storyTitle provided, or if we're in full-page mode, just navigate
         if (!storyId || !storyTitle || isFullPage) {
-            // If no storyId or storyTitle provided, or if we're in full-page mode, just navigate
             router.push('/story');
             return;
         }

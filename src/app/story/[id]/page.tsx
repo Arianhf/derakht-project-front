@@ -181,6 +181,7 @@ const StoryPage = () => {
                 isOpen={true}
                 onClose={() => router.push('/stories')}
                 isFullPage={true}
+                readOnly={true}
                 storyId={id as string}
                 storyTitle={template.title}
                 coverImage={coverImage}
