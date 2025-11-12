@@ -331,7 +331,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                     width={800}
                                     height={600}
                                     className={styles.mobileStoryImage}
-                                    style={{ opacity: imageLoadingStates[`mobile-${mobilePageIndex}`] ? 1 : 0, transition: 'opacity 0.3s ease' }}
+                                    style={{ opacity: imageLoadingStates[`mobile-${mobilePageIndex}`] ? 1 : 0, transition: 'opacity 0.3s ease', position: 'static' }}
                                     onLoad={() => handleImageLoad(`mobile-${mobilePageIndex}`)}
                                 />
                             </div>
