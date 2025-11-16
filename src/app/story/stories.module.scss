@@ -1,9 +1,11 @@
 @import '../../styles/globals.scss';
 
 .container {
-  min-height: $default-min-height;
+  min-height: calc(100vh - 200px);
   background: $gradient-bg;
   padding: $spacing-xl $spacing-md;
+  margin-top: $spacing-lg;
+  margin-bottom: $spacing-lg;
   display: flex;
   flex-direction: column;
   align-items: center;
