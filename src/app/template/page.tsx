@@ -8,9 +8,11 @@ import logo from '@/assets/images/logo2.png';
 import styles from './template.module.scss';
 import { templateService } from '@/services/templateService';
 import { loginService } from '@/services/loginService';
+import { storyService } from '@/services/storyService';
 import Image from 'next/image';
 import { Toaster, toast } from 'react-hot-toast';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import placeholderImage from '@/assets/images/story.png';
 
 // Import images
 import writeStoryImage from '../../../public/images/writeStory.jpg';
@@ -18,7 +20,7 @@ import paintStoryImage from '../../../public/images/paintStory.jpg';
 import finishStoryImage from '../../../public/images/finishStory.jpg';
 
 // Icons
-import { FaPaintBrush, FaPen, FaClock } from 'react-icons/fa';
+import { FaPaintBrush, FaPen, FaClock, FaBook } from 'react-icons/fa';
 
 interface TemplatePart {
   id: string;
@@ -43,10 +45,28 @@ interface TemplateResponse {
   results: Template[];
 }
 
+interface StoryPart {
+  id: string;
+  position: number;
+  text: string;
+  illustration: string | null;
+}
+
+interface Story {
+  id: string;
+  title: string;
+  parts: StoryPart[];
+  cover_image: string | null;
+  background_color: string | null;
+  font_color: string | null;
+}
+
 const TemplatePage = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<'story' | 'drawing' | null>(null);
   const [templates, setTemplates] = useState<Template[]>([]);
+  const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingStories, setIsLoadingStories] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -54,6 +74,26 @@ const TemplatePage = () => {
       fetchTemplates(selectedTemplate);
     }
   }, [selectedTemplate]);
+
+  // Fetch user stories on component mount
+  useEffect(() => {
+    const fetchUserStories = async () => {
+      const isAuthenticated = loginService.isAuthenticated();
+      if (isAuthenticated) {
+        try {
+          setIsLoadingStories(true);
+          const response = await storyService.getApiStories();
+          setStories(response.results);
+        } catch (error) {
+          console.error('Error fetching stories:', error);
+        } finally {
+          setIsLoadingStories(false);
+        }
+      }
+    };
+
+    fetchUserStories();
+  }, []);
 
   // Check for pending template selection on component mount
   useEffect(() => {
@@ -194,6 +234,56 @@ const TemplatePage = () => {
                     <div className={styles.imageLabel}>داستان کامل</div>
                   </div>
                 </div>
+
+                {/* My Stories Section */}
+                {loginService.isAuthenticated() && (
+                    <div className={styles.myStoriesSection}>
+                      <h2 className={styles.myStoriesTitle}>
+                        <FaBook className={styles.myStoriesIcon} />
+                        داستان‌های من
+                      </h2>
+                      {isLoadingStories ? (
+                          <div className={styles.myStoriesLoading}>در حال بارگذاری...</div>
+                      ) : stories.length === 0 ? (
+                          <p className={styles.noStories}>هنوز داستانی ندارید. یکی از قالب‌های بالا را انتخاب کنید!</p>
+                      ) : (
+                          <div className={styles.myStoriesGrid}>
+                            {stories.slice(0, 4).map((story) => (
+                                <div
+                                    key={story.id}
+                                    className={styles.myStoryCard}
+                                    onClick={() => router.push(`/story/${story.id}`)}
+                                >
+                                  <Image
+                                      src={story.cover_image || placeholderImage}
+                                      alt={story.title}
+                                      width={200}
+                                      height={150}
+                                      className={styles.myStoryImage}
+                                  />
+                                  <h3 className={styles.myStoryTitle}>{story.title}</h3>
+                                </div>
+                            ))}
+                          </div>
+                      )}
+                      {stories.length > 4 && (
+                          <button
+                              className={styles.viewAllButton}
+                              onClick={() => router.push('/story')}
+                          >
+                            مشاهده همه داستان‌ها
+                          </button>
+                      )}
+                      {stories.length > 0 && stories.length <= 4 && (
+                          <button
+                              className={styles.viewAllButton}
+                              onClick={() => router.push('/story')}
+                          >
+                            مشاهده داستان‌ها
+                          </button>
+                      )}
+                    </div>
+                )}
               </div>
           ) : (
               <div className={styles.selectedTemplate}>

@@ -395,3 +395,189 @@
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* My Stories Section */
+.myStoriesSection {
+  margin-top: 60px;
+  width: 100%;
+  padding: 40px 0;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  animation: fadeIn 0.8s ease-out;
+  direction: rtl;
+
+  @media (max-width: $breakpoint-md) {
+    padding: 30px 0;
+    margin-top: 40px;
+  }
+}
+
+.myStoriesTitle {
+  font-size: 28px;
+  font-weight: bold;
+  color: $dark-text;
+  margin-bottom: 50px;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+  width: 100%;
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 3px;
+    background: linear-gradient(to right, $primary-color, $secondary-color);
+    border-radius: 3px;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 24px;
+    margin-bottom: 40px;
+  }
+}
+
+.myStoriesIcon {
+  font-size: 28px;
+  color: $primary-color;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 24px;
+  }
+}
+
+.myStoriesLoading {
+  text-align: center;
+  padding: 40px 30px;
+  font-size: 18px;
+  color: $light-text;
+}
+
+.noStories {
+  text-align: center;
+  padding: 40px 30px;
+  font-size: 18px;
+  color: $light-text;
+  line-height: 1.6;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 16px;
+    padding: 30px 20px;
+  }
+}
+
+.myStoriesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  padding: 0 30px;
+  justify-items: center;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 0 20px;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 0 15px;
+  }
+}
+
+.myStoryCard {
+  background: white;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+  cursor: pointer;
+  transition: $transition-base;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 300px;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $shadow-lg;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    max-width: 100%;
+  }
+}
+
+.myStoryImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 1px solid rgba($primary-color, 0.1);
+
+  @media (max-width: $breakpoint-md) {
+    height: 180px;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    height: 150px;
+  }
+}
+
+.myStoryTitle {
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  color: $dark-text;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+.viewAllButton {
+  display: block;
+  margin: 20px auto 0;
+  padding: 12px 30px;
+  font-size: 16px;
+  border: none;
+  border-radius: $border-radius-md;
+  background-color: $primary-color;
+  color: white;
+  cursor: pointer;
+  transition: $transition-base;
+  font-family: $font-primary;
+  font-weight: bold;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-3px);
+    box-shadow: $shadow-md;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 14px;
+    padding: 10px 25px;
+  }
+}
