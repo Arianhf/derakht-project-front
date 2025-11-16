@@ -136,28 +136,29 @@ const StoriesPage: React.FC = () => {
                         ))
                     )}
                 </div>
-
-                {/* Story Preview Modal */}
-                {selectedStory && (
-                    <StoryPreview
-                        parts={selectedStory.parts.map((part) => ({
-                            illustration: part.illustration || "/placeholder-image.jpg",
-                            text: part.text || "متنی وارد نشده است.",
-                        }))}
-                        isOpen={isPreviewOpen}
-                        onClose={() => setIsPreviewOpen(false)}
-                        readOnly={true}
-                        storyId={selectedStory.id}
-                        storyTitle={selectedStory.title}
-                        coverImage={selectedStory.cover_image}
-                        backgroundColor={selectedStory.background_color}
-                        fontColor={selectedStory.font_color}
-                        onCoverImageUpload={handleCoverImageUpload}
-                        onColorChange={handleColorChange}
-                        modalTitle={selectedStory.title}
-                    />
-                )}
             </div>
+
+            {/* Story Preview Modal - Rendered outside container to avoid z-index stacking context issues */}
+            {selectedStory && (
+                <StoryPreview
+                    parts={selectedStory.parts.map((part) => ({
+                        illustration: part.illustration || "/placeholder-image.jpg",
+                        text: part.text || "متنی وارد نشده است.",
+                    }))}
+                    isOpen={isPreviewOpen}
+                    onClose={() => setIsPreviewOpen(false)}
+                    readOnly={true}
+                    storyId={selectedStory.id}
+                    storyTitle={selectedStory.title}
+                    coverImage={selectedStory.cover_image}
+                    backgroundColor={selectedStory.background_color}
+                    fontColor={selectedStory.font_color}
+                    onCoverImageUpload={handleCoverImageUpload}
+                    onColorChange={handleColorChange}
+                    modalTitle={selectedStory.title}
+                />
+            )}
+
             <Footer />
         </>
     );
