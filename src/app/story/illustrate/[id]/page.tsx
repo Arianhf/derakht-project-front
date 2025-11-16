@@ -91,7 +91,8 @@ const IllustrateStoryPage = () => {
 
       // Create FormData for the current image
       const formData = new FormData();
-      formData.append('part_position', currentIndex.toString());
+      // Convert 0-based index to 1-based position for backend
+      formData.append('part_position', (currentIndex + 1).toString());
       formData.append('story_id', id as string);
       formData.append('image', images[currentIndex] as File);
 
