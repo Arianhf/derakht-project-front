@@ -151,12 +151,6 @@ const TemplatePage = () => {
                       onClick={() => setSelectedTemplate("story")}
                       className={styles.imageContainer}
                   >
-                    <div className={styles.comingSoonOverlay}>
-                      <div className={styles.comingSoonContent}>
-                        <FaClock className={styles.comingSoonIcon} />
-                        <span className={styles.comingSoonText}>به زودی</span>
-                      </div>
-                    </div>
                     <Image
                         src={writeStoryImage}
                         alt="نوشتن داستان"
@@ -172,12 +166,6 @@ const TemplatePage = () => {
                       onClick={() => setSelectedTemplate("drawing")}
                       className={styles.imageContainer}
                   >
-                    <div className={styles.comingSoonOverlay}>
-                      <div className={styles.comingSoonContent}>
-                        <FaClock className={styles.comingSoonIcon} />
-                        <span className={styles.comingSoonText}>به زودی</span>
-                      </div>
-                    </div>
                     <Image
                         src={paintStoryImage}
                         alt="کشیدن عکس"
