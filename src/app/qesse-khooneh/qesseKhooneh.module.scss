@@ -1,0 +1,234 @@
+@import '../../styles/globals.scss';
+
+.container {
+  min-height: calc(100vh - 200px);
+  background: $gradient-bg;
+  padding: $spacing-xl $spacing-md;
+  margin-top: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  direction: rtl;
+  position: relative;
+  z-index: 0;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: $clouds;
+    z-index: -1;
+    opacity: 0.1;
+  }
+}
+
+.title {
+  font-size: $font-size-title;
+  font-weight: bold;
+  margin-bottom: $spacing-sm;
+  color: $dark-text;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: $font-size-lg;
+  color: $light-text;
+  text-align: center;
+  margin-bottom: $spacing-md;
+}
+
+.count {
+  font-size: $font-size-base;
+  color: $light-text;
+  text-align: center;
+  margin-bottom: $spacing-lg;
+  font-weight: 500;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $spacing-lg;
+  width: 100%;
+  max-width: 1200px;
+  animation: fadeIn 0.8s ease-out;
+  margin-bottom: $spacing-xl;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.storyCard {
+  background: $card-bg;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  transition: $transition-base;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.storyCard:hover {
+  transform: translateY(-5px);
+  box-shadow: $shadow-lg;
+}
+
+.storyImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 1px solid rgba($primary-color, 0.1);
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: $spacing-md;
+}
+
+.storyTitle {
+  font-size: $font-size-xl;
+  font-weight: bold;
+  margin-bottom: $spacing-sm;
+  color: $dark-text;
+}
+
+.authorName {
+  font-size: $font-size-sm;
+  color: $primary-color;
+  margin-bottom: $spacing-sm;
+  font-weight: 600;
+}
+
+.storyExcerpt {
+  font-size: $font-size-base;
+  color: $light-text;
+  margin-bottom: $spacing-md;
+  flex: 1;
+  line-height: $line-height-base;
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: center;
+  align-items: center;
+}
+
+.viewButton {
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-base;
+  cursor: pointer;
+  transition: $transition-base;
+  font-family: $font-primary;
+  width: 100%;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-2px);
+  }
+}
+
+.pagination {
+  display: flex;
+  gap: $spacing-md;
+  align-items: center;
+  justify-content: center;
+  margin-top: $spacing-lg;
+  padding: $spacing-md;
+}
+
+.paginationButton {
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-base;
+  cursor: pointer;
+  transition: $transition-base;
+  font-family: $font-primary;
+  font-weight: 600;
+
+  &:hover:not(:disabled) {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    background-color: lighten($light-text, 20%);
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.pageInfo {
+  font-size: $font-size-lg;
+  color: $dark-text;
+  font-weight: 600;
+  padding: 0 $spacing-md;
+}
+
+.loading, .error, .noStories {
+  text-align: center;
+  font-size: $font-size-lg;
+  color: $light-text;
+  padding: $spacing-xl;
+}
+
+.error {
+  color: $secondary-color;
+}
+
+/* Responsive styles */
+@media screen and (max-width: $breakpoint-md) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: $spacing-md;
+  }
+
+  .title {
+    font-size: $font-size-xxl;
+  }
+
+  .subtitle {
+    font-size: $font-size-base;
+  }
+
+  .pagination {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  .paginationButton {
+    width: 200px;
+  }
+}
+
+@media screen and (max-width: $breakpoint-sm) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+
+  .container {
+    padding: $spacing-lg $spacing-sm;
+  }
+
+  .paginationButton {
+    width: 100%;
+    max-width: 300px;
+  }
+}

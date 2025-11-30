@@ -49,6 +49,9 @@ const NavigationLinks: React.FC<NavigationLinksProps> = ({ pathname }) => {
                 <Link href="/template" className={styles.navbarLink}>
                     <span className={pathname?.startsWith('/template') ? styles.active : ''}>قصه‌سازی</span>
                 </Link>
+                <Link href="/qesse-khooneh" className={styles.navbarLink}>
+                    <span className={pathname?.startsWith('/qesse-khooneh') ? styles.active : ''}>قصه خونه</span>
+                </Link>
                 <Link href="/shop" className={styles.navbarLink}>
                     <span className={pathname?.startsWith('/shop') ? styles.active : ''}>فروشگاه</span>
                 </Link>
