@@ -83,5 +83,11 @@ export const storyService = {
   ): Promise<Story> => {
     const response = await api.post(`/stories/${storyId}/set_config/`, config);
     return response.data;
+  },
+
+  // Get all completed stories from all users
+  getCompletedStories: async (page: number = 1): Promise<StoryResponse<Story>> => {
+    const response = await api.get(`/stories/completed/?page=${page}`);
+    return response.data;
   }
 };

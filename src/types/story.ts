@@ -31,9 +31,24 @@ export interface StoryPart {
     illustration: string | null;
 }
 
+export interface Author {
+    id: number;
+    first_name: string;
+    last_name: string;
+    full_name: string;
+    age: number;
+    profile_image: string | null;
+    bio: string;
+    profile_url: string;
+    email: string;
+    social_links?: {
+        [key: string]: string;
+    };
+}
+
 export interface Story {
     activity_type: 'WRITE_FOR_DRAWING' | string;
-    author: number;
+    author: number | Author;
     created_at: string;
     id: string;
     parts: StoryPart[];
@@ -42,4 +57,5 @@ export interface Story {
     cover_image: string | null;
     background_color: string | null;
     font_color: string | null;
+    status?: 'DRAFT' | 'COMPLETED';
 }
