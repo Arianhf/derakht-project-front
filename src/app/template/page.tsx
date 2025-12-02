@@ -97,6 +97,9 @@ const TemplatePage = () => {
 
   // Check for pending template selection on component mount
   useEffect(() => {
+    // Only run in browser environment
+    if (typeof window === 'undefined') return;
+
     const isAuthenticated = loginService.isAuthenticated();
 
     if (isAuthenticated) {
@@ -145,14 +148,16 @@ const TemplatePage = () => {
       const isAuthenticated = loginService.isAuthenticated();
 
       if (!isAuthenticated) {
-        // Save the current selection and template to localStorage
-        localStorage.setItem(
-            'pendingTemplate',
-            JSON.stringify({
-              templateId,
-              selectedTemplate,
-            })
-        );
+        // Save the current selection and template to localStorage (only in browser)
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(
+              'pendingTemplate',
+              JSON.stringify({
+                templateId,
+                selectedTemplate,
+              })
+          );
+        }
 
         // Redirect to login page with returnUrl pointing back to the template page
         router.push(`/login?redirect=${encodeURIComponent('/template')}`);

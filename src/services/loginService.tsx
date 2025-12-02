@@ -35,10 +35,12 @@ export const loginService = {
             });
 
             if (response.data.access) {
-                // Store tokens in localStorage
-                localStorage.setItem("access_token", response.data.access);
-                localStorage.setItem("refresh_token", response.data.refresh);
-                localStorage.setItem("user", JSON.stringify(response.data.user));
+                // Store tokens in localStorage (only in browser)
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem("access_token", response.data.access);
+                    localStorage.setItem("refresh_token", response.data.refresh);
+                    localStorage.setItem("user", JSON.stringify(response.data.user));
+                }
 
                 // Store access_token in cookies (so middleware can access it)
                 Cookies.set("access_token", response.data.access, { expires: 1 }); // Expires in 1 day
@@ -60,13 +62,19 @@ export const loginService = {
     },
 
     logout: () => {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-        localStorage.removeItem("user");
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+            localStorage.removeItem("user");
+        }
         Cookies.remove("access_token"); // Remove cookie on logout
     },
 
     isAuthenticated: () => {
+        // Check if we're in the browser before accessing localStorage
+        if (typeof window === 'undefined') {
+            return false;
+        }
         return !!localStorage.getItem("access_token"); // Check if access token exists
     },
 };
