@@ -55,13 +55,19 @@ export const userService = {
     },
 
     isAuthenticated: () => {
+        // Check if we're in the browser before accessing localStorage
+        if (typeof window === 'undefined') {
+            return !!Cookies.get('access_token');
+        }
         return !!localStorage.getItem('access_token') || !!Cookies.get('access_token');
     },
 
     logout: () => {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('user');
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user');
+        }
         Cookies.remove('access_token');
     }
 };
