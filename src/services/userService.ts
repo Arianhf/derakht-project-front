@@ -54,6 +54,22 @@ export const userService = {
         return response.data;
     },
 
+    uploadProfileImage: async (imageFile: File): Promise<User> => {
+        const formData = new FormData();
+        formData.append('profile_image', imageFile);
+        const response = await api.post('/users/me/profile-image/', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    },
+
+    deleteProfileImage: async (): Promise<User> => {
+        const response = await api.delete('/users/me/profile-image/');
+        return response.data;
+    },
+
     isAuthenticated: () => {
         // Check if we're in the browser before accessing localStorage
         if (typeof window === 'undefined') {

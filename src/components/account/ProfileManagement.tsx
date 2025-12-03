@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useUser, UserAddress } from '@/contexts/UserContext';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit, FaTrash, FaCamera } from 'react-icons/fa';
 import styles from './ProfileManagement.module.scss';
 
 const ProfileManagement: React.FC = () => {
-    const { user, updateProfile, updateAddress } = useUser();
+    const { user, updateProfile, updateAddress, updateProfileImage, deleteProfileImage } = useUser();
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [isEditingAddress, setIsEditingAddress] = useState(false);
     const [profileData, setProfileData] = useState({
@@ -25,6 +26,7 @@ const ProfileManagement: React.FC = () => {
         is_default: true
     });
     const [loading, setLoading] = useState(false);
+    const [imageLoading, setImageLoading] = useState(false);
 
     const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -65,6 +67,55 @@ const ProfileManagement: React.FC = () => {
         }
     };
 
+    const handleImageClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            alert('لطفاً یک فایل تصویری انتخاب کنید');
+            return;
+        }
+
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('حجم فایل نباید بیشتر از ۵ مگابایت باشد');
+            return;
+        }
+
+        try {
+            setImageLoading(true);
+            await updateProfileImage(file);
+        } catch (error) {
+            console.error('Error uploading image:', error);
+        } finally {
+            setImageLoading(false);
+            // Reset file input
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    };
+
+    const handleDeleteImage = async () => {
+        if (!window.confirm('آیا از حذف تصویر پروفایل اطمینان دارید؟')) {
+            return;
+        }
+
+        try {
+            setImageLoading(true);
+            await deleteProfileImage();
+        } catch (error) {
+            console.error('Error deleting image:', error);
+        } finally {
+            setImageLoading(false);
+        }
+    };
+
     // List of Iranian provinces for select options
     const provinces = [
         'آذربایجان شرقی', 'آذربایجان غربی', 'اردبیل', 'اصفهان', 'البرز', 'ایلام', 'بوشهر',
@@ -77,6 +128,63 @@ const ProfileManagement: React.FC = () => {
     return (
         <div className={styles.profileContainer}>
             <h1 className={styles.pageTitle}>پروفایل من</h1>
+
+            {/* Profile Image Section */}
+            <div className={styles.section}>
+                <div className={styles.sectionHeader}>
+                    <h2><FaCamera className={styles.sectionIcon} /> تصویر پروفایل</h2>
+                </div>
+                <div className={styles.imageCard}>
+                    <div className={styles.imageContainer}>
+                        <div className={styles.profileImageWrapper}>
+                            {user?.profile_image ? (
+                                <img
+                                    src={user.profile_image}
+                                    alt="Profile"
+                                    className={styles.profileImage}
+                                />
+                            ) : (
+                                <div className={styles.profileImagePlaceholder}>
+                                    <FaUser className={styles.placeholderIcon} />
+                                </div>
+                            )}
+                            {imageLoading && (
+                                <div className={styles.imageLoadingOverlay}>
+                                    <div className={styles.spinner}></div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className={styles.imageActions}>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleImageChange}
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                        />
+                        <button
+                            onClick={handleImageClick}
+                            className={styles.uploadButton}
+                            disabled={imageLoading}
+                        >
+                            <FaCamera /> {user?.profile_image ? 'تغییر تصویر' : 'آپلود تصویر'}
+                        </button>
+                        {user?.profile_image && (
+                            <button
+                                onClick={handleDeleteImage}
+                                className={styles.deleteImageButton}
+                                disabled={imageLoading}
+                            >
+                                <FaTrash /> حذف تصویر
+                            </button>
+                        )}
+                        <small className={styles.imageHelpText}>
+                            حداکثر حجم: ۵ مگابایت | فرمت‌های مجاز: JPG, PNG, GIF
+                        </small>
+                    </div>
+                </div>
+            </div>
 
             <div className={styles.section}>
                 <div className={styles.sectionHeader}>

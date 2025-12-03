@@ -31,6 +31,8 @@ interface UserContextType {
     fetchUser: () => Promise<void>;
     updateProfile: (userData: Partial<User>) => Promise<void>;
     updateAddress: (addressData: UserAddress) => Promise<void>;
+    updateProfileImage: (imageFile: File) => Promise<void>;
+    deleteProfileImage: () => Promise<void>;
     logout: () => void;
 }
 
@@ -86,6 +88,34 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const updateProfileImage = async (imageFile: File) => {
+        try {
+            setLoading(true);
+            const updatedUser = await userService.uploadProfileImage(imageFile);
+            setUser(updatedUser);
+            toast.success('تصویر پروفایل با موفقیت به‌روزرسانی شد');
+        } catch (error) {
+            toast.error('خطا در آپلود تصویر پروفایل');
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const deleteProfileImage = async () => {
+        try {
+            setLoading(true);
+            const updatedUser = await userService.deleteProfileImage();
+            setUser(updatedUser);
+            toast.success('تصویر پروفایل با موفقیت حذف شد');
+        } catch (error) {
+            toast.error('خطا در حذف تصویر پروفایل');
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const logout = () => {
         userService.logout();
         setUser(null);
@@ -112,6 +142,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 fetchUser,
                 updateProfile,
                 updateAddress,
+                updateProfileImage,
+                deleteProfileImage,
                 logout
             }}
         >
