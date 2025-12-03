@@ -81,7 +81,11 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
                     <div className={styles.userInfo}>
                         <div className={styles.avatarContainer}>
                             <div className={styles.avatar}>
-                                {user.first_name?.charAt(0) || (user.email && user.email.charAt(0).toUpperCase()) || 'U'}
+                                {user.profile_image ? (
+                                    <img src={user.profile_image} alt={`${user.first_name} ${user.last_name}`} />
+                                ) : (
+                                    user.first_name?.charAt(0) || (user.email && user.email.charAt(0).toUpperCase()) || 'U'
+                                )}
                             </div>
                         </div>
                         <div className={styles.userDetails}>
