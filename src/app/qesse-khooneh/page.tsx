@@ -103,12 +103,6 @@ const QesseKhoonehPage: React.FC = () => {
             <Toaster position="top-center" />
             <div className={styles.container}>
                 <h1 className={styles.title}>قصه خونه</h1>
-                <p className={styles.subtitle}>داستان‌های تکمیل شده همه کاربران</p>
-
-                {totalCount > 0 && (
-                    <p className={styles.count}>تعداد داستان‌ها: {totalCount}</p>
-                )}
-
                 <div className={styles.grid}>
                     {stories.length === 0 ? (
                         <p className={styles.noStories}>هنوز داستانی ثبت نشده است.</p>
