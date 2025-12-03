@@ -10,6 +10,7 @@ export interface User {
     first_name: string;
     last_name: string;
     phone_number?: string;
+    profile_image?: string | null;
     default_address?: UserAddress;
 }
 
