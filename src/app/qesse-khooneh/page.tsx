@@ -69,6 +69,14 @@ const QesseKhoonehPage: React.FC = () => {
         return author.full_name || `${author.first_name} ${author.last_name}`;
     };
 
+    const getAuthorAvatar = (author: number | Author) => {
+        if (typeof author === 'number') {
+            return { image: null, initial: 'ن' };
+        }
+        const initial = author.first_name?.charAt(0) || author.full_name?.charAt(0) || 'ن';
+        return { image: author.profile_image, initial };
+    };
+
     if (loading) return (
         <>
             <Navbar logo={logo} />
@@ -116,9 +124,21 @@ const QesseKhoonehPage: React.FC = () => {
                                 />
                                 <div className={styles.cardContent}>
                                     <h2 className={styles.storyTitle}>{story.title}</h2>
-                                    <p className={styles.authorName}>
-                                        نویسنده: {getAuthorName(story.author)}
-                                    </p>
+                                    <div className={styles.authorInfo}>
+                                        <div className={styles.authorAvatar}>
+                                            {getAuthorAvatar(story.author).image ? (
+                                                <img
+                                                    src={getAuthorAvatar(story.author).image!}
+                                                    alt={getAuthorName(story.author)}
+                                                />
+                                            ) : (
+                                                getAuthorAvatar(story.author).initial
+                                            )}
+                                        </div>
+                                        <p className={styles.authorName}>
+                                            نویسنده: {getAuthorName(story.author)}
+                                        </p>
+                                    </div>
                                     <p className={styles.storyExcerpt}>
                                         {story.parts[0]?.text.substring(0, 50) || "بدون متن"}...
                                     </p>
