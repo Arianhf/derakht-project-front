@@ -9,53 +9,6 @@ import Footer from '@/components/shared/Footer/Footer';
 import { FaBook, FaShoppingCart, FaPencilAlt, FaStar } from 'react-icons/fa';
 import styles from './home.module.scss';
 import logo from '@/assets/images/logo2.png';
-import { Metadata } from 'next';
-
-// SEO Metadata for homepage
-export const metadata: Metadata = {
-  title: 'درخت | پلتفرم قصه‌سازی و آموزش خلاقانه کودکان',
-  description: 'درخت - پلتفرم آموزشی و سرگرمی برای کودکان. قصه‌سازی خلاقانه، بسته‌های کتابخوانی و بلاگ آموزشی برای رشد خلاقیت، مهارت‌های زبانی و تفکر خلاق کودکان از یک تا یک‌صد سال',
-  keywords: 'قصه‌سازی کودکان، آموزش خلاقانه، بلاگ کودک، بسته کتابخوانی، رشد خلاقیت کودکان، داستان‌های کودکانه، پلتفرم آموزشی کودک، مهارت‌های زبانی کودکان، تفکر خلاق، درخت',
-  authors: [{ name: 'تیم درخت' }],
-  creator: 'درخت',
-  publisher: 'درخت',
-  openGraph: {
-    type: 'website',
-    locale: 'fa_IR',
-    url: 'https://derakht.com',
-    siteName: 'درخت',
-    title: 'درخت | پلتفرم قصه‌سازی و آموزش خلاقانه کودکان',
-    description: 'پلتفرم آموزشی و سرگرمی برای کودکان. قصه‌سازی خلاقانه، بسته‌های کتابخوانی و بلاگ آموزشی برای رشد خلاقیت کودکان',
-    images: [
-      {
-        url: '/images/og-default.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'درخت - پلتفرم قصه‌سازی و آموزش خلاقانه کودکان',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'درخت | پلتفرم قصه‌سازی و آموزش خلاقانه کودکان',
-    description: 'پلتفرم آموزشی و سرگرمی برای کودکان. قصه‌سازی خلاقانه، بسته‌های کتابخوانی و بلاگ آموزشی',
-    images: ['/images/og-default.jpg'],
-  },
-  alternates: {
-    canonical: 'https://derakht.com',
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-};
 
 const HomePage = () => {
   const router = useRouter();
