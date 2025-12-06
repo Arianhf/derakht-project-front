@@ -8,6 +8,53 @@ import { FaUsers, FaBullseye, FaHeart, FaSeedling, FaSmile, FaBookReader, FaPuzz
 import styles from './about.module.scss';
 import logo from '@/assets/images/logo2.png';
 import Footer from "@/components/shared/Footer/Footer";
+import { Metadata } from 'next';
+
+// SEO Metadata for About page
+export const metadata: Metadata = {
+    title: 'درباره درخت | ماموریت ما در پرورش خلاقیت کودکان',
+    description: 'درخت - پلتفرم قصه‌سازی و آموزش خلاقانه کودکان. تیم ما شامل نویسندگان، نقاشان و متخصصان آموزش کودک است که در سال ۱۴۰۳ گرد هم آمدند تا خلاقیت کودکان را پرورش دهند',
+    keywords: 'درباره درخت، ماموریت درخت، تیم درخت، آموزش خلاقانه کودکان، قصه‌سازی، پلتفرم آموزشی کودکان، ارزش‌های درخت، چشم‌انداز درخت',
+    authors: [{ name: 'تیم درخت' }],
+    creator: 'درخت',
+    publisher: 'درخت',
+    openGraph: {
+        type: 'website',
+        locale: 'fa_IR',
+        url: 'https://derakht.com/about',
+        siteName: 'درخت',
+        title: 'درباره درخت | ماموریت ما در پرورش خلاقیت کودکان',
+        description: 'داستان درخت، یک پلتفرم قصه‌سازی و آموزش خلاقانه. تیم ما شامل نویسندگان، نقاشان و متخصصان آموزش کودک',
+        images: [
+            {
+                url: '/images/about-og-image.jpg',
+                width: 1200,
+                height: 630,
+                alt: 'درباره درخت - ماموریت ما',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'درباره درخت | ماموریت ما در پرورش خلاقیت کودکان',
+        description: 'داستان درخت، یک پلتفرم قصه‌سازی و آموزش خلاقانه. تیم ما شامل نویسندگان، نقاشان و متخصصان آموزش کودک',
+        images: ['/images/about-og-image.jpg'],
+    },
+    alternates: {
+        canonical: 'https://derakht.com/about',
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            'max-video-preview': -1,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+        },
+    },
+};
 
 const AboutUsPage = () => {
     // Animation states for elements
@@ -47,8 +94,64 @@ const AboutUsPage = () => {
         };
     }, []);
 
+    // Organization Structured Data
+    const organizationSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'درخت',
+        url: 'https://derakht.com',
+        logo: 'https://derakht.com/images/logo2.png',
+        description: 'پلتفرم قصه‌سازی و آموزش خلاقانه کودکان',
+        foundingDate: '2024',
+        slogan: 'برای خلق اثری ماندگار از کودکی',
+        mission: 'راحت‌تر کردن مسیر فکر کردن و تخیل کردن و رساندن آن به خلق یک اثر است؛ اثری از امروز زندگی که در درخت برای همیشه ماندگار می‌شود',
+        knowsAbout: [
+            'قصه‌سازی کودکان',
+            'آموزش خلاقانه',
+            'رشد مهارت‌های کودکان',
+            'تفکر خلاق',
+            'مهارت‌های زبانی کودکان'
+        ],
+        areaServed: {
+            '@type': 'Country',
+            name: 'ایران'
+        },
+        keywords: 'قصه‌سازی، آموزش کودک، خلاقیت، مهارت‌های زبانی'
+    };
+
+    // Breadcrumb Structured Data
+    const breadcrumbSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'خانه',
+                item: 'https://derakht.com'
+            },
+            {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'درباره ما',
+                item: 'https://derakht.com/about'
+            }
+        ]
+    };
+
     return (
-        <div className={styles.aboutContainer}>
+        <>
+            {/* Structured Data Scripts */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+            />
+
+            <div className={styles.aboutContainer}>
             <Navbar logo={logo} />
 
             {/* Hero Section */}
@@ -209,6 +312,7 @@ const AboutUsPage = () => {
             {/* Footer */}
             <Footer/>
         </div>
+        </>
     );
 };
 
