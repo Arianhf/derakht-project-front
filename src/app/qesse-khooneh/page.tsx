@@ -102,7 +102,6 @@ const QesseKhoonehPage: React.FC = () => {
             <Navbar logo={logo} />
             <Toaster position="top-center" />
             <div className={styles.container}>
-                <h1 className={styles.title}>قصه خونه</h1>
                 <div className={styles.grid}>
                     {stories.length === 0 ? (
                         <p className={styles.noStories}>هنوز داستانی ثبت نشده است.</p>
