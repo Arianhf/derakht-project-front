@@ -35,8 +35,56 @@ const HomePage = () => {
     };
   }, []);
 
+  // Structured Data for Organization
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'درخت',
+    url: 'https://derakht.com',
+    logo: 'https://derakht.com/images/logo2.png',
+    description: 'پلتفرم قصه‌سازی و آموزش خلاقانه کودکان',
+    foundingDate: '2024',
+    slogan: 'برای خلق اثری ماندگار از کودکی',
+    knowsAbout: [
+      'قصه‌سازی کودکان',
+      'آموزش خلاقانه',
+      'رشد مهارت‌های کودکان',
+      'محتوای آموزشی کودک',
+      'بسته‌های کتابخوانی'
+    ],
+  };
+
+  // WebSite Schema with SearchAction
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'درخت',
+    url: 'https://derakht.com',
+    description: 'پلتفرم آموزشی و سرگرمی برای کودکان',
+    inLanguage: 'fa-IR',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://derakht.com/search?q={search_term_string}'
+      },
+      'query-input': 'required name=search_term_string'
+    }
+  };
+
   return (
-      <div className={styles.homeContainer}>
+      <>
+        {/* Structured Data Scripts */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+
+        <div className={styles.homeContainer}>
         <Navbar logo={logo} />
 
         {/* Hero Section */}
@@ -188,6 +236,7 @@ const HomePage = () => {
         {/* Use the shared Footer component */}
         <Footer />
       </div>
+      </>
   );
 };
 

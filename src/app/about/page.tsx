@@ -47,8 +47,64 @@ const AboutUsPage = () => {
         };
     }, []);
 
+    // Organization Structured Data
+    const organizationSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'درخت',
+        url: 'https://derakht.com',
+        logo: 'https://derakht.com/images/logo2.png',
+        description: 'پلتفرم قصه‌سازی و آموزش خلاقانه کودکان',
+        foundingDate: '2024',
+        slogan: 'برای خلق اثری ماندگار از کودکی',
+        mission: 'راحت‌تر کردن مسیر فکر کردن و تخیل کردن و رساندن آن به خلق یک اثر است؛ اثری از امروز زندگی که در درخت برای همیشه ماندگار می‌شود',
+        knowsAbout: [
+            'قصه‌سازی کودکان',
+            'آموزش خلاقانه',
+            'رشد مهارت‌های کودکان',
+            'تفکر خلاق',
+            'مهارت‌های زبانی کودکان'
+        ],
+        areaServed: {
+            '@type': 'Country',
+            name: 'ایران'
+        },
+        keywords: 'قصه‌سازی، آموزش کودک، خلاقیت، مهارت‌های زبانی'
+    };
+
+    // Breadcrumb Structured Data
+    const breadcrumbSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'خانه',
+                item: 'https://derakht.com'
+            },
+            {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'درباره ما',
+                item: 'https://derakht.com/about'
+            }
+        ]
+    };
+
     return (
-        <div className={styles.aboutContainer}>
+        <>
+            {/* Structured Data Scripts */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+            />
+
+            <div className={styles.aboutContainer}>
             <Navbar logo={logo} />
 
             {/* Hero Section */}
@@ -209,6 +265,7 @@ const AboutUsPage = () => {
             {/* Footer */}
             <Footer/>
         </div>
+        </>
     );
 };
 

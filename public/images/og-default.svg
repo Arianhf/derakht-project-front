@@ -1,0 +1,45 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B5CF6;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#06B6D4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+
+  <!-- Overlay for better text readability -->
+  <rect width="1200" height="630" fill="rgba(255, 255, 255, 0.1)"/>
+
+  <!-- Main content container -->
+  <g>
+    <!-- Decorative circles -->
+    <circle cx="150" cy="150" r="80" fill="rgba(255, 255, 255, 0.2)"/>
+    <circle cx="1050" cy="480" r="100" fill="rgba(255, 255, 255, 0.15)"/>
+    <circle cx="900" cy="100" r="60" fill="rgba(255, 255, 255, 0.2)"/>
+
+    <!-- Title -->
+    <text x="600" y="280" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="#FFFFFF" text-anchor="middle">
+      درخت
+    </text>
+
+    <!-- Subtitle -->
+    <text x="600" y="360" font-family="Arial, sans-serif" font-size="36" fill="#FFFFFF" text-anchor="middle" opacity="0.95">
+      پلتفرم قصه‌سازی و آموزش خلاقانه کودکان
+    </text>
+
+    <!-- Tagline -->
+    <text x="600" y="450" font-family="Arial, sans-serif" font-size="28" fill="#FFFFFF" text-anchor="middle" opacity="0.9">
+      برای خلق اثری ماندگار از کودکی
+    </text>
+
+    <!-- Decorative elements -->
+    <text x="500" y="200" font-size="60" opacity="0.6">✨</text>
+    <text x="700" y="520" font-size="60" opacity="0.6">🌈</text>
+    <text x="200" y="400" font-size="50" opacity="0.5">📚</text>
+    <text x="1000" y="250" font-size="50" opacity="0.5">🎨</text>
+  </g>
+</svg>
