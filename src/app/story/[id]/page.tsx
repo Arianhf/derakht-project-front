@@ -189,6 +189,8 @@ const StoryPage = () => {
                 fontColor={fontColor}
                 onCoverImageUpload={handleCoverImageUpload}
                 onColorChange={handleColorChange}
+                orientation={template.orientation}
+                size={template.size}
             />
           </div>
         </div>
@@ -373,6 +375,8 @@ const StoryPage = () => {
             fontColor={fontColor}
             onCoverImageUpload={handleCoverImageUpload}
             onColorChange={handleColorChange}
+            orientation={template.orientation}
+            size={template.size}
         />
       </div>
   );

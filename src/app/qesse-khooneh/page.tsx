@@ -187,6 +187,8 @@ const QesseKhoonehPage: React.FC = () => {
                     backgroundColor={selectedStory.background_color}
                     fontColor={selectedStory.font_color}
                     modalTitle={selectedStory.title}
+                    orientation={selectedStory.orientation}
+                    size={selectedStory.size}
                 />
             )}
 

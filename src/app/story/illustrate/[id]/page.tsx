@@ -377,6 +377,8 @@ const IllustrateStoryPage = () => {
             }))}
             isOpen={isPreviewOpen}
             onClose={() => setIsPreviewOpen(false)}
+            orientation={template.orientation}
+            size={template.size}
         />
       </div>
   );

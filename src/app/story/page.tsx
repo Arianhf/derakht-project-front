@@ -156,6 +156,8 @@ const StoriesPage: React.FC = () => {
                     onCoverImageUpload={handleCoverImageUpload}
                     onColorChange={handleColorChange}
                     modalTitle={selectedStory.title}
+                    orientation={selectedStory.orientation}
+                    size={selectedStory.size}
                 />
             )}
 

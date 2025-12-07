@@ -807,3 +807,116 @@
         background-position: -200% 0;
     }
 }
+
+/* Story size and orientation styles */
+/* These classes control the aspect ratio and dimensions of story containers */
+
+/* Square sizes */
+.size_20x20 {
+    .imageContainer,
+    .imagePane {
+        aspect-ratio: 1 / 1;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .mobileImagePage {
+        aspect-ratio: 1 / 1;
+        max-height: 70vh;
+    }
+}
+
+.size_25x25 {
+    .imageContainer,
+    .imagePane {
+        aspect-ratio: 1 / 1;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .mobileImagePage {
+        aspect-ratio: 1 / 1;
+        max-height: 75vh;
+    }
+}
+
+/* 15x23 sizes with orientation */
+.size_15x23 {
+    &.orientation_landscape {
+        .imageContainer,
+        .imagePane {
+            aspect-ratio: 23 / 15;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .mobileImagePage {
+            aspect-ratio: 23 / 15;
+            max-height: 60vh;
+        }
+    }
+
+    &.orientation_portrait {
+        .imageContainer,
+        .imagePane {
+            aspect-ratio: 15 / 23;
+            max-width: 550px;
+            margin: 0 auto;
+        }
+
+        .mobileImagePage {
+            aspect-ratio: 15 / 23;
+            max-height: 80vh;
+        }
+    }
+}
+
+/* Default behavior when no size/orientation is set */
+.story_default {
+    // Keep existing flexible behavior
+    .imageContainer,
+    .imagePane {
+        // No forced aspect ratio
+        width: 95%;
+        height: auto;
+    }
+}
+
+/* Orientation-specific adjustments for side-by-side view */
+.orientation_landscape {
+    &.sideBySideView {
+        .imagePane {
+            flex: 3;
+        }
+        .textPane {
+            flex: 2;
+        }
+    }
+}
+
+.orientation_portrait {
+    &.sideBySideView {
+        .imagePane {
+            flex: 2;
+        }
+        .textPane {
+            flex: 3;
+        }
+    }
+}
+
+/* Mobile adjustments for different sizes */
+@media (max-width: $breakpoint-md) {
+    .size_15x23.orientation_portrait {
+        .mobileImagePage {
+            max-height: 85vh;
+        }
+    }
+
+    .size_20x20,
+    .size_25x25 {
+        .mobileImagePage {
+            max-height: 65vh;
+        }
+    }
+}
