@@ -1,4 +1,11 @@
 // src/types/story.ts
+
+// Story orientation type
+export type StoryOrientation = 'LANDSCAPE' | 'PORTRAIT' | null;
+
+// Story size type
+export type StorySize = '20x20' | '25x25' | '15x23' | null;
+
 export interface StoryResponse<T> {
     count: number;
     next: string | null;
@@ -58,4 +65,39 @@ export interface Story {
     background_color: string | null;
     font_color: string | null;
     status?: 'DRAFT' | 'COMPLETED';
+    orientation: StoryOrientation;
+    size: StorySize;
 }
+
+// Helper functions for story orientation and size
+
+/**
+ * Get CSS class based on story orientation
+ * @param story - The story object
+ * @returns CSS class name for orientation
+ */
+export const getOrientationClass = (story: Story | null | undefined): string => {
+    if (!story) return 'story-default';
+    if (story.orientation === 'LANDSCAPE') return 'story-landscape';
+    if (story.orientation === 'PORTRAIT') return 'story-portrait';
+    return 'story-default';
+};
+
+/**
+ * Get size dimensions for a story
+ * @param story - The story object
+ * @returns Object with width and height dimensions
+ */
+export const getSizeDimensions = (story: Story | null | undefined): { width: number | 'auto'; height: number | 'auto' } => {
+    if (!story || !story.size) {
+        return { width: 'auto', height: 'auto' };
+    }
+
+    const sizes: Record<string, { width: number; height: number }> = {
+        '20x20': { width: 20, height: 20 },
+        '25x25': { width: 25, height: 25 },
+        '15x23': { width: 15, height: 23 }
+    };
+
+    return sizes[story.size] || { width: 'auto', height: 'auto' };
+};
