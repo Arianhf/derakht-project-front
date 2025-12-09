@@ -42,16 +42,18 @@ export interface CanvasTextObject {
 const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
   initialState,
   onChange,
-  width = 800,
-  height = 600,
+  width,
+  height,
   backgroundColor = '#FFFFFF',
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const fabricCanvasRef = useRef<any>(null);
   const fabricLibRef = useRef<any>(null); // Store fabric library instance
   const [activeObject, setActiveObject] = useState<CanvasTextObject | null>(null);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
   const [isFabricLoaded, setIsFabricLoaded] = useState(false);
+  const [canvasDimensions, setCanvasDimensions] = useState({ width: 800, height: 600 });
 
   /**
    * Load Fabric.js dynamically (client-side only)
@@ -81,6 +83,37 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
   }, []);
 
   /**
+   * Calculate canvas dimensions from container
+   */
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const newWidth = width || rect.width;
+        const newHeight = height || rect.height;
+
+        console.log('Container dimensions:', { width: rect.width, height: rect.height });
+        console.log('Setting canvas dimensions:', { newWidth, newHeight });
+
+        setCanvasDimensions({ width: newWidth, height: newHeight });
+      }
+    };
+
+    // Initial measurement
+    updateDimensions();
+
+    // Observe container size changes
+    const resizeObserver = new ResizeObserver(updateDimensions);
+    resizeObserver.observe(containerRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [width, height]);
+
+  /**
    * Initialize Fabric.js canvas
    */
   useEffect(() => {
@@ -99,14 +132,14 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
       return;
     }
 
-    console.log('Initializing Fabric canvas...');
+    console.log('Initializing Fabric canvas with dimensions:', canvasDimensions);
 
     const { Canvas } = fabricLibRef.current;
 
     // Initialize the canvas
     const canvas = new Canvas(canvasRef.current, {
-      width,
-      height,
+      width: canvasDimensions.width,
+      height: canvasDimensions.height,
       backgroundColor,
       selection: true,
       preserveObjectStacking: true,
@@ -178,6 +211,20 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     // Cleanup only happens when component unmounts (see separate effect below)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFabricLoaded]);
+
+  /**
+   * Update canvas dimensions when container size changes
+   */
+  useEffect(() => {
+    if (!fabricCanvasRef.current) return;
+
+    console.log('Updating canvas dimensions to:', canvasDimensions);
+    fabricCanvasRef.current.setDimensions({
+      width: canvasDimensions.width,
+      height: canvasDimensions.height,
+    });
+    fabricCanvasRef.current.renderAll();
+  }, [canvasDimensions]);
 
   /**
    * Cleanup canvas on unmount
@@ -452,7 +499,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
 
   return (
     <div className={styles.canvasEditorWrapper}>
-      <div className={styles.canvasContainer}>
+      <div ref={containerRef} className={styles.canvasContainer}>
         <canvas ref={canvasRef} />
 
         {/* Floating toolbar overlay */}

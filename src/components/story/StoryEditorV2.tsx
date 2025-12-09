@@ -326,8 +326,6 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
                   key={`canvas-${index}`}
                   initialState={canvasStates[index]}
                   onChange={(canvasJSON) => handleCanvasChange(index, canvasJSON)}
-                  width={600}
-                  height={450}
                   backgroundColor={story.background_color || '#FFFFFF'}
                 />
               ) : (
