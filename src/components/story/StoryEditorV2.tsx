@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight, FaSave, FaCog } from 'react-icons/fa';
+import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight, FaSave, FaCog, FaPaintBrush, FaFont } from 'react-icons/fa';
 import styles from './StoryEditorV2.module.scss';
 import { Story, StoryOrientation, StorySize, StoryPart } from '@/types/story';
+import TextCanvasEditor from './TextCanvasEditor';
 
 interface StoryEditorV2Props {
   story: Story;
@@ -97,6 +98,8 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isCanvasMode, setIsCanvasMode] = useState(false);
+  const [canvasStates, setCanvasStates] = useState<{ [key: number]: string }>({});
   const contentRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const settingsModalRef = useRef<HTMLDivElement>(null);
@@ -199,6 +202,17 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
     newTexts[index] = value;
     setTexts(newTexts);
     setHasUnsavedChanges(true);
+  };
+
+  const handleCanvasChange = (index: number, canvasJSON: string) => {
+    const newCanvasStates = { ...canvasStates };
+    newCanvasStates[index] = canvasJSON;
+    setCanvasStates(newCanvasStates);
+    setHasUnsavedChanges(true);
+  };
+
+  const toggleCanvasMode = () => {
+    setIsCanvasMode(!isCanvasMode);
   };
 
   const handleCoverImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -307,17 +321,27 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
         <div className={styles.contentInner}>
           {type === 'text' ? (
             <div className={styles.textEditorWrapper}>
-              <textarea
-                ref={currentView === 'text' && isMobile ? textareaRef : null}
-                className={styles.textEditor}
-                value={texts[index] || ''}
-                onChange={(e) => handleTextChange(index, e.target.value)}
-                placeholder="متن داستان خود را اینجا بنویسید..."
-                style={{
-                  backgroundColor: story.background_color || '#FFF9F5',
-                  color: story.font_color || '#2B463C',
-                }}
-              />
+              {isCanvasMode ? (
+                <TextCanvasEditor
+                  initialState={canvasStates[index]}
+                  onChange={(canvasJSON) => handleCanvasChange(index, canvasJSON)}
+                  width={600}
+                  height={450}
+                  backgroundColor={story.background_color || '#FFFFFF'}
+                />
+              ) : (
+                <textarea
+                  ref={currentView === 'text' && isMobile ? textareaRef : null}
+                  className={styles.textEditor}
+                  value={texts[index] || ''}
+                  onChange={(e) => handleTextChange(index, e.target.value)}
+                  placeholder="متن داستان خود را اینجا بنویسید..."
+                  style={{
+                    backgroundColor: story.background_color || '#FFF9F5',
+                    color: story.font_color || '#2B463C',
+                  }}
+                />
+              )}
             </div>
           ) : (
             <div className={styles.imageContent}>
@@ -399,6 +423,14 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
           </h2>
         </div>
         <div className={styles.headerLeft}>
+          <button
+            className={`${styles.editorModeButton} ${isCanvasMode ? styles.active : ''}`}
+            onClick={toggleCanvasMode}
+            aria-label={isCanvasMode ? 'حالت متن ساده' : 'حالت ویرایشگر کنواس'}
+            title={isCanvasMode ? 'تغییر به حالت متن ساده' : 'تغییر به حالت ویرایشگر کنواس'}
+          >
+            {isCanvasMode ? <FaFont /> : <FaPaintBrush />}
+          </button>
           <button
             className={styles.settingsButton}
             onClick={() => setIsSettingsOpen(true)}

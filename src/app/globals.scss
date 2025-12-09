@@ -30,6 +30,17 @@ html, body {
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Yekan';
+  src: url('../../public/fonts/Yekan.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+// Additional Persian fonts for canvas editor
+// Vazir and Shabnam can be loaded via CDN or added locally
+// For CDN usage, add these imports in your component or use Google Fonts
+
 
 // Container Width
 .container {
