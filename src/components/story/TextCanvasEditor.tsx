@@ -538,37 +538,35 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     }
   }, []);
 
-  // Show loading state while Fabric.js is loading or dimensions not ready
-  if (!isFabricLoaded || !dimensionsCalculatedRef.current) {
-    return (
-      <div className={styles.canvasEditorWrapper}>
-        <div className={styles.loadingState}>
-          <p>در حال بارگذاری ویرایشگر...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.canvasEditorWrapper}>
       <div ref={containerRef} className={styles.canvasContainer}>
-        <canvas ref={canvasRef} />
+        {/* Show loading state while Fabric.js is loading or dimensions not ready */}
+        {(!isFabricLoaded || !dimensionsCalculatedRef.current) ? (
+          <div className={styles.loadingState}>
+            <p>در حال بارگذاری ویرایشگر...</p>
+          </div>
+        ) : (
+          <>
+            <canvas ref={canvasRef} />
 
-        {/* Floating toolbar overlay */}
-        <div className={styles.floatingToolbar}>
-          <CanvasToolbar
-            activeObject={activeObject}
-            onAddText={addText}
-            onDeleteSelected={deleteSelected}
-            onFontFamilyChange={updateFontFamily}
-            onFontSizeChange={updateFontSize}
-            onTextColorChange={updateTextColor}
-            onDimensionsChange={updateDimensions}
-            onSkewChange={updateSkew}
-            onAspectRatioLockChange={toggleAspectRatioLock}
-            isCanvasReady={isCanvasReady}
-          />
-        </div>
+            {/* Floating toolbar overlay */}
+            <div className={styles.floatingToolbar}>
+              <CanvasToolbar
+                activeObject={activeObject}
+                onAddText={addText}
+                onDeleteSelected={deleteSelected}
+                onFontFamilyChange={updateFontFamily}
+                onFontSizeChange={updateFontSize}
+                onTextColorChange={updateTextColor}
+                onDimensionsChange={updateDimensions}
+                onSkewChange={updateSkew}
+                onAspectRatioLockChange={toggleAspectRatioLock}
+                isCanvasReady={isCanvasReady}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
