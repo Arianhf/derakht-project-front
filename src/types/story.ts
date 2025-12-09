@@ -46,6 +46,10 @@ export interface Author {
     };
 }
 
+// Story display configuration types
+export type StoryOrientation = 'LANDSCAPE' | 'PORTRAIT' | null;
+export type StorySize = '20x20' | '25x25' | '15x23' | null;
+
 export interface Story {
     activity_type: 'WRITE_FOR_DRAWING' | string;
     author: number | Author;
@@ -58,4 +62,6 @@ export interface Story {
     background_color: string | null;
     font_color: string | null;
     status?: 'DRAFT' | 'COMPLETED';
+    orientation?: StoryOrientation;
+    size?: StorySize;
 }
