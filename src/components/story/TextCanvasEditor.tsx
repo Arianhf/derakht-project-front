@@ -50,10 +50,11 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const fabricCanvasRef = useRef<any>(null);
   const fabricLibRef = useRef<any>(null); // Store fabric library instance
+  const dimensionsCalculatedRef = useRef(false); // Track if dimensions are ready
   const [activeObject, setActiveObject] = useState<CanvasTextObject | null>(null);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
   const [isFabricLoaded, setIsFabricLoaded] = useState(false);
-  const [canvasDimensions, setCanvasDimensions] = useState({ width: 800, height: 600 });
+  const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
 
   /**
    * Load Fabric.js dynamically (client-side only)
@@ -100,12 +101,13 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         // Only update if dimensions are valid
         if (newWidth > 0 && newHeight > 0) {
           setCanvasDimensions({ width: newWidth, height: newHeight });
+          dimensionsCalculatedRef.current = true; // Mark as calculated
         }
       }
     };
 
     // Delay initial measurement to ensure container has rendered
-    const timer = setTimeout(updateDimensions, 100);
+    const timer = setTimeout(updateDimensions, 200);
 
     // Observe container size changes
     const resizeObserver = new ResizeObserver(updateDimensions);
@@ -127,6 +129,14 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         isFabricLoaded,
         hasFabric: !!fabricLibRef.current
       });
+      return;
+    }
+
+    // Wait for valid dimensions before initializing
+    if (!dimensionsCalculatedRef.current ||
+        canvasDimensions.width === 0 ||
+        canvasDimensions.height === 0) {
+      console.log('Waiting for valid container dimensions...', canvasDimensions);
       return;
     }
 
@@ -223,7 +233,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     // No cleanup on this effect - canvas persists for component lifetime
     // Cleanup only happens when component unmounts (see separate effect below)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFabricLoaded]);
+  }, [isFabricLoaded, canvasDimensions]);
 
   /**
    * Update canvas dimensions when container size changes
@@ -393,6 +403,29 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
   }, [onChange]);
 
   /**
+   * Update the selected text object's color
+   */
+  const updateTextColor = useCallback((color: string) => {
+    if (!fabricCanvasRef.current) return;
+
+    const canvas = fabricCanvasRef.current;
+    const activeObj = canvas.getActiveObject();
+
+    if (!activeObj || activeObj.type !== 'i-text') {
+      toast.error('لطفاً ابتدا یک متن را انتخاب کنید');
+      return;
+    }
+
+    activeObj.set({ fill: color });
+    canvas.renderAll();
+
+    if (onChange) {
+      const json = JSON.stringify(canvas.toJSON());
+      onChange(json);
+    }
+  }, [onChange]);
+
+  /**
    * Update the selected object's dimensions
    */
   const updateDimensions = useCallback((width?: number, height?: number) => {
@@ -505,8 +538,8 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     }
   }, []);
 
-  // Show loading state while Fabric.js is loading
-  if (!isFabricLoaded) {
+  // Show loading state while Fabric.js is loading or dimensions not ready
+  if (!isFabricLoaded || !dimensionsCalculatedRef.current) {
     return (
       <div className={styles.canvasEditorWrapper}>
         <div className={styles.loadingState}>
@@ -529,6 +562,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
             onDeleteSelected={deleteSelected}
             onFontFamilyChange={updateFontFamily}
             onFontSizeChange={updateFontSize}
+            onTextColorChange={updateTextColor}
             onDimensionsChange={updateDimensions}
             onSkewChange={updateSkew}
             onAspectRatioLockChange={toggleAspectRatioLock}

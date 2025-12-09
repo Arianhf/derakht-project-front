@@ -16,6 +16,8 @@ interface CanvasToolbarProps {
   onFontFamilyChange: (fontFamily: string) => void;
   /** Callback when font size changes */
   onFontSizeChange: (fontSize: number) => void;
+  /** Callback when text color changes */
+  onTextColorChange: (color: string) => void;
   /** Callback when dimensions change */
   onDimensionsChange: (width?: number, height?: number) => void;
   /** Callback when skew values change */
@@ -39,6 +41,16 @@ const FONTS = [
 // Font size options (16-72px)
 const FONT_SIZES = [16, 18, 20, 22, 24, 28, 32, 36, 40, 48, 56, 64, 72];
 
+// Text color options
+const TEXT_COLORS = [
+  { value: '#2B463C', label: 'سبز تیره' },
+  { value: '#000000', label: 'مشکی' },
+  { value: '#FFFFFF', label: 'سفید' },
+  { value: '#345BC0', label: 'آبی' },
+  { value: '#FF6F61', label: 'مرجانی' },
+  { value: '#80D46D', label: 'سبز روشن' },
+];
+
 /**
  * CanvasToolbar - Toolbar component for canvas text editing controls
  * Provides controls for adding text, changing fonts, sizing, and transformations
@@ -49,6 +61,7 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
   onDeleteSelected,
   onFontFamilyChange,
   onFontSizeChange,
+  onTextColorChange,
   onDimensionsChange,
   onSkewChange,
   onAspectRatioLockChange,
@@ -56,6 +69,7 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
 }) => {
   const [selectedFont, setSelectedFont] = useState(FONTS[0].value);
   const [selectedFontSize, setSelectedFontSize] = useState(24);
+  const [selectedColor, setSelectedColor] = useState('#2B463C');
   const [objectWidth, setObjectWidth] = useState<number>(0);
   const [objectHeight, setObjectHeight] = useState<number>(0);
   const [skewX, setSkewX] = useState<number>(0);
@@ -82,6 +96,7 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
       if (activeObject.type === 'i-text') {
         setSelectedFont(activeObject.fontFamily || FONTS[0].value);
         setSelectedFontSize(activeObject.fontSize || 24);
+        setSelectedColor(activeObject.fill as string || '#2B463C');
       }
 
       // Update dimensions
@@ -100,6 +115,7 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
       // Reset to defaults when no object is selected
       setSelectedFont(FONTS[0].value);
       setSelectedFontSize(24);
+      setSelectedColor('#2B463C');
       setObjectWidth(0);
       setObjectHeight(0);
       setSkewX(0);
@@ -124,6 +140,15 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
     const size = parseInt(e.target.value, 10);
     setSelectedFontSize(size);
     onFontSizeChange(size);
+  };
+
+  /**
+   * Handle text color change
+   */
+  const handleColorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const color = e.target.value;
+    setSelectedColor(color);
+    onTextColorChange(color);
   };
 
   /**
@@ -224,6 +249,23 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
               {FONT_SIZES.map((size) => (
                 <option key={size} value={size}>
                   {size}px
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.toolbarSection}>
+            <select
+              id="text-color"
+              className={styles.select}
+              value={selectedColor}
+              onChange={handleColorChange}
+              disabled={!isObjectSelected}
+              aria-label="رنگ متن"
+            >
+              {TEXT_COLORS.map((color) => (
+                <option key={color.value} value={color.value}>
+                  {color.label}
                 </option>
               ))}
             </select>
