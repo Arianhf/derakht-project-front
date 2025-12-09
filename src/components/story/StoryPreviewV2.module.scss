@@ -473,7 +473,7 @@ $transition-speed: 0.3s;
 
 // Accessibility improvements
 @media (prefers-reduced-motion: reduce) {
-  * {
+  :global(*) {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
