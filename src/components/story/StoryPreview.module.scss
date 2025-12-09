@@ -818,6 +818,7 @@
         aspect-ratio: 1 / 1;
         max-width: 600px;
         margin: 0 auto;
+        height: auto; // Let aspect-ratio control the height
     }
 
     .mobileImagePage {
@@ -832,6 +833,7 @@
         aspect-ratio: 1 / 1;
         max-width: 700px;
         margin: 0 auto;
+        height: auto; // Let aspect-ratio control the height
     }
 
     .mobileImagePage {
@@ -848,6 +850,7 @@
             aspect-ratio: 23 / 15;
             max-width: 900px;
             margin: 0 auto;
+            height: auto; // Let aspect-ratio control the height
         }
 
         .mobileImagePage {
@@ -862,6 +865,7 @@
             aspect-ratio: 15 / 23;
             max-width: 550px;
             margin: 0 auto;
+            height: auto; // Let aspect-ratio control the height
         }
 
         .mobileImagePage {
