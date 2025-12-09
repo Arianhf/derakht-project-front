@@ -17,6 +17,22 @@
   }
 }
 
+.loadingState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  color: $dark-text;
+  font-size: $font-size-lg;
+
+  p {
+    padding: $spacing-lg;
+    background: $card-bg;
+    border-radius: $border-radius-sm;
+    box-shadow: $shadow-sm;
+  }
+}
+
 .canvasContainer {
   display: flex;
   justify-content: center;

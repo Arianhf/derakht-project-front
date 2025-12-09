@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { fabric } from 'fabric';
 import styles from './TextCanvasEditor.module.scss';
 import CanvasToolbar from './CanvasToolbar';
 import { toast } from 'react-hot-toast';
+
+// Dynamic import for fabric.js (client-side only)
+let fabric: any = null;
 
 export interface TextCanvasEditorProps {
   /** Initial canvas state in JSON format */
@@ -19,12 +21,21 @@ export interface TextCanvasEditorProps {
   backgroundColor?: string;
 }
 
-export interface CanvasTextObject extends fabric.IText {
+export interface CanvasTextObject {
+  type?: string;
   fontFamily?: string;
   fontSize?: number;
   fill?: string;
   skewX?: number;
   skewY?: number;
+  width?: number;
+  height?: number;
+  scaleX?: number;
+  scaleY?: number;
+  lockUniScaling?: boolean;
+  set?: (props: any) => void;
+  setCoords?: () => void;
+  setControlsVisibility?: (controls: any) => void;
 }
 
 /**
@@ -39,15 +50,34 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
   backgroundColor = '#FFFFFF',
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
-  const [activeObject, setActiveObject] = useState<fabric.Object | null>(null);
+  const fabricCanvasRef = useRef<any>(null);
+  const [activeObject, setActiveObject] = useState<CanvasTextObject | null>(null);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
+  const [isFabricLoaded, setIsFabricLoaded] = useState(false);
+
+  /**
+   * Load Fabric.js dynamically (client-side only)
+   */
+  useEffect(() => {
+    const loadFabric = async () => {
+      try {
+        const fabricModule = await import('fabric');
+        fabric = fabricModule.fabric;
+        setIsFabricLoaded(true);
+      } catch (error) {
+        console.error('Error loading Fabric.js:', error);
+        toast.error('خطا در بارگذاری کتابخانه کنواس');
+      }
+    };
+
+    loadFabric();
+  }, []);
 
   /**
    * Initialize Fabric.js canvas
    */
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || !isFabricLoaded || !fabric) return;
 
     // Initialize the canvas
     const canvas = new fabric.Canvas(canvasRef.current, {
@@ -74,11 +104,11 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     }
 
     // Event handlers
-    const handleSelectionCreated = (e: fabric.IEvent) => {
+    const handleSelectionCreated = (e: any) => {
       setActiveObject(e.selected?.[0] || null);
     };
 
-    const handleSelectionUpdated = (e: fabric.IEvent) => {
+    const handleSelectionUpdated = (e: any) => {
       setActiveObject(e.selected?.[0] || null);
     };
 
@@ -131,24 +161,24 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
       canvas.dispose();
       fabricCanvasRef.current = null;
     };
-  }, [width, height, backgroundColor]);
+  }, [width, height, backgroundColor, isFabricLoaded]);
 
   /**
    * Add a new text object to the canvas
    */
   const addText = useCallback(() => {
-    if (!fabricCanvasRef.current) {
+    if (!fabricCanvasRef.current || !fabric) {
       toast.error('کنواس آماده نیست');
       return;
     }
 
     const canvas = fabricCanvasRef.current;
     const text = new fabric.IText('متن خود را بنویسید', {
-      left: canvas.width! / 2,
-      top: canvas.height! / 2,
+      left: canvas.width / 2,
+      top: canvas.height / 2,
       originX: 'center',
       originY: 'center',
-      fontFamily: 'Vazir, sans-serif',
+      fontFamily: 'Yekan, Vazir, sans-serif',
       fontSize: 24,
       fill: '#2B463C',
       direction: 'rtl',
@@ -160,7 +190,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
       borderColor: '#345BC0',
       cornerColor: '#345BC0',
       cornerStyle: 'circle',
-    } as any);
+    });
 
     // Set control visibility
     text.setControlsVisibility({
@@ -219,7 +249,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     if (!fabricCanvasRef.current) return;
 
     const canvas = fabricCanvasRef.current;
-    const activeObj = canvas.getActiveObject() as CanvasTextObject;
+    const activeObj = canvas.getActiveObject();
 
     if (!activeObj || activeObj.type !== 'i-text') {
       toast.error('لطفاً ابتدا یک متن را انتخاب کنید');
@@ -242,7 +272,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     if (!fabricCanvasRef.current) return;
 
     const canvas = fabricCanvasRef.current;
-    const activeObj = canvas.getActiveObject() as CanvasTextObject;
+    const activeObj = canvas.getActiveObject();
 
     if (!activeObj || activeObj.type !== 'i-text') {
       toast.error('لطفاً ابتدا یک متن را انتخاب کنید');
@@ -377,10 +407,21 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     }
   }, []);
 
+  // Show loading state while Fabric.js is loading
+  if (!isFabricLoaded) {
+    return (
+      <div className={styles.canvasEditorWrapper}>
+        <div className={styles.loadingState}>
+          <p>در حال بارگذاری ویرایشگر...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.canvasEditorWrapper}>
       <CanvasToolbar
-        activeObject={activeObject as CanvasTextObject}
+        activeObject={activeObject}
         onAddText={addText}
         onDeleteSelected={deleteSelected}
         onFontFamilyChange={updateFontFamily}

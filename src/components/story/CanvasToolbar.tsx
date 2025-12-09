@@ -28,8 +28,9 @@ interface CanvasToolbarProps {
 
 // Available fonts
 const FONTS = [
+  { value: 'Yekan, Vazir, sans-serif', label: 'یکان' },
+  { value: 'shoor-Medium, sans-serif', label: 'شور' },
   { value: 'Vazir, sans-serif', label: 'وزیر' },
-  { value: 'Yekan, sans-serif', label: 'یکان' },
   { value: 'Shabnam, sans-serif', label: 'شبنم' },
   { value: 'Arial, sans-serif', label: 'Arial' },
   { value: 'Tahoma, sans-serif', label: 'Tahoma' },
