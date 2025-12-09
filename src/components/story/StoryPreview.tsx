@@ -7,6 +7,7 @@ import { FaTimes, FaArrowRight, FaArrowLeft, FaColumns, FaLayerGroup, FaImage, F
 import styles from "./StoryPreview.module.scss";
 import { storyService } from '@/services/storyService';
 import { toast } from 'react-hot-toast';
+import { StoryOrientation, StorySize } from '@/types/story';
 
 interface StoryPreviewProps {
     parts: { illustration: string; text: string }[];
@@ -22,6 +23,8 @@ interface StoryPreviewProps {
     onCoverImageUpload?: (file: File) => void;
     onColorChange?: (backgroundColor?: string, fontColor?: string) => void;
     modalTitle?: string; // Custom title for the modal header
+    orientation?: StoryOrientation; // Story orientation
+    size?: StorySize; // Story size
 }
 
 // Preset colors for background
@@ -60,7 +63,9 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                                                        fontColor,
                                                        onCoverImageUpload,
                                                        onColorChange,
-                                                       modalTitle
+                                                       modalTitle,
+                                                       orientation,
+                                                       size
                                                    }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [viewMode, setViewMode] = useState<'overlay' | 'sideBySide'>('overlay');
@@ -71,6 +76,30 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
     const [mobilePageIndex, setMobilePageIndex] = useState(0); // Index for mobile pagination (0 = first image, 1 = first text, 2 = second image, etc.)
     const settingsModalRef = React.useRef<HTMLDivElement>(null);
     const router = useRouter();
+
+    // Get CSS class names based on size and orientation
+    const getContainerClasses = (): string => {
+        const classes: string[] = [];
+
+        // Add size class
+        if (size) {
+            // Use size as-is (e.g., "20x20" -> "size_20x20")
+            classes.push(styles[`size_${size}`]);
+        }
+
+        // Add orientation class
+        if (orientation) {
+            const orientationClass = orientation.toLowerCase();
+            classes.push(styles[`orientation_${orientationClass}`]);
+        }
+
+        // If no size or orientation, use default
+        if (!size && !orientation) {
+            classes.push(styles.story_default);
+        }
+
+        return classes.filter(Boolean).join(' ');
+    };
 
     // Helper function to convert hex color to rgba with opacity
     const hexToRgba = (hex: string, alpha: number): string => {
@@ -323,7 +352,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
             </div>
 
             {/* Content area - changes based on view mode or mobile pagination */}
-            <div className={`${styles.previewContent} ${isMobile ? styles.mobileView : styles[viewMode]}`}>
+            <div className={`${styles.previewContent} ${isMobile ? styles.mobileView : ''} ${getContainerClasses()}`}>
                 {isMobile ? (
                     // Mobile single-page view: show either image or text
                     <div className={styles.mobilePageView}>
