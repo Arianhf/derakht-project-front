@@ -5,9 +5,6 @@ import styles from './TextCanvasEditor.module.scss';
 import CanvasToolbar from './CanvasToolbar';
 import { toast } from 'react-hot-toast';
 
-// Dynamic import for fabric.js (client-side only)
-let fabric: any = null;
-
 export interface TextCanvasEditorProps {
   /** Initial canvas state in JSON format */
   initialState?: string;
@@ -51,6 +48,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<any>(null);
+  const fabricLibRef = useRef<any>(null); // Store fabric library instance
   const [activeObject, setActiveObject] = useState<CanvasTextObject | null>(null);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
   const [isFabricLoaded, setIsFabricLoaded] = useState(false);
@@ -61,8 +59,14 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
   useEffect(() => {
     const loadFabric = async () => {
       try {
+        console.log('Loading Fabric.js module...');
         const fabricModule = await import('fabric');
-        fabric = fabricModule.fabric;
+        console.log('Fabric.js module loaded:', fabricModule);
+
+        // Store the fabric instance in a ref
+        fabricLibRef.current = fabricModule.fabric;
+        console.log('Fabric instance stored:', !!fabricLibRef.current);
+
         setIsFabricLoaded(true);
       } catch (error) {
         console.error('Error loading Fabric.js:', error);
@@ -77,11 +81,11 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
    * Initialize Fabric.js canvas
    */
   useEffect(() => {
-    if (!canvasRef.current || !isFabricLoaded || !fabric) {
+    if (!canvasRef.current || !isFabricLoaded || !fabricLibRef.current) {
       console.log('Canvas initialization skipped:', {
         hasRef: !!canvasRef.current,
         isFabricLoaded,
-        hasFabric: !!fabric
+        hasFabric: !!fabricLibRef.current
       });
       return;
     }
@@ -93,6 +97,8 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     }
 
     console.log('Initializing Fabric canvas...');
+
+    const fabric = fabricLibRef.current;
 
     // Initialize the canvas
     const canvas = new fabric.Canvas(canvasRef.current, {
@@ -188,12 +194,14 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
    * Add a new text object to the canvas
    */
   const addText = useCallback(() => {
-    if (!fabricCanvasRef.current || !fabric) {
+    if (!fabricCanvasRef.current || !fabricLibRef.current) {
       toast.error('کنواس آماده نیست');
       return;
     }
 
     const canvas = fabricCanvasRef.current;
+    const fabric = fabricLibRef.current;
+
     const text = new fabric.IText('متن خود را بنویسید', {
       left: canvas.width / 2,
       top: canvas.height / 2,
