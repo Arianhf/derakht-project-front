@@ -97,18 +97,22 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         console.log('Container dimensions:', { width: rect.width, height: rect.height });
         console.log('Setting canvas dimensions:', { newWidth, newHeight });
 
-        setCanvasDimensions({ width: newWidth, height: newHeight });
+        // Only update if dimensions are valid
+        if (newWidth > 0 && newHeight > 0) {
+          setCanvasDimensions({ width: newWidth, height: newHeight });
+        }
       }
     };
 
-    // Initial measurement
-    updateDimensions();
+    // Delay initial measurement to ensure container has rendered
+    const timer = setTimeout(updateDimensions, 100);
 
     // Observe container size changes
     const resizeObserver = new ResizeObserver(updateDimensions);
     resizeObserver.observe(containerRef.current);
 
     return () => {
+      clearTimeout(timer);
       resizeObserver.disconnect();
     };
   }, [width, height]);
@@ -196,8 +200,17 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     // Keyboard shortcuts
     const handleKeyDown = (e: KeyboardEvent) => {
       // Delete key - delete selected object
+      // BUT NOT if we're editing text!
       if (e.key === 'Delete' || e.key === 'Backspace') {
         const activeObj = canvas.getActiveObject();
+
+        // Check if we're editing text (isEditing property)
+        if (activeObj && (activeObj as any).isEditing) {
+          // User is editing text, don't delete the object
+          return;
+        }
+
+        // User is not editing, delete the object
         if (activeObj && document.activeElement?.tagName !== 'INPUT') {
           e.preventDefault();
           deleteSelected();
@@ -286,6 +299,12 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
 
     canvas.add(text);
     canvas.setActiveObject(text);
+
+    // Enter editing mode and set cursor at the end
+    text.enterEditing();
+    text.selectAll();
+    text.setSelectionEnd(text.text?.length || 0);
+
     canvas.renderAll();
 
     if (onChange) {
