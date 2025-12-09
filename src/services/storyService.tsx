@@ -85,6 +85,14 @@ export const storyService = {
     return response.data;
   },
 
+  // Set cover image from existing story part illustration
+  setCoverImageFromUrl: async (storyId: string, imageUrl: string): Promise<Story> => {
+    const response = await api.post(`/stories/${storyId}/set_cover_from_url/`, {
+      cover_image_url: imageUrl,
+    });
+    return response.data;
+  },
+
   // Get all completed stories from all users
   getCompletedStories: async (page: number = 1): Promise<StoryResponse<Story>> => {
     const response = await api.get(`/stories/completed/?page=${page}`);
