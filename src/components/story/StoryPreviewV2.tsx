@@ -14,7 +14,7 @@ interface StoryPreviewV2Props {
 }
 
 // Layout configuration type
-type LayoutType = 'square' | 'landscape-rectangle' | 'portrait-rectangle' | 'default';
+type LayoutType = 'square' | 'landscapeRectangle' | 'portraitRectangle' | 'default';
 
 // View type for mobile navigation
 type ViewType = 'text' | 'image';
@@ -32,9 +32,9 @@ const getLayoutType = (size: StorySize, orientation: StoryOrientation): LayoutTy
   // Rectangle layouts (15x23)
   if (size === '15x23') {
     if (orientation === 'LANDSCAPE') {
-      return 'landscape-rectangle';
+      return 'landscapeRectangle';
     } else if (orientation === 'PORTRAIT') {
-      return 'portrait-rectangle';
+      return 'portraitRectangle';
     }
   }
 
@@ -50,9 +50,9 @@ const getAspectRatioPadding = (layoutType: LayoutType): string => {
   switch (layoutType) {
     case 'square':
       return '100%'; // 1:1 ratio
-    case 'landscape-rectangle':
+    case 'landscapeRectangle':
       return `${(15 / 23) * 100}%`; // 15:23 in landscape (width:height) = ~65.22%
-    case 'portrait-rectangle':
+    case 'portraitRectangle':
       return `${(23 / 15) * 100}%`; // 23:15 in portrait (height:width) = ~153.33%
     case 'default':
       return '75%'; // Default 4:3 ratio
@@ -82,7 +82,7 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
   const aspectRatio = getAspectRatioPadding(layoutType);
 
   // Check if we should show single-page view on mobile (for rectangle layouts)
-  const isSinglePageMobile = layoutType.includes('rectangle');
+  const isSinglePageMobile = layoutType.includes('Rectangle');
 
   // Mobile detection
   useEffect(() => {
