@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight, FaSave } from 'react-icons/fa';
+import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight, FaSave, FaCog } from 'react-icons/fa';
 import styles from './StoryEditorV2.module.scss';
 import { Story, StoryOrientation, StorySize, StoryPart } from '@/types/story';
 
@@ -11,8 +11,28 @@ interface StoryEditorV2Props {
   isOpen: boolean;
   onClose: () => void;
   onSave: (updatedTexts: string[]) => Promise<void>;
+  onCoverImageUpload?: (file: File) => void;
+  onColorChange?: (backgroundColor?: string, fontColor?: string) => void;
   isFullPage?: boolean;
 }
+
+// Preset colors for background
+const BACKGROUND_PRESET_COLORS = [
+  { color: '#FFFFFF', label: 'سفید' },
+  { color: '#FFF9F5', label: 'کرم روشن' },
+  { color: '#E8F6FF', label: 'آبی روشن' },
+  { color: '#FFF7E5', label: 'زرد روشن' },
+  { color: '#2B463C', label: 'سبز تیره' },
+];
+
+// Preset colors for font
+const FONT_PRESET_COLORS = [
+  { color: '#2B463C', label: 'سبز تیره' },
+  { color: '#000000', label: 'مشکی' },
+  { color: '#FFFFFF', label: 'سفید' },
+  { color: '#345BC0', label: 'آبی' },
+  { color: '#FF6F61', label: 'مرجانی' },
+];
 
 // Layout configuration type
 type LayoutType = 'square' | 'landscapeRectangle' | 'portraitRectangle' | 'default';
@@ -62,6 +82,8 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   isOpen,
   onClose,
   onSave,
+  onCoverImageUpload,
+  onColorChange,
   isFullPage = false,
 }) => {
   const [currentPartIndex, setCurrentPartIndex] = useState(0);
@@ -70,10 +92,12 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   const [texts, setTexts] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const settingsModalRef = useRef<HTMLDivElement>(null);
 
   const MIN_SWIPE_DISTANCE = 50;
 
@@ -173,6 +197,22 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
     newTexts[index] = value;
     setTexts(newTexts);
     setHasUnsavedChanges(true);
+  };
+
+  const handleCoverImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0 || !onCoverImageUpload) return;
+    const file = e.target.files[0];
+    onCoverImageUpload(file);
+  };
+
+  const handleColorChange = (type: 'background' | 'font', color: string) => {
+    if (!onColorChange) return;
+
+    if (type === 'background') {
+      onColorChange(color, story.font_color || undefined);
+    } else {
+      onColorChange(story.background_color || undefined, color);
+    }
   };
 
   // Touch handlers for swipe navigation
@@ -353,6 +393,13 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
         </div>
         <div className={styles.headerLeft}>
           <button
+            className={styles.settingsButton}
+            onClick={() => setIsSettingsOpen(true)}
+            aria-label="تنظیمات داستان"
+          >
+            <FaCog className={styles.settingsIcon} />
+          </button>
+          <button
             className={styles.saveButton}
             onClick={handleSave}
             disabled={isSaving || !hasUnsavedChanges}
@@ -400,6 +447,120 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
           <FaChevronLeft className={styles.navIcon} />
         </button>
       </div>
+
+      {/* Settings Modal */}
+      {isSettingsOpen && (
+        <div
+          className={styles.settingsOverlay}
+          onClick={() => setIsSettingsOpen(false)}
+        >
+          <div
+            ref={settingsModalRef}
+            className={styles.settingsModal}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.settingsHeader}>
+              <h3 className={styles.settingsTitle}>تنظیمات داستان</h3>
+              <button
+                className={styles.settingsCloseButton}
+                onClick={() => setIsSettingsOpen(false)}
+                aria-label="بستن تنظیمات"
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            <div className={styles.settingsContent}>
+              {/* Cover Image Upload */}
+              {onCoverImageUpload && (
+                <div className={styles.settingsSection}>
+                  <label className={styles.settingsLabel}>
+                    تصویر جلد داستان
+                  </label>
+                  <div className={styles.coverImageSection}>
+                    {story.cover_image && (
+                      <div className={styles.currentCoverImage}>
+                        <Image
+                          src={story.cover_image}
+                          alt="تصویر جلد فعلی"
+                          width={200}
+                          height={200}
+                          className={styles.coverImagePreview}
+                          style={{ objectFit: 'cover' }}
+                        />
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleCoverImageUpload}
+                      className={styles.fileInput}
+                      id="cover-image-upload"
+                    />
+                    <label htmlFor="cover-image-upload" className={styles.uploadButton}>
+                      آپلود تصویر جدید
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Background Color */}
+              {onColorChange && (
+                <div className={styles.settingsSection}>
+                  <label className={styles.settingsLabel}>
+                    رنگ پس‌زمینه
+                  </label>
+                  <div className={styles.colorGrid}>
+                    {BACKGROUND_PRESET_COLORS.map((preset) => (
+                      <button
+                        key={preset.color}
+                        className={`${styles.colorSwatch} ${
+                          story.background_color === preset.color ? styles.active : ''
+                        }`}
+                        style={{ backgroundColor: preset.color }}
+                        onClick={() => handleColorChange('background', preset.color)}
+                        aria-label={`انتخاب رنگ ${preset.label}`}
+                        title={preset.label}
+                      >
+                        {story.background_color === preset.color && (
+                          <span className={styles.checkmark}>✓</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Font Color */}
+              {onColorChange && (
+                <div className={styles.settingsSection}>
+                  <label className={styles.settingsLabel}>
+                    رنگ متن
+                  </label>
+                  <div className={styles.colorGrid}>
+                    {FONT_PRESET_COLORS.map((preset) => (
+                      <button
+                        key={preset.color}
+                        className={`${styles.colorSwatch} ${
+                          story.font_color === preset.color ? styles.active : ''
+                        }`}
+                        style={{ backgroundColor: preset.color }}
+                        onClick={() => handleColorChange('font', preset.color)}
+                        aria-label={`انتخاب رنگ ${preset.label}`}
+                        title={preset.label}
+                      >
+                        {story.font_color === preset.color && (
+                          <span className={styles.checkmark}>✓</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 

@@ -89,6 +89,42 @@ const StoryEditV2Page = () => {
     }
   };
 
+  const handleCoverImageUpload = async (file: File) => {
+    if (!story) return;
+
+    try {
+      const updatedStory = await storyService.uploadStoryCoverImage(story.id, file);
+      setStory(updatedStory);
+      toast.success('تصویر جلد با موفقیت آپلود شد');
+    } catch (error) {
+      console.error('Error uploading cover image:', error);
+      toast.error('خطا در آپلود تصویر جلد');
+    }
+  };
+
+  const handleColorChange = async (backgroundColor?: string, fontColor?: string) => {
+    if (!story) return;
+
+    try {
+      const config: { background_color?: string | null; font_color?: string | null } = {};
+
+      if (backgroundColor !== undefined) {
+        config.background_color = backgroundColor;
+      }
+
+      if (fontColor !== undefined) {
+        config.font_color = fontColor;
+      }
+
+      const updatedStory = await storyService.setStoryConfig(story.id, config);
+      setStory(updatedStory);
+      toast.success('رنگ‌ها با موفقیت تغییر کردند');
+    } catch (error) {
+      console.error('Error updating story colors:', error);
+      toast.error('خطا در تغییر رنگ‌ها');
+    }
+  };
+
   const handleClose = () => {
     router.push('/story');
   };
@@ -153,6 +189,8 @@ const StoryEditV2Page = () => {
         isOpen={true}
         onClose={handleClose}
         onSave={handleSave}
+        onCoverImageUpload={handleCoverImageUpload}
+        onColorChange={handleColorChange}
         isFullPage={true}
       />
     </div>

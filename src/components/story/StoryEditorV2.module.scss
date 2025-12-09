@@ -190,6 +190,51 @@ $transition-speed: 0.3s;
   }
 }
 
+.settingsButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: $primary-color;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all $transition-speed ease;
+  box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+
+  @media (max-width: $mobile-breakpoint) {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .settingsIcon {
+    transition: transform 0.5s ease;
+  }
+
+  &:hover {
+    background: darken($primary-color, 10%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($primary-color, 0.4);
+
+    .settingsIcon {
+      transform: rotate(90deg);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus {
+    outline: 3px solid $accent-color;
+    outline-offset: 2px;
+  }
+}
+
 .saveButton {
   display: flex;
   align-items: center;
@@ -586,13 +631,275 @@ $transition-speed: 0.3s;
   }
 }
 
+// Settings Modal
+.settingsOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn $transition-speed ease-in;
+}
+
+.settingsModal {
+  background: white;
+  border-radius: $border-radius;
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp $transition-speed ease-out;
+  overflow: hidden;
+
+  @media (max-width: $mobile-breakpoint) {
+    max-width: 95%;
+    max-height: 90vh;
+  }
+}
+
+.settingsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 2px solid #F0F0F0;
+  background: $gradient-bg;
+
+  @media (max-width: $mobile-breakpoint) {
+    padding: 20px 16px;
+  }
+}
+
+.settingsTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: $text-dark;
+  margin: 0;
+  font-family: 'Vazirmatn', sans-serif;
+
+  @media (max-width: $mobile-breakpoint) {
+    font-size: 20px;
+  }
+}
+
+.settingsCloseButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #E0E0E0;
+  color: $text-dark;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all $transition-speed ease;
+
+  &:hover {
+    background: $secondary-color;
+    color: white;
+    transform: rotate(90deg);
+    border-color: $secondary-color;
+  }
+
+  &:focus {
+    outline: 3px solid $accent-color;
+    outline-offset: 2px;
+  }
+}
+
+.settingsContent {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+
+  @media (max-width: $mobile-breakpoint) {
+    padding: 20px 16px;
+  }
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #F0F0F0;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $primary-color;
+    border-radius: 10px;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+    }
+  }
+}
+
+.settingsSection {
+  margin-bottom: 32px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: $mobile-breakpoint) {
+    margin-bottom: 24px;
+  }
+}
+
+.settingsLabel {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  color: $text-dark;
+  margin-bottom: 16px;
+  font-family: 'Vazirmatn', sans-serif;
+
+  @media (max-width: $mobile-breakpoint) {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+}
+
+// Cover Image Section
+.coverImageSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.currentCoverImage {
+  width: 200px;
+  height: 200px;
+  border-radius: $border-radius;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: $mobile-breakpoint) {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+.coverImagePreview {
+  border-radius: $border-radius;
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadButton {
+  display: inline-block;
+  padding: 12px 24px;
+  background: $primary-color;
+  color: white;
+  border-radius: $border-radius-full;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Vazirmatn', sans-serif;
+  cursor: pointer;
+  transition: all $transition-speed ease;
+  box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+
+  @media (max-width: $mobile-breakpoint) {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  &:hover {
+    background: darken($primary-color, 10%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($primary-color, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Color Grid
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 12px;
+
+  @media (max-width: $mobile-breakpoint) {
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 10px;
+  }
+}
+
+.colorSwatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 3px solid #E0E0E0;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  transition: all $transition-speed ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    border-color: $primary-color;
+  }
+
+  &:active {
+    transform: translateY(-1px) scale(1.02);
+  }
+
+  &:focus {
+    outline: 3px solid $accent-color;
+    outline-offset: 2px;
+  }
+
+  &.active {
+    border-color: $accent-color;
+    border-width: 4px;
+    box-shadow: 0 4px 12px rgba($accent-color, 0.4);
+  }
+
+  .checkmark {
+    font-size: 24px;
+    font-weight: bold;
+    color: $accent-color;
+    text-shadow:
+      -1px -1px 0 white,
+      1px -1px 0 white,
+      -1px 1px 0 white,
+      1px 1px 0 white;
+
+    @media (max-width: $mobile-breakpoint) {
+      font-size: 20px;
+    }
+  }
+}
+
 // Accessibility improvements - Reduced motion support
 @media (prefers-reduced-motion: reduce) {
   .editorContainer,
   .modalOverlay,
   .navButton,
   .contentBox,
-  .closeButton {
+  .closeButton,
+  .settingsOverlay,
+  .settingsModal {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
