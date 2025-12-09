@@ -471,9 +471,14 @@ $transition-speed: 0.3s;
   }
 }
 
-// Accessibility improvements
+// Accessibility improvements - Reduced motion support
+// Applied to component classes (not global * selector for CSS Modules compatibility)
 @media (prefers-reduced-motion: reduce) {
-  :global(*) {
+  .previewContainer,
+  .modalOverlay,
+  .navButton,
+  .contentBox,
+  .closeButton {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
