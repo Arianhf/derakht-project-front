@@ -352,7 +352,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
             </div>
 
             {/* Content area - changes based on view mode or mobile pagination */}
-            <div className={`${styles.previewContent} ${isMobile ? styles.mobileView : styles[viewMode]} ${getContainerClasses()}`}>
+            <div className={`${styles.previewContent} ${isMobile ? styles.mobileView : ''} ${getContainerClasses()}`}>
                 {isMobile ? (
                     // Mobile single-page view: show either image or text
                     <div className={styles.mobilePageView}>
