@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight } from 'react-icons/fa';
 import styles from './StoryPreviewV2.module.scss';
 import { Story, StoryOrientation, StorySize } from '@/types/story';
 
@@ -68,7 +68,7 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
   isFullPage = false,
 }) => {
   const [currentPartIndex, setCurrentPartIndex] = useState(0);
-  const [currentView, setCurrentView] = useState<ViewType>('text');
+  const [currentView, setCurrentView] = useState<ViewType>('image'); // Start with image first
   const [isMobile, setIsMobile] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -100,7 +100,7 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
   useEffect(() => {
     if (!isOpen) {
       setCurrentPartIndex(0);
-      setCurrentView('text');
+      setCurrentView('image'); // Reset to image first
     }
   }, [isOpen]);
 
@@ -163,15 +163,15 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
 
   const handleNext = () => {
     if (isMobile && isSinglePageMobile) {
-      // Mobile single-page navigation
-      if (currentView === 'text') {
-        // Move from text to image
-        setCurrentView('image');
+      // Mobile single-page navigation: image → text → next image
+      if (currentView === 'image') {
+        // Move from image to text
+        setCurrentView('text');
       } else {
-        // Move from image to next part's text (or finish)
+        // Move from text to next part's image (or finish)
         if (currentPartIndex < story.parts.length - 1) {
           setCurrentPartIndex(currentPartIndex + 1);
-          setCurrentView('text');
+          setCurrentView('image'); // Next part starts with image
         }
       }
     } else {
@@ -184,15 +184,15 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
 
   const handlePrevious = () => {
     if (isMobile && isSinglePageMobile) {
-      // Mobile single-page navigation
-      if (currentView === 'image') {
-        // Move from image to text
-        setCurrentView('text');
+      // Mobile single-page navigation: text ← image ← previous text
+      if (currentView === 'text') {
+        // Move from text to image
+        setCurrentView('image');
       } else {
-        // Move from text to previous part's image (or do nothing if first)
+        // Move from image to previous part's text (or do nothing if first)
         if (currentPartIndex > 0) {
           setCurrentPartIndex(currentPartIndex - 1);
-          setCurrentView('image');
+          setCurrentView('text'); // Previous part shows text
         }
       }
     } else {
@@ -203,15 +203,15 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
     }
   };
 
-  const isFirstPage = currentPartIndex === 0 && (isMobile && isSinglePageMobile ? currentView === 'text' : true);
-  const isLastPage = currentPartIndex === story.parts.length - 1 && (isMobile && isSinglePageMobile ? currentView === 'image' : true);
+  const isFirstPage = currentPartIndex === 0 && (isMobile && isSinglePageMobile ? currentView === 'image' : true);
+  const isLastPage = currentPartIndex === story.parts.length - 1 && (isMobile && isSinglePageMobile ? currentView === 'text' : true);
 
   const currentPart = story.parts[currentPartIndex];
 
   // Calculate current page number for display
   const getCurrentPageNumber = (): string => {
     if (isMobile && isSinglePageMobile) {
-      const pageNum = currentPartIndex * 2 + (currentView === 'text' ? 1 : 2);
+      const pageNum = currentPartIndex * 2 + (currentView === 'image' ? 1 : 2);
       const totalPages = story.parts.length * 2;
       return `${pageNum} از ${totalPages}`;
     } else {
@@ -282,12 +282,14 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
 
   /**
    * Renders desktop view (always side-by-side)
+   * In RTL: first element appears on the right, second on the left
+   * So: image first (right), text second (left)
    */
   const renderDesktopView = () => {
     return (
       <div className={styles.sideBySideView}>
-        {renderContentBox('text')}
         {renderContentBox('image')}
+        {renderContentBox('text')}
       </div>
     );
   };
@@ -307,7 +309,17 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
 
       {/* Header */}
       <div className={styles.header}>
-        <h2 className={styles.title}>{story.title || 'پیش‌نمایش داستان'}</h2>
+        <div className={styles.headerRight}>
+          <button
+            className={styles.backButton}
+            onClick={onClose}
+            aria-label="بازگشت"
+          >
+            <FaArrowRight className={styles.backIcon} />
+            <span>بازگشت</span>
+          </button>
+          <h2 className={styles.title}>{story.title || 'پیش‌نمایش داستان'}</h2>
+        </div>
         <div className={styles.pageIndicator}>
           صفحه {getCurrentPageNumber()}
         </div>

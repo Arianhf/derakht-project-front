@@ -1,11 +1,14 @@
 // StoryPreviewV2.module.scss
 // Responsive children's storytelling component styles
 
-// Variables
+// Import Derakht global styles
+@import '../../styles/globals.scss';
+
+// Variables (using Derakht colors)
 $mobile-breakpoint: 768px;
-$primary-color: #FF6B9D;
-$secondary-color: #4ECDC4;
-$accent-color: #FFD93D;
+$primary-color: #345BC0; // Derakht blue
+$secondary-color: #FF6F61; // Derakht coral
+$accent-color: #80D46D; // Derakht green
 $text-dark: #2B463C;
 $bg-light: #FFF9F5;
 $border-radius: 16px;
@@ -90,10 +93,10 @@ $transition-speed: 0.3s;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    background: #FF6B9D;
+    background: $secondary-color;
     color: white;
     transform: rotate(90deg) scale(1.1);
-    border-color: #FF6B9D;
+    border-color: $secondary-color;
   }
 
   &:focus {
@@ -109,11 +112,66 @@ $transition-speed: 0.3s;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, #FFF9F5 0%, #FFE8F0 100%);
+  background: $gradient-bg; // Use Derakht gradient
   flex-shrink: 0;
 
   @media (max-width: $mobile-breakpoint) {
     padding: 16px 16px 12px;
+  }
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  @media (max-width: $mobile-breakpoint) {
+    gap: 12px;
+  }
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $border-radius-full;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Vazirmatn', sans-serif;
+  cursor: pointer;
+  transition: all $transition-speed ease;
+  box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+
+  @media (max-width: $mobile-breakpoint) {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .backIcon {
+    font-size: 18px;
+
+    @media (max-width: $mobile-breakpoint) {
+      font-size: 16px;
+    }
+  }
+
+  &:hover {
+    background: darken($primary-color, 10%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($primary-color, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus {
+    outline: 3px solid $accent-color;
+    outline-offset: 2px;
   }
 }
 
@@ -125,7 +183,7 @@ $transition-speed: 0.3s;
   font-family: 'Vazirmatn', sans-serif;
 
   @media (max-width: $mobile-breakpoint) {
-    font-size: 20px;
+    font-size: 18px;
   }
 }
 
@@ -151,7 +209,10 @@ $transition-speed: 0.3s;
   padding: 24px;
   display: flex;
   flex-direction: column;
-  background: $bg-light;
+  background: $gradient-bg; // Use Derakht gradient
+  background-image: $clouds, $gradient-bg; // Add cloud pattern
+  background-size: auto, cover;
+  background-repeat: repeat, no-repeat;
   position: relative;
 
   @media (max-width: $mobile-breakpoint) {
@@ -396,13 +457,14 @@ $transition-speed: 0.3s;
   }
 }
 
-// Previous button styling (colorful gradient)
+// Previous button styling (Derakht green)
 .prevButton {
-  background: linear-gradient(135deg, $secondary-color 0%, #95E1D3 100%);
+  background: $accent-color;
   color: white;
 
   &:not(:disabled):hover {
-    background: linear-gradient(135deg, darken($secondary-color, 5%) 0%, #80D8CB 100%);
+    background: darken($accent-color, 10%);
+    box-shadow: 0 6px 20px rgba($accent-color, 0.4);
 
     .navIcon {
       transform: translateX(5px);
@@ -410,13 +472,14 @@ $transition-speed: 0.3s;
   }
 }
 
-// Next button styling (colorful gradient)
+// Next button styling (Derakht blue)
 .nextButton {
-  background: linear-gradient(135deg, $primary-color 0%, #FF8FB3 100%);
+  background: $primary-color;
   color: white;
 
   &:not(:disabled):hover {
-    background: linear-gradient(135deg, darken($primary-color, 5%) 0%, #FF7DA3 100%);
+    background: darken($primary-color, 10%);
+    box-shadow: 0 6px 20px rgba($primary-color, 0.4);
 
     .navIcon {
       transform: translateX(-5px);
