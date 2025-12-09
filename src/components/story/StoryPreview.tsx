@@ -83,8 +83,8 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
 
         // Add size class
         if (size) {
-            const sizeClass = size.replace('x', '_'); // Convert "20x20" to "20_20"
-            classes.push(styles[`size_${sizeClass}`]);
+            // Use size as-is (e.g., "20x20" -> "size_20x20")
+            classes.push(styles[`size_${size}`]);
         }
 
         // Add orientation class
