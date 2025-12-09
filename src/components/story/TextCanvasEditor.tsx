@@ -77,7 +77,22 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
    * Initialize Fabric.js canvas
    */
   useEffect(() => {
-    if (!canvasRef.current || !isFabricLoaded || !fabric) return;
+    if (!canvasRef.current || !isFabricLoaded || !fabric) {
+      console.log('Canvas initialization skipped:', {
+        hasRef: !!canvasRef.current,
+        isFabricLoaded,
+        hasFabric: !!fabric
+      });
+      return;
+    }
+
+    // Prevent multiple initializations
+    if (fabricCanvasRef.current) {
+      console.log('Canvas already initialized, skipping');
+      return;
+    }
+
+    console.log('Initializing Fabric canvas...');
 
     // Initialize the canvas
     const canvas = new fabric.Canvas(canvasRef.current, {
@@ -89,13 +104,16 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     });
 
     fabricCanvasRef.current = canvas;
+    console.log('Canvas created, setting ready state');
     setIsCanvasReady(true);
 
-    // Load initial state if provided
+    // Load initial state if provided (only on first mount)
     if (initialState) {
       try {
+        console.log('Loading initial canvas state...');
         canvas.loadFromJSON(initialState, () => {
           canvas.renderAll();
+          console.log('Initial state loaded');
         });
       } catch (error) {
         console.error('Error loading canvas state:', error);
@@ -147,21 +165,24 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
 
     document.addEventListener('keydown', handleKeyDown);
 
-    // Cleanup
+    // No cleanup on this effect - canvas persists for component lifetime
+    // Cleanup only happens when component unmounts (see separate effect below)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFabricLoaded]);
+
+  /**
+   * Cleanup canvas on unmount
+   */
+  useEffect(() => {
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      canvas.off('selection:created', handleSelectionCreated);
-      canvas.off('selection:updated', handleSelectionUpdated);
-      canvas.off('selection:cleared', handleSelectionCleared);
-      canvas.off('object:modified', handleObjectModified);
-      canvas.off('object:scaling', handleObjectModified);
-      canvas.off('object:rotating', handleObjectModified);
-      canvas.off('object:skewing', handleObjectModified);
-      canvas.off('object:moving', handleObjectModified);
-      canvas.dispose();
-      fabricCanvasRef.current = null;
+      if (fabricCanvasRef.current) {
+        console.log('Component unmounting, cleaning up canvas...');
+        fabricCanvasRef.current.dispose();
+        fabricCanvasRef.current = null;
+        setIsCanvasReady(false);
+      }
     };
-  }, [width, height, backgroundColor, isFabricLoaded]);
+  }, []);
 
   /**
    * Add a new text object to the canvas

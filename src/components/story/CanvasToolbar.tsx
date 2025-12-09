@@ -64,6 +64,15 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
 
   const isObjectSelected = !!activeObject;
 
+  // Debug logging
+  useEffect(() => {
+    console.log('CanvasToolbar state:', {
+      isCanvasReady,
+      isObjectSelected,
+      activeObjectType: activeObject?.type,
+    });
+  }, [isCanvasReady, isObjectSelected, activeObject]);
+
   /**
    * Update toolbar state when active object changes
    */
