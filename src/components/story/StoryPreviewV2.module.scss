@@ -267,6 +267,15 @@ $transition-speed: 0.3s;
     align-items: center;
     justify-content: center;
   }
+
+  // Type-specific styles
+  &.text {
+    background: white;
+  }
+
+  &.image {
+    background: #F5F5F5;
+  }
 }
 
 // Text content styling
