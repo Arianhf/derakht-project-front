@@ -63,9 +63,12 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         const fabricModule = await import('fabric');
         console.log('Fabric.js module loaded:', fabricModule);
 
-        // Store the fabric instance in a ref
-        fabricLibRef.current = fabricModule.fabric;
+        // In Fabric.js v6, the module itself contains the classes
+        // Store the entire module in the ref
+        fabricLibRef.current = fabricModule;
         console.log('Fabric instance stored:', !!fabricLibRef.current);
+        console.log('Has Canvas:', !!fabricLibRef.current.Canvas);
+        console.log('Has IText:', !!fabricLibRef.current.IText);
 
         setIsFabricLoaded(true);
       } catch (error) {
@@ -98,10 +101,10 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
 
     console.log('Initializing Fabric canvas...');
 
-    const fabric = fabricLibRef.current;
+    const { Canvas } = fabricLibRef.current;
 
     // Initialize the canvas
-    const canvas = new fabric.Canvas(canvasRef.current, {
+    const canvas = new Canvas(canvasRef.current, {
       width,
       height,
       backgroundColor,
@@ -200,9 +203,9 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     }
 
     const canvas = fabricCanvasRef.current;
-    const fabric = fabricLibRef.current;
+    const { IText } = fabricLibRef.current;
 
-    const text = new fabric.IText('متن خود را بنویسید', {
+    const text = new IText('متن خود را بنویسید', {
       left: canvas.width / 2,
       top: canvas.height / 2,
       originX: 'center',
