@@ -12,6 +12,7 @@ interface StoryEditorV2Props {
   onClose: () => void;
   onSave: (updatedTexts: string[]) => Promise<void>;
   onCoverImageUpload?: (file: File) => void;
+  onCoverImageSelect?: (imageUrl: string) => void;
   onColorChange?: (backgroundColor?: string, fontColor?: string) => void;
   isFullPage?: boolean;
 }
@@ -83,6 +84,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   onClose,
   onSave,
   onCoverImageUpload,
+  onCoverImageSelect,
   onColorChange,
   isFullPage = false,
 }) => {
@@ -203,6 +205,11 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
     if (!e.target.files || e.target.files.length === 0 || !onCoverImageUpload) return;
     const file = e.target.files[0];
     onCoverImageUpload(file);
+  };
+
+  const handleSelectExistingImage = (imageUrl: string) => {
+    if (!onCoverImageSelect) return;
+    onCoverImageSelect(imageUrl);
   };
 
   const handleColorChange = (type: 'background' | 'font', color: string) => {
@@ -472,13 +479,16 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
 
             <div className={styles.settingsContent}>
               {/* Cover Image Upload */}
-              {onCoverImageUpload && (
+              {(onCoverImageUpload || onCoverImageSelect) && (
                 <div className={styles.settingsSection}>
                   <label className={styles.settingsLabel}>
                     تصویر جلد داستان
                   </label>
-                  <div className={styles.coverImageSection}>
-                    {story.cover_image && (
+
+                  {/* Current cover image */}
+                  {story.cover_image && (
+                    <div className={styles.currentCoverWrapper}>
+                      <p className={styles.sectionSubtitle}>تصویر جلد فعلی:</p>
                       <div className={styles.currentCoverImage}>
                         <Image
                           src={story.cover_image}
@@ -489,18 +499,60 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
                           style={{ objectFit: 'cover' }}
                         />
                       </div>
-                    )}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleCoverImageUpload}
-                      className={styles.fileInput}
-                      id="cover-image-upload"
-                    />
-                    <label htmlFor="cover-image-upload" className={styles.uploadButton}>
-                      آپلود تصویر جدید
-                    </label>
-                  </div>
+                    </div>
+                  )}
+
+                  {/* Select from existing images */}
+                  {onCoverImageSelect && story.parts.length > 0 && (
+                    <div className={styles.existingImagesSection}>
+                      <p className={styles.sectionSubtitle}>انتخاب از تصاویر داستان:</p>
+                      <div className={styles.imageGrid}>
+                        {story.parts
+                          .filter(part => part.illustration)
+                          .map((part, index) => (
+                            <button
+                              key={part.id}
+                              className={`${styles.imageOption} ${
+                                story.cover_image === part.illustration ? styles.selected : ''
+                              }`}
+                              onClick={() => handleSelectExistingImage(part.illustration!)}
+                              aria-label={`انتخاب تصویر بخش ${index + 1}`}
+                            >
+                              <Image
+                                src={part.illustration!}
+                                alt={`تصویر بخش ${index + 1}`}
+                                width={120}
+                                height={120}
+                                className={styles.imageOptionThumb}
+                                style={{ objectFit: 'cover' }}
+                              />
+                              {story.cover_image === part.illustration && (
+                                <div className={styles.selectedBadge}>
+                                  <span className={styles.selectedCheck}>✓</span>
+                                </div>
+                              )}
+                            </button>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Upload new image */}
+                  {onCoverImageUpload && (
+                    <div className={styles.uploadSection}>
+                      <p className={styles.sectionSubtitle}>یا آپلود تصویر جدید:</p>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleCoverImageUpload}
+                        className={styles.fileInput}
+                        id="cover-image-upload"
+                      />
+                      <label htmlFor="cover-image-upload" className={styles.uploadButton}>
+                        آپلود تصویر جدید
+                      </label>
+                    </div>
+                  )}
                 </div>
               )}
 

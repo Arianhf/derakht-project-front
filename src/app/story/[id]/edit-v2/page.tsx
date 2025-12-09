@@ -102,6 +102,19 @@ const StoryEditV2Page = () => {
     }
   };
 
+  const handleCoverImageSelect = async (imageUrl: string) => {
+    if (!story) return;
+
+    try {
+      const updatedStory = await storyService.setCoverImageFromUrl(story.id, imageUrl);
+      setStory(updatedStory);
+      toast.success('تصویر جلد با موفقیت انتخاب شد');
+    } catch (error) {
+      console.error('Error selecting cover image:', error);
+      toast.error('خطا در انتخاب تصویر جلد');
+    }
+  };
+
   const handleColorChange = async (backgroundColor?: string, fontColor?: string) => {
     if (!story) return;
 
@@ -190,6 +203,7 @@ const StoryEditV2Page = () => {
         onClose={handleClose}
         onSave={handleSave}
         onCoverImageUpload={handleCoverImageUpload}
+        onCoverImageSelect={handleCoverImageSelect}
         onColorChange={handleColorChange}
         isFullPage={true}
       />

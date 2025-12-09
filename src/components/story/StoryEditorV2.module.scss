@@ -772,11 +772,25 @@ $transition-speed: 0.3s;
 }
 
 // Cover Image Section
-.coverImageSection {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  align-items: center;
+.sectionSubtitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: $text-dark;
+  margin: 0 0 12px 0;
+  font-family: 'Vazirmatn', sans-serif;
+
+  @media (max-width: $mobile-breakpoint) {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+}
+
+.currentCoverWrapper {
+  margin-bottom: 24px;
+
+  @media (max-width: $mobile-breakpoint) {
+    margin-bottom: 20px;
+  }
 }
 
 .currentCoverImage {
@@ -785,6 +799,7 @@ $transition-speed: 0.3s;
   border-radius: $border-radius;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
 
   @media (max-width: $mobile-breakpoint) {
     width: 150px;
@@ -794,6 +809,106 @@ $transition-speed: 0.3s;
 
 .coverImagePreview {
   border-radius: $border-radius;
+}
+
+// Existing images selection
+.existingImagesSection {
+  margin-bottom: 24px;
+
+  @media (max-width: $mobile-breakpoint) {
+    margin-bottom: 20px;
+  }
+}
+
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+
+  @media (max-width: $mobile-breakpoint) {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+  }
+}
+
+.imageOption {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 3px solid #E0E0E0;
+  border-radius: $border-radius-sm;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all $transition-speed ease;
+  background: none;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    border-color: $primary-color;
+  }
+
+  &:active {
+    transform: translateY(-1px) scale(1.02);
+  }
+
+  &:focus {
+    outline: 3px solid $accent-color;
+    outline-offset: 2px;
+  }
+
+  &.selected {
+    border-color: $accent-color;
+    border-width: 4px;
+    box-shadow: 0 4px 12px rgba($accent-color, 0.4);
+  }
+}
+
+.imageOptionThumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.selectedBadge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  background: $accent-color;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  @media (max-width: $mobile-breakpoint) {
+    width: 28px;
+    height: 28px;
+    top: 6px;
+    right: 6px;
+  }
+}
+
+.selectedCheck {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+
+  @media (max-width: $mobile-breakpoint) {
+    font-size: 18px;
+  }
+}
+
+// Upload section
+.uploadSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
 }
 
 .fileInput {
