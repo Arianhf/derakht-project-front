@@ -452,19 +452,23 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
 
   return (
     <div className={styles.canvasEditorWrapper}>
-      <CanvasToolbar
-        activeObject={activeObject}
-        onAddText={addText}
-        onDeleteSelected={deleteSelected}
-        onFontFamilyChange={updateFontFamily}
-        onFontSizeChange={updateFontSize}
-        onDimensionsChange={updateDimensions}
-        onSkewChange={updateSkew}
-        onAspectRatioLockChange={toggleAspectRatioLock}
-        isCanvasReady={isCanvasReady}
-      />
       <div className={styles.canvasContainer}>
         <canvas ref={canvasRef} />
+
+        {/* Floating toolbar overlay */}
+        <div className={styles.floatingToolbar}>
+          <CanvasToolbar
+            activeObject={activeObject}
+            onAddText={addText}
+            onDeleteSelected={deleteSelected}
+            onFontFamilyChange={updateFontFamily}
+            onFontSizeChange={updateFontSize}
+            onDimensionsChange={updateDimensions}
+            onSkewChange={updateSkew}
+            onAspectRatioLockChange={toggleAspectRatioLock}
+            isCanvasReady={isCanvasReady}
+          />
+        </div>
       </div>
     </div>
   );

@@ -323,6 +323,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
             <div className={styles.textEditorWrapper}>
               {isCanvasMode ? (
                 <TextCanvasEditor
+                  key={`canvas-${index}`}
                   initialState={canvasStates[index]}
                   onChange={(canvasJSON) => handleCanvasChange(index, canvasJSON)}
                   width={600}

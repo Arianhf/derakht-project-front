@@ -189,7 +189,6 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
           title="افزودن متن (T)"
         >
           <FaPlus />
-          <span>افزودن متن</span>
         </button>
       </div>
 
@@ -197,15 +196,13 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
       {isTextObject && (
         <>
           <div className={styles.toolbarSection}>
-            <label htmlFor="font-family" className={styles.label}>
-              فونت:
-            </label>
             <select
               id="font-family"
               className={styles.select}
               value={selectedFont}
               onChange={handleFontFamilyChange}
               disabled={!isObjectSelected}
+              aria-label="انتخاب فونت"
             >
               {FONTS.map((font) => (
                 <option key={font.value} value={font.value}>
@@ -216,15 +213,13 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
           </div>
 
           <div className={styles.toolbarSection}>
-            <label htmlFor="font-size" className={styles.label}>
-              اندازه:
-            </label>
             <select
               id="font-size"
               className={styles.select}
               value={selectedFontSize}
               onChange={handleFontSizeChange}
               disabled={!isObjectSelected}
+              aria-label="اندازه فونت"
             >
               {FONT_SIZES.map((size) => (
                 <option key={size} value={size}>
@@ -232,89 +227,6 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
                 </option>
               ))}
             </select>
-          </div>
-        </>
-      )}
-
-      {/* Transform Controls - For all objects */}
-      {isObjectSelected && (
-        <>
-          <div className={styles.toolbarSection}>
-            <label htmlFor="object-width" className={styles.label}>
-              عرض:
-            </label>
-            <input
-              id="object-width"
-              type="number"
-              className={styles.numberInput}
-              value={objectWidth}
-              onChange={handleWidthChange}
-              min="1"
-              disabled={!isObjectSelected}
-            />
-          </div>
-
-          <div className={styles.toolbarSection}>
-            <label htmlFor="object-height" className={styles.label}>
-              ارتفاع:
-            </label>
-            <input
-              id="object-height"
-              type="number"
-              className={styles.numberInput}
-              value={objectHeight}
-              onChange={handleHeightChange}
-              min="1"
-              disabled={!isObjectSelected}
-            />
-          </div>
-
-          <div className={styles.toolbarSection}>
-            <button
-              className={`${styles.lockButton} ${isAspectRatioLocked ? styles.locked : ''}`}
-              onClick={handleAspectRatioToggle}
-              disabled={!isObjectSelected}
-              aria-label={isAspectRatioLocked ? 'باز کردن قفل نسبت تصویر' : 'قفل کردن نسبت تصویر'}
-              title={isAspectRatioLocked ? 'باز کردن قفل نسبت تصویر' : 'قفل کردن نسبت تصویر'}
-            >
-              {isAspectRatioLocked ? <FaLock /> : <FaUnlock />}
-            </button>
-          </div>
-
-          <div className={styles.toolbarSection}>
-            <label htmlFor="skew-x" className={styles.label}>
-              انحراف X:
-            </label>
-            <input
-              id="skew-x"
-              type="range"
-              className={styles.slider}
-              value={skewX}
-              onChange={handleSkewXChange}
-              min="-45"
-              max="45"
-              step="1"
-              disabled={!isObjectSelected}
-            />
-            <span className={styles.sliderValue}>{Math.round(skewX)}°</span>
-          </div>
-
-          <div className={styles.toolbarSection}>
-            <label htmlFor="skew-y" className={styles.label}>
-              انحراف Y:
-            </label>
-            <input
-              id="skew-y"
-              type="range"
-              className={styles.slider}
-              value={skewY}
-              onChange={handleSkewYChange}
-              min="-45"
-              max="45"
-              step="1"
-              disabled={!isObjectSelected}
-            />
-            <span className={styles.sliderValue}>{Math.round(skewY)}°</span>
           </div>
 
           <div className={styles.toolbarSection}>
@@ -326,7 +238,6 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
               title="حذف شی (Delete)"
             >
               <FaTrash />
-              <span>حذف</span>
             </button>
           </div>
         </>
