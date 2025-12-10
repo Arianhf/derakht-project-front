@@ -1,0 +1,245 @@
+@use 'sass:color';
+@use '@/styles/globals.scss' as *;
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  align-items: center;
+  direction: rtl;
+
+  @media (max-width: $breakpoint-md) {
+    gap: $spacing-xs;
+  }
+}
+
+.toolSection {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs;
+  border-right: 2px solid $light-text;
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &:first-child {
+    border-right: none;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-xs;
+    gap: $spacing-xs;
+  }
+}
+
+.toolLabel {
+  font-size: $font-size-sm;
+  color: $dark-text;
+  font-weight: 500;
+  margin-left: $spacing-xs;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 12px;
+  }
+}
+
+// Tool Buttons (Brush, Eraser)
+.toolButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: $spacing-xs;
+  background-color: white;
+  color: $dark-text;
+  border: 2px solid $light-text;
+  border-radius: $border-radius-sm;
+  font-size: 18px;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:hover:not(:disabled) {
+    border-color: $primary-color;
+    color: $primary-color;
+    transform: scale(1.05);
+  }
+
+  &.active {
+    background-color: $primary-color;
+    color: white;
+    border-color: $primary-color;
+  }
+
+  &:disabled {
+    background-color: $background;
+    color: $light-text;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+}
+
+// Brush Size Select
+.sizeSelect {
+  padding: $spacing-xs $spacing-sm;
+  border: 2px solid $light-text;
+  border-radius: $border-radius-sm;
+  font-size: 14px;
+  color: $dark-text;
+  background-color: white;
+  cursor: pointer;
+  transition: $transition-fast;
+  min-width: 90px;
+
+  &:hover:not(:disabled) {
+    border-color: $primary-color;
+  }
+
+  &:focus {
+    border-color: $primary-color;
+    outline: 2px solid rgba($primary-color, 0.2);
+    outline-offset: 0;
+  }
+
+  &:disabled {
+    background-color: $background;
+    color: $light-text;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 12px;
+    min-width: 70px;
+  }
+}
+
+// Color Grid
+.colorGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  max-width: 250px;
+
+  @media (max-width: $breakpoint-md) {
+    max-width: 200px;
+    gap: 4px;
+  }
+}
+
+.colorSwatch {
+  width: 32px;
+  height: 32px;
+  border-radius: $border-radius-sm;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: $transition-fast;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover:not(:disabled) {
+    transform: scale(1.1);
+    border-color: $dark-text;
+  }
+
+  &.active {
+    border-color: $dark-text;
+    box-shadow: 0 0 0 2px white, 0 0 0 4px $dark-text;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.checkmark {
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 14px;
+  }
+}
+
+// Action Buttons (Undo, Clear)
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: $spacing-xs;
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-size: 16px;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:hover:not(:disabled) {
+    background-color: color.adjust($primary-color, $lightness: -10%);
+    transform: scale(1.05);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  &.danger {
+    background-color: $secondary-color;
+
+    &:hover:not(:disabled) {
+      background-color: color.adjust($secondary-color, $lightness: -10%);
+    }
+
+    &:focus {
+      outline-color: $secondary-color;
+    }
+  }
+
+  &:disabled {
+    background-color: $light-text;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+}

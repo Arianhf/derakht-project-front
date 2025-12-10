@@ -1,0 +1,63 @@
+@use '@/styles/globals.scss' as *;
+
+.canvasEditorWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.loadingState {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: $dark-text;
+  font-size: $font-size-lg;
+  background-color: $card-bg;
+  border-radius: $border-radius-sm;
+
+  p {
+    padding: $spacing-lg;
+    background: white;
+    border-radius: $border-radius-sm;
+    box-shadow: $shadow-sm;
+  }
+}
+
+.canvasContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: $card-bg;
+  border-radius: $border-radius-sm;
+
+  canvas {
+    display: block;
+    border-radius: $border-radius-sm;
+    cursor: crosshair;
+  }
+}
+
+.floatingToolbar {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-lg;
+  padding: $spacing-xs;
+
+  @media (max-width: $breakpoint-md) {
+    top: $spacing-xs;
+    right: $spacing-xs;
+    left: $spacing-xs;
+  }
+}
