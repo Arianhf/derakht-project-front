@@ -20,17 +20,23 @@ export interface DrawingCanvasProps {
 
 type DrawingTool = 'brush' | 'eraser';
 
+export interface DrawingCanvasRef {
+  exportAsImage: () => string;
+  getCanvasJSON: () => string;
+  clearCanvas: () => void;
+}
+
 /**
  * DrawingCanvas - A canvas-based drawing editor using Fabric.js
  * Supports drawing with brush, eraser, and color selection
  */
-const DrawingCanvas: React.FC<DrawingCanvasProps> = ({
+const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
   initialState,
   onChange,
   width,
   height,
   backgroundColor = '#FFFFFF',
-}) => {
+}, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const fabricCanvasRef = useRef<any>(null);
@@ -42,6 +48,33 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({
   const [currentTool, setCurrentTool] = useState<DrawingTool>('brush');
   const [brushSize, setBrushSize] = useState(5);
   const [brushColor, setBrushColor] = useState('#2B463C');
+
+  /**
+   * Expose methods to parent component via ref
+   */
+  React.useImperativeHandle(ref, () => ({
+    exportAsImage: () => {
+      if (!fabricCanvasRef.current) return '';
+      return fabricCanvasRef.current.toDataURL({
+        format: 'png',
+        quality: 1,
+      });
+    },
+    getCanvasJSON: () => {
+      if (!fabricCanvasRef.current) return '{}';
+      return JSON.stringify(fabricCanvasRef.current.toJSON());
+    },
+    clearCanvas: () => {
+      if (!fabricCanvasRef.current) return;
+      fabricCanvasRef.current.clear();
+      fabricCanvasRef.current.backgroundColor = backgroundColor;
+      fabricCanvasRef.current.renderAll();
+      if (onChange) {
+        const json = JSON.stringify(fabricCanvasRef.current.toJSON());
+        onChange(json);
+      }
+    },
+  }));
 
   /**
    * Load Fabric.js dynamically (client-side only)
@@ -356,6 +389,8 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({
       </div>
     </div>
   );
-};
+});
+
+DrawingCanvas.displayName = 'DrawingCanvas';
 
 export default DrawingCanvas;

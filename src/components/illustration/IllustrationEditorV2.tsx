@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight, FaSave, FaCheck } from 'react-icons/fa';
 import styles from './IllustrationEditorV2.module.scss';
 import { Story, StoryOrientation, StorySize, StoryPart } from '@/types/story';
-import DrawingCanvas from './DrawingCanvas';
+import DrawingCanvas, { DrawingCanvasRef } from './DrawingCanvas';
 
 interface IllustrationEditorV2Props {
   story: Story;
@@ -73,7 +73,7 @@ const IllustrationEditorV2: React.FC<IllustrationEditorV2Props> = ({
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [canvasStates, setCanvasStates] = useState<{ [key: number]: string }>({});
-  const [canvasRefs, setCanvasRefs] = useState<{ [key: number]: any }>({});
+  const canvasRefsMap = useRef<{ [key: number]: DrawingCanvasRef | null }>({});
   const contentRef = useRef<HTMLDivElement>(null);
 
   const MIN_SWIPE_DISTANCE = 50;
@@ -199,14 +199,20 @@ const IllustrationEditorV2: React.FC<IllustrationEditorV2Props> = ({
       // Collect all canvas states and export as images
       const illustrations: { [key: number]: { canvasData: string; imageData: string } } = {};
 
-      // TODO: Export canvas as image data URL
-      // For now, just save canvas JSON states
-      Object.keys(canvasStates).forEach(key => {
-        const index = parseInt(key);
-        illustrations[index] = {
-          canvasData: canvasStates[index],
-          imageData: '' // Will be populated by canvas export
-        };
+      // Export each canvas as image
+      story.parts.forEach((part, index) => {
+        const canvasRef = canvasRefsMap.current[index];
+        if (canvasRef) {
+          const imageData = canvasRef.exportAsImage();
+          const canvasData = canvasRef.getCanvasJSON();
+
+          if (imageData && canvasData !== '{}') {
+            illustrations[index] = {
+              canvasData,
+              imageData
+            };
+          }
+        }
       });
 
       await onSave(illustrations);
@@ -278,6 +284,9 @@ const IllustrationEditorV2: React.FC<IllustrationEditorV2Props> = ({
           {type === 'drawing' ? (
             <div className={styles.drawingCanvasWrapper}>
               <DrawingCanvas
+                ref={(ref) => {
+                  canvasRefsMap.current[index] = ref;
+                }}
                 key={`canvas-${index}`}
                 initialState={canvasStates[index]}
                 onChange={(canvasJSON) => handleCanvasChange(index, canvasJSON)}
