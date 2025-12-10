@@ -6,23 +6,23 @@ import StoryEditorV2 from '@/components/story/StoryEditorV2';
 import { storyService } from '@/services/storyService';
 import { Story } from '@/types/story';
 import { toast, Toaster } from 'react-hot-toast';
-import styles from './StoryEditV2Page.module.scss';
+import styles from './StoryEditPage.module.scss';
 
 /**
- * StoryEditorV2 Page Component
+ * Story Editor Page Component
  *
- * Edit mode for stories with V2 responsive layouts
+ * Edit mode for stories with responsive layouts
  *
- * URL Pattern: /story/[id]/edit-v2
+ * URL Pattern: /story/[id]/edit
  *
  * Features:
  * - Full editing capabilities with textarea
- * - Same responsive layouts as preview V2
+ * - Same responsive layouts as preview
  * - Auto-save support
  * - Unsaved changes warning
  * - Back navigation
  */
-const StoryEditV2Page = () => {
+const StoryEditPage = () => {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
@@ -231,4 +231,4 @@ const StoryEditV2Page = () => {
   );
 };
 
-export default StoryEditV2Page;
+export default StoryEditPage;
