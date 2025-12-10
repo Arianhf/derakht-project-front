@@ -18,17 +18,6 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ heroPosts, onTagClick }) =>
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Auto transition every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (heroPosts.length > 1) {
-        goToNextSlide();
-      }
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex, heroPosts.length, goToNextSlide]);
-
   const goToNextSlide = useCallback(() => {
     if (isTransitioning) return;
 
@@ -52,6 +41,17 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ heroPosts, onTagClick }) =>
     // Reset transition state after animation completes
     setTimeout(() => setIsTransitioning(false), 500);
   }, [heroPosts.length, isTransitioning]);
+
+  // Auto transition every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (heroPosts.length > 1) {
+        goToNextSlide();
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [currentIndex, heroPosts.length, goToNextSlide]);
 
   const handleDotClick = (index: number) => {
     if (isTransitioning || index === currentIndex) return;
