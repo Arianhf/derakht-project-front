@@ -7,7 +7,7 @@ import styles from "./stories.module.scss";
 import { storyService } from "@/services/storyService";
 import { Story } from "@/types/story";
 import placeholderImage from "@/assets/images/story.png";
-import StoryPreview from "@/components/story/StoryPreview";
+import StoryPreviewV2 from "@/components/story/StoryPreviewV2";
 import { toast, Toaster } from 'react-hot-toast';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import Footer from '@/components/shared/Footer/Footer';
@@ -41,38 +41,6 @@ const StoriesPage: React.FC = () => {
         setIsPreviewOpen(true);
     };
 
-    const handleCoverImageUpload = async (file: File) => {
-        if (!selectedStory) return;
-
-        try {
-            const response = await storyService.uploadStoryCoverImage(selectedStory.id, file);
-            setSelectedStory(response);
-            // Update the story in the list
-            setStories(stories.map(s => s.id === response.id ? response : s));
-            toast.success('تصویر جلد با موفقیت آپلود شد');
-        } catch (error) {
-            console.error('Error uploading cover image:', error);
-            toast.error('خطا در آپلود تصویر جلد');
-        }
-    };
-
-    const handleColorChange = async (backgroundColor?: string, fontColor?: string) => {
-        if (!selectedStory) return;
-
-        try {
-            const response = await storyService.setStoryConfig(selectedStory.id, {
-                background_color: backgroundColor || null,
-                font_color: fontColor || null
-            });
-            setSelectedStory(response);
-            // Update the story in the list
-            setStories(stories.map(s => s.id === response.id ? response : s));
-            toast.success('رنگ‌ها با موفقیت ذخیره شدند');
-        } catch (error) {
-            console.error('Error updating story colors:', error);
-            toast.error('خطا در ذخیره رنگ‌ها');
-        }
-    };
 
     if (loading) return (
         <>
@@ -140,22 +108,10 @@ const StoriesPage: React.FC = () => {
 
             {/* Story Preview Modal - Rendered outside container to avoid z-index stacking context issues */}
             {selectedStory && (
-                <StoryPreview
-                    parts={selectedStory.parts.map((part) => ({
-                        illustration: part.illustration || "/placeholder-image.jpg",
-                        text: part.text || "متنی وارد نشده است.",
-                    }))}
+                <StoryPreviewV2
+                    story={selectedStory}
                     isOpen={isPreviewOpen}
                     onClose={() => setIsPreviewOpen(false)}
-                    readOnly={true}
-                    storyId={selectedStory.id}
-                    storyTitle={selectedStory.title}
-                    coverImage={selectedStory.cover_image}
-                    backgroundColor={selectedStory.background_color}
-                    fontColor={selectedStory.font_color}
-                    onCoverImageUpload={handleCoverImageUpload}
-                    onColorChange={handleColorChange}
-                    modalTitle={selectedStory.title}
                 />
             )}
 

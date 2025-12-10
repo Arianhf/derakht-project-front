@@ -6,7 +6,7 @@ import styles from "./qesseKhooneh.module.scss";
 import { storyService } from "@/services/storyService";
 import { Story, Author } from "@/types/story";
 import placeholderImage from "@/assets/images/story.png";
-import StoryPreview from "@/components/story/StoryPreview";
+import StoryPreviewV2 from "@/components/story/StoryPreviewV2";
 import { toast, Toaster } from 'react-hot-toast';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import Footer from '@/components/shared/Footer/Footer';
@@ -175,20 +175,10 @@ const QesseKhoonehPage: React.FC = () => {
 
             {/* Story Preview Modal */}
             {selectedStory && (
-                <StoryPreview
-                    parts={selectedStory.parts.map((part) => ({
-                        illustration: part.illustration || "/placeholder-image.jpg",
-                        text: part.text || "متنی وارد نشده است.",
-                    }))}
+                <StoryPreviewV2
+                    story={selectedStory}
                     isOpen={isPreviewOpen}
                     onClose={() => setIsPreviewOpen(false)}
-                    readOnly={true}
-                    storyId={selectedStory.id}
-                    storyTitle={selectedStory.title}
-                    coverImage={selectedStory.cover_image}
-                    backgroundColor={selectedStory.background_color}
-                    fontColor={selectedStory.font_color}
-                    modalTitle={selectedStory.title}
                 />
             )}
 
