@@ -29,6 +29,7 @@ export interface StoryPart {
     text: string;
     story_part_template: string;
     illustration: string | null;
+    canvas_data?: string | null;  // Fabric.js canvas JSON for advanced text editing
 }
 
 export interface Author {

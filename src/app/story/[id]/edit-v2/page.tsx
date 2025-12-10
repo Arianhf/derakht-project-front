@@ -54,19 +54,23 @@ const StoryEditV2Page = () => {
     fetchStory();
   }, [id]);
 
-  const handleSave = async (updatedTexts: string[]) => {
+  const handleSave = async (updatedTexts: string[], canvasData: { [key: number]: string }) => {
     if (!story) return;
 
     try {
-      // Update each part's text
+      // Update each part's text and canvas data
       for (let i = 0; i < story.parts.length; i++) {
         const part = story.parts[i];
-        if (part.text !== updatedTexts[i]) {
-          // Call API to update this part
+        const hasTextChanged = part.text !== updatedTexts[i];
+        const hasCanvasData = canvasData[i] !== undefined && canvasData[i] !== '';
+
+        if (hasTextChanged || hasCanvasData) {
+          // Call API to update this part with text and canvas data
           await storyService.addStoryPart(
             story.id,
             part.story_part_template,
-            updatedTexts[i]
+            updatedTexts[i],
+            hasCanvasData ? canvasData[i] : undefined // Pass canvas data if it exists
           );
         }
       }
@@ -77,6 +81,7 @@ const StoryEditV2Page = () => {
         parts: story.parts.map((part, index) => ({
           ...part,
           text: updatedTexts[index],
+          canvas_data: canvasData[index] || part.canvas_data, // Preserve or update canvas data
         })),
       };
       setStory(updatedStory);

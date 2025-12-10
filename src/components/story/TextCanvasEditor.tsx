@@ -150,39 +150,18 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
 
     const { Canvas } = fabricLibRef.current;
 
-    // Get device pixel ratio for crisp rendering on high-DPI displays
-    const pixelRatio = window.devicePixelRatio || 1;
-
-    // Initialize the canvas
+    // Initialize the canvas - Fabric.js will handle Retina scaling automatically
     const canvas = new Canvas(canvasRef.current, {
       width: canvasDimensions.width,
       height: canvasDimensions.height,
       backgroundColor,
       selection: true,
       preserveObjectStacking: true,
-    });
-
-    // Scale canvas for high-DPI displays to fix blurry text
-    const canvasEl = canvas.getElement();
-    canvasEl.width = canvasDimensions.width * pixelRatio;
-    canvasEl.height = canvasDimensions.height * pixelRatio;
-    canvasEl.style.width = `${canvasDimensions.width}px`;
-    canvasEl.style.height = `${canvasDimensions.height}px`;
-
-    // Scale the canvas context
-    const ctx = canvasEl.getContext('2d');
-    if (ctx) {
-      ctx.scale(pixelRatio, pixelRatio);
-    }
-
-    // Update Fabric canvas dimensions to match
-    canvas.setDimensions({
-      width: canvasDimensions.width,
-      height: canvasDimensions.height,
+      enableRetinaScaling: true, // This should handle high-DPI displays automatically
     });
 
     fabricCanvasRef.current = canvas;
-    console.log('Canvas created with pixel ratio:', pixelRatio);
+    console.log('Canvas created with enableRetinaScaling');
     setIsCanvasReady(true);
 
     // Load initial state if provided (only on first mount)

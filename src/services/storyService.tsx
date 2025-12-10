@@ -31,11 +31,27 @@ export const storyService = {
     return response.data;
   },
 
-  addStoryPart: async (storyId: string, storyPartTemplateId: string, text: string): Promise<StoryPart> => {
-    const response = await api.post(`/stories/${storyId}/add_part/`, {
+  addStoryPart: async (
+    storyId: string,
+    storyPartTemplateId: string,
+    text: string,
+    canvasData?: string
+  ): Promise<StoryPart> => {
+    const payload: {
+      text: string;
+      story_part_template_id: string;
+      canvas_data?: string;
+    } = {
       text,
       story_part_template_id: storyPartTemplateId,
-    });
+    };
+
+    // Only include canvas_data if it's provided
+    if (canvasData) {
+      payload.canvas_data = canvasData;
+    }
+
+    const response = await api.post(`/stories/${storyId}/add_part/`, payload);
     return response.data;
   },
 

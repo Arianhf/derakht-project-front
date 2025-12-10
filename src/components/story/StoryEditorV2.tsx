@@ -11,7 +11,7 @@ interface StoryEditorV2Props {
   story: Story;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (updatedTexts: string[]) => Promise<void>;
+  onSave: (updatedTexts: string[], canvasData: { [key: number]: string }) => Promise<void>;
   onCoverImageUpload?: (file: File) => void;
   onCoverImageSelect?: (imageUrl: string) => void;
   onColorChange?: (backgroundColor?: string, fontColor?: string) => void;
@@ -117,6 +117,19 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
     }
   }, [story.parts]);
 
+  // Initialize canvas states from story parts
+  useEffect(() => {
+    if (story.parts) {
+      const initialCanvasStates: { [key: number]: string } = {};
+      story.parts.forEach((part, index) => {
+        if (part.canvas_data) {
+          initialCanvasStates[index] = part.canvas_data;
+        }
+      });
+      setCanvasStates(initialCanvasStates);
+    }
+  }, [story.parts]);
+
   // Mobile detection
   useEffect(() => {
     const checkMobile = () => {
@@ -187,7 +200,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      await onSave(texts);
+      await onSave(texts, canvasStates);
       setHasUnsavedChanges(false);
     } catch (error) {
       console.error('Error saving story:', error);
