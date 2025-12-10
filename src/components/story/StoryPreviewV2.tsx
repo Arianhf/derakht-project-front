@@ -84,6 +84,49 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
   // Check if we should show single-page view on mobile (for rectangle layouts)
   const isSinglePageMobile = layoutType.includes('Rectangle');
 
+  // Navigation handlers - defined early to be used in useEffect
+  const handleNext = useCallback(() => {
+    if (isMobile && isSinglePageMobile) {
+      // Mobile single-page navigation: image → text → next image
+      if (currentView === 'image') {
+        // Move from image to text
+        setCurrentView('text');
+      } else {
+        // Move from text to next part's image (or finish)
+        if (currentPartIndex < story.parts.length - 1) {
+          setCurrentPartIndex(currentPartIndex + 1);
+          setCurrentView('image'); // Next part starts with image
+        }
+      }
+    } else {
+      // Desktop or square mobile: navigate through parts
+      if (currentPartIndex < story.parts.length - 1) {
+        setCurrentPartIndex(currentPartIndex + 1);
+      }
+    }
+  }, [isMobile, isSinglePageMobile, currentView, currentPartIndex, story.parts.length]);
+
+  const handlePrevious = useCallback(() => {
+    if (isMobile && isSinglePageMobile) {
+      // Mobile single-page navigation: text ← image ← previous text
+      if (currentView === 'text') {
+        // Move from text to image
+        setCurrentView('image');
+      } else {
+        // Move from image to previous part's text (or do nothing if first)
+        if (currentPartIndex > 0) {
+          setCurrentPartIndex(currentPartIndex - 1);
+          setCurrentView('text'); // Previous part shows text
+        }
+      }
+    } else {
+      // Desktop or square mobile: navigate through parts
+      if (currentPartIndex > 0) {
+        setCurrentPartIndex(currentPartIndex - 1);
+      }
+    }
+  }, [isMobile, isSinglePageMobile, currentView, currentPartIndex]);
+
   // Mobile detection
   useEffect(() => {
     const checkMobile = () => {
@@ -160,48 +203,6 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
       handlePrevious();
     }
   };
-
-  const handleNext = useCallback(() => {
-    if (isMobile && isSinglePageMobile) {
-      // Mobile single-page navigation: image → text → next image
-      if (currentView === 'image') {
-        // Move from image to text
-        setCurrentView('text');
-      } else {
-        // Move from text to next part's image (or finish)
-        if (currentPartIndex < story.parts.length - 1) {
-          setCurrentPartIndex(currentPartIndex + 1);
-          setCurrentView('image'); // Next part starts with image
-        }
-      }
-    } else {
-      // Desktop or square mobile: navigate through parts
-      if (currentPartIndex < story.parts.length - 1) {
-        setCurrentPartIndex(currentPartIndex + 1);
-      }
-    }
-  }, [isMobile, isSinglePageMobile, currentView, currentPartIndex, story.parts.length]);
-
-  const handlePrevious = useCallback(() => {
-    if (isMobile && isSinglePageMobile) {
-      // Mobile single-page navigation: text ← image ← previous text
-      if (currentView === 'text') {
-        // Move from text to image
-        setCurrentView('image');
-      } else {
-        // Move from image to previous part's text (or do nothing if first)
-        if (currentPartIndex > 0) {
-          setCurrentPartIndex(currentPartIndex - 1);
-          setCurrentView('text'); // Previous part shows text
-        }
-      }
-    } else {
-      // Desktop or square mobile: navigate through parts
-      if (currentPartIndex > 0) {
-        setCurrentPartIndex(currentPartIndex - 1);
-      }
-    }
-  }, [isMobile, isSinglePageMobile, currentView, currentPartIndex]);
 
   const isFirstPage = currentPartIndex === 0 && (isMobile && isSinglePageMobile ? currentView === 'image' : true);
   const isLastPage = currentPartIndex === story.parts.length - 1 && (isMobile && isSinglePageMobile ? currentView === 'text' : true);
