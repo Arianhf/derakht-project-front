@@ -1,5 +1,6 @@
 // src/components/blog/RelatedPosts.module.scss
-@import '../../styles/globals.scss';
+@use 'sass:color';
+@use '../../styles/globals.scss' as *;
 
 .relatedPosts {
   margin-top: $spacing-xl;
@@ -141,7 +142,7 @@
   align-self: flex-start;
 
   &:hover {
-    background-color: darken($primary-color, 10%);
+    background-color: color.adjust($primary-color, $lightness: -10%);
     transform: translateY(-2px);
   }
 }

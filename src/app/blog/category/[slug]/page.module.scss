@@ -1,5 +1,6 @@
 // src/app/blog/category/[slug]/page.module.scss
-@import '../../../../styles/globals.scss';
+@use 'sass:color';
+@use '../../../../styles/globals.scss' as *;
 
 .pageWrapper {
   min-height: 100vh;
@@ -211,7 +212,7 @@
 }
 
 .readButton:hover {
-  background-color: darken($primary-color, 10%);
+  background-color: color.adjust($primary-color, $lightness: -10%);
 }
 
 .emptyState {

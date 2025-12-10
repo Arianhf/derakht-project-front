@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import Footer from '@/components/shared/Footer/Footer';
@@ -69,6 +69,47 @@ const TemplatePage = () => {
   const [isLoadingStories, setIsLoadingStories] = useState(false);
   const router = useRouter();
 
+  const startStory = useCallback(async (templateId: string) => {
+    try {
+      setIsLoading(true);
+
+      // Check if user is authenticated
+      const isAuthenticated = loginService.isAuthenticated();
+
+      if (!isAuthenticated) {
+        // Save the current selection and template to localStorage (only in browser)
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(
+              'pendingTemplate',
+              JSON.stringify({
+                templateId,
+                selectedTemplate,
+              })
+          );
+        }
+
+        // Redirect to login page with returnUrl pointing back to the template page
+        router.push(`/login?redirect=${encodeURIComponent('/template')}`);
+        return;
+      }
+
+      // User is authenticated, proceed with starting the story
+      const response = await templateService.startStory(templateId);
+      const storyId = response.story.id;
+
+      if (selectedTemplate === 'drawing') {
+        router.push(`/story/illustrate/${storyId}`);
+      } else if (selectedTemplate === 'story') {
+        router.push(`/story/${storyId}`);
+      }
+    } catch (error) {
+      console.error('Error starting story:', error);
+      toast.error('خطا در شروع داستان. لطفا دوباره تلاش کنید.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [selectedTemplate, router]);
+
   useEffect(() => {
     if (selectedTemplate) {
       fetchTemplates(selectedTemplate);
@@ -124,7 +165,7 @@ const TemplatePage = () => {
         }
       }
     }
-  }, []);
+  }, [startStory]);
 
   const fetchTemplates = async (type: 'story' | 'drawing') => {
     try {
@@ -135,47 +176,6 @@ const TemplatePage = () => {
     } catch (error) {
       console.error('Error fetching templates:', error);
       toast.error('خطا در دریافت قالب‌ها. لطفا دوباره تلاش کنید.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const startStory = async (templateId: string) => {
-    try {
-      setIsLoading(true);
-
-      // Check if user is authenticated
-      const isAuthenticated = loginService.isAuthenticated();
-
-      if (!isAuthenticated) {
-        // Save the current selection and template to localStorage (only in browser)
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(
-              'pendingTemplate',
-              JSON.stringify({
-                templateId,
-                selectedTemplate,
-              })
-          );
-        }
-
-        // Redirect to login page with returnUrl pointing back to the template page
-        router.push(`/login?redirect=${encodeURIComponent('/template')}`);
-        return;
-      }
-
-      // User is authenticated, proceed with starting the story
-      const response = await templateService.startStory(templateId);
-      const storyId = response.story.id;
-
-      if (selectedTemplate === 'drawing') {
-        router.push(`/story/illustrate/${storyId}`);
-      } else if (selectedTemplate === 'story') {
-        router.push(`/story/${storyId}`);
-      }
-    } catch (error) {
-      console.error('Error starting story:', error);
-      toast.error('خطا در شروع داستان. لطفا دوباره تلاش کنید.');
     } finally {
       setIsLoading(false);
     }

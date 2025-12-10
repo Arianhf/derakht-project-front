@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import { FaUser, FaShoppingBag, FaSignOutAlt, FaHome } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
@@ -82,7 +83,12 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({ children }) => {
                         <div className={styles.avatarContainer}>
                             <div className={styles.avatar}>
                                 {user.profile_image ? (
-                                    <img src={user.profile_image} alt={`${user.first_name} ${user.last_name}`} />
+                                    <Image
+                                        src={user.profile_image}
+                                        alt={`${user.first_name} ${user.last_name}`}
+                                        width={80}
+                                        height={80}
+                                    />
                                 ) : (
                                     user.first_name?.charAt(0) || (user.email && user.email.charAt(0).toUpperCase()) || 'U'
                                 )}

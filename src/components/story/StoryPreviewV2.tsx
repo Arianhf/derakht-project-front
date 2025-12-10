@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight } from 'react-icons/fa';
 import styles from './StoryPreviewV2.module.scss';
@@ -84,6 +84,49 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
   // Check if we should show single-page view on mobile (for rectangle layouts)
   const isSinglePageMobile = layoutType.includes('Rectangle');
 
+  // Navigation handlers - defined early to be used in useEffect
+  const handleNext = useCallback(() => {
+    if (isMobile && isSinglePageMobile) {
+      // Mobile single-page navigation: image → text → next image
+      if (currentView === 'image') {
+        // Move from image to text
+        setCurrentView('text');
+      } else {
+        // Move from text to next part's image (or finish)
+        if (currentPartIndex < story.parts.length - 1) {
+          setCurrentPartIndex(currentPartIndex + 1);
+          setCurrentView('image'); // Next part starts with image
+        }
+      }
+    } else {
+      // Desktop or square mobile: navigate through parts
+      if (currentPartIndex < story.parts.length - 1) {
+        setCurrentPartIndex(currentPartIndex + 1);
+      }
+    }
+  }, [isMobile, isSinglePageMobile, currentView, currentPartIndex, story.parts.length]);
+
+  const handlePrevious = useCallback(() => {
+    if (isMobile && isSinglePageMobile) {
+      // Mobile single-page navigation: text ← image ← previous text
+      if (currentView === 'text') {
+        // Move from text to image
+        setCurrentView('image');
+      } else {
+        // Move from image to previous part's text (or do nothing if first)
+        if (currentPartIndex > 0) {
+          setCurrentPartIndex(currentPartIndex - 1);
+          setCurrentView('text'); // Previous part shows text
+        }
+      }
+    } else {
+      // Desktop or square mobile: navigate through parts
+      if (currentPartIndex > 0) {
+        setCurrentPartIndex(currentPartIndex - 1);
+      }
+    }
+  }, [isMobile, isSinglePageMobile, currentView, currentPartIndex]);
+
   // Mobile detection
   useEffect(() => {
     const checkMobile = () => {
@@ -133,7 +176,7 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, currentPartIndex, currentView, isMobile, isFullPage]);
+  }, [isOpen, currentPartIndex, currentView, isMobile, isFullPage, handleNext, handlePrevious, onClose]);
 
   if (!isOpen) return null;
 
@@ -158,48 +201,6 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
       handleNext();
     } else if (isRightSwipe) {
       handlePrevious();
-    }
-  };
-
-  const handleNext = () => {
-    if (isMobile && isSinglePageMobile) {
-      // Mobile single-page navigation: image → text → next image
-      if (currentView === 'image') {
-        // Move from image to text
-        setCurrentView('text');
-      } else {
-        // Move from text to next part's image (or finish)
-        if (currentPartIndex < story.parts.length - 1) {
-          setCurrentPartIndex(currentPartIndex + 1);
-          setCurrentView('image'); // Next part starts with image
-        }
-      }
-    } else {
-      // Desktop or square mobile: navigate through parts
-      if (currentPartIndex < story.parts.length - 1) {
-        setCurrentPartIndex(currentPartIndex + 1);
-      }
-    }
-  };
-
-  const handlePrevious = () => {
-    if (isMobile && isSinglePageMobile) {
-      // Mobile single-page navigation: text ← image ← previous text
-      if (currentView === 'text') {
-        // Move from text to image
-        setCurrentView('image');
-      } else {
-        // Move from image to previous part's text (or do nothing if first)
-        if (currentPartIndex > 0) {
-          setCurrentPartIndex(currentPartIndex - 1);
-          setCurrentView('text'); // Previous part shows text
-        }
-      }
-    } else {
-      // Desktop or square mobile: navigate through parts
-      if (currentPartIndex > 0) {
-        setCurrentPartIndex(currentPartIndex - 1);
-      }
     }
   };
 

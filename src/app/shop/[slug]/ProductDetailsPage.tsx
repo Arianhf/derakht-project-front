@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
@@ -33,7 +33,7 @@ const ProductDetailsPage: React.FC = () => {
         { label: 'فروشگاه', href: '/shop' },
     ]);
 
-    const fetchProduct = async () => {
+    const fetchProduct = useCallback(async () => {
         try {
             setLoading(true);
             const data = await shopService.getProductBySlug(productSlug);
@@ -72,14 +72,14 @@ const ProductDetailsPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [productSlug]);
 
     // Use effect to fetch product on component mount
     useEffect(() => {
         if (productSlug) {
             fetchProduct();
         }
-    }, [productSlug]);
+    }, [productSlug, fetchProduct]);
 
     // Use the product quantity hook
     const {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight, FaSave, FaCog, FaPaintBrush, FaFont } from 'react-icons/fa';
 import styles from './StoryEditorV2.module.scss';
@@ -110,6 +110,49 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   const aspectRatio = getAspectRatioPadding(layoutType);
   const isSinglePageMobile = layoutType.includes('Rectangle');
 
+  // Navigation handlers - defined early to be used in useEffect
+  const handleClose = useCallback(() => {
+    if (hasUnsavedChanges) {
+      const confirmed = window.confirm('شما تغییراتی ذخیره نشده دارید. آیا مطمئن هستید؟');
+      if (!confirmed) return;
+    }
+    onClose();
+  }, [hasUnsavedChanges, onClose]);
+
+  const handleNext = useCallback(() => {
+    if (isMobile && isSinglePageMobile) {
+      if (currentView === 'image') {
+        setCurrentView('text');
+      } else {
+        if (currentPartIndex < story.parts.length - 1) {
+          setCurrentPartIndex(currentPartIndex + 1);
+          setCurrentView('image');
+        }
+      }
+    } else {
+      if (currentPartIndex < story.parts.length - 1) {
+        setCurrentPartIndex(currentPartIndex + 1);
+      }
+    }
+  }, [isMobile, isSinglePageMobile, currentView, currentPartIndex, story.parts.length]);
+
+  const handlePrevious = useCallback(() => {
+    if (isMobile && isSinglePageMobile) {
+      if (currentView === 'text') {
+        setCurrentView('image');
+      } else {
+        if (currentPartIndex > 0) {
+          setCurrentPartIndex(currentPartIndex - 1);
+          setCurrentView('text');
+        }
+      }
+    } else {
+      if (currentPartIndex > 0) {
+        setCurrentPartIndex(currentPartIndex - 1);
+      }
+    }
+  }, [isMobile, isSinglePageMobile, currentView, currentPartIndex]);
+
   // Initialize texts from story parts
   useEffect(() => {
     if (story.parts) {
@@ -185,17 +228,9 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, currentPartIndex, currentView, isMobile, isFullPage]);
+  }, [isOpen, currentPartIndex, currentView, isMobile, isFullPage, handleClose, handleNext, handlePrevious]);
 
   if (!isOpen) return null;
-
-  const handleClose = () => {
-    if (hasUnsavedChanges) {
-      const confirmed = window.confirm('شما تغییراتی ذخیره نشده دارید. آیا مطمئن هستید؟');
-      if (!confirmed) return;
-    }
-    onClose();
-  };
 
   const handleSave = async () => {
     try {
@@ -270,40 +305,6 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
       handleNext();
     } else if (isRightSwipe) {
       handlePrevious();
-    }
-  };
-
-  const handleNext = () => {
-    if (isMobile && isSinglePageMobile) {
-      if (currentView === 'image') {
-        setCurrentView('text');
-      } else {
-        if (currentPartIndex < story.parts.length - 1) {
-          setCurrentPartIndex(currentPartIndex + 1);
-          setCurrentView('image');
-        }
-      }
-    } else {
-      if (currentPartIndex < story.parts.length - 1) {
-        setCurrentPartIndex(currentPartIndex + 1);
-      }
-    }
-  };
-
-  const handlePrevious = () => {
-    if (isMobile && isSinglePageMobile) {
-      if (currentView === 'text') {
-        setCurrentView('image');
-      } else {
-        if (currentPartIndex > 0) {
-          setCurrentPartIndex(currentPartIndex - 1);
-          setCurrentView('text');
-        }
-      }
-    } else {
-      if (currentPartIndex > 0) {
-        setCurrentPartIndex(currentPartIndex - 1);
-      }
     }
   };
 

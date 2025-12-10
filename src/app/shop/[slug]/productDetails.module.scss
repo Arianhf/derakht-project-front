@@ -1,4 +1,5 @@
-@import '../../../styles/globals.scss';
+@use 'sass:color';
+@use '../../../styles/globals.scss' as *;
 
 .productContainer {
   display: flex;
@@ -425,7 +426,7 @@
   font-family: $font-primary;
 
   &:hover {
-    background-color: darken($primary-color, 10%);
+    background-color: color.adjust($primary-color, $lightness: -10%);
     transform: translateY(-3px);
     box-shadow: $shadow-md;
   }
@@ -557,7 +558,7 @@
   background-color: $primary-color;
 
   &:hover {
-    background-color: darken($primary-color, 10%);
+    background-color: color.adjust($primary-color, $lightness: -10%);
   }
 }
 

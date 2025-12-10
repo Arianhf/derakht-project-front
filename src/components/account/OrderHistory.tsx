@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { userService } from '@/services/userService';
 import { Order } from '@/types/shop';
@@ -19,22 +19,7 @@ const OrderHistory: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
 
-    useEffect(() => {
-        fetchOrders();
-    }, [currentPage]);
-
-    useEffect(() => {
-        if (searchTerm) {
-            const filtered = orders.filter(order =>
-                order.id.includes(searchTerm)
-            );
-            setFilteredOrders(filtered);
-        } else {
-            setFilteredOrders(orders);
-        }
-    }, [searchTerm, orders]);
-
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
         try {
             setLoading(true);
             const response = await userService.getOrders(currentPage);
@@ -51,7 +36,22 @@ const OrderHistory: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [currentPage]);
+
+    useEffect(() => {
+        fetchOrders();
+    }, [currentPage, fetchOrders]);
+
+    useEffect(() => {
+        if (searchTerm) {
+            const filtered = orders.filter(order =>
+                order.id.includes(searchTerm)
+            );
+            setFilteredOrders(filtered);
+        } else {
+            setFilteredOrders(orders);
+        }
+    }, [searchTerm, orders]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from './orderConfirmation.module.scss';
@@ -22,13 +22,7 @@ const OrderConfirmationPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (orderId) {
-            fetchOrder();
-        }
-    }, [orderId]);
-
-    const fetchOrder = async () => {
+    const fetchOrder = useCallback(async () => {
         try {
             setLoading(true);
             const data = await shopService.getOrderById(orderId);
@@ -39,7 +33,13 @@ const OrderConfirmationPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [orderId]);
+
+    useEffect(() => {
+        if (orderId) {
+            fetchOrder();
+        }
+    }, [orderId, fetchOrder]);
 
     const handleContinueShopping = () => {
         router.push('/shop');

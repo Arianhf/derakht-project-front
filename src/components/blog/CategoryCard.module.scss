@@ -1,5 +1,5 @@
 // src/components/blog/CategoryCard.module.scss
-@import '../../styles/globals.scss';
+@use '../../styles/globals.scss' as *;
 
 .categoryCard {
   position: relative;
