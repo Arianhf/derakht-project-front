@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight } from 'react-icons/fa';
 import styles from './StoryPreviewV2.module.scss';
@@ -161,7 +161,7 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
     }
   };
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (isMobile && isSinglePageMobile) {
       // Mobile single-page navigation: image → text → next image
       if (currentView === 'image') {
@@ -180,9 +180,9 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
         setCurrentPartIndex(currentPartIndex + 1);
       }
     }
-  };
+  }, [isMobile, isSinglePageMobile, currentView, currentPartIndex, story.parts.length]);
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (isMobile && isSinglePageMobile) {
       // Mobile single-page navigation: text ← image ← previous text
       if (currentView === 'text') {
@@ -201,7 +201,7 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
         setCurrentPartIndex(currentPartIndex - 1);
       }
     }
-  };
+  }, [isMobile, isSinglePageMobile, currentView, currentPartIndex]);
 
   const isFirstPage = currentPartIndex === 0 && (isMobile && isSinglePageMobile ? currentView === 'image' : true);
   const isLastPage = currentPartIndex === story.parts.length - 1 && (isMobile && isSinglePageMobile ? currentView === 'text' : true);

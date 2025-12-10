@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight, FaSave, FaCog, FaPaintBrush, FaFont } from 'react-icons/fa';
 import styles from './StoryEditorV2.module.scss';
@@ -187,15 +187,15 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, currentPartIndex, currentView, isMobile, isFullPage, handleClose, handleNext, handlePrevious]);
 
-  if (!isOpen) return null;
-
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     if (hasUnsavedChanges) {
       const confirmed = window.confirm('شما تغییراتی ذخیره نشده دارید. آیا مطمئن هستید؟');
       if (!confirmed) return;
     }
     onClose();
-  };
+  }, [hasUnsavedChanges, onClose]);
+
+  if (!isOpen) return null;
 
   const handleSave = async () => {
     try {
@@ -273,7 +273,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
     }
   };
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (isMobile && isSinglePageMobile) {
       if (currentView === 'image') {
         setCurrentView('text');
@@ -288,9 +288,9 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
         setCurrentPartIndex(currentPartIndex + 1);
       }
     }
-  };
+  }, [isMobile, isSinglePageMobile, currentView, currentPartIndex, story.parts.length]);
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (isMobile && isSinglePageMobile) {
       if (currentView === 'text') {
         setCurrentView('image');
@@ -305,7 +305,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
         setCurrentPartIndex(currentPartIndex - 1);
       }
     }
-  };
+  }, [isMobile, isSinglePageMobile, currentView, currentPartIndex]);
 
   const isFirstPage = currentPartIndex === 0 && (isMobile && isSinglePageMobile ? currentView === 'image' : true);
   const isLastPage = currentPartIndex === story.parts.length - 1 && (isMobile && isSinglePageMobile ? currentView === 'text' : true);
