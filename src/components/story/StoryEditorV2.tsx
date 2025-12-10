@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight, FaSave, FaCog, FaPaintBrush, FaFont } from 'react-icons/fa';
+import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight, FaSave, FaCog, FaPaintBrush, FaFont, FaPencilAlt, FaCheck } from 'react-icons/fa';
 import styles from './StoryEditorV2.module.scss';
 import { Story, StoryOrientation, StorySize, StoryPart } from '@/types/story';
 import TextCanvasEditor from './TextCanvasEditor';
@@ -15,6 +15,7 @@ interface StoryEditorV2Props {
   onCoverImageUpload?: (file: File) => void;
   onCoverImageSelect?: (imageUrl: string) => void;
   onColorChange?: (backgroundColor?: string, fontColor?: string) => void;
+  onTitleChange?: (title: string) => Promise<void>;
   isFullPage?: boolean;
 }
 
@@ -87,6 +88,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   onCoverImageUpload,
   onCoverImageSelect,
   onColorChange,
+  onTitleChange,
   isFullPage = false,
 }) => {
   const [currentPartIndex, setCurrentPartIndex] = useState(0);
@@ -100,9 +102,12 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [isCanvasMode, setIsCanvasMode] = useState(false);
   const [canvasStates, setCanvasStates] = useState<{ [key: number]: string }>({});
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(story.title || '');
   const contentRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const settingsModalRef = useRef<HTMLDivElement>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   const MIN_SWIPE_DISTANCE = 50;
 
@@ -159,6 +164,11 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
       setTexts(story.parts.map(part => part.text || ''));
     }
   }, [story.parts]);
+
+  // Update edited title when story changes
+  useEffect(() => {
+    setEditedTitle(story.title || '');
+  }, [story.title]);
 
   // Initialize canvas states from story parts
   useEffect(() => {
@@ -281,6 +291,45 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
       onColorChange(color, story.font_color || undefined);
     } else {
       onColorChange(story.background_color || undefined, color);
+    }
+  };
+
+  const handleEditTitle = () => {
+    setIsEditingTitle(true);
+    // Focus input after state update
+    setTimeout(() => {
+      titleInputRef.current?.focus();
+      titleInputRef.current?.select();
+    }, 0);
+  };
+
+  const handleSaveTitle = async () => {
+    if (!onTitleChange || editedTitle.trim() === story.title) {
+      setIsEditingTitle(false);
+      return;
+    }
+
+    try {
+      await onTitleChange(editedTitle.trim());
+      setIsEditingTitle(false);
+    } catch (error) {
+      console.error('Error saving title:', error);
+      alert('خطا در ذخیره عنوان');
+      // Revert to original title on error
+      setEditedTitle(story.title || '');
+    }
+  };
+
+  const handleCancelEditTitle = () => {
+    setEditedTitle(story.title || '');
+    setIsEditingTitle(false);
+  };
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSaveTitle();
+    } else if (e.key === 'Escape') {
+      handleCancelEditTitle();
     }
   };
 
@@ -430,10 +479,45 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
             <FaArrowRight className={styles.backIcon} />
             <span>بازگشت</span>
           </button>
-          <h2 className={styles.title}>
-            {story.title || 'ویرایش داستان'}
-            {hasUnsavedChanges && <span className={styles.unsavedIndicator}>*</span>}
-          </h2>
+          <div className={styles.titleContainer}>
+            {isEditingTitle ? (
+              <div className={styles.titleEditWrapper}>
+                <input
+                  ref={titleInputRef}
+                  type="text"
+                  className={styles.titleInput}
+                  value={editedTitle}
+                  onChange={(e) => setEditedTitle(e.target.value)}
+                  onKeyDown={handleTitleKeyDown}
+                  onBlur={handleSaveTitle}
+                  placeholder="عنوان داستان"
+                />
+                <button
+                  className={styles.titleEditButton}
+                  onClick={handleSaveTitle}
+                  aria-label="ذخیره عنوان"
+                  title="ذخیره عنوان"
+                >
+                  <FaCheck />
+                </button>
+              </div>
+            ) : (
+              <h2 className={styles.title}>
+                {story.title || 'ویرایش داستان'}
+                {hasUnsavedChanges && <span className={styles.unsavedIndicator}>*</span>}
+                {onTitleChange && (
+                  <button
+                    className={styles.titleEditButton}
+                    onClick={handleEditTitle}
+                    aria-label="ویرایش عنوان"
+                    title="ویرایش عنوان"
+                  >
+                    <FaPencilAlt />
+                  </button>
+                )}
+              </h2>
+            )}
+          </div>
         </div>
         <div className={styles.headerLeft}>
           <button

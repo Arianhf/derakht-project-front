@@ -113,5 +113,11 @@ export const storyService = {
   getCompletedStories: async (page: number = 1): Promise<StoryResponse<Story>> => {
     const response = await api.get(`/stories/completed/?page=${page}`);
     return response.data;
+  },
+
+  // Update story title
+  updateStoryTitle: async (storyId: string, title: string): Promise<Story> => {
+    const response = await api.patch(`/stories/${storyId}/`, { title });
+    return response.data;
   }
 };
