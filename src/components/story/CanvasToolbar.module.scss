@@ -1,0 +1,149 @@
+@import '@/styles/globals.scss';
+
+.toolbar {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: $spacing-xs;
+  align-items: center;
+  direction: rtl;
+
+  @media (max-width: $breakpoint-md) {
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+  }
+}
+
+.toolbarSection {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+// Add Text Button
+.addTextButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: $spacing-xs;
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-size: 16px;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:hover:not(:disabled) {
+    background-color: darken($primary-color, 10%);
+    transform: scale(1.05);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    background-color: $light-text;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+
+// Delete Button
+.deleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: $spacing-xs;
+  background-color: $secondary-color;
+  color: white;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-size: 16px;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:hover:not(:disabled) {
+    background-color: darken($secondary-color, 10%);
+    transform: scale(1.05);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    background-color: $light-text;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:focus {
+    outline: 2px solid $secondary-color;
+    outline-offset: 2px;
+  }
+}
+
+// Select Dropdown
+.select {
+  padding: $spacing-xs $spacing-sm;
+  border: 2px solid $light-text;
+  border-radius: $border-radius-sm;
+  font-size: 14px;
+  color: $dark-text;
+  background-color: white;
+  cursor: pointer;
+  transition: $transition-fast;
+  min-width: 80px;
+
+  &:hover:not(:disabled) {
+    border-color: $primary-color;
+  }
+
+  &:focus {
+    border-color: $primary-color;
+    outline: 2px solid rgba($primary-color, 0.2);
+    outline-offset: 0;
+  }
+
+  &:disabled {
+    background-color: $background;
+    color: $light-text;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  option {
+    padding: $spacing-sm;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: $breakpoint-md) {
+  .toolbar {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .select {
+    font-size: 12px;
+    min-width: 60px;
+    padding: $spacing-xs;
+  }
+
+  .addTextButton,
+  .deleteButton {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+}
