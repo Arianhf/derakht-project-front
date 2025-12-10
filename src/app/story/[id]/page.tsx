@@ -48,7 +48,7 @@ const StoryPage = () => {
   }, [id]);
 
   const handleClose = () => {
-    router.push('/story');
+    router.back();
   };
 
   // Loading state

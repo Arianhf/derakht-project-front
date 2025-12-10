@@ -1,23 +1,22 @@
 'use client';
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "./qesseKhooneh.module.scss";
 import { storyService } from "@/services/storyService";
 import { Story, Author } from "@/types/story";
 import placeholderImage from "@/assets/images/story.png";
-import StoryPreview from "@/components/story/StoryPreview";
 import { toast, Toaster } from 'react-hot-toast';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import Footer from '@/components/shared/Footer/Footer';
 import logo from '@/assets/images/logo2.png';
 
 const QesseKhoonehPage: React.FC = () => {
+    const router = useRouter();
     const [stories, setStories] = useState<Story[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [selectedStory, setSelectedStory] = useState<Story | null>(null);
-    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [hasNext, setHasNext] = useState<boolean>(false);
@@ -43,9 +42,8 @@ const QesseKhoonehPage: React.FC = () => {
         fetchStories(currentPage);
     }, [currentPage]);
 
-    const handleViewStory = (story: Story) => {
-        setSelectedStory(story);
-        setIsPreviewOpen(true);
+    const handleViewStory = (storyId: string) => {
+        router.push(`/story/${storyId}`);
     };
 
     const handleNextPage = () => {
@@ -140,7 +138,7 @@ const QesseKhoonehPage: React.FC = () => {
                                     <div className={styles.actions}>
                                         <button
                                             className={styles.viewButton}
-                                            onClick={() => handleViewStory(story)}
+                                            onClick={() => handleViewStory(story.id)}
                                         >
                                             مشاهده داستان
                                         </button>
@@ -172,25 +170,6 @@ const QesseKhoonehPage: React.FC = () => {
                     </div>
                 )}
             </div>
-
-            {/* Story Preview Modal */}
-            {selectedStory && (
-                <StoryPreview
-                    parts={selectedStory.parts.map((part) => ({
-                        illustration: part.illustration || "/placeholder-image.jpg",
-                        text: part.text || "متنی وارد نشده است.",
-                    }))}
-                    isOpen={isPreviewOpen}
-                    onClose={() => setIsPreviewOpen(false)}
-                    readOnly={true}
-                    storyId={selectedStory.id}
-                    storyTitle={selectedStory.title}
-                    coverImage={selectedStory.cover_image}
-                    backgroundColor={selectedStory.background_color}
-                    fontColor={selectedStory.font_color}
-                    modalTitle={selectedStory.title}
-                />
-            )}
 
             <Footer />
         </>
