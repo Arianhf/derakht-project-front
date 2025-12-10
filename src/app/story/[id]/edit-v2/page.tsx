@@ -143,6 +143,20 @@ const StoryEditV2Page = () => {
     }
   };
 
+  const handleTitleChange = async (title: string) => {
+    if (!story) return;
+
+    try {
+      const updatedStory = await storyService.updateStoryTitle(story.id, title);
+      setStory(updatedStory);
+      toast.success('عنوان با موفقیت تغییر کرد');
+    } catch (error) {
+      console.error('Error updating story title:', error);
+      toast.error('خطا در تغییر عنوان');
+      throw error;
+    }
+  };
+
   const handleClose = () => {
     router.push('/story');
   };
@@ -210,6 +224,7 @@ const StoryEditV2Page = () => {
         onCoverImageUpload={handleCoverImageUpload}
         onCoverImageSelect={handleCoverImageSelect}
         onColorChange={handleColorChange}
+        onTitleChange={handleTitleChange}
         isFullPage={true}
       />
     </div>
