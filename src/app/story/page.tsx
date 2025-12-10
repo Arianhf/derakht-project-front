@@ -7,7 +7,6 @@ import styles from "./stories.module.scss";
 import { storyService } from "@/services/storyService";
 import { Story } from "@/types/story";
 import placeholderImage from "@/assets/images/story.png";
-import StoryPreviewV2 from "@/components/story/StoryPreviewV2";
 import { toast, Toaster } from 'react-hot-toast';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import Footer from '@/components/shared/Footer/Footer';
@@ -18,8 +17,6 @@ const StoriesPage: React.FC = () => {
     const [stories, setStories] = useState<Story[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [selectedStory, setSelectedStory] = useState<Story | null>(null);
-    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
     useEffect(() => {
         const fetchStories = async () => {
@@ -36,9 +33,8 @@ const StoriesPage: React.FC = () => {
         fetchStories();
     }, []);
 
-    const handleViewStory = (story: Story) => {
-        setSelectedStory(story);
-        setIsPreviewOpen(true);
+    const handleViewStory = (storyId: string) => {
+        router.push(`/story/${storyId}`);
     };
 
 
@@ -86,13 +82,13 @@ const StoriesPage: React.FC = () => {
                                 <div className={styles.actions}>
                                     <button
                                         className={styles.viewButton}
-                                        onClick={() => handleViewStory(story)}
+                                        onClick={() => handleViewStory(story.id)}
                                     >
                                         مشاهده داستان
                                     </button>
                                     <button
                                         className={styles.editButton}
-                                        onClick={() => router.push(`/story/${story.id}`)}
+                                        onClick={() => router.push(`/story/${story.id}/edit`)}
                                         aria-label="ویرایش داستان"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -105,15 +101,6 @@ const StoriesPage: React.FC = () => {
                     )}
                 </div>
             </div>
-
-            {/* Story Preview Modal - Rendered outside container to avoid z-index stacking context issues */}
-            {selectedStory && (
-                <StoryPreviewV2
-                    story={selectedStory}
-                    isOpen={isPreviewOpen}
-                    onClose={() => setIsPreviewOpen(false)}
-                />
-            )}
 
             <Footer />
         </>
