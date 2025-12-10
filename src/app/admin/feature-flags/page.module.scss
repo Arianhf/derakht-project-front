@@ -1,5 +1,5 @@
 // src/app/admin/feature-flags/page.module.scss
-@import '../../../styles/globals.scss';
+@use '../../../styles/globals.scss' as *;
 
 .container {
   min-height: 100vh;

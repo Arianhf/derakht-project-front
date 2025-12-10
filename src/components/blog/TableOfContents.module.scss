@@ -1,5 +1,6 @@
 // src/components/blog/TableOfContents.module.scss
-@import '../../styles/globals.scss';
+@use 'sass:color';
+@use '../../styles/globals.scss' as *;
 
 .tocContainer {
   position: relative;
@@ -97,7 +98,7 @@
   color: $light-text;
 
   &:before {
-    background-color: lighten($accent-color, 10%);
+    background-color: color.adjust($accent-color, $lightness: 10%);
     height: 10px;
   }
 }

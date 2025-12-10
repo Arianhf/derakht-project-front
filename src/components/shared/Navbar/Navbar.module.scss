@@ -1,4 +1,5 @@
-@import '../../../styles/globals';
+@use 'sass:color';
+@use '../../../styles/globals' as *;
 
 .navbar {
   direction: rtl;
@@ -386,7 +387,7 @@
   font-size: 15px;
 
   &:hover {
-    background-color: darken($primary-color, 10%);
+    background-color: color.adjust($primary-color, $lightness: -10%);
     transform: translateY(-2px);
   }
 }

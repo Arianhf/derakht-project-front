@@ -2,7 +2,8 @@
 // Story editor with responsive layouts and editing capabilities
 
 // Import Derakht global styles
-@import '../../styles/globals.scss';
+@use 'sass:color';
+@use '../../styles/globals.scss' as *;
 
 // Variables (using Derakht colors)
 $mobile-breakpoint: 768px;
@@ -175,7 +176,7 @@ $transition-speed: 0.3s;
   }
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: color.adjust($primary-color, $lightness: -10%);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba($primary-color, 0.4);
   }
@@ -258,7 +259,7 @@ $transition-speed: 0.3s;
   }
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: color.adjust($primary-color, $lightness: -10%);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba($primary-color, 0.4);
 
@@ -307,7 +308,7 @@ $transition-speed: 0.3s;
   }
 
   &:hover:not(:disabled) {
-    background: darken($accent-color, 10%);
+    background: color.adjust($accent-color, $lightness: -10%);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba($accent-color, 0.4);
   }
@@ -414,7 +415,7 @@ $transition-speed: 0.3s;
     border-radius: 10px;
 
     &:hover {
-      background: darken($primary-color, 10%);
+      background: color.adjust($primary-color, $lightness: -10%);
     }
   }
 }
@@ -649,7 +650,7 @@ $transition-speed: 0.3s;
   color: white;
 
   &:not(:disabled):hover {
-    background: darken($accent-color, 10%);
+    background: color.adjust($accent-color, $lightness: -10%);
     box-shadow: 0 6px 20px rgba($accent-color, 0.4);
 
     .navIcon {
@@ -664,7 +665,7 @@ $transition-speed: 0.3s;
   color: white;
 
   &:not(:disabled):hover {
-    background: darken($primary-color, 10%);
+    background: color.adjust($primary-color, $lightness: -10%);
     box-shadow: 0 6px 20px rgba($primary-color, 0.4);
 
     .navIcon {
@@ -782,7 +783,7 @@ $transition-speed: 0.3s;
     border-radius: 10px;
 
     &:hover {
-      background: darken($primary-color, 10%);
+      background: color.adjust($primary-color, $lightness: -10%);
     }
   }
 }
@@ -976,7 +977,7 @@ $transition-speed: 0.3s;
   }
 
   &:hover {
-    background: darken($primary-color, 10%);
+    background: color.adjust($primary-color, $lightness: -10%);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba($primary-color, 0.4);
   }

@@ -1,4 +1,4 @@
-@import '../../../styles/globals';
+@use '../../../styles/globals' as *;
 
 .container {
   display: flex;

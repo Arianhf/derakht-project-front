@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import StoryPreviewV2 from '@/components/story/StoryPreviewV2';
 import { Story, StoryPart } from '@/types/story';
 import styles from './DemoPage.module.scss';
@@ -286,7 +287,7 @@ const DemoPage: React.FC = () => {
       <div className={styles.linkSection}>
         <h2>🔗 پیوندهای مفید</h2>
         <div className={styles.links}>
-          <a href="/story" className={styles.link}>لیست داستان‌ها</a>
+          <Link href="/story" className={styles.link}>لیست داستان‌ها</Link>
           <a href="https://github.com" className={styles.link} target="_blank" rel="noopener noreferrer">
             مستندات GitHub
           </a>

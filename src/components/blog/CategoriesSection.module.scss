@@ -1,5 +1,5 @@
 // src/components/blog/CategoriesSection.module.scss
-@import '../../styles/globals.scss';
+@use '../../styles/globals.scss' as *;
 
 .categoriesSection {
   margin-bottom: $spacing-xl;
