@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import Footer from '@/components/shared/Footer/Footer';
@@ -124,7 +124,7 @@ const TemplatePage = () => {
         }
       }
     }
-  }, []);
+  }, [startStory]);
 
   const fetchTemplates = async (type: 'story' | 'drawing') => {
     try {
@@ -140,7 +140,7 @@ const TemplatePage = () => {
     }
   };
 
-  const startStory = async (templateId: string) => {
+  const startStory = useCallback(async (templateId: string) => {
     try {
       setIsLoading(true);
 
@@ -179,7 +179,7 @@ const TemplatePage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedTemplate, router]);
 
   return (
       <div className={styles.templateContainer}>

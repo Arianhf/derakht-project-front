@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import Image from 'next/image';
 import { useUser, UserAddress } from '@/contexts/UserContext';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit, FaTrash, FaCamera } from 'react-icons/fa';
@@ -138,9 +139,11 @@ const ProfileManagement: React.FC = () => {
                     <div className={styles.imageContainer}>
                         <div className={styles.profileImageWrapper}>
                             {user?.profile_image ? (
-                                <img
+                                <Image
                                     src={user.profile_image}
                                     alt="Profile"
+                                    width={150}
+                                    height={150}
                                     className={styles.profileImage}
                                 />
                             ) : (

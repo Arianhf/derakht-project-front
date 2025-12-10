@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import Image from 'next/image';
 import styles from './CardToCardPayment.module.scss';
 import { FaArrowRight, FaUpload, FaCheckCircle } from 'react-icons/fa';
 
@@ -85,7 +86,13 @@ export const CardToCardPayment: React.FC<CardToCardPaymentProps> = ({
 
                     {previewUrl ? (
                         <div className={styles.previewContainer}>
-                            <img src={previewUrl} alt="Receipt preview" className={styles.previewImage} />
+                            <Image
+                                src={previewUrl}
+                                alt="Receipt preview"
+                                width={400}
+                                height={300}
+                                className={styles.previewImage}
+                            />
                             <div className={styles.uploadSuccess}>
                                 <FaCheckCircle /> رسید با موفقیت انتخاب شد
                             </div>

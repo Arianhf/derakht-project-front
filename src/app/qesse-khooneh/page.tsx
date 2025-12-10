@@ -120,9 +120,11 @@ const QesseKhoonehPage: React.FC = () => {
                                     <div className={styles.authorInfo}>
                                         <div className={styles.authorAvatar}>
                                             {getAuthorAvatar(story.author).image ? (
-                                                <img
+                                                <Image
                                                     src={getAuthorAvatar(story.author).image!}
                                                     alt={getAuthorName(story.author)}
+                                                    width={40}
+                                                    height={40}
                                                 />
                                             ) : (
                                                 getAuthorAvatar(story.author).initial

@@ -133,7 +133,7 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, currentPartIndex, currentView, isMobile, isFullPage]);
+  }, [isOpen, currentPartIndex, currentView, isMobile, isFullPage, handleNext, handlePrevious, onClose]);
 
   if (!isOpen) return null;
 

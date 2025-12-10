@@ -27,7 +27,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ heroPosts, onTagClick }) =>
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [currentIndex, heroPosts.length]);
+  }, [currentIndex, heroPosts.length, goToNextSlide]);
 
   const goToNextSlide = useCallback(() => {
     if (isTransitioning) return;

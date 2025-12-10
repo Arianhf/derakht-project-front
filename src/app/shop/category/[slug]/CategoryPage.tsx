@@ -1,7 +1,7 @@
 // src/app/shop/category/[slug]/CategoryPage.tsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import ProductCard from '@/components/shop/ProductCard';
@@ -40,12 +40,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ params }) => {
         { label: 'دسته‌بندی', href: `/shop/category/${slug}` }
     ]);
 
-    useEffect(() => {
-        fetchCategory();
-        fetchProducts({ ...filters, category: slug });
-    }, [slug]);
-
-    const fetchCategory = async () => {
+    const fetchCategory = useCallback(async () => {
         try {
             const data = await categoryService.getCategoryBySlug(slug);
             setCategory(data);
@@ -58,9 +53,9 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ params }) => {
         } catch (error) {
             console.error('Error fetching category:', error);
         }
-    };
+    }, [slug]);
 
-    const fetchProducts = async (appliedFilters: ShopFilters) => {
+    const fetchProducts = useCallback(async (appliedFilters: ShopFilters) => {
         try {
             setLoading(true);
             // Use the special category endpoint for filtering by category
@@ -78,7 +73,12 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ params }) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [slug]);
+
+    useEffect(() => {
+        fetchCategory();
+        fetchProducts({ ...filters, category: slug });
+    }, [slug, fetchCategory, fetchProducts, filters]);
 
     const handleFilterChange = (newFilters: ShopFilters) => {
         // Preserve the category while updating other filters

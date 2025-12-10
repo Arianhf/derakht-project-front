@@ -185,7 +185,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, currentPartIndex, currentView, isMobile, isFullPage]);
+  }, [isOpen, currentPartIndex, currentView, isMobile, isFullPage, handleClose, handleNext, handlePrevious]);
 
   if (!isOpen) return null;
 

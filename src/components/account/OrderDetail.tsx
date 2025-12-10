@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { userService } from '@/services/userService';
@@ -21,13 +21,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (orderId) {
-            fetchOrderDetails();
-        }
-    }, [orderId]);
-
-    const fetchOrderDetails = async () => {
+    const fetchOrderDetails = useCallback(async () => {
         try {
             setLoading(true);
             const data = await userService.getOrderDetails(orderId);
@@ -38,7 +32,13 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId }) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [orderId]);
+
+    useEffect(() => {
+        if (orderId) {
+            fetchOrderDetails();
+        }
+    }, [orderId, fetchOrderDetails]);
 
     const getStatusIcon = (status: string) => {
         // Convert status to lowercase for comparison
