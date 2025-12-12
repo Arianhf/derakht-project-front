@@ -136,8 +136,12 @@ export const storyService = {
       formData.append('name', name);
     }
 
-    // Don't set Content-Type header - let the browser set it with the correct boundary
-    const response = await api.post(`/users/${userId}/assets/`, formData);
+    // Remove the default Content-Type header to let axios set multipart/form-data with boundary
+    const response = await api.post(`/users/${userId}/assets/`, formData, {
+      headers: {
+        'Content-Type': undefined,
+      },
+    });
 
     // Map backend response (file) to frontend expectation (url)
     const data = response.data;
