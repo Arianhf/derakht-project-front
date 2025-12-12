@@ -77,7 +77,7 @@ const IllustrationTestPage = () => {
 
   const handleClose = () => {
     setIsOpen(false);
-    toast.info('ویرایشگر بسته شد');
+    toast.success('ویرایشگر بسته شد');
   };
 
   return (
