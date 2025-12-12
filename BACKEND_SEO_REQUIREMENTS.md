@@ -212,21 +212,21 @@ Current: Category is returned as a slug in query params
 ## 3. API Endpoint Changes
 
 ### 3.1 Individual Post Endpoint
-**Current:** `GET v2/posts/{id}/`
+**Current:** `GET blog/posts/{id}/`
 
 **Required Change:** Support slug-based retrieval
-- `GET v2/posts/{slug}/` should work with slug parameter
+- `GET blog/posts/{slug}/` should work with slug parameter
 - Keep supporting numeric ID for backward compatibility
 - Auto-detect if parameter is numeric (ID) or string (slug)
 
 **Example requests:**
 ```
-GET v2/posts/123/  (ID - keep working)
-GET v2/posts/آموزش-ریاضی-کودکان/  (slug - add support)
+GET blog/posts/123/  (ID - keep working)
+GET blog/posts/آموزش-ریاضی-کودکان/  (slug - add support)
 ```
 
 ### 3.2 Posts List Endpoint
-**Current:** `GET v2/posts/`
+**Current:** `GET blog/posts/`
 
 **Enhancement:** Return complete response structure with all new fields
 
@@ -286,7 +286,7 @@ GET v2/posts/آموزش-ریاضی-کودکان/  (slug - add support)
 ### 3.3 New Endpoint: Get All Post Slugs
 **Purpose:** For sitemap generation
 
-**Endpoint:** `GET v2/posts/slugs/`
+**Endpoint:** `GET blog/posts/slugs/`
 
 **Response:**
 ```json
@@ -312,7 +312,7 @@ GET v2/posts/آموزش-ریاضی-کودکان/  (slug - add support)
 - Should be fast (only 2 fields)
 
 ### 3.4 Categories Endpoint Enhancement
-**Current:** `GET v2/categories/`
+**Current:** `GET blog/categories/`
 
 **Enhancement:** Include meta fields in response
 
@@ -403,8 +403,8 @@ All date fields must be in ISO 8601 format with UTC timezone:
 - [ ] Add `meta_description` field to posts
 - [ ] Add `published_date` field to posts
 - [ ] Add `excerpt` field to posts
-- [ ] Support slug-based post retrieval (GET v2/posts/{slug}/)
-- [ ] Create slugs endpoint for sitemap (GET v2/posts/slugs/)
+- [ ] Support slug-based post retrieval (GET blog/posts/{slug}/)
+- [ ] Create slugs endpoint for sitemap (GET blog/posts/slugs/)
 
 ### Phase 2: High Priority (Within 1-2 weeks)
 - [ ] Add `updated_date` field to posts
