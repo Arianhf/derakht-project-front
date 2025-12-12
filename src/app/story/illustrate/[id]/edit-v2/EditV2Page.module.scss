@@ -24,7 +24,7 @@
   gap: $spacing-lg;
 
   h2 {
-    font-size: $font-size-2xl;
+    font-size: $font-size-xxl;
     color: $dark-text;
     margin: 0;
     font-family: 'Vazirmatn', sans-serif;
@@ -59,7 +59,7 @@
   color: white;
   border: none;
   border-radius: $border-radius-full;
-  font-size: $font-size-md;
+  font-size: $font-size-base;
   font-weight: 600;
   font-family: 'Vazirmatn', sans-serif;
   cursor: pointer;

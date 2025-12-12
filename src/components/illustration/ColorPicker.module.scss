@@ -65,7 +65,7 @@
 }
 
 .pickerHeader {
-  font-size: $font-size-md;
+  font-size: $font-size-base;
   font-weight: 600;
   color: $dark-text;
   margin-bottom: $spacing-md;
@@ -92,7 +92,7 @@
   padding: $spacing-sm;
   border: 2px solid $light-text;
   border-radius: $border-radius-sm;
-  font-size: $font-size-md;
+  font-size: $font-size-base;
   font-family: 'Courier New', monospace;
   text-transform: uppercase;
   transition: $transition-fast;

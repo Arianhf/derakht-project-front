@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Navbar } from '@/components/shared/Navbar/Navbar';
-import logo from '@/assets/images/logo2.png';
 import { storyService } from '@/services/storyService';
 import { Story } from '@/types/story';
 import styles from './EditV2Page.module.scss';
@@ -97,7 +95,7 @@ const IllustrateEditV2Page = () => {
         const updatedStory = await storyService.getStoryById(id);
         setStory(updatedStory);
       } else {
-        toast.info('هیچ تصویری برای ذخیره وجود ندارد');
+        toast.error('هیچ تصویری برای ذخیره وجود ندارد');
       }
     } catch (err) {
       console.error('Error saving illustrations:', err);
@@ -134,7 +132,6 @@ const IllustrateEditV2Page = () => {
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
-        <Navbar logo={logo} />
         <div className={styles.loadingContent}>
           <div className={styles.spinner}></div>
           <p>در حال بارگذاری...</p>
@@ -146,7 +143,6 @@ const IllustrateEditV2Page = () => {
   if (error || !story) {
     return (
       <div className={styles.errorContainer}>
-        <Navbar logo={logo} />
         <div className={styles.errorContent}>
           <h2>خطا</h2>
           <p>{error || 'داستان یافت نشد'}</p>
@@ -160,7 +156,6 @@ const IllustrateEditV2Page = () => {
 
   return (
     <div className={styles.illustrateV2Page}>
-      <Navbar logo={logo} />
       <Toaster position="top-center" />
 
       <IllustrationEditorV2
