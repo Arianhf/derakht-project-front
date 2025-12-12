@@ -136,11 +136,8 @@ export const storyService = {
       formData.append('name', name);
     }
 
-    const response = await api.post(`/users/${userId}/assets/`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    // Don't set Content-Type header - let the browser set it with the correct boundary
+    const response = await api.post(`/users/${userId}/assets/`, formData);
 
     // Map backend response (file) to frontend expectation (url)
     const data = response.data;
