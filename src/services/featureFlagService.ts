@@ -16,7 +16,7 @@ export const featureFlagService = {
         // }
 
         try {
-            const response = await api.get('/v2/feature-flags/');
+            const response = await api.get('/core/feature-flags/');
 
             // Backend returns array directly, not paginated response
             if (Array.isArray(response.data)) {
@@ -52,7 +52,7 @@ export const featureFlagService = {
         }
 
         try {
-            const response = await api.get(`/v2/feature-flags/${featureName}/`);
+            const response = await api.get(`/core/feature-flags/${featureName}/`);
             return response.data.enabled || false;
         } catch (error) {
             // Error checking feature flag - default to disabled
