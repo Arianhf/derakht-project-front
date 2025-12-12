@@ -18,7 +18,7 @@ export interface DrawingCanvasProps {
   backgroundColor?: string;
 }
 
-type DrawingTool = 'brush' | 'eraser';
+type DrawingTool = 'brush' | 'eraser' | 'select';
 
 export interface DrawingCanvasRef {
   exportAsImage: () => string;
@@ -47,7 +47,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
   const [isCanvasReady, setIsCanvasReady] = useState(false);
   const [isFabricLoaded, setIsFabricLoaded] = useState(false);
   const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
-  const [currentTool, setCurrentTool] = useState<DrawingTool>('brush');
+  const [currentTool, setCurrentTool] = useState<DrawingTool>('select');
   const [brushSize, setBrushSize] = useState(5);
   const [brushColor, setBrushColor] = useState('#2B463C');
 
@@ -182,8 +182,8 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
       width: canvasDimensions.width,
       height: canvasDimensions.height,
       backgroundColor,
-      isDrawingMode: true,
-      selection: false,
+      isDrawingMode: false,
+      selection: true,
       enableRetinaScaling: true,
     });
 
@@ -232,11 +232,20 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
 
     // Keyboard shortcuts
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        const activeObj = canvas.getActiveObject();
-        if (activeObj && document.activeElement?.tagName !== 'INPUT') {
-          e.preventDefault();
-          clearCanvas();
+      if ((e.key === 'Delete' || e.key === 'Backspace') && document.activeElement?.tagName !== 'INPUT') {
+        e.preventDefault();
+        const activeObjects = canvas.getActiveObjects();
+        if (activeObjects && activeObjects.length > 0) {
+          activeObjects.forEach((obj: any) => canvas.remove(obj));
+          canvas.discardActiveObject();
+          canvas.renderAll();
+
+          if (onChange) {
+            const json = JSON.stringify(canvas.toJSON());
+            onChange(json);
+          }
+
+          toast.success('شیء حذف شد');
         }
       }
     };
@@ -276,11 +285,30 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
       brush.color = brushColor;
       brush.width = brushSize;
       canvas.isDrawingMode = true;
+      canvas.selection = false;
+      // Disable object selection in drawing mode
+      canvas.forEachObject((obj: any) => {
+        obj.selectable = false;
+      });
     } else if (currentTool === 'eraser') {
       // Eraser is just a white brush (or matches background)
       brush.color = backgroundColor;
       brush.width = brushSize * 2; // Eraser is typically larger
       canvas.isDrawingMode = true;
+      canvas.selection = false;
+      // Disable object selection in eraser mode
+      canvas.forEachObject((obj: any) => {
+        obj.selectable = false;
+      });
+    } else if (currentTool === 'select') {
+      // Enable selection mode, disable drawing
+      canvas.isDrawingMode = false;
+      canvas.selection = true;
+      // Enable object selection and movement
+      canvas.forEachObject((obj: any) => {
+        obj.selectable = true;
+        obj.evented = true;
+      });
     }
 
     canvas.renderAll();

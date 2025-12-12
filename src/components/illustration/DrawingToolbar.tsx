@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { FaPaintBrush, FaEraser, FaTrash, FaUndo, FaImage } from 'react-icons/fa';
+import { FaPaintBrush, FaEraser, FaTrash, FaUndo, FaImage, FaMousePointer } from 'react-icons/fa';
 import styles from './DrawingToolbar.module.scss';
 import ColorPicker from './ColorPicker';
 
 interface DrawingToolbarProps {
-  currentTool: 'brush' | 'eraser';
+  currentTool: 'brush' | 'eraser' | 'select';
   brushSize: number;
   brushColor: string;
-  onToolChange: (tool: 'brush' | 'eraser') => void;
+  onToolChange: (tool: 'brush' | 'eraser' | 'select') => void;
   onBrushSizeChange: (size: number) => void;
   onBrushColorChange: (color: string) => void;
   onClear: () => void;
@@ -49,6 +49,15 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
     <div className={styles.toolbar}>
       {/* Tool Selection */}
       <div className={styles.toolSection}>
+        <button
+          className={`${styles.toolButton} ${currentTool === 'select' ? styles.active : ''}`}
+          onClick={() => onToolChange('select')}
+          disabled={!isCanvasReady}
+          aria-label="ابزار انتخاب و جابجایی"
+          title="انتخاب/جابجایی"
+        >
+          <FaMousePointer />
+        </button>
         <button
           className={`${styles.toolButton} ${currentTool === 'brush' ? styles.active : ''}`}
           onClick={() => onToolChange('brush')}
