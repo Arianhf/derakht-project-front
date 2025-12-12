@@ -47,6 +47,26 @@ export interface Author {
     };
 }
 
+// Asset types for reusable images
+export interface Asset {
+  id: string;
+  url: string;
+  name: string;
+  size: number;
+  mime_type: string;
+  created_at: string;
+}
+
+export interface AssetsResponse {
+  assets: Asset[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    total_pages: number;
+  };
+}
+
 // Story display configuration types
 export type StoryOrientation = 'LANDSCAPE' | 'PORTRAIT' | null;
 export type StorySize = '20x20' | '25x25' | '15x23' | null;

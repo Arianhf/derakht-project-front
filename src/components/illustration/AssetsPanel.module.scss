@@ -152,7 +152,8 @@
   }
 }
 
-.emptyState {
+.emptyState,
+.loadingState {
   grid-column: 1 / -1;
   text-align: center;
   padding: $spacing-xl;
@@ -167,6 +168,43 @@
       font-weight: 600;
       color: $dark-text;
     }
+  }
+}
+
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-md;
+  min-height: 200px;
+
+  p {
+    color: $dark-text;
+    font-size: $font-size-md;
+  }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.uploadButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+
+  &:hover {
+    transform: none;
+    box-shadow: 0 2px 8px rgba($primary-color, 0.3);
   }
 }
 
