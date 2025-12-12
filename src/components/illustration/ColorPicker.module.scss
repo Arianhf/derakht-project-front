@@ -1,0 +1,207 @@
+@use 'sass:color';
+@use '@/styles/globals.scss' as *;
+
+.colorPickerWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.colorButton {
+  width: 40px;
+  height: 40px;
+  border-radius: $border-radius-sm;
+  border: 2px solid $light-text;
+  cursor: pointer;
+  transition: $transition-fast;
+  padding: 4px;
+  background: white;
+
+  &:hover:not(:disabled) {
+    border-color: $primary-color;
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+.colorPreview {
+  width: 100%;
+  height: 100%;
+  border-radius: $border-radius-xs;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.colorPickerDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-lg;
+  padding: $spacing-md;
+  z-index: 1000;
+  min-width: 280px;
+  direction: rtl;
+
+  @media (max-width: $breakpoint-md) {
+    min-width: 260px;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.pickerHeader {
+  font-size: $font-size-md;
+  font-weight: 600;
+  color: $dark-text;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-sm;
+  border-bottom: 2px solid $light-text;
+  font-family: 'Vazirmatn', sans-serif;
+}
+
+.hexInput {
+  margin-bottom: $spacing-md;
+
+  label {
+    display: block;
+    font-size: $font-size-sm;
+    color: $dark-text;
+    margin-bottom: $spacing-xs;
+    font-family: 'Vazirmatn', sans-serif;
+    font-weight: 500;
+  }
+}
+
+.hexField {
+  width: 100%;
+  padding: $spacing-sm;
+  border: 2px solid $light-text;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-md;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  transition: $transition-fast;
+
+  &:focus {
+    border-color: $primary-color;
+    outline: none;
+  }
+
+  &::placeholder {
+    color: $light-text;
+  }
+}
+
+.presetColors {
+  margin-bottom: $spacing-md;
+}
+
+.presetLabel {
+  display: block;
+  font-size: $font-size-sm;
+  color: $dark-text;
+  margin-bottom: $spacing-sm;
+  font-family: 'Vazirmatn', sans-serif;
+  font-weight: 500;
+}
+
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: $spacing-xs;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.presetSwatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: $border-radius-xs;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: $transition-fast;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  &:hover {
+    transform: scale(1.1);
+    border-color: $dark-text;
+  }
+
+  &.active {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px white, 0 0 0 4px $primary-color;
+  }
+
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+
+.checkmark {
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  text-shadow:
+    -1px -1px 0 rgba(0, 0, 0, 0.5),
+    1px -1px 0 rgba(0, 0, 0, 0.5),
+    -1px 1px 0 rgba(0, 0, 0, 0.5),
+    1px 1px 0 rgba(0, 0, 0, 0.5);
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 12px;
+  }
+}
+
+.nativePickerWrapper {
+  padding-top: $spacing-md;
+  border-top: 2px solid $light-text;
+
+  label {
+    display: block;
+    font-size: $font-size-sm;
+    color: $dark-text;
+    margin-bottom: $spacing-sm;
+    font-family: 'Vazirmatn', sans-serif;
+    font-weight: 500;
+  }
+}
+
+.nativePicker {
+  width: 100%;
+  height: 50px;
+  border: 2px solid $light-text;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:hover {
+    border-color: $primary-color;
+  }
+
+  &:focus {
+    border-color: $primary-color;
+    outline: none;
+  }
+}

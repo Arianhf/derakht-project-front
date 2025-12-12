@@ -1,0 +1,78 @@
+@use '@/styles/globals.scss' as *;
+
+.illustrateV2Page {
+  min-height: 100vh;
+  background: $gradient-bg;
+}
+
+.loadingContainer,
+.errorContainer {
+  min-height: 100vh;
+  background: $gradient-bg;
+  display: flex;
+  flex-direction: column;
+}
+
+.loadingContent,
+.errorContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: $spacing-xl;
+  gap: $spacing-lg;
+
+  h2 {
+    font-size: $font-size-2xl;
+    color: $dark-text;
+    margin: 0;
+    font-family: 'Vazirmatn', sans-serif;
+  }
+
+  p {
+    font-size: $font-size-lg;
+    color: $light-text;
+    margin: 0;
+    font-family: 'Vazirmatn', sans-serif;
+  }
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid rgba($primary-color, 0.2);
+  border-top-color: $primary-color;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.backButton {
+  padding: $spacing-md $spacing-xl;
+  background: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $border-radius-full;
+  font-size: $font-size-md;
+  font-weight: 600;
+  font-family: 'Vazirmatn', sans-serif;
+  cursor: pointer;
+  transition: all $transition-fast;
+  box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+
+  &:hover {
+    background: darken($primary-color, 10%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($primary-color, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

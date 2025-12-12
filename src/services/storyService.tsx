@@ -1,6 +1,6 @@
 // src/services/storyService.tsx
 import api from './api';
-import { StoryTemplate, StoryResponse, Story, StoryPart } from '@/types/story';
+import { StoryTemplate, StoryResponse, Story, StoryPart, Asset, AssetsResponse } from '@/types/story';
 
 export const storyService = {
   getAllStories: async (): Promise<StoryResponse<StoryTemplate>> => {
@@ -119,5 +119,43 @@ export const storyService = {
   updateStoryTitle: async (storyId: string, title: string): Promise<Story> => {
     const response = await api.patch(`/stories/${storyId}/`, { title });
     return response.data;
-  }
+  },
+
+  // Asset Management Methods
+
+  /**
+   * Upload a reusable image asset
+   * User ID is inferred from authentication token
+   */
+  uploadAsset: async (file: File, name?: string): Promise<Asset> => {
+    const formData = new FormData();
+    formData.append('image', file);
+    if (name) {
+      formData.append('name', name);
+    }
+
+    const response = await api.post('/assets/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Get all assets for the authenticated user
+   */
+  getUserAssets: async (page: number = 1, limit: number = 50): Promise<AssetsResponse> => {
+    const response = await api.get('/assets/', {
+      params: { page, limit },
+    });
+    return response.data;
+  },
+
+  /**
+   * Delete an asset by ID
+   */
+  deleteAsset: async (assetId: string): Promise<void> => {
+    await api.delete(`/assets/${assetId}/`);
+  },
 };
