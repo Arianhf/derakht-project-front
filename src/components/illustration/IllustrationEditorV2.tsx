@@ -2,16 +2,18 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight, FaSave, FaCheck } from 'react-icons/fa';
+import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight, FaSave, FaCheck, FaPencilAlt, FaImages } from 'react-icons/fa';
 import styles from './IllustrationEditorV2.module.scss';
 import { Story, StoryOrientation, StorySize, StoryPart } from '@/types/story';
 import DrawingCanvas, { DrawingCanvasRef } from './DrawingCanvas';
+import AssetsPanel from './AssetsPanel';
 
 interface IllustrationEditorV2Props {
   story: Story;
   isOpen: boolean;
   onClose: () => void;
   onSave: (illustrations: { [key: number]: { canvasData: string; imageData: string } }) => Promise<void>;
+  onTitleChange?: (title: string) => Promise<void>;
   isFullPage?: boolean;
 }
 
@@ -63,6 +65,7 @@ const IllustrationEditorV2: React.FC<IllustrationEditorV2Props> = ({
   isOpen,
   onClose,
   onSave,
+  onTitleChange,
   isFullPage = false,
 }) => {
   const [currentPartIndex, setCurrentPartIndex] = useState(0);
@@ -73,8 +76,12 @@ const IllustrationEditorV2: React.FC<IllustrationEditorV2Props> = ({
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [canvasStates, setCanvasStates] = useState<{ [key: number]: string }>({});
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(story.title || '');
+  const [isAssetsPanelOpen, setIsAssetsPanelOpen] = useState(false);
   const canvasRefsMap = useRef<{ [key: number]: DrawingCanvasRef | null }>({});
   const contentRef = useRef<HTMLDivElement>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   const MIN_SWIPE_DISTANCE = 50;
 
@@ -137,6 +144,11 @@ const IllustrationEditorV2: React.FC<IllustrationEditorV2Props> = ({
       setCanvasStates(initialCanvasStates);
     }
   }, [story.parts]);
+
+  // Update edited title when story changes
+  useEffect(() => {
+    setEditedTitle(story.title || '');
+  }, [story.title]);
 
   // Mobile detection
   useEffect(() => {
@@ -230,6 +242,51 @@ const IllustrationEditorV2: React.FC<IllustrationEditorV2Props> = ({
     newCanvasStates[index] = canvasJSON;
     setCanvasStates(newCanvasStates);
     setHasUnsavedChanges(true);
+  };
+
+  const handleEditTitle = () => {
+    setIsEditingTitle(true);
+    setTimeout(() => {
+      titleInputRef.current?.focus();
+      titleInputRef.current?.select();
+    }, 0);
+  };
+
+  const handleSaveTitle = async () => {
+    if (!onTitleChange || editedTitle.trim() === story.title) {
+      setIsEditingTitle(false);
+      return;
+    }
+
+    try {
+      await onTitleChange(editedTitle.trim());
+      setIsEditingTitle(false);
+    } catch (error) {
+      console.error('Error saving title:', error);
+      alert('خطا در ذخیره عنوان');
+      setEditedTitle(story.title || '');
+    }
+  };
+
+  const handleCancelEditTitle = () => {
+    setEditedTitle(story.title || '');
+    setIsEditingTitle(false);
+  };
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSaveTitle();
+    } else if (e.key === 'Escape') {
+      handleCancelEditTitle();
+    }
+  };
+
+  const handleAssetSelect = (url: string) => {
+    // Add asset to current canvas
+    const currentCanvasRef = canvasRefsMap.current[currentPartIndex];
+    if (currentCanvasRef) {
+      currentCanvasRef.addImageFromUrl(url);
+    }
   };
 
   // Touch handlers for swipe navigation
@@ -360,12 +417,55 @@ const IllustrationEditorV2: React.FC<IllustrationEditorV2Props> = ({
             <FaArrowRight className={styles.backIcon} />
             <span>بازگشت</span>
           </button>
-          <h2 className={styles.title}>
-            {story.title || 'تصویرسازی داستان'}
-            {hasUnsavedChanges && <span className={styles.unsavedIndicator}>*</span>}
-          </h2>
+          <div className={styles.titleContainer}>
+            {isEditingTitle ? (
+              <div className={styles.titleEditWrapper}>
+                <input
+                  ref={titleInputRef}
+                  type="text"
+                  className={styles.titleInput}
+                  value={editedTitle}
+                  onChange={(e) => setEditedTitle(e.target.value)}
+                  onKeyDown={handleTitleKeyDown}
+                  onBlur={handleSaveTitle}
+                  placeholder="عنوان داستان"
+                />
+                <button
+                  className={styles.titleEditButton}
+                  onClick={handleSaveTitle}
+                  aria-label="ذخیره عنوان"
+                  title="ذخیره عنوان"
+                >
+                  <FaCheck />
+                </button>
+              </div>
+            ) : (
+              <h2 className={styles.title}>
+                {story.title || 'تصویرسازی داستان'}
+                {hasUnsavedChanges && <span className={styles.unsavedIndicator}>*</span>}
+                {onTitleChange && (
+                  <button
+                    className={styles.titleEditButton}
+                    onClick={handleEditTitle}
+                    aria-label="ویرایش عنوان"
+                    title="ویرایش عنوان"
+                  >
+                    <FaPencilAlt />
+                  </button>
+                )}
+              </h2>
+            )}
+          </div>
         </div>
         <div className={styles.headerLeft}>
+          <button
+            className={styles.assetsButton}
+            onClick={() => setIsAssetsPanelOpen(true)}
+            aria-label="مدیریت تصاویر"
+            title="مدیریت تصاویر"
+          >
+            <FaImages />
+          </button>
           <button
             className={styles.saveButton}
             onClick={handleSave}
@@ -414,6 +514,13 @@ const IllustrationEditorV2: React.FC<IllustrationEditorV2Props> = ({
           <FaChevronLeft className={styles.navIcon} />
         </button>
       </div>
+
+      {/* Assets Panel */}
+      <AssetsPanel
+        isOpen={isAssetsPanelOpen}
+        onClose={() => setIsAssetsPanelOpen(false)}
+        onAssetSelect={handleAssetSelect}
+      />
     </div>
   );
 

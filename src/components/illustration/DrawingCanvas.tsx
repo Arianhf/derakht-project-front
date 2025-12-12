@@ -24,6 +24,8 @@ export interface DrawingCanvasRef {
   exportAsImage: () => string;
   getCanvasJSON: () => string;
   clearCanvas: () => void;
+  addImage: (file: File) => void;
+  addImageFromUrl: (url: string) => void;
 }
 
 /**
@@ -73,6 +75,21 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
         const json = JSON.stringify(fabricCanvasRef.current.toJSON());
         onChange(json);
       }
+    },
+    addImage: (file: File) => {
+      if (!fabricCanvasRef.current || !fabricLibRef.current) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        if (dataUrl) {
+          addImageToCanvas(dataUrl);
+        }
+      };
+      reader.readAsDataURL(file);
+    },
+    addImageFromUrl: (url: string) => {
+      addImageToCanvas(url);
     },
   }));
 
@@ -284,6 +301,55 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
   }, []);
 
   /**
+   * Add an image to the canvas from a URL or data URL
+   */
+  const addImageToCanvas = useCallback((url: string) => {
+    if (!fabricCanvasRef.current || !fabricLibRef.current) {
+      toast.error('کنواس آماده نیست');
+      return;
+    }
+
+    const canvas = fabricCanvasRef.current;
+    const { FabricImage } = fabricLibRef.current;
+
+    // Load image
+    FabricImage.fromURL(url, {
+      crossOrigin: 'anonymous',
+    }).then((img: any) => {
+      // Scale image to fit canvas if it's too large
+      const maxWidth = canvas.width * 0.5;
+      const maxHeight = canvas.height * 0.5;
+
+      if (img.width > maxWidth || img.height > maxHeight) {
+        const scale = Math.min(maxWidth / img.width, maxHeight / img.height);
+        img.scale(scale);
+      }
+
+      // Center the image
+      img.set({
+        left: canvas.width / 2,
+        top: canvas.height / 2,
+        originX: 'center',
+        originY: 'center',
+      });
+
+      canvas.add(img);
+      canvas.setActiveObject(img);
+      canvas.renderAll();
+
+      if (onChange) {
+        const json = JSON.stringify(canvas.toJSON());
+        onChange(json);
+      }
+
+      toast.success('تصویر اضافه شد');
+    }).catch((error: Error) => {
+      console.error('Error loading image:', error);
+      toast.error('خطا در بارگذاری تصویر');
+    });
+  }, [onChange]);
+
+  /**
    * Clear the entire canvas
    */
   const clearCanvas = useCallback(() => {
@@ -359,6 +425,20 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     }
   }, []);
 
+  /**
+   * Handle image upload from toolbar
+   */
+  const handleImageUpload = useCallback((file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target?.result as string;
+      if (dataUrl) {
+        addImageToCanvas(dataUrl);
+      }
+    };
+    reader.readAsDataURL(file);
+  }, [addImageToCanvas]);
+
   return (
     <div className={styles.canvasEditorWrapper}>
       <div ref={containerRef} className={styles.canvasContainer}>
@@ -381,6 +461,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
                 onBrushColorChange={setBrushColor}
                 onClear={clearCanvas}
                 onUndo={undo}
+                onImageUpload={handleImageUpload}
                 isCanvasReady={isCanvasReady}
               />
             </div>

@@ -111,6 +111,26 @@ const IllustrateEditV2Page = () => {
     router.push('/story');
   };
 
+  /**
+   * Handle title change
+   */
+  const handleTitleChange = async (newTitle: string) => {
+    if (!story) return;
+
+    try {
+      // Update story title via backend API
+      await storyService.updateStoryTitle(id, newTitle);
+
+      // Update local story state
+      setStory({ ...story, title: newTitle });
+
+      toast.success('عنوان با موفقیت به‌روزرسانی شد');
+    } catch (err) {
+      console.error('Error updating title:', err);
+      toast.error('خطا در به‌روزرسانی عنوان');
+    }
+  };
+
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -148,6 +168,7 @@ const IllustrateEditV2Page = () => {
         isOpen={true}
         onClose={handleClose}
         onSave={handleSave}
+        onTitleChange={handleTitleChange}
         isFullPage={true}
       />
     </div>

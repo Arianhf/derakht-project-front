@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
-import { FaPaintBrush, FaEraser, FaTrash, FaUndo } from 'react-icons/fa';
+import React, { useRef } from 'react';
+import { FaPaintBrush, FaEraser, FaTrash, FaUndo, FaImage } from 'react-icons/fa';
 import styles from './DrawingToolbar.module.scss';
+import ColorPicker from './ColorPicker';
 
 interface DrawingToolbarProps {
   currentTool: 'brush' | 'eraser';
@@ -13,20 +14,9 @@ interface DrawingToolbarProps {
   onBrushColorChange: (color: string) => void;
   onClear: () => void;
   onUndo: () => void;
+  onImageUpload: (file: File) => void;
   isCanvasReady: boolean;
 }
-
-// Preset colors for drawing
-const DRAWING_PRESET_COLORS = [
-  { color: '#2B463C', label: 'سبز تیره' },
-  { color: '#000000', label: 'مشکی' },
-  { color: '#FF6F61', label: 'مرجانی' },
-  { color: '#345BC0', label: 'آبی' },
-  { color: '#F4A261', label: 'نارنجی' },
-  { color: '#E76F51', label: 'قرمز' },
-  { color: '#2A9D8F', label: 'فیروزه‌ای' },
-  { color: '#E9C46A', label: 'زرد' },
-];
 
 const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
   currentTool,
@@ -37,8 +27,24 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
   onBrushColorChange,
   onClear,
   onUndo,
+  onImageUpload,
   isCanvasReady,
 }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      onImageUpload(file);
+      // Reset input so same file can be selected again
+      e.target.value = '';
+    }
+  };
+
   return (
     <div className={styles.toolbar}>
       {/* Tool Selection */}
@@ -83,27 +89,33 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
       {currentTool === 'brush' && (
         <div className={styles.toolSection}>
           <label className={styles.toolLabel}>رنگ:</label>
-          <div className={styles.colorGrid}>
-            {DRAWING_PRESET_COLORS.map((preset) => (
-              <button
-                key={preset.color}
-                className={`${styles.colorSwatch} ${
-                  brushColor === preset.color ? styles.active : ''
-                }`}
-                style={{ backgroundColor: preset.color }}
-                onClick={() => onBrushColorChange(preset.color)}
-                disabled={!isCanvasReady}
-                aria-label={`انتخاب رنگ ${preset.label}`}
-                title={preset.label}
-              >
-                {brushColor === preset.color && (
-                  <span className={styles.checkmark}>✓</span>
-                )}
-              </button>
-            ))}
-          </div>
+          <ColorPicker
+            color={brushColor}
+            onChange={onBrushColorChange}
+            disabled={!isCanvasReady}
+          />
         </div>
       )}
+
+      {/* Image Upload */}
+      <div className={styles.toolSection}>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
+        />
+        <button
+          className={styles.actionButton}
+          onClick={handleImageButtonClick}
+          disabled={!isCanvasReady}
+          aria-label="آپلود تصویر"
+          title="آپلود تصویر"
+        >
+          <FaImage />
+        </button>
+      </div>
 
       {/* Action Buttons */}
       <div className={styles.toolSection}>

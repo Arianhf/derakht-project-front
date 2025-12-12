@@ -1,0 +1,258 @@
+@use 'sass:color';
+@use '@/styles/globals.scss' as *;
+
+.assetsPanelOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: $spacing-md;
+}
+
+.assetsPanel {
+  background: white;
+  border-radius: $border-radius-md;
+  width: 90%;
+  max-width: 800px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: $shadow-lg;
+  direction: rtl;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 2px solid $light-text;
+
+  h3 {
+    font-size: $font-size-xl;
+    font-weight: 700;
+    color: $dark-text;
+    margin: 0;
+    font-family: 'Vazirmatn', sans-serif;
+  }
+}
+
+.closeButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid $light-text;
+  color: $dark-text;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:hover {
+    background: $secondary-color;
+    color: white;
+    border-color: $secondary-color;
+    transform: rotate(90deg);
+  }
+
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+
+.uploadSection {
+  padding: $spacing-lg;
+  border-bottom: 2px solid $light-text;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.uploadButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  background: $primary-color;
+  color: white;
+  border: none;
+  border-radius: $border-radius-full;
+  font-size: $font-size-md;
+  font-weight: 600;
+  font-family: 'Vazirmatn', sans-serif;
+  cursor: pointer;
+  transition: $transition-fast;
+  box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+
+  &:hover {
+    background: color.adjust($primary-color, $lightness: -10%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($primary-color, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus {
+    outline: 2px solid $accent-color;
+    outline-offset: 2px;
+  }
+}
+
+.hint {
+  font-size: $font-size-sm;
+  color: $light-text;
+  margin: 0;
+  text-align: center;
+  font-family: 'Vazirmatn', sans-serif;
+}
+
+.assetsGrid {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-lg;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: $spacing-md;
+  align-content: start;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: $spacing-sm;
+  }
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $background;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $primary-color;
+    border-radius: 10px;
+
+    &:hover {
+      background: color.adjust($primary-color, $lightness: -10%);
+    }
+  }
+}
+
+.emptyState {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: $spacing-xl;
+  color: $light-text;
+
+  p {
+    margin: $spacing-sm 0;
+    font-family: 'Vazirmatn', sans-serif;
+
+    &:first-child {
+      font-size: $font-size-lg;
+      font-weight: 600;
+      color: $dark-text;
+    }
+  }
+}
+
+.assetCard {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  background: white;
+  border: 2px solid $light-text;
+  border-radius: $border-radius-sm;
+  overflow: hidden;
+  transition: $transition-fast;
+
+  &:hover {
+    border-color: $primary-color;
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.assetImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  cursor: pointer;
+  background: $background;
+  overflow: hidden;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  img {
+    transition: $transition-fast;
+  }
+
+  &:active img {
+    transform: scale(0.95);
+  }
+}
+
+.assetInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-xs $spacing-sm;
+  gap: $spacing-xs;
+}
+
+.assetName {
+  font-size: $font-size-sm;
+  color: $dark-text;
+  font-family: 'Vazirmatn', sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: white;
+  color: $secondary-color;
+  border: 1px solid $secondary-color;
+  border-radius: 50%;
+  font-size: 12px;
+  cursor: pointer;
+  transition: $transition-fast;
+  flex-shrink: 0;
+
+  &:hover {
+    background: $secondary-color;
+    color: white;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:focus {
+    outline: 2px solid $secondary-color;
+    outline-offset: 2px;
+  }
+}
