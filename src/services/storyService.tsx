@@ -131,7 +131,7 @@ export const storyService = {
    */
   uploadAsset: async (userId: string, file: File, name?: string): Promise<Asset> => {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('file', file);  // Backend expects 'file', not 'image'
     if (name) {
       formData.append('name', name);
     }
