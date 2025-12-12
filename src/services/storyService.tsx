@@ -117,7 +117,7 @@ export const storyService = {
 
   // Update story title
   updateStoryTitle: async (storyId: string, title: string): Promise<Story> => {
-    const response = await api.patch(`/stories/${storyId}/`, { title });
+    const response = await api.patch(`/stories/${storyId}/title/`, { title });
     return response.data;
   },
 
@@ -125,37 +125,75 @@ export const storyService = {
 
   /**
    * Upload a reusable image asset
-   * User ID is inferred from authentication token
+   * @param userId - The user ID (must match authenticated user)
+   * @param file - Image file to upload
+   * @param name - Optional name for the asset
    */
-  uploadAsset: async (file: File, name?: string): Promise<Asset> => {
+  uploadAsset: async (userId: string, file: File, name?: string): Promise<Asset> => {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('file', file);  // Backend expects 'file', not 'image'
     if (name) {
       formData.append('name', name);
     }
 
-    const response = await api.post('/assets/', formData, {
+    // Remove the default Content-Type header to let axios set multipart/form-data with boundary
+    const response = await api.post(`/users/${userId}/assets/`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': undefined,
       },
     });
-    return response.data;
+
+    // Map backend response (file) to frontend expectation (url)
+    const data = response.data;
+    return {
+      id: data.id,
+      url: data.file || data.url, // Backend returns 'file', frontend expects 'url'
+      name: name || 'asset',
+      created_at: data.created_at,
+      size: 0, // Backend doesn't return size in upload response
+      mime_type: file.type,
+    };
   },
 
   /**
    * Get all assets for the authenticated user
+   * @param userId - The user ID (must match authenticated user)
+   * @param page - Page number (default: 1)
+   * @param limit - Items per page (default: 50)
    */
-  getUserAssets: async (page: number = 1, limit: number = 50): Promise<AssetsResponse> => {
-    const response = await api.get('/assets/', {
+  getUserAssets: async (userId: string, page: number = 1, limit: number = 50): Promise<AssetsResponse> => {
+    const response = await api.get(`/users/${userId}/assets/`, {
       params: { page, limit },
     });
-    return response.data;
+
+    // Map backend response if needed
+    const data = response.data;
+    const assets = (data.results || data.assets || []).map((asset: any) => ({
+      id: asset.id,
+      url: asset.file || asset.url, // Backend returns 'file', frontend expects 'url'
+      name: asset.name || 'asset',
+      created_at: asset.created_at,
+      size: asset.size || 0,
+      mime_type: asset.mime_type || 'image/jpeg',
+    }));
+
+    return {
+      assets,
+      pagination: data.pagination || {
+        total: data.count || 0,
+        page: page,
+        limit: limit,
+        total_pages: Math.ceil((data.count || 0) / limit),
+      },
+    };
   },
 
   /**
    * Delete an asset by ID
+   * @param userId - The user ID (must match authenticated user)
+   * @param assetId - The asset ID to delete
    */
-  deleteAsset: async (assetId: string): Promise<void> => {
-    await api.delete(`/assets/${assetId}/`);
+  deleteAsset: async (userId: string, assetId: string): Promise<void> => {
+    await api.delete(`/users/${userId}/assets/${assetId}/`);
   },
 };

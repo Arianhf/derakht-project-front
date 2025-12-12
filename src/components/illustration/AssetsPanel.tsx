@@ -7,6 +7,7 @@ import styles from './AssetsPanel.module.scss';
 import { toast } from 'react-hot-toast';
 import { Asset } from '@/types/story';
 import { storyService } from '@/services/storyService';
+import { useUser } from '@/contexts/UserContext';
 
 interface AssetsPanelProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ interface AssetsPanelProps {
  * Users can upload images and click to add them to the canvas
  */
 const AssetsPanel: React.FC<AssetsPanelProps> = ({ isOpen, onClose, onAssetSelect }) => {
+  const { user } = useUser();
   const [assets, setAssets] = useState<Asset[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -32,9 +34,14 @@ const AssetsPanel: React.FC<AssetsPanelProps> = ({ isOpen, onClose, onAssetSelec
   }, [isOpen]);
 
   const fetchAssets = async () => {
+    if (!user?.id) {
+      console.warn('Cannot fetch assets: user not authenticated');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const response = await storyService.getUserAssets();
+      const response = await storyService.getUserAssets(user.id);
       setAssets(response.assets);
     } catch (error: any) {
       console.error('Error fetching assets:', error);
@@ -49,7 +56,12 @@ const AssetsPanel: React.FC<AssetsPanelProps> = ({ isOpen, onClose, onAssetSelec
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files) return;
+    if (!files || !user?.id) {
+      if (!user?.id) {
+        toast.error('لطفا ابتدا وارد شوید');
+      }
+      return;
+    }
 
     setIsUploading(true);
 
@@ -61,7 +73,7 @@ const AssetsPanel: React.FC<AssetsPanelProps> = ({ isOpen, onClose, onAssetSelec
         }
 
         try {
-          const uploadedAsset = await storyService.uploadAsset(file, file.name);
+          const uploadedAsset = await storyService.uploadAsset(user.id, file, file.name);
           return uploadedAsset;
         } catch (error) {
           console.error(`Error uploading ${file.name}:`, error);
@@ -84,8 +96,13 @@ const AssetsPanel: React.FC<AssetsPanelProps> = ({ isOpen, onClose, onAssetSelec
   };
 
   const handleDelete = async (id: string) => {
+    if (!user?.id) {
+      toast.error('لطفا ابتدا وارد شوید');
+      return;
+    }
+
     try {
-      await storyService.deleteAsset(id);
+      await storyService.deleteAsset(user.id, id);
       setAssets((prev) => prev.filter((asset) => asset.id !== id));
       toast.success('تصویر حذف شد');
     } catch (error) {
