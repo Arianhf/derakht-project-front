@@ -20,8 +20,7 @@ import paintStoryImage from '../../../public/images/paintStory.jpg';
 import finishStoryImage from '../../../public/images/finishStory.jpg';
 
 // Icons
-import { FaPaintBrush, FaPen, FaClock, FaBook, FaTrash } from 'react-icons/fa';
-import ConfirmDialog from '@/components/shared/ConfirmDialog/ConfirmDialog';
+import { FaPaintBrush, FaPen, FaClock, FaBook } from 'react-icons/fa';
 
 interface TemplatePart {
   id: string;
@@ -60,8 +59,6 @@ interface Story {
   cover_image: string | null;
   background_color: string | null;
   font_color: string | null;
-  status?: 'DRAFT' | 'COMPLETED';
-  activity_type?: string;
 }
 
 const TemplatePage = () => {
@@ -70,8 +67,6 @@ const TemplatePage = () => {
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingStories, setIsLoadingStories] = useState(false);
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
-  const [storyToDelete, setStoryToDelete] = useState<string | null>(null);
   const router = useRouter();
 
   const startStory = useCallback(async (templateId: string) => {
@@ -105,7 +100,7 @@ const TemplatePage = () => {
       if (selectedTemplate === 'drawing') {
         router.push(`/story/illustrate/${storyId}`);
       } else if (selectedTemplate === 'story') {
-        router.push(`/story/${storyId}/edit`);
+        router.push(`/story/${storyId}`);
       }
     } catch (error) {
       console.error('Error starting story:', error);
@@ -114,35 +109,6 @@ const TemplatePage = () => {
       setIsLoading(false);
     }
   }, [selectedTemplate, router]);
-
-  const handleDeleteClick = (storyId: string, e: React.MouseEvent) => {
-    // Prevent the click from bubbling up to the story card
-    e.stopPropagation();
-    setStoryToDelete(storyId);
-    setDeleteConfirmOpen(true);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (!storyToDelete) return;
-
-    try {
-      await storyService.deleteStory(storyToDelete);
-      // Remove the story from the local state
-      setStories(prevStories => prevStories.filter(story => story.id !== storyToDelete));
-      toast.success('داستان با موفقیت حذف شد');
-    } catch (error) {
-      console.error('Error deleting story:', error);
-      toast.error('خطا در حذف داستان. لطفا دوباره تلاش کنید.');
-    } finally {
-      setDeleteConfirmOpen(false);
-      setStoryToDelete(null);
-    }
-  };
-
-  const handleCancelDelete = () => {
-    setDeleteConfirmOpen(false);
-    setStoryToDelete(null);
-  };
 
   useEffect(() => {
     if (selectedTemplate) {
@@ -287,37 +253,12 @@ const TemplatePage = () => {
                           <p className={styles.noStories}>هنوز داستانی ندارید. یکی از قالب‌های بالا را انتخاب کنید!</p>
                       ) : (
                           <div className={styles.myStoriesGrid}>
-                            {stories.slice(0, 4).map((story) => {
-                              // Determine the correct route based on story status and activity type
-                              const getStoryRoute = () => {
-                                // If story is completed, always go to view page
-                                if (story.status === 'COMPLETED') {
-                                  return `/story/${story.id}`;
-                                }
-
-                                // For draft stories, go to edit page based on activity type
-                                if (story.activity_type === 'ILLUSTRATE') {
-                                  return `/story/illustrate/${story.id}`;
-                                }
-
-                                // Default for WRITE_FOR_DRAWING drafts
-                                return `/story/${story.id}/edit`;
-                              };
-
-                              return (
+                            {stories.slice(0, 4).map((story) => (
                                 <div
                                     key={story.id}
                                     className={styles.myStoryCard}
-                                    onClick={() => router.push(getStoryRoute())}
+                                    onClick={() => router.push(`/story/${story.id}`)}
                                 >
-                                  <button
-                                      className={styles.deleteButton}
-                                      onClick={(e) => handleDeleteClick(story.id, e)}
-                                      aria-label="حذف داستان"
-                                      title="حذف داستان"
-                                  >
-                                    <FaTrash />
-                                  </button>
                                   <Image
                                       src={story.cover_image || placeholderImage}
                                       alt={story.title}
@@ -327,8 +268,7 @@ const TemplatePage = () => {
                                   />
                                   <h3 className={styles.myStoryTitle}>{story.title}</h3>
                                 </div>
-                              );
-                            })}
+                            ))}
                           </div>
                       )}
                       {stories.length > 4 && (
@@ -406,16 +346,6 @@ const TemplatePage = () => {
               </div>
           )}
         </div>
-
-        <ConfirmDialog
-            isOpen={deleteConfirmOpen}
-            title="حذف داستان"
-            message="آیا مطمئن هستید که می‌خواهید این داستان را حذف کنید؟ این عملیات قابل بازگشت نیست."
-            confirmText="حذف"
-            cancelText="انصراف"
-            onConfirm={handleConfirmDelete}
-            onCancel={handleCancelDelete}
-        />
 
         <Footer />
       </div>
