@@ -168,6 +168,23 @@ export const shopService = {
         return response.data;
     },
 
+    // Get shipping estimate based on location
+    getShippingEstimate: async (province: string, city: string) => {
+        const anonymousCartId = shopService.getAnonymousCartId();
+        const payload: {
+            province: string;
+            city: string;
+            cart_id?: string;
+        } = { province, city };
+
+        if (anonymousCartId) {
+            payload.cart_id = anonymousCartId;
+        }
+
+        const response = await api.post('/shop/cart/shipping-estimate/', payload);
+        return response.data;
+    },
+
     // This method will merge anonymous cart with user cart upon login
     mergeAnonymousCart: async () => {
         const anonymousCartId = shopService.getAnonymousCartId();
@@ -259,6 +276,24 @@ export const shopService = {
 
     getOrderById: async (orderId: string) => {
         const response = await api.get(`/shop/orders/${orderId}/`);
+        return response.data;
+    },
+
+    // Comment endpoints for product reviews
+    getProductComments: async (productSlug: string, page = 1) => {
+        const response = await api.get(`/shop/products/${productSlug}/comments/?page=${page}`);
+        return response.data;
+    },
+
+    createProductComment: async (productSlug: string, text: string) => {
+        const response = await api.post(`/shop/products/${productSlug}/comments/`, {
+            text
+        });
+        return response.data;
+    },
+
+    deleteProductComment: async (productSlug: string, commentId: string) => {
+        const response = await api.delete(`/shop/products/${productSlug}/comments/${commentId}/`);
         return response.data;
     }
 };

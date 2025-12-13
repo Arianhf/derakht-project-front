@@ -531,6 +531,50 @@
   }
 }
 
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xs;
+  padding-bottom: $spacing-xs;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.commentAuthor {
+  font-weight: 600;
+  color: $dark-text;
+  font-size: 16px;
+}
+
+.commentDate {
+  font-size: 14px;
+  color: $light-text;
+  direction: rtl;
+}
+
+.commentText {
+  font-size: 16px;
+  line-height: 1.6;
+  color: $dark-text;
+  margin: 0;
+  direction: rtl;
+  text-align: right;
+}
+
+.commentsLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  gap: $spacing-sm;
+  color: $light-text;
+
+  p {
+    margin: 0;
+  }
+}
+
 .commentInput {
   width: 100%;
   min-height: 120px;
@@ -550,6 +594,12 @@
     border-color: $primary-color;
     box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
   }
+
+  &:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 }
 
 .submitCommentButton {
@@ -568,6 +618,29 @@
   margin-bottom: $spacing-xl;
 }
 
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: $spacing-md;
+  color: $dark-text;
+
+  .spinner {
+    font-size: 48px;
+    color: $primary-color;
+  }
+
+  p {
+    font-size: 18px;
+  }
+}
+
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
@@ -577,6 +650,11 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 // Skeleton overlay for image loading
