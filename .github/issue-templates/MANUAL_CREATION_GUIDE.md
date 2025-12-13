@@ -76,7 +76,19 @@ For each issue:
 
 ## Labels to Create First
 
-Before creating issues, ensure these labels exist in your repository:
+Before creating issues, ensure these labels exist in your repository.
+
+### Option A: Automated Label Creation (Recommended)
+
+If you have GitHub CLI installed locally, use the automation script:
+
+```bash
+./scripts/create-github-labels.sh
+```
+
+This will create all 18 required labels automatically.
+
+### Option B: Manual Label Creation
 
 Go to: `https://github.com/YOUR_USERNAME/derakht-project-front/labels`
 

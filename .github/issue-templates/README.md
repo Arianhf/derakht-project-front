@@ -48,93 +48,26 @@ Quality of life and accessibility improvements:
 
 ## 📝 How to Use These Templates
 
-### Option 1: Manual Creation (No GitHub CLI)
-1. Copy the content from each `.md` file
-2. Go to your GitHub repository
-3. Navigate to **Issues** → **New Issue**
-4. Paste the content
-5. Add the labels mentioned at the top of each file
-6. Submit the issue
+### Option 1: Using GitHub CLI Scripts (Recommended - Fastest)
 
-### Option 2: Using GitHub CLI (Recommended)
-If you have `gh` CLI installed:
+If you have `gh` CLI installed, use the provided automation scripts:
 
 ```bash
 # Navigate to project root
 cd /path/to/derakht-project-front
 
-# Create issues from templates
-for file in .github/issue-templates/*.md; do
-  if [[ $file == *"README"* ]]; then
-    continue
-  fi
+# Step 1: Create all required labels first
+./scripts/create-github-labels.sh
 
-  # Extract title (first line without #)
-  title=$(head -n 1 "$file" | sed 's/# //')
-
-  # Extract labels from the file
-  labels=$(grep "Labels:" "$file" | sed 's/.*Labels.*: //' | sed 's/`//g')
-
-  # Create issue
-  gh issue create \
-    --title "$title" \
-    --body-file "$file" \
-    --label "$labels"
-done
+# Step 2: Create all 15 issues from templates
+./scripts/create-github-issues.sh
 ```
 
-### Option 3: Batch Import Script
-Create a script `create-issues.sh`:
+**Important**: You must run `create-github-labels.sh` first, otherwise issue creation will fail with "label not found" errors.
 
-```bash
-#!/bin/bash
+### Option 2: Manual Creation (No GitHub CLI)
 
-# Array of issue files in priority order
-issues=(
-  "01-critical-comments-section.md"
-  "02-critical-shipping-cost.md"
-  "03-critical-payment-verification.md"
-  "04-critical-cart-error-handling.md"
-  "05-high-pagination.md"
-  "06-high-image-loading-state.md"
-  "07-high-cart-loading-indicators.md"
-  "08-high-cart-refresh-optimization.md"
-  "09-high-error-display-shop.md"
-  "10-medium-stock-display.md"
-  "11-medium-mobile-checkout-steps.md"
-  "12-medium-discount-system.md"
-  "13-medium-order-receipt.md"
-  "14-low-accessibility.md"
-  "15-enhancement-product-reviews.md"
-)
-
-for issue_file in "${issues[@]}"; do
-  echo "Creating issue from $issue_file..."
-
-  # Extract title
-  title=$(head -n 1 ".github/issue-templates/$issue_file" | sed 's/# //')
-
-  # Extract labels
-  labels=$(grep "Labels:" ".github/issue-templates/$issue_file" | sed 's/.*Labels.*: //' | sed 's/`//g' | sed 's/,/, /g')
-
-  # Create issue
-  gh issue create \
-    --title "$title" \
-    --body-file ".github/issue-templates/$issue_file" \
-    --label "$labels"
-
-  echo "✓ Created: $title"
-  sleep 1  # Rate limiting
-done
-
-echo "✓ All issues created!"
-```
-
-Make executable and run:
-```bash
-chmod +x create-issues.sh
-./create-issues.sh
-```
+See the detailed guide in `MANUAL_CREATION_GUIDE.md` for step-by-step instructions to manually create all issues via the GitHub web interface.
 
 ## 🎯 Recommended Implementation Order
 
