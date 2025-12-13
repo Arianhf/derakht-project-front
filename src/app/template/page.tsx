@@ -59,6 +59,8 @@ interface Story {
   cover_image: string | null;
   background_color: string | null;
   font_color: string | null;
+  status?: 'DRAFT' | 'COMPLETED';
+  activity_type?: string;
 }
 
 const TemplatePage = () => {
@@ -253,11 +255,28 @@ const TemplatePage = () => {
                           <p className={styles.noStories}>هنوز داستانی ندارید. یکی از قالب‌های بالا را انتخاب کنید!</p>
                       ) : (
                           <div className={styles.myStoriesGrid}>
-                            {stories.slice(0, 4).map((story) => (
+                            {stories.slice(0, 4).map((story) => {
+                              // Determine the correct route based on story status and activity type
+                              const getStoryRoute = () => {
+                                // If story is completed, always go to view page
+                                if (story.status === 'COMPLETED') {
+                                  return `/story/${story.id}`;
+                                }
+
+                                // For draft stories, go to edit page based on activity type
+                                if (story.activity_type === 'ILLUSTRATE') {
+                                  return `/story/illustrate/${story.id}`;
+                                }
+
+                                // Default for WRITE_FOR_DRAWING drafts
+                                return `/story/${story.id}/edit`;
+                              };
+
+                              return (
                                 <div
                                     key={story.id}
                                     className={styles.myStoryCard}
-                                    onClick={() => router.push(`/story/${story.id}`)}
+                                    onClick={() => router.push(getStoryRoute())}
                                 >
                                   <Image
                                       src={story.cover_image || placeholderImage}
@@ -268,7 +287,8 @@ const TemplatePage = () => {
                                   />
                                   <h3 className={styles.myStoryTitle}>{story.title}</h3>
                                 </div>
-                            ))}
+                              );
+                            })}
                           </div>
                       )}
                       {stories.length > 4 && (
