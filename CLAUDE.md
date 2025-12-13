@@ -195,12 +195,3 @@ All API interactions go through service modules in `src/services/`:
 4. **Persian Text**: Use Persian for all user-facing strings; check `src/constants/errorMessages.ts` for common messages
 5. **Provider Nesting**: UserProvider at root, FeatureFlagProvider always on, CartProvider only on shop routes
 6. **Test Mocking**: Mock context hooks (e.g., `useUser`) rather than wrapping components with providers in tests
-
-
-## Platform Implementation Guideline
-When implementing features:
-1. Always consider both web and mobile contexts
-2. If implementations differ between platforms, explicitly create both versions
-3. Don't ask which platform to implement - do both by default
-4. Highlight any platform-specific considerations or trade-offs
-5. Test/verify behavior works correctly on both platforms
