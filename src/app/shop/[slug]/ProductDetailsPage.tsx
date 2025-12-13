@@ -13,10 +13,12 @@ import logo from '@/assets/images/logo2.png';
 import heroImage from "../../../../public/images/shop_bg.png";
 import { FaPlus, FaMinus, FaTrash, FaArrowRight, FaSpinner, FaShoppingCart } from 'react-icons/fa';
 import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
-import { Product, ProductImage, Breadcrumb } from '@/types/shop';
+import { Product, ProductImage, Breadcrumb, ProductComment, CommentsResponse } from '@/types/shop';
 import { shopService } from '@/services/shopService';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { useProductQuantity } from '@/hooks/useProductQuantity';
+import { StandardErrorResponse } from '@/types/error';
+import { ERROR_MESSAGES } from '@/constants/errorMessages';
 
 const ProductDetailsPage: React.FC = () => {
     const router = useRouter();
@@ -28,7 +30,9 @@ const ProductDetailsPage: React.FC = () => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [isImageLoading, setIsImageLoading] = useState(false);
     const [comment, setComment] = useState('');
-    const [comments, setComments] = useState<Array<{ id: string; text: string }>>([]);
+    const [comments, setComments] = useState<ProductComment[]>([]);
+    const [commentsLoading, setCommentsLoading] = useState(false);
+    const [commentSubmitting, setCommentSubmitting] = useState(false);
     const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([
         { label: 'فروشگاه', href: '/shop' },
     ]);
@@ -74,12 +78,29 @@ const ProductDetailsPage: React.FC = () => {
         }
     }, [productSlug]);
 
+    // Fetch comments
+    const fetchComments = useCallback(async () => {
+        if (!productSlug) return;
+
+        try {
+            setCommentsLoading(true);
+            const response: CommentsResponse = await shopService.getProductComments(productSlug);
+            setComments(response.items || []);
+        } catch (error) {
+            // Silently handle error - comments are not critical
+            setComments([]);
+        } finally {
+            setCommentsLoading(false);
+        }
+    }, [productSlug]);
+
     // Use effect to fetch product on component mount
     useEffect(() => {
         if (productSlug) {
             fetchProduct();
+            fetchComments();
         }
-    }, [productSlug, fetchProduct]);
+    }, [productSlug, fetchProduct, fetchComments]);
 
     // Use the product quantity hook
     const {
@@ -91,14 +112,36 @@ const ProductDetailsPage: React.FC = () => {
     } = useProductQuantity(product || {} as Product);
 
     // Comment submission handler
-    const handleSubmitComment = () => {
-        if (comment.trim()) {
-            const newComment = {
-                id: `${Date.now()}-${Math.random()}`,
-                text: comment.trim()
-            };
-            setComments((prev) => [...prev, newComment]);
+    const handleSubmitComment = async () => {
+        if (!comment.trim()) {
+            toast.error('لطفاً نظر خود را وارد کنید');
+            return;
+        }
+
+        if (comment.trim().length < 10) {
+            toast.error('نظر شما باید حداقل ۱۰ کاراکتر باشد');
+            return;
+        }
+
+        try {
+            setCommentSubmitting(true);
+            const newComment = await shopService.createProductComment(productSlug, comment.trim());
+
+            // Add the new comment to the list
+            setComments((prev) => [newComment, ...prev]);
             setComment('');
+            toast.success('نظر شما با موفقیت ثبت شد');
+        } catch (error) {
+            const standardError = error as StandardErrorResponse;
+            const errorMessage = standardError?.code && ERROR_MESSAGES[standardError.code]
+                ? typeof ERROR_MESSAGES[standardError.code] === 'function'
+                    ? (ERROR_MESSAGES[standardError.code] as (details?: any) => string)(standardError.details)
+                    : ERROR_MESSAGES[standardError.code]
+                : 'خطا در ارسال نظر. لطفاً دوباره تلاش کنید';
+
+            toast.error(errorMessage as string);
+        } finally {
+            setCommentSubmitting(false);
         }
     };
 
@@ -118,6 +161,23 @@ const ProductDetailsPage: React.FC = () => {
     // Handle image load complete
     const handleImageLoadComplete = () => {
         setIsImageLoading(false);
+    };
+
+    // Format date to Persian
+    const formatDate = (dateString: string) => {
+        try {
+            const date = new Date(dateString);
+            const options: Intl.DateTimeFormatOptions = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            return new Intl.DateTimeFormat('fa-IR', options).format(date);
+        } catch {
+            return '';
+        }
     };
 
     // Render loading state
@@ -303,29 +363,45 @@ const ProductDetailsPage: React.FC = () => {
                 <div className={styles.commentsContainer}>
                     <h2 className={styles.commentsTitle}>نظرات کاربران</h2>
                     <div className={styles.commentsBox}>
-                        {comments.length === 0 ? (
+                        {commentsLoading ? (
+                            <div className={styles.commentsLoading}>
+                                <FaSpinner className={styles.spinner} />
+                                <p>در حال بارگذاری نظرات...</p>
+                            </div>
+                        ) : comments.length === 0 ? (
                             <p className={styles.noComments}>هنوز نظری ثبت نشده است. اولین نفری باشید که نظر می‌دهد!</p>
                         ) : (
                             <ul className={styles.commentsList}>
                                 {comments.map((cmt) => (
                                     <li key={cmt.id} className={styles.commentItem}>
-                                        {cmt.text}
+                                        <div className={styles.commentHeader}>
+                                            <span className={styles.commentAuthor}>
+                                                {cmt.user_name || 'کاربر ناشناس'}
+                                            </span>
+                                            <span className={styles.commentDate}>
+                                                {formatDate(cmt.created_at)}
+                                            </span>
+                                        </div>
+                                        <p className={styles.commentText}>{cmt.text}</p>
                                     </li>
                                 ))}
                             </ul>
                         )}
                         <textarea
                             className={styles.commentInput}
-                            placeholder="نظر خود را وارد کنید..."
+                            placeholder="نظر خود را وارد کنید... (حداقل ۱۰ کاراکتر)"
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
+                            disabled={commentSubmitting}
                         />
                         <Button
                             variant="primary"
                             onClick={handleSubmitComment}
                             className={styles.submitCommentButton}
+                            disabled={commentSubmitting || !comment.trim()}
+                            icon={commentSubmitting ? <FaSpinner className={styles.spinner} /> : undefined}
                         >
-                            ارسال نظر
+                            {commentSubmitting ? 'در حال ارسال...' : 'ارسال نظر'}
                         </Button>
                     </div>
                 </div>
