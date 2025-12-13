@@ -150,3 +150,27 @@ export interface Breadcrumb {
     href: string;
     isActive?: boolean;
 }
+
+// Comment types for product reviews/comments
+export interface ProductComment {
+    id: string;
+    product_id: string;
+    user_id?: string;
+    user_name?: string;
+    text: string;
+    created_at: string;
+    updated_at?: string;
+    is_approved?: boolean;
+}
+
+export interface CreateCommentRequest {
+    product_id: string;
+    text: string;
+}
+
+export interface CommentsResponse {
+    items: ProductComment[];
+    total: number;
+    page?: number;
+    pages?: number;
+}

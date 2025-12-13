@@ -260,5 +260,23 @@ export const shopService = {
     getOrderById: async (orderId: string) => {
         const response = await api.get(`/shop/orders/${orderId}/`);
         return response.data;
+    },
+
+    // Comment endpoints for product reviews
+    getProductComments: async (productSlug: string, page = 1) => {
+        const response = await api.get(`/shop/products/${productSlug}/comments/?page=${page}`);
+        return response.data;
+    },
+
+    createProductComment: async (productSlug: string, text: string) => {
+        const response = await api.post(`/shop/products/${productSlug}/comments/`, {
+            text
+        });
+        return response.data;
+    },
+
+    deleteProductComment: async (productSlug: string, commentId: string) => {
+        const response = await api.delete(`/shop/products/${productSlug}/comments/${commentId}/`);
+        return response.data;
     }
 };
