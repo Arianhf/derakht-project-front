@@ -20,6 +20,7 @@ const StoriesPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
     const [storyToDelete, setStoryToDelete] = useState<string | null>(null);
+    const [deleting, setDeleting] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const observerTarget = useRef<HTMLDivElement>(null);
@@ -81,44 +82,39 @@ const StoriesPage: React.FC = () => {
         }
     }, [currentPage, fetchStories]);
 
-
-    const handleViewStory = (story: Story) => {
-        // If story is completed, go to view page
-        if (story.status === 'COMPLETED') {
-            router.push(`/story/${story.id}`);
-            return;
-        }
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            entries => {
-                if (entries[0].isIntersecting && hasMore && !loadingMore && !loading) {
-                    setCurrentPage(prev => prev + 1);
-                }
-            },
-            { threshold: 0.1 }
-        );
-
-        const currentTarget = observerTarget.current;
-        if (currentTarget) {
-            observer.observe(currentTarget);
-        }
-
-        return () => {
-            if (currentTarget) {
-                observer.unobserve(currentTarget);
-            }
-        };
-    }, [hasMore, loadingMore, loading]);
-
-    useEffect(() => {
-        if (currentPage > 1) {
-            fetchStories(currentPage, true);
-        }
-    }, [currentPage, fetchStories]);
-
     const handleViewStory = (storyId: string) => {
         router.push(`/story/${storyId}`);
+    };
+
+    const handleDeleteClick = (storyId: string) => {
+        setStoryToDelete(storyId);
+        setDeleteConfirmOpen(true);
+    };
+
+    const handleCancelDelete = () => {
+        setDeleteConfirmOpen(false);
+        setStoryToDelete(null);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!storyToDelete) return;
+
+        try {
+            setDeleting(true);
+            await storyService.deleteStory(storyToDelete);
+
+            // Remove the deleted story from the list
+            setStories(prev => prev.filter(story => story.id !== storyToDelete));
+
+            toast.success('داستان با موفقیت حذف شد');
+            setDeleteConfirmOpen(false);
+            setStoryToDelete(null);
+        } catch (err) {
+            console.error('Error deleting story:', err);
+            toast.error('خطا در حذف داستان. لطفا دوباره تلاش کنید.');
+        } finally {
+            setDeleting(false);
+        }
     };
 
     return (
@@ -141,34 +137,43 @@ const StoriesPage: React.FC = () => {
                                 <p className={styles.noStories}>هنوز داستانی ثبت نشده است.</p>
                             ) : (
                                 stories.map((story) => (
-                            <div key={story.id} className={styles.storyCard}>
-                                <Image
-                                    src={story.cover_image || placeholderImage}
-                                    alt={story.title}
-                                    width={300}
-                                    height={200}
-                                    className={styles.storyImage}
-                                />
-                                <h2 className={styles.storyTitle}>{story.title}</h2>
-                                <p className={styles.storyExcerpt}>{story.parts[0]?.text.substring(0, 50) || "بدون متن"}...</p>
-                                <div className={styles.actions}>
-                                    <button
-                                        className={styles.viewButton}
-                                        onClick={() => handleViewStory(story.id)}
-                                    >
-                                        مشاهده داستان
-                                    </button>
-                                    <button
-                                        className={styles.editButton}
-                                        onClick={() => router.push(`/story/${story.id}/edit`)}
-                                        aria-label="ویرایش داستان"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
+                                    <div key={story.id} className={styles.storyCard}>
+                                        <Image
+                                            src={story.cover_image || placeholderImage}
+                                            alt={story.title}
+                                            width={300}
+                                            height={200}
+                                            className={styles.storyImage}
+                                        />
+                                        <h2 className={styles.storyTitle}>{story.title}</h2>
+                                        <p className={styles.storyExcerpt}>{story.parts[0]?.text.substring(0, 50) || "بدون متن"}...</p>
+                                        <div className={styles.actions}>
+                                            <button
+                                                className={styles.viewButton}
+                                                onClick={() => handleViewStory(story.id)}
+                                            >
+                                                مشاهده داستان
+                                            </button>
+                                            <button
+                                                className={styles.editButton}
+                                                onClick={() => router.push(`/story/${story.id}/edit`)}
+                                                aria-label="ویرایش داستان"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                            </button>
+                                            <button
+                                                className={styles.deleteButton}
+                                                onClick={() => handleDeleteClick(story.id)}
+                                                aria-label="حذف داستان"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
                                 ))
                             )}
                         </div>
@@ -193,15 +198,31 @@ const StoriesPage: React.FC = () => {
                 )}
             </div>
 
-                        {/* End of results indicator */}
-                        {!hasMore && stories.length > 0 && (
-                            <div className={styles.endMessage}>
-                                <p>همه داستان‌ها نمایش داده شدند</p>
-                            </div>
-                        )}
-                    </>
-                )}
-            </div>
+            {/* Delete Confirmation Modal */}
+            {deleteConfirmOpen && (
+                <div className={styles.modalOverlay} onClick={handleCancelDelete}>
+                    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                        <h2 className={styles.modalTitle}>تأیید حذف</h2>
+                        <p className={styles.modalText}>آیا از حذف این داستان اطمینان دارید؟ این عملیات قابل بازگشت نیست.</p>
+                        <div className={styles.modalActions}>
+                            <button
+                                className={styles.confirmButton}
+                                onClick={handleConfirmDelete}
+                                disabled={deleting}
+                            >
+                                {deleting ? 'در حال حذف...' : 'بله، حذف شود'}
+                            </button>
+                            <button
+                                className={styles.cancelButton}
+                                onClick={handleCancelDelete}
+                                disabled={deleting}
+                            >
+                                انصراف
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <Footer />
         </>

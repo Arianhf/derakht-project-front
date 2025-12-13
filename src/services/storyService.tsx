@@ -200,4 +200,12 @@ export const storyService = {
   deleteAsset: async (userId: string, assetId: string): Promise<void> => {
     await api.delete(`/users/${userId}/assets/${assetId}/`);
   },
+
+  /**
+   * Delete a story by ID
+   * @param storyId - The story ID to delete
+   */
+  deleteStory: async (storyId: string): Promise<void> => {
+    await api.delete(`/stories/${storyId}/`);
+  },
 };
