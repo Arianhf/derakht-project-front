@@ -112,8 +112,10 @@ export const storyService = {
   },
 
   // Get all completed stories from all users
-  getCompletedStories: async (page: number = 1): Promise<StoryResponse<Story>> => {
-    const response = await api.get(`/stories/completed/?page=${page}`);
+  getCompletedStories: async (page: number = 1, pageSize: number = 12): Promise<StoryResponse<Story>> => {
+    const response = await api.get('/stories/completed/', {
+      params: { page, page_size: pageSize }
+    });
     return response.data;
   },
 

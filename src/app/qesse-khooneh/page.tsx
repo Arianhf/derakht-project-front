@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "./qesseKhooneh.module.scss";
@@ -16,48 +16,72 @@ const QesseKhoonehPage: React.FC = () => {
     const router = useRouter();
     const [stories, setStories] = useState<Story[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [loadingMore, setLoadingMore] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [totalCount, setTotalCount] = useState<number>(0);
-    const [hasNext, setHasNext] = useState<boolean>(false);
-    const [hasPrevious, setHasPrevious] = useState<boolean>(false);
+    const [hasMore, setHasMore] = useState<boolean>(true);
+    const observerTarget = useRef<HTMLDivElement>(null);
 
-    const fetchStories = async (page: number) => {
-        setLoading(true);
+    const fetchStories = useCallback(async (page: number, append: boolean = false) => {
         try {
-            const response = await storyService.getCompletedStories(page);
-            setStories(response.results);
-            setTotalCount(response.count);
-            setHasNext(response.next !== null);
-            setHasPrevious(response.previous !== null);
+            if (append) {
+                setLoadingMore(true);
+            } else {
+                setLoading(true);
+            }
+
+            const response = await storyService.getCompletedStories(page, 12);
+
+            if (append) {
+                setStories(prev => [...prev, ...response.results]);
+            } else {
+                setStories(response.results);
+            }
+
+            setHasMore(response.next !== null);
         } catch (err) {
             setError("مشکلی در دریافت داستان‌ها رخ داده است.");
             toast.error("مشکلی در دریافت داستان‌ها رخ داده است.");
         } finally {
             setLoading(false);
+            setLoadingMore(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
-        fetchStories(currentPage);
-    }, [currentPage]);
+        fetchStories(1);
+    }, [fetchStories]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting && hasMore && !loadingMore && !loading) {
+                    setCurrentPage(prev => prev + 1);
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        const currentTarget = observerTarget.current;
+        if (currentTarget) {
+            observer.observe(currentTarget);
+        }
+
+        return () => {
+            if (currentTarget) {
+                observer.unobserve(currentTarget);
+            }
+        };
+    }, [hasMore, loadingMore, loading]);
+
+    useEffect(() => {
+        if (currentPage > 1) {
+            fetchStories(currentPage, true);
+        }
+    }, [currentPage, fetchStories]);
 
     const handleViewStory = (storyId: string) => {
         router.push(`/story/${storyId}`);
-    };
-
-    const handleNextPage = () => {
-        if (hasNext) {
-            setCurrentPage(prev => prev + 1);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    };
-
-    const handlePreviousPage = () => {
-        if (hasPrevious) {
-            setCurrentPage(prev => prev - 1);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
     };
 
     const getAuthorName = (author: number | Author): string => {
@@ -75,32 +99,20 @@ const QesseKhoonehPage: React.FC = () => {
         return { image: author.profile_image, initial };
     };
 
-    if (loading) return (
-        <>
-            <Navbar logo={logo} />
-            <div className={styles.container}>
-                <p className={styles.loading}>در حال بارگذاری...</p>
-            </div>
-            <Footer />
-        </>
-    );
-
-    if (error) return (
-        <>
-            <Navbar logo={logo} />
-            <div className={styles.container}>
-                <p className={styles.error}>{error}</p>
-            </div>
-            <Footer />
-        </>
-    );
-
     return (
         <>
             <Navbar logo={logo} />
             <Toaster position="top-center" />
             <div className={styles.container}>
-                <div className={styles.grid}>
+                {error && (
+                    <p className={styles.error}>{error}</p>
+                )}
+
+                {loading && stories.length === 0 ? (
+                    <p className={styles.loading}>در حال بارگذاری...</p>
+                ) : (
+                    <>
+                        <div className={styles.grid}>
                     {stories.length === 0 ? (
                         <p className={styles.noStories}>هنوز داستانی ثبت نشده است.</p>
                     ) : (
@@ -147,27 +159,25 @@ const QesseKhoonehPage: React.FC = () => {
                             </div>
                         ))
                     )}
-                </div>
+                        </div>
 
-                {/* Pagination Controls */}
-                {(hasNext || hasPrevious) && (
-                    <div className={styles.pagination}>
-                        <button
-                            className={styles.paginationButton}
-                            onClick={handlePreviousPage}
-                            disabled={!hasPrevious}
-                        >
-                            صفحه قبل
-                        </button>
-                        <span className={styles.pageInfo}>صفحه {currentPage}</span>
-                        <button
-                            className={styles.paginationButton}
-                            onClick={handleNextPage}
-                            disabled={!hasNext}
-                        >
-                            صفحه بعد
-                        </button>
-                    </div>
+                        {/* Infinite scroll trigger */}
+                        <div ref={observerTarget} className={styles.scrollTrigger} />
+
+                        {/* Loading indicator for infinite scroll */}
+                        {loadingMore && (
+                            <div className={styles.loadingMore}>
+                                <p>در حال بارگذاری داستان‌های بیشتر...</p>
+                            </div>
+                        )}
+
+                        {/* End of results indicator */}
+                        {!hasMore && stories.length > 0 && (
+                            <div className={styles.endMessage}>
+                                <p>همه داستان‌ها نمایش داده شدند</p>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
 
