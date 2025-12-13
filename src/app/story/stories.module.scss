@@ -138,6 +138,30 @@
   }
 }
 
+.deleteButton {
+  background-color: #ff3b30;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  transition: $transition-base;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 45px;
+
+  &:hover {
+    background-color: color.adjust(#ff3b30, $lightness: -10%);
+    transform: translateY(-2px);
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .loading, .error, .noStories {
   text-align: center;
   font-size: $font-size-lg;

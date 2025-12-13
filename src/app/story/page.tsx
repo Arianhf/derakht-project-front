@@ -33,10 +33,40 @@ const StoriesPage: React.FC = () => {
         fetchStories();
     }, []);
 
-    const handleViewStory = (storyId: string) => {
-        router.push(`/story/${storyId}`);
+    const handleViewStory = (story: Story) => {
+        // If story is completed, go to view page
+        if (story.status === 'COMPLETED') {
+            router.push(`/story/${story.id}`);
+            return;
+        }
+
+        // For draft stories, go to edit page based on activity type
+        if (story.activity_type === 'ILLUSTRATE') {
+            router.push(`/story/illustrate/${story.id}`);
+        } else {
+            // Default for WRITE_FOR_DRAWING drafts
+            router.push(`/story/${story.id}/edit`);
+        }
     };
 
+    const handleDeleteStory = async (storyId: string, e: React.MouseEvent) => {
+        // Prevent event bubbling
+        e.stopPropagation();
+
+        // Ask for confirmation
+        const confirmed = window.confirm('آیا مطمئن هستید که می‌خواهید این داستان را حذف کنید؟');
+        if (!confirmed) return;
+
+        try {
+            await storyService.deleteStory(storyId);
+            // Remove the story from the local state
+            setStories(prevStories => prevStories.filter(story => story.id !== storyId));
+            toast.success('داستان با موفقیت حذف شد');
+        } catch (err) {
+            console.error('Error deleting story:', err);
+            toast.error('خطا در حذف داستان. لطفا دوباره تلاش کنید.');
+        }
+    };
 
     if (loading) return (
         <>
@@ -82,9 +112,9 @@ const StoriesPage: React.FC = () => {
                                 <div className={styles.actions}>
                                     <button
                                         className={styles.viewButton}
-                                        onClick={() => handleViewStory(story.id)}
+                                        onClick={() => handleViewStory(story)}
                                     >
-                                        مشاهده داستان
+                                        {story.status === 'COMPLETED' ? 'مشاهده داستان' : 'ادامه نوشتن'}
                                     </button>
                                     <button
                                         className={styles.editButton}
@@ -93,6 +123,15 @@ const StoriesPage: React.FC = () => {
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        className={styles.deleteButton}
+                                        onClick={(e) => handleDeleteStory(story.id, e)}
+                                        aria-label="حذف داستان"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
                                     </button>
                                 </div>
