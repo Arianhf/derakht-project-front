@@ -100,11 +100,11 @@ for issue_spec in "${issues[@]}"; do
     --label "$labels" 2>&1; then
 
     echo -e "${GREEN}✓ Created: $title${NC}"
-    ((created++))
+    created=$((created + 1))
   else
     echo -e "${RED}✗ Failed: $title${NC}"
     echo -e "${RED}Error output above${NC}"
-    ((failed++))
+    failed=$((failed + 1))
   fi
 
   # Clean up temp file
