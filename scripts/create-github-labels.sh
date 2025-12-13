@@ -77,15 +77,19 @@ for label_spec in "${labels[@]}"; do
 
   echo -n "Processing: $name ... "
 
-  # Try to create the label
-  if gh label create "$name" --color "$color" --description "$description" 2>&1 | grep -q "already exists"; then
-    echo -e "${YELLOW}already exists${NC}"
-    ((skipped++))
-  elif gh label create "$name" --color "$color" --description "$description" &> /dev/null; then
+  # Try to create the label and capture output
+  output=$(gh label create "$name" --color "$color" --description "$description" 2>&1)
+  exit_code=$?
+
+  if [ $exit_code -eq 0 ]; then
     echo -e "${GREEN}✓ created${NC}"
     ((created++))
+  elif echo "$output" | grep -qi "already exists"; then
+    echo -e "${YELLOW}already exists${NC}"
+    ((skipped++))
   else
     echo -e "${RED}✗ failed${NC}"
+    echo -e "${RED}Error: $output${NC}"
     ((failed++))
   fi
 done
