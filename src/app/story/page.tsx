@@ -11,12 +11,15 @@ import { toast, Toaster } from 'react-hot-toast';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import Footer from '@/components/shared/Footer/Footer';
 import logo from '@/assets/images/logo2.png';
+import ConfirmDialog from '@/components/shared/ConfirmDialog/ConfirmDialog';
 
 const StoriesPage: React.FC = () => {
     const router = useRouter();
     const [stories, setStories] = useState<Story[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
+    const [storyToDelete, setStoryToDelete] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchStories = async () => {
@@ -49,23 +52,33 @@ const StoriesPage: React.FC = () => {
         }
     };
 
-    const handleDeleteStory = async (storyId: string, e: React.MouseEvent) => {
+    const handleDeleteClick = (storyId: string, e: React.MouseEvent) => {
         // Prevent event bubbling
         e.stopPropagation();
+        setStoryToDelete(storyId);
+        setDeleteConfirmOpen(true);
+    };
 
-        // Ask for confirmation
-        const confirmed = window.confirm('آیا مطمئن هستید که می‌خواهید این داستان را حذف کنید؟');
-        if (!confirmed) return;
+    const handleConfirmDelete = async () => {
+        if (!storyToDelete) return;
 
         try {
-            await storyService.deleteStory(storyId);
+            await storyService.deleteStory(storyToDelete);
             // Remove the story from the local state
-            setStories(prevStories => prevStories.filter(story => story.id !== storyId));
+            setStories(prevStories => prevStories.filter(story => story.id !== storyToDelete));
             toast.success('داستان با موفقیت حذف شد');
         } catch (err) {
             console.error('Error deleting story:', err);
             toast.error('خطا در حذف داستان. لطفا دوباره تلاش کنید.');
+        } finally {
+            setDeleteConfirmOpen(false);
+            setStoryToDelete(null);
         }
+    };
+
+    const handleCancelDelete = () => {
+        setDeleteConfirmOpen(false);
+        setStoryToDelete(null);
     };
 
     if (loading) return (
@@ -127,7 +140,7 @@ const StoriesPage: React.FC = () => {
                                     </button>
                                     <button
                                         className={styles.deleteButton}
-                                        onClick={(e) => handleDeleteStory(story.id, e)}
+                                        onClick={(e) => handleDeleteClick(story.id, e)}
                                         aria-label="حذف داستان"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -140,6 +153,16 @@ const StoriesPage: React.FC = () => {
                     )}
                 </div>
             </div>
+
+            <ConfirmDialog
+                isOpen={deleteConfirmOpen}
+                title="حذف داستان"
+                message="آیا مطمئن هستید که می‌خواهید این داستان را حذف کنید؟ این عملیات قابل بازگشت نیست."
+                confirmText="حذف"
+                cancelText="انصراف"
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
+            />
 
             <Footer />
         </>

@@ -21,6 +21,7 @@ import finishStoryImage from '../../../public/images/finishStory.jpg';
 
 // Icons
 import { FaPaintBrush, FaPen, FaClock, FaBook, FaTrash } from 'react-icons/fa';
+import ConfirmDialog from '@/components/shared/ConfirmDialog/ConfirmDialog';
 
 interface TemplatePart {
   id: string;
@@ -69,6 +70,8 @@ const TemplatePage = () => {
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingStories, setIsLoadingStories] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
+  const [storyToDelete, setStoryToDelete] = useState<string | null>(null);
   const router = useRouter();
 
   const startStory = useCallback(async (templateId: string) => {
@@ -112,23 +115,33 @@ const TemplatePage = () => {
     }
   }, [selectedTemplate, router]);
 
-  const handleDeleteStory = async (storyId: string, e: React.MouseEvent) => {
+  const handleDeleteClick = (storyId: string, e: React.MouseEvent) => {
     // Prevent the click from bubbling up to the story card
     e.stopPropagation();
+    setStoryToDelete(storyId);
+    setDeleteConfirmOpen(true);
+  };
 
-    // Ask for confirmation
-    const confirmed = window.confirm('آیا مطمئن هستید که می‌خواهید این داستان را حذف کنید؟');
-    if (!confirmed) return;
+  const handleConfirmDelete = async () => {
+    if (!storyToDelete) return;
 
     try {
-      await storyService.deleteStory(storyId);
+      await storyService.deleteStory(storyToDelete);
       // Remove the story from the local state
-      setStories(prevStories => prevStories.filter(story => story.id !== storyId));
+      setStories(prevStories => prevStories.filter(story => story.id !== storyToDelete));
       toast.success('داستان با موفقیت حذف شد');
     } catch (error) {
       console.error('Error deleting story:', error);
       toast.error('خطا در حذف داستان. لطفا دوباره تلاش کنید.');
+    } finally {
+      setDeleteConfirmOpen(false);
+      setStoryToDelete(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirmOpen(false);
+    setStoryToDelete(null);
   };
 
   useEffect(() => {
@@ -299,7 +312,7 @@ const TemplatePage = () => {
                                 >
                                   <button
                                       className={styles.deleteButton}
-                                      onClick={(e) => handleDeleteStory(story.id, e)}
+                                      onClick={(e) => handleDeleteClick(story.id, e)}
                                       aria-label="حذف داستان"
                                       title="حذف داستان"
                                   >
@@ -393,6 +406,16 @@ const TemplatePage = () => {
               </div>
           )}
         </div>
+
+        <ConfirmDialog
+            isOpen={deleteConfirmOpen}
+            title="حذف داستان"
+            message="آیا مطمئن هستید که می‌خواهید این داستان را حذف کنید؟ این عملیات قابل بازگشت نیست."
+            confirmText="حذف"
+            cancelText="انصراف"
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+        />
 
         <Footer />
       </div>
