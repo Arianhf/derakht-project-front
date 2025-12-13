@@ -97,12 +97,13 @@ for issue_spec in "${issues[@]}"; do
   if gh issue create \
     --title "$title" \
     --body-file "$temp_body" \
-    --label "$labels" 2>/dev/null; then
+    --label "$labels" 2>&1; then
 
     echo -e "${GREEN}✓ Created: $title${NC}"
     ((created++))
   else
     echo -e "${RED}✗ Failed: $title${NC}"
+    echo -e "${RED}Error output above${NC}"
     ((failed++))
   fi
 
