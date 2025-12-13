@@ -60,8 +60,10 @@ export const storyService = {
     return response.data;
   },
 
-  getApiStories: async (): Promise<StoryResponse<Story>> => {
-    const response = await api.get('/stories/');
+  getApiStories: async (page: number = 1, pageSize: number = 12): Promise<StoryResponse<Story>> => {
+    const response = await api.get('/stories/', {
+      params: { page, page_size: pageSize }
+    });
     return response.data;
   },
 
@@ -110,8 +112,10 @@ export const storyService = {
   },
 
   // Get all completed stories from all users
-  getCompletedStories: async (page: number = 1): Promise<StoryResponse<Story>> => {
-    const response = await api.get(`/stories/completed/?page=${page}`);
+  getCompletedStories: async (page: number = 1, pageSize: number = 12): Promise<StoryResponse<Story>> => {
+    const response = await api.get('/stories/completed/', {
+      params: { page, page_size: pageSize }
+    });
     return response.data;
   },
 
@@ -195,13 +199,5 @@ export const storyService = {
    */
   deleteAsset: async (userId: string, assetId: string): Promise<void> => {
     await api.delete(`/users/${userId}/assets/${assetId}/`);
-  },
-
-  /**
-   * Delete a story by ID
-   * @param storyId - The story ID to delete
-   */
-  deleteStory: async (storyId: string): Promise<void> => {
-    await api.delete(`/stories/${storyId}/`);
   },
 };
