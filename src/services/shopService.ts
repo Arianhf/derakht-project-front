@@ -168,6 +168,23 @@ export const shopService = {
         return response.data;
     },
 
+    // Get shipping estimate based on location
+    getShippingEstimate: async (province: string, city: string) => {
+        const anonymousCartId = shopService.getAnonymousCartId();
+        const payload: {
+            province: string;
+            city: string;
+            cart_id?: string;
+        } = { province, city };
+
+        if (anonymousCartId) {
+            payload.cart_id = anonymousCartId;
+        }
+
+        const response = await api.post('/shop/cart/shipping-estimate/', payload);
+        return response.data;
+    },
+
     // This method will merge anonymous cart with user cart upon login
     mergeAnonymousCart: async () => {
         const anonymousCartId = shopService.getAnonymousCartId();

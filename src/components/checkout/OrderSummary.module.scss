@@ -137,6 +137,38 @@
   border-radius: 6px;
 }
 
+.loadingText {
+  color: #999;
+  font-style: italic;
+  font-size: 14px;
+}
+
+.pendingText {
+  color: #ff9800;
+  font-size: 14px;
+}
+
+.shippingMethodInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 0;
+  border-bottom: 1px dashed #e1e1e1;
+  text-align: right;
+  direction: rtl;
+}
+
+.shippingMethodName {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.deliveryEstimate {
+  font-size: 12px;
+  color: #999;
+}
+
 @media (max-width: 768px) {
   .summaryTitle {
     font-size: 18px;

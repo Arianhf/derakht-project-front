@@ -47,6 +47,29 @@ export interface CartItem {
     total_price: number;
 }
 
+// Shipping method types
+export interface ShippingMethod {
+    id: 'standard_post' | 'express';
+    name: string;
+    description: string;
+    cost: number;
+    original_cost: number;
+    is_free: boolean;
+    estimated_delivery_days_min?: number;
+    estimated_delivery_days_max?: number;
+    estimated_delivery_hours_min?: number;
+    estimated_delivery_hours_max?: number;
+    is_available: boolean;
+    available_for_provinces?: string[];
+}
+
+export interface ShippingEstimateResponse {
+    shipping_methods: ShippingMethod[];
+    cart_total: number;
+    free_shipping_threshold: number;
+    message?: string;
+}
+
 export interface CartDetails {
     items_count: number;
     total_amount: number;
@@ -56,6 +79,7 @@ export interface CartDetails {
         discount_amount: number;
     };
     shipping_cost?: number;
+    selected_shipping_method?: ShippingMethod;
 }
 
 // Order types remain the same
@@ -75,6 +99,7 @@ export interface ShippingInfo {
     postal_code: string;
     recipient_name: string;
     phone_number: string;
+    shipping_method_id?: string;
 }
 
 export interface PaymentInfo {
