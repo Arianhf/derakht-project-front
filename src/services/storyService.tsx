@@ -60,8 +60,10 @@ export const storyService = {
     return response.data;
   },
 
-  getApiStories: async (): Promise<StoryResponse<Story>> => {
-    const response = await api.get('/stories/');
+  getApiStories: async (page: number = 1, pageSize: number = 12): Promise<StoryResponse<Story>> => {
+    const response = await api.get('/stories/', {
+      params: { page, page_size: pageSize }
+    });
     return response.data;
   },
 

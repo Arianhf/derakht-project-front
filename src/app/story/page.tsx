@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "./stories.module.scss";
@@ -16,47 +16,72 @@ const StoriesPage: React.FC = () => {
     const router = useRouter();
     const [stories, setStories] = useState<Story[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [loadingMore, setLoadingMore] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [hasMore, setHasMore] = useState<boolean>(true);
+    const observerTarget = useRef<HTMLDivElement>(null);
+
+    const fetchStories = useCallback(async (page: number, append: boolean = false) => {
+        try {
+            if (append) {
+                setLoadingMore(true);
+            } else {
+                setLoading(true);
+            }
+
+            const response = await storyService.getApiStories(page, 12);
+
+            if (append) {
+                setStories(prev => [...prev, ...response.results]);
+            } else {
+                setStories(response.results);
+            }
+
+            setHasMore(response.next !== null);
+        } catch (err) {
+            setError("مشکلی در دریافت داستان‌ها رخ داده است.");
+        } finally {
+            setLoading(false);
+            setLoadingMore(false);
+        }
+    }, []);
 
     useEffect(() => {
-        const fetchStories = async () => {
-            try {
-                const response = await storyService.getApiStories();
-                setStories(response.results);
-            } catch (err) {
-                setError("مشکلی در دریافت داستان‌ها رخ داده است.");
-            } finally {
-                setLoading(false);
+        fetchStories(1);
+    }, [fetchStories]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting && hasMore && !loadingMore && !loading) {
+                    setCurrentPage(prev => prev + 1);
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        const currentTarget = observerTarget.current;
+        if (currentTarget) {
+            observer.observe(currentTarget);
+        }
+
+        return () => {
+            if (currentTarget) {
+                observer.unobserve(currentTarget);
             }
         };
+    }, [hasMore, loadingMore, loading]);
 
-        fetchStories();
-    }, []);
+    useEffect(() => {
+        if (currentPage > 1) {
+            fetchStories(currentPage, true);
+        }
+    }, [currentPage, fetchStories]);
 
     const handleViewStory = (storyId: string) => {
         router.push(`/story/${storyId}`);
     };
-
-
-    if (loading) return (
-        <>
-            <Navbar logo={logo} />
-            <div className={styles.container}>
-                <p className={styles.loading}>در حال بارگذاری...</p>
-            </div>
-            <Footer />
-        </>
-    );
-
-    if (error) return (
-        <>
-            <Navbar logo={logo} />
-            <div className={styles.container}>
-                <p className={styles.error}>{error}</p>
-            </div>
-            <Footer />
-        </>
-    );
 
     return (
         <>
@@ -64,11 +89,20 @@ const StoriesPage: React.FC = () => {
             <Toaster position="top-center" />
             <div className={styles.container}>
                 <h1 className={styles.title}>داستان‌های شما</h1>
-                <div className={styles.grid}>
-                    {stories.length === 0 ? (
-                        <p className={styles.noStories}>هنوز داستانی ثبت نشده است.</p>
-                    ) : (
-                        stories.map((story) => (
+
+                {error && (
+                    <p className={styles.error}>{error}</p>
+                )}
+
+                {loading && stories.length === 0 ? (
+                    <p className={styles.loading}>در حال بارگذاری...</p>
+                ) : (
+                    <>
+                        <div className={styles.grid}>
+                            {stories.length === 0 ? (
+                                <p className={styles.noStories}>هنوز داستانی ثبت نشده است.</p>
+                            ) : (
+                                stories.map((story) => (
                             <div key={story.id} className={styles.storyCard}>
                                 <Image
                                     src={story.cover_image || placeholderImage}
@@ -97,9 +131,28 @@ const StoriesPage: React.FC = () => {
                                     </button>
                                 </div>
                             </div>
-                        ))
-                    )}
-                </div>
+                                ))
+                            )}
+                        </div>
+
+                        {/* Infinite scroll trigger */}
+                        <div ref={observerTarget} className={styles.scrollTrigger} />
+
+                        {/* Loading indicator for infinite scroll */}
+                        {loadingMore && (
+                            <div className={styles.loadingMore}>
+                                <p>در حال بارگذاری داستان‌های بیشتر...</p>
+                            </div>
+                        )}
+
+                        {/* End of results indicator */}
+                        {!hasMore && stories.length > 0 && (
+                            <div className={styles.endMessage}>
+                                <p>همه داستان‌ها نمایش داده شدند</p>
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
 
             <Footer />
