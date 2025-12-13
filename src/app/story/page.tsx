@@ -18,6 +18,8 @@ const StoriesPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [loadingMore, setLoadingMore] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
+    const [storyToDelete, setStoryToDelete] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const observerTarget = useRef<HTMLDivElement>(null);
@@ -50,6 +52,42 @@ const StoriesPage: React.FC = () => {
     useEffect(() => {
         fetchStories(1);
     }, [fetchStories]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting && hasMore && !loadingMore && !loading) {
+                    setCurrentPage(prev => prev + 1);
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        const currentTarget = observerTarget.current;
+        if (currentTarget) {
+            observer.observe(currentTarget);
+        }
+
+        return () => {
+            if (currentTarget) {
+                observer.unobserve(currentTarget);
+            }
+        };
+    }, [hasMore, loadingMore, loading]);
+
+    useEffect(() => {
+        if (currentPage > 1) {
+            fetchStories(currentPage, true);
+        }
+    }, [currentPage, fetchStories]);
+
+
+    const handleViewStory = (story: Story) => {
+        // If story is completed, go to view page
+        if (story.status === 'COMPLETED') {
+            router.push(`/story/${story.id}`);
+            return;
+        }
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -144,6 +182,16 @@ const StoriesPage: React.FC = () => {
                                 <p>در حال بارگذاری داستان‌های بیشتر...</p>
                             </div>
                         )}
+
+                        {/* End of results indicator */}
+                        {!hasMore && stories.length > 0 && (
+                            <div className={styles.endMessage}>
+                                <p>همه داستان‌ها نمایش داده شدند</p>
+                            </div>
+                        )}
+                    </>
+                )}
+            </div>
 
                         {/* End of results indicator */}
                         {!hasMore && stories.length > 0 && (
