@@ -7,19 +7,22 @@ import styles from './checkout.module.scss';
 import logo from '@/assets/images/logo2.png';
 import { useCart } from '@/contexts/CartContext';
 import { useUser } from '@/contexts/UserContext';
-import { toPersianNumber } from '@/utils/convertToPersianNumber';
+import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
 import { ShippingForm } from '@/components/checkout/ShippingForm';
 import { PaymentMethod } from '@/components/checkout/PaymentMethod';
 import { CardToCardPayment } from '@/components/checkout/CardToCardPayment';
 import { OrderSummary } from '@/components/checkout/OrderSummary';
+import { ShippingMethodSelector } from '@/components/checkout/ShippingMethodSelector';
 import { Toaster } from 'react-hot-toast';
 import { FaArrowRight, FaSpinner, FaEdit } from 'react-icons/fa';
 import { shopService } from '@/services/shopService';
 import toast from 'react-hot-toast';
+import { ShippingMethod, ShippingEstimateResponse } from '@/types/shop';
 
 // Checkout steps
 enum CheckoutStep {
     SHIPPING = 'shipping',
+    SHIPPING_METHOD = 'shipping_method',
     PAYMENT = 'payment',
     CARD_TO_CARD = 'card_to_card',
     REVIEW = 'review',
@@ -48,6 +51,12 @@ const CheckoutPage: React.FC = () => {
 
     const [paymentMethod, setPaymentMethod] = useState<'online' | 'cash' | 'card_to_card'>('card_to_card');
     const [receiptImage, setReceiptImage] = useState<File | null>(null);
+
+    // Shipping method state
+    const [availableShippingMethods, setAvailableShippingMethods] = useState<ShippingMethod[]>([]);
+    const [selectedShippingMethod, setSelectedShippingMethod] = useState<ShippingMethod | null>(null);
+    const [loadingShippingMethods, setLoadingShippingMethods] = useState<boolean>(false);
+    const [shippingEstimateMessage, setShippingEstimateMessage] = useState<string>('');
 
     useEffect(() => {
         // Redirect to cart if there are no items
@@ -138,10 +147,47 @@ const CheckoutPage: React.FC = () => {
         }
     };
 
-    const handleShippingSubmit = (data: any) => {
+    const fetchShippingMethods = async (province: string, city: string) => {
+        try {
+            setLoadingShippingMethods(true);
+            const response: ShippingEstimateResponse = await shopService.getShippingEstimate(province, city);
+            setAvailableShippingMethods(response.shipping_methods);
+            setShippingEstimateMessage(response.message || '');
+
+            // Auto-select first available method
+            if (response.shipping_methods.length > 0) {
+                setSelectedShippingMethod(response.shipping_methods[0]);
+            }
+        } catch (err) {
+            console.error('Error fetching shipping methods:', err);
+            toast.error('خطا در دریافت روش‌های ارسال');
+            setAvailableShippingMethods([]);
+        } finally {
+            setLoadingShippingMethods(false);
+        }
+    };
+
+    const handleShippingSubmit = async (data: any) => {
         setShippingInfo(data);
+
+        // Fetch shipping methods based on entered address
+        await fetchShippingMethods(data.province, data.city);
+
+        setCurrentStep(CheckoutStep.SHIPPING_METHOD);
+        window.scrollTo(0, 0);
+    };
+
+    const handleShippingMethodSubmit = () => {
+        if (!selectedShippingMethod) {
+            toast.error('لطفاً روش ارسال را انتخاب کنید');
+            return;
+        }
         setCurrentStep(CheckoutStep.PAYMENT);
         window.scrollTo(0, 0);
+    };
+
+    const handleShippingMethodSelect = (method: ShippingMethod) => {
+        setSelectedShippingMethod(method);
     };
 
     const handlePaymentSubmit = (method: 'online' | 'cash' | 'card_to_card') => {
@@ -171,6 +217,11 @@ const CheckoutPage: React.FC = () => {
         window.scrollTo(0, 0);
     };
 
+    const handleBackToShippingMethod = () => {
+        setCurrentStep(CheckoutStep.SHIPPING_METHOD);
+        window.scrollTo(0, 0);
+    };
+
     const handleBackToPayment = () => {
         setCurrentStep(CheckoutStep.PAYMENT);
         window.scrollTo(0, 0);
@@ -181,13 +232,19 @@ const CheckoutPage: React.FC = () => {
             setLoading(true);
             setError(null);
 
+            if (!selectedShippingMethod) {
+                toast.error('لطفاً روش ارسال را انتخاب کنید');
+                return;
+            }
+
             const ShippingInfo = {
                 address: shippingInfo.address,
                 city: shippingInfo.city,
                 province: shippingInfo.province,
                 postal_code: shippingInfo.postalCode,
                 recipient_name: shippingInfo.fullName,
-                phone_number: shippingInfo.phoneNumber
+                phone_number: shippingInfo.phoneNumber,
+                shipping_method_id: selectedShippingMethod.id
             };
 
             // Call checkout API with properly formatted data
@@ -313,22 +370,26 @@ const CheckoutPage: React.FC = () => {
                 <h1 className={styles.pageTitle}>تکمیل خرید</h1>
 
                 <div className={styles.checkoutSteps}>
-                    <div className={`${styles.step} ${currentStep === CheckoutStep.SHIPPING ? styles.active : ''} ${currentStep === CheckoutStep.PAYMENT || currentStep === CheckoutStep.CARD_TO_CARD || currentStep === CheckoutStep.REVIEW ? styles.completed : ''}`}>
+                    <div className={`${styles.step} ${currentStep === CheckoutStep.SHIPPING ? styles.active : ''} ${currentStep === CheckoutStep.SHIPPING_METHOD || currentStep === CheckoutStep.PAYMENT || currentStep === CheckoutStep.CARD_TO_CARD || currentStep === CheckoutStep.REVIEW ? styles.completed : ''}`}>
                         <span className={styles.stepNumber}>1</span>
-                        <span className={styles.stepTitle}>اطلاعات ارسال</span>
+                        <span className={styles.stepTitle}>آدرس ارسال</span>
+                    </div>
+                    <div className={`${styles.step} ${currentStep === CheckoutStep.SHIPPING_METHOD ? styles.active : ''} ${currentStep === CheckoutStep.PAYMENT || currentStep === CheckoutStep.CARD_TO_CARD || currentStep === CheckoutStep.REVIEW ? styles.completed : ''}`}>
+                        <span className={styles.stepNumber}>2</span>
+                        <span className={styles.stepTitle}>روش ارسال</span>
                     </div>
                     <div className={`${styles.step} ${currentStep === CheckoutStep.PAYMENT ? styles.active : ''} ${currentStep === CheckoutStep.CARD_TO_CARD || currentStep === CheckoutStep.REVIEW ? styles.completed : ''}`}>
-                        <span className={styles.stepNumber}>2</span>
+                        <span className={styles.stepNumber}>3</span>
                         <span className={styles.stepTitle}>روش پرداخت</span>
                     </div>
                     {paymentMethod === 'card_to_card' && (
                         <div className={`${styles.step} ${currentStep === CheckoutStep.CARD_TO_CARD ? styles.active : ''} ${currentStep === CheckoutStep.REVIEW ? styles.completed : ''}`}>
-                            <span className={styles.stepNumber}>3</span>
+                            <span className={styles.stepNumber}>4</span>
                             <span className={styles.stepTitle}>پرداخت کارت به کارت</span>
                         </div>
                     )}
                     <div className={`${styles.step} ${currentStep === CheckoutStep.REVIEW ? styles.active : ''}`}>
-                        <span className={styles.stepNumber}>{paymentMethod === 'card_to_card' ? '4' : '3'}</span>
+                        <span className={styles.stepNumber}>{paymentMethod === 'card_to_card' ? '5' : '4'}</span>
                         <span className={styles.stepTitle}>بررسی سفارش</span>
                     </div>
                 </div>
@@ -337,11 +398,38 @@ const CheckoutPage: React.FC = () => {
                     <div className={styles.formContainer}>
                         {currentStep === CheckoutStep.SHIPPING && renderShippingStep()}
 
+                        {currentStep === CheckoutStep.SHIPPING_METHOD && (
+                            <div className={styles.shippingMethodContainer}>
+                                <ShippingMethodSelector
+                                    methods={availableShippingMethods}
+                                    selectedMethodId={selectedShippingMethod?.id || null}
+                                    onSelect={handleShippingMethodSelect}
+                                    loading={loadingShippingMethods}
+                                    freeShippingMessage={shippingEstimateMessage}
+                                />
+                                <div className={styles.formActions}>
+                                    <button
+                                        className={styles.backButton}
+                                        onClick={handleBackToShipping}
+                                    >
+                                        بازگشت
+                                    </button>
+                                    <button
+                                        className={styles.continueButton}
+                                        onClick={handleShippingMethodSubmit}
+                                        disabled={!selectedShippingMethod}
+                                    >
+                                        ادامه به پرداخت
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
                         {currentStep === CheckoutStep.PAYMENT && (
                             <PaymentMethod
                                 selectedMethod={paymentMethod}
                                 onSubmit={handlePaymentSubmit}
-                                onBack={handleBackToShipping}
+                                onBack={handleBackToShippingMethod}
                             />
                         )}
 
@@ -361,11 +449,27 @@ const CheckoutPage: React.FC = () => {
                                     <p>{shippingInfo.fullName}</p>
                                     <p>{shippingInfo.address}</p>
                                     <p>{shippingInfo.city}، {shippingInfo.province}</p>
-                                        <p>کد پستی: {toPersianNumber(shippingInfo.postalCode)}</p>
+                                    <p>کد پستی: {toPersianNumber(shippingInfo.postalCode)}</p>
                                     <p>شماره تماس: {toPersianNumber(shippingInfo.phoneNumber)}</p>
                                     <button
                                         className={styles.editButton}
                                         onClick={handleBackToShipping}
+                                    >
+                                        ویرایش
+                                    </button>
+                                </div>
+
+                                <div className={styles.reviewSection}>
+                                    <h3>روش ارسال</h3>
+                                    <p>{selectedShippingMethod?.name}</p>
+                                    {selectedShippingMethod && (
+                                        <p className={styles.shippingCost}>
+                                            هزینه ارسال: {selectedShippingMethod.is_free ? 'رایگان' : formatPrice(selectedShippingMethod.cost, false)}
+                                        </p>
+                                    )}
+                                    <button
+                                        className={styles.editButton}
+                                        onClick={handleBackToShippingMethod}
                                     >
                                         ویرایش
                                     </button>
@@ -414,7 +518,11 @@ const CheckoutPage: React.FC = () => {
                     </div>
 
                     <div className={styles.summaryContainer}>
-                        <OrderSummary cartDetails={cartDetails} />
+                        <OrderSummary
+                            cartDetails={cartDetails}
+                            selectedShippingMethod={selectedShippingMethod}
+                            loadingShipping={loadingShippingMethods}
+                        />
                     </div>
                 </div>
             </div>

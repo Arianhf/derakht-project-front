@@ -81,6 +81,9 @@ export const ERROR_MESSAGES: Record<string, ErrorMessageTemplate> = {
   [ErrorCode.SHIPPING_ADDRESS_REQUIRED]:
     'لطفاً آدرس ارسال را وارد کنید',
   [ErrorCode.INVALID_SHIPPING_ADDRESS]: 'آدرس ارسال نامعتبر است',
+  [ErrorCode.SHIPPING_METHOD_REQUIRED]: 'لطفاً روش ارسال را انتخاب کنید',
+  [ErrorCode.SHIPPING_METHOD_UNAVAILABLE]: 'روش ارسال انتخابی برای این منطقه در دسترس نیست',
+  [ErrorCode.SHIPPING_ESTIMATE_FAILED]: 'خطا در محاسبه هزینه ارسال. لطفاً دوباره تلاش کنید',
   [ErrorCode.COMMENT_TOO_SHORT]: (details?: any) =>
     `نظر شما باید حداقل ${details?.limit || 10} کاراکتر باشد`,
   [ErrorCode.COMMENT_TOO_LONG]: (details?: any) =>
