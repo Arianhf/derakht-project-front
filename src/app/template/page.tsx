@@ -20,7 +20,7 @@ import paintStoryImage from '../../../public/images/paintStory.jpg';
 import finishStoryImage from '../../../public/images/finishStory.jpg';
 
 // Icons
-import { FaPaintBrush, FaPen, FaClock, FaBook } from 'react-icons/fa';
+import { FaPaintBrush, FaPen, FaClock, FaBook, FaTrash } from 'react-icons/fa';
 
 interface TemplatePart {
   id: string;
@@ -102,7 +102,7 @@ const TemplatePage = () => {
       if (selectedTemplate === 'drawing') {
         router.push(`/story/illustrate/${storyId}`);
       } else if (selectedTemplate === 'story') {
-        router.push(`/story/${storyId}`);
+        router.push(`/story/${storyId}/edit`);
       }
     } catch (error) {
       console.error('Error starting story:', error);
@@ -111,6 +111,25 @@ const TemplatePage = () => {
       setIsLoading(false);
     }
   }, [selectedTemplate, router]);
+
+  const handleDeleteStory = async (storyId: string, e: React.MouseEvent) => {
+    // Prevent the click from bubbling up to the story card
+    e.stopPropagation();
+
+    // Ask for confirmation
+    const confirmed = window.confirm('آیا مطمئن هستید که می‌خواهید این داستان را حذف کنید؟');
+    if (!confirmed) return;
+
+    try {
+      await storyService.deleteStory(storyId);
+      // Remove the story from the local state
+      setStories(prevStories => prevStories.filter(story => story.id !== storyId));
+      toast.success('داستان با موفقیت حذف شد');
+    } catch (error) {
+      console.error('Error deleting story:', error);
+      toast.error('خطا در حذف داستان. لطفا دوباره تلاش کنید.');
+    }
+  };
 
   useEffect(() => {
     if (selectedTemplate) {
@@ -278,6 +297,14 @@ const TemplatePage = () => {
                                     className={styles.myStoryCard}
                                     onClick={() => router.push(getStoryRoute())}
                                 >
+                                  <button
+                                      className={styles.deleteButton}
+                                      onClick={(e) => handleDeleteStory(story.id, e)}
+                                      aria-label="حذف داستان"
+                                      title="حذف داستان"
+                                  >
+                                    <FaTrash />
+                                  </button>
                                   <Image
                                       src={story.cover_image || placeholderImage}
                                       alt={story.title}
