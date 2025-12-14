@@ -209,12 +209,22 @@ export const shopService = {
 
     checkout: async (shippingInfo: ShippingInfo) => {
         const anonymousCartId = shopService.getAnonymousCartId();
+
+        // Extract shipping_method_id from shippingInfo and send it at root level
+        const { shipping_method_id, ...addressInfo } = shippingInfo;
+
         const payload: {
-            shipping_info: ShippingInfo;
+            shipping_info: Omit<ShippingInfo, 'shipping_method_id'>;
+            shipping_method?: string;
             anonymous_cart_id?: string;
         } = {
-            shipping_info: shippingInfo,
+            shipping_info: addressInfo,
         };
+
+        // Add shipping_method at root level if provided
+        if (shipping_method_id) {
+            payload.shipping_method = shipping_method_id;
+        }
 
         if (anonymousCartId) {
             payload.anonymous_cart_id = anonymousCartId;
