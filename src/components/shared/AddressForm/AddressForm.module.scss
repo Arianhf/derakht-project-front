@@ -1,0 +1,55 @@
+.addressForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.formActions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.submitButton {
+  padding: 12px 30px;
+  background-color: #018A08;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-family: 'shoor-Medium', sans-serif;
+
+  &:hover {
+    background-color: #016906;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.cancelButton {
+  padding: 12px 30px;
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-family: 'shoor-Medium', sans-serif;
+
+  &:hover {
+    background-color: #ebebeb;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}

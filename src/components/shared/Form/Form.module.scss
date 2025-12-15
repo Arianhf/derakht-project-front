@@ -1,0 +1,80 @@
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: right;
+  width: 100%;
+  position: relative;
+
+  label {
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+
+  input,
+  select,
+  textarea {
+    font-family: 'shoor-Medium', sans-serif;
+    padding: 12px 15px;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #f8f8f8;
+    transition: border-color 0.3s, background-color 0.3s;
+    direction: rtl;
+    min-height: 48px;
+
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+      background-color: #fff;
+    }
+  }
+
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+}
+
+.inputError {
+  border-color: #f44336 !important;
+  background-color: rgba(244, 67, 54, 0.05) !important;
+}
+
+.errorMessage {
+  color: #f44336;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.passwordContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  input {
+    width: 100%;
+    padding-right: 40px;
+  }
+}
+
+.eyeButton {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #666;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #345BC0;
+  }
+}
