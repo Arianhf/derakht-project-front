@@ -10,6 +10,7 @@ import styles from './OrderHistory.module.scss';
 import OrderStatusBadge from '@/components/shared/OrderStatusBadge/OrderStatusBadge';
 import EmptyState from '@/components/shared/EmptyState/EmptyState';
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import Pagination from '@/components/shared/Pagination/Pagination';
 
 const OrderHistory: React.FC = () => {
     const router = useRouter();
@@ -65,90 +66,7 @@ const OrderHistory: React.FC = () => {
     };
 
     const handlePageChange = (page: number) => {
-        if (page >= 1 && page <= totalPages) {
-            setCurrentPage(page);
-        }
-    };
-
-    const getStatusText = (status: string) => {
-        // Convert status to lowercase for comparison
-        const statusLower = status.toLowerCase();
-
-        switch (statusLower) {
-            case 'cart': return 'در سبد خرید';
-            case 'pending': return 'در انتظار پرداخت';
-            case 'processing': return 'در حال پردازش';
-            case 'shipped': return 'ارسال شده';
-            case 'delivered': return 'تحویل داده شده';
-            case 'canceled': return 'لغو شده';
-            default: return status;
-        }
-    };
-
-    const getStatusClass = (status: string) => {
-        // Convert status to lowercase for comparison
-        const statusLower = status.toLowerCase();
-
-        switch (statusLower) {
-            case 'cart': return styles.pending;
-            case 'pending': return styles.pending;
-            case 'processing': return styles.processing;
-            case 'shipped': return styles.shipped;
-            case 'delivered': return styles.delivered;
-            case 'canceled': return styles.canceled;
-            default: return '';
-        }
-    };
-
-    const renderPagination = () => {
-        const pages = [];
-        const maxVisiblePages = 5;
-
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-        if (endPage - startPage + 1 < maxVisiblePages) {
-            startPage = Math.max(1, endPage - maxVisiblePages + 1);
-        }
-
-        // Previous button
-        pages.push(
-            <button
-                key="prev"
-                className={`${styles.pageButton} ${currentPage === 1 ? styles.disabled : ''}`}
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-            >
-                قبلی
-            </button>
-        );
-
-        // Page numbers
-        for (let i = startPage; i <= endPage; i++) {
-            pages.push(
-                <button
-                    key={i}
-                    className={`${styles.pageButton} ${i === currentPage ? styles.active : ''}`}
-                    onClick={() => handlePageChange(i)}
-                >
-                    {toPersianNumber(i)}
-                </button>
-            );
-        }
-
-        // Next button
-        pages.push(
-            <button
-                key="next"
-                className={`${styles.pageButton} ${currentPage === totalPages ? styles.disabled : ''}`}
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-            >
-                بعدی
-            </button>
-        );
-
-        return pages;
+        setCurrentPage(page);
     };
 
     return (
@@ -208,11 +126,11 @@ const OrderHistory: React.FC = () => {
                             ))}
                         </div>
 
-                        {totalPages > 1 && (
-                            <div className={styles.pagination}>
-                                {renderPagination()}
-                            </div>
-                        )}
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                        />
                     </>
                 ) : (
                     <EmptyState
