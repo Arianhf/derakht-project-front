@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import { Button } from '@/components/shared/Button';
 import Breadcrumbs from '@/components/shop/Breadcrumbs';
+import ProductImageGallery from '@/components/shared/ProductImageGallery/ProductImageGallery';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import styles from './productDetails.module.scss';
@@ -27,8 +28,6 @@ const ProductDetailsPage: React.FC = () => {
 
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
-    const [isImageLoading, setIsImageLoading] = useState(false);
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState<ProductComment[]>([]);
     const [commentsLoading, setCommentsLoading] = useState(false);
@@ -61,16 +60,6 @@ const ProductDetailsPage: React.FC = () => {
             });
 
             setBreadcrumbs(updatedBreadcrumbs);
-
-            // Set feature image with proper fallback handling
-            if (data.images && data.images.length > 0) {
-                const featureImage = data.images.find((img: ProductImage) => img.is_feature);
-                setSelectedImage(featureImage ? featureImage.image_url : data.images[0]?.image_url || null);
-            } else if (data.feature_image) {
-                setSelectedImage(data.feature_image);
-            } else {
-                setSelectedImage(null);
-            }
         } catch (error) {
             // Error fetching product - silently handle in production
         } finally {
@@ -150,19 +139,6 @@ const ProductDetailsPage: React.FC = () => {
         router.push('/shop');
     };
 
-    // Image selection handler with loading state
-    const handleImageSelect = (image: string) => {
-        if (image === selectedImage) return; // Don't reload the same image
-
-        setIsImageLoading(true);
-        setSelectedImage(image);
-    };
-
-    // Handle image load complete
-    const handleImageLoadComplete = () => {
-        setIsImageLoading(false);
-    };
-
     // Format date to Persian
     const formatDate = (dateString: string) => {
         try {
@@ -237,63 +213,12 @@ const ProductDetailsPage: React.FC = () => {
 
                 <div className={styles.productContent}>
                     {/* Product Image Gallery */}
-                    <div className={styles.productImageGallery}>
-                        <div className={styles.mainImageContainer}>
-                            {selectedImage ? (
-                                <>
-                                    {isImageLoading && (
-                                        <div className={styles.skeletonOverlay}>
-                                            <Skeleton
-                                                height="100%"
-                                                width="100%"
-                                                borderRadius="12px"
-                                            />
-                                        </div>
-                                    )}
-                                    <Image
-                                        src={selectedImage}
-                                        alt={product.title}
-                                        fill
-                                        sizes="(max-width: 768px) 100vw, 50vw"
-                                        className={`${styles.mainImage} ${isImageLoading ? styles.imageLoading : ''}`}
-                                        onLoad={handleImageLoadComplete}
-                                        priority
-                                    />
-                                </>
-                            ) : (
-                                <div className={styles.noImage}>
-                                    تصویر موجود نیست
-                                </div>
-                            )}
-                            {!product.is_available && (
-                                <div className={styles.unavailableBadge}>ناموجود</div>
-                            )}
-                            {product.age_range && (
-                                <div className={styles.ageBadge}>
-                                    {product.age_range}
-                                </div>
-                            )}
-                        </div>
-
-                        {product.images && product.images.length > 1 && (
-                            <div className={styles.thumbnailsContainer}>
-                                {product.images.map((image, index) => (
-                                    <div
-                                        key={image.id || image.image_url}
-                                        className={`${styles.thumbnail} ${selectedImage === image.image_url ? styles.activeThumbnail : ''}`}
-                                        onClick={() => handleImageSelect(image.image_url)}
-                                    >
-                                        <Image
-                                            src={image.image_url}
-                                            alt={`${product.title} - تصویر ${index + 1}`}
-                                            fill
-                                            sizes="80px"
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                    <ProductImageGallery
+                        images={product.images || []}
+                        productTitle={product.title}
+                        isAvailable={product.is_available}
+                        ageRange={product.age_range}
+                    />
 
                     {/* Product Details */}
                     <div className={styles.productDetails}>
