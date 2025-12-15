@@ -11,6 +11,7 @@ import { FaTrash, FaPlus, FaMinus, FaShoppingBasket } from 'react-icons/fa';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import { CartItem } from '@/types/shop';
 import { Toaster } from 'react-hot-toast';
+import EmptyState from '@/components/shared/EmptyState/EmptyState';
 
 const CartPage: React.FC = () => {
     const { cartDetails, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
@@ -33,13 +34,12 @@ const CartPage: React.FC = () => {
                 <h1 className={styles.cartTitle}>سبد خرید شما</h1>
 
                 {!cartDetails?.items || cartDetails.items.length === 0 ? (
-                    <div className={styles.emptyCartContainer}>
-                        <FaShoppingBasket size={60} color="#ccc" />
-                        <p className={styles.emptyMessage}>سبد خرید شما خالی است.</p>
-                        <button onClick={goBackToShop} className={styles.backButton}>
-                            بازگشت به فروشگاه
-                        </button>
-                    </div>
+                    <EmptyState
+                        icon={FaShoppingBasket}
+                        message="سبد خرید شما خالی است."
+                        actionLabel="بازگشت به فروشگاه"
+                        onAction={goBackToShop}
+                    />
                 ) : (
                     <>
                         <ul className={styles.cartList}>

@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { FaShoppingBasket, FaTrash } from 'react-icons/fa';
 import { useCart } from '@/contexts/CartContext';
+import EmptyState from '@/components/shared/EmptyState/EmptyState';
 import styles from '../Navbar.module.scss';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
 
@@ -69,10 +70,11 @@ const CartDropdown: React.FC = () => {
                 <div className={styles.cartDropdown} onClick={(e) => e.stopPropagation()}>
                     <div className={styles.cartDropdownTitle}>سبد خرید</div>
                     {!cartDetails?.items || cartDetails.items.length === 0 ? (
-                        <div className={styles.emptyCart}>
-                            <p>سبد خرید شما خالی است</p>
-                            <div className={styles.emptyCartIcon}>🛒</div>
-                        </div>
+                        <EmptyState
+                            icon={FaShoppingBasket}
+                            message="سبد خرید شما خالی است"
+                            iconSize={40}
+                        />
                     ) : (
                         <>
                             <div className={styles.cartItems}>

@@ -8,6 +8,7 @@ import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import { FaSearch, FaShoppingBag } from 'react-icons/fa';
 import styles from './OrderHistory.module.scss';
 import OrderStatusBadge from '@/components/shared/OrderStatusBadge/OrderStatusBadge';
+import EmptyState from '@/components/shared/EmptyState/EmptyState';
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
 const OrderHistory: React.FC = () => {
@@ -214,17 +215,12 @@ const OrderHistory: React.FC = () => {
                         )}
                     </>
                 ) : (
-                    <div className={styles.emptyOrders}>
-                        <p>{searchTerm ? 'سفارشی با این شماره یافت نشد.' : 'هنوز سفارشی ثبت نکرده‌اید.'}</p>
-                        {!searchTerm && (
-                            <button
-                                className={styles.shopButton}
-                                onClick={() => router.push('/shop')}
-                            >
-                                مشاهده محصولات
-                            </button>
-                        )}
-                    </div>
+                    <EmptyState
+                        icon={FaShoppingBag}
+                        message={searchTerm ? 'سفارشی با این شماره یافت نشد.' : 'هنوز سفارشی ثبت نکرده‌اید.'}
+                        actionLabel={!searchTerm ? 'مشاهده محصولات' : undefined}
+                        onAction={!searchTerm ? () => router.push('/shop') : undefined}
+                    />
                 )}
             </div>
         </div>

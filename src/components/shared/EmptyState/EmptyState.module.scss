@@ -1,0 +1,40 @@
+@import '@/assets/styles/variables.css';
+
+.emptyStateContainer {
+  background-color: var(--card-bg, #fff);
+  border-radius: var(--border-radius-lg, 12px);
+  padding: var(--spacing-xl, 32px);
+  box-shadow: var(--shadow-md, 0 2px 8px rgba(0, 0, 0, 0.1));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md, 16px);
+  margin-top: var(--spacing-lg, 24px);
+  text-align: center;
+}
+
+.message {
+  font-size: 20px;
+  color: var(--light-text, #666);
+  margin-bottom: var(--spacing-md, 16px);
+}
+
+.actionButton {
+  padding: 12px 24px;
+  background-color: var(--primary-color, #345BC0);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md, 8px);
+  font-size: 16px;
+  font-family: 'shoor-Medium', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: var(--primary-color-dark, #2a4a9c);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
