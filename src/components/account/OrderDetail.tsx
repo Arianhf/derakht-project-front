@@ -6,10 +6,11 @@ import Image from 'next/image';
 import { userService } from '@/services/userService';
 import { Order } from '@/types/shop';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
-import { FaArrowRight, FaCheckCircle, FaTruck, FaBoxOpen, FaTimesCircle } from 'react-icons/fa';
+import { FaArrowRight } from 'react-icons/fa';
 import styles from './OrderDetail.module.scss';
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import ErrorMessage from "@/components/shared/ErrorMessage";
+import OrderStatusBadge from '@/components/shared/OrderStatusBadge/OrderStatusBadge';
 
 interface OrderDetailProps {
     orderId: string;
@@ -39,51 +40,6 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId }) => {
             fetchOrderDetails();
         }
     }, [orderId, fetchOrderDetails]);
-
-    const getStatusIcon = (status: string) => {
-        // Convert status to lowercase for comparison
-        const statusLower = status.toLowerCase();
-
-        switch (statusLower) {
-            case 'cart': return <FaBoxOpen className={styles.statusIconPending} />;
-            case 'pending': return <FaBoxOpen className={styles.statusIconPending} />;
-            case 'processing': return <FaBoxOpen className={styles.statusIconProcessing} />;
-            case 'shipped': return <FaTruck className={styles.statusIconShipped} />;
-            case 'delivered': return <FaCheckCircle className={styles.statusIconDelivered} />;
-            case 'canceled': return <FaTimesCircle className={styles.statusIconCanceled} />;
-            default: return <FaBoxOpen className={styles.statusIconPending} />;
-        }
-    };
-
-    const getStatusText = (status: string) => {
-        // Convert status to lowercase for comparison
-        const statusLower = status.toLowerCase();
-
-        switch (statusLower) {
-            case 'cart': return 'در سبد خرید';
-            case 'pending': return 'در انتظار پرداخت';
-            case 'processing': return 'در حال پردازش';
-            case 'shipped': return 'ارسال شده';
-            case 'delivered': return 'تحویل داده شده';
-            case 'canceled': return 'لغو شده';
-            default: return status;
-        }
-    };
-
-    const getStatusClass = (status: string) => {
-        // Convert status to lowercase for comparison
-        const statusLower = status.toLowerCase();
-
-        switch (statusLower) {
-            case 'cart': return styles.pending;
-            case 'pending': return styles.pending;
-            case 'processing': return styles.processing;
-            case 'shipped': return styles.shipped;
-            case 'delivered': return styles.delivered;
-            case 'canceled': return styles.canceled;
-            default: return '';
-        }
-    };
 
     const formatPrice = (amount: number): string => {
         // Convert to toman from rial
@@ -136,10 +92,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId }) => {
                         </div>
                     </div>
                     <div className={styles.orderStatus}>
-                        <div className={`${styles.statusBadge} ${getStatusClass(order.status)}`}>
-                            {getStatusIcon(order.status)}
-                            <span>{getStatusText(order.status)}</span>
-                        </div>
+                        <OrderStatusBadge status={order.status} showIcon={true} />
                     </div>
                 </div>
 

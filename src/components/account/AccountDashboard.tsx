@@ -6,6 +6,7 @@ import { useUser } from '@/contexts/UserContext';
 import { userService } from '@/services/userService';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import { FaBox, FaUser, FaMapMarkerAlt, FaArrowLeft, FaSpinner } from 'react-icons/fa';
+import OrderStatusBadge from '@/components/shared/OrderStatusBadge/OrderStatusBadge';
 import styles from './AccountDashboard.module.scss';
 
 interface RecentOrder {
@@ -36,36 +37,6 @@ const AccountDashboard: React.FC = () => {
 
         fetchRecentOrders();
     }, []);
-
-    const getStatusText = (status: string) => {
-        // Convert status to lowercase for comparison
-        const statusLower = status.toLowerCase();
-
-        switch (statusLower) {
-            case 'cart': return 'در سبد خرید';
-            case 'pending': return 'در انتظار پرداخت';
-            case 'processing': return 'در حال پردازش';
-            case 'shipped': return 'ارسال شده';
-            case 'delivered': return 'تحویل داده شده';
-            case 'canceled': return 'لغو شده';
-            default: return status;
-        }
-    };
-
-    const getStatusClass = (status: string) => {
-        // Convert status to lowercase for comparison
-        const statusLower = status.toLowerCase();
-
-        switch (statusLower) {
-            case 'cart': return styles.pending;
-            case 'pending': return styles.pending;
-            case 'processing': return styles.processing;
-            case 'shipped': return styles.shipped;
-            case 'delivered': return styles.delivered;
-            case 'canceled': return styles.canceled;
-            default: return '';
-        }
-    };
 
     return (
         <div className={styles.dashboardContainer}>
@@ -159,9 +130,7 @@ const AccountDashboard: React.FC = () => {
                                     {toPersianNumber(new Date(order.created_at).toLocaleDateString('fa-IR'))}
                                 </div>
                                 <div className={styles.statusColumn}>
-                                    <span className={`${styles.statusBadge} ${getStatusClass(order.status)}`}>
-                                        {getStatusText(order.status)}
-                                    </span>
+                                    <OrderStatusBadge status={order.status} showIcon={false} />
                                 </div>
                                 <div className={styles.totalColumn}>
                                     {toPersianNumber(order.total_amount)} تومان

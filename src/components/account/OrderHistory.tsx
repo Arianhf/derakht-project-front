@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import { userService } from '@/services/userService';
 import { Order } from '@/types/shop';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaShoppingBag } from 'react-icons/fa';
 import styles from './OrderHistory.module.scss';
+import OrderStatusBadge from '@/components/shared/OrderStatusBadge/OrderStatusBadge';
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
 const OrderHistory: React.FC = () => {
@@ -189,9 +190,7 @@ const OrderHistory: React.FC = () => {
                                         {toPersianNumber(new Date(order.created_at).toLocaleDateString('fa-IR'))}
                                     </div>
                                     <div className={styles.statusColumn}>
-                    <span className={`${styles.statusBadge} ${getStatusClass(order.status)}`}>
-                      {getStatusText(order.status)}
-                    </span>
+                                        <OrderStatusBadge status={order.status} showIcon={false} />
                                     </div>
                                     <div className={styles.totalColumn}>
                                         {toPersianNumber(order.total_amount)} تومان
