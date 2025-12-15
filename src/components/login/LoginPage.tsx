@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { loginService } from '@/services/loginService';
 import { useUser } from '@/contexts/UserContext';
+import PasswordInput from '@/components/shared/Form/PasswordInput';
 import styles from './login.module.scss';
 import logo from '@/assets/images/logo2.png';
 import { toast } from 'react-hot-toast';
@@ -19,7 +19,6 @@ const LoginPage: React.FC = () => {
     const [age, setAge] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -83,10 +82,6 @@ const LoginPage: React.FC = () => {
         }
     };
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-    };
-
     const toggleAuthMode = () => {
         setIsLogin(!isLogin);
         setError(null);
@@ -131,45 +126,25 @@ const LoginPage: React.FC = () => {
                         />
                     </div>
 
-                    <div className={styles.formGroup}>
-                        <label htmlFor="password" className={styles.label}>رمز عبور</label>
-                        <div className={styles.passwordContainer}>
-                            <input
-                                id="password"
-                                type={showPassword ? "text" : "password"}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className={styles.input}
-                                required
-                                dir="ltr"
-                            />
-                            <button
-                                type="button"
-                                className={styles.eyeButton}
-                                onClick={togglePasswordVisibility}
-                                aria-label={showPassword ? "پنهان کردن رمز عبور" : "نمایش رمز عبور"}
-                            >
-                                {showPassword ? <FaEyeSlash /> : <FaEye />}
-                            </button>
-                        </div>
-                    </div>
+                    <PasswordInput
+                        label="رمز عبور"
+                        id="password"
+                        name="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
 
                     {!isLogin && (
                         <>
-                            <div className={styles.formGroup}>
-                                <label htmlFor="confirmPassword" className={styles.label}>تکرار رمز عبور</label>
-                                <div className={styles.passwordContainer}>
-                                    <input
-                                        id="confirmPassword"
-                                        type={showPassword ? "text" : "password"}
-                                        value={confirmPassword}
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
-                                        className={styles.input}
-                                        required
-                                        dir="ltr"
-                                    />
-                                </div>
-                            </div>
+                            <PasswordInput
+                                label="تکرار رمز عبور"
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                required
+                            />
 
                             <div className={styles.formGroup}>
                                 <label htmlFor="age" className={styles.label}>سن</label>
