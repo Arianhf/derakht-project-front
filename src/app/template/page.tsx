@@ -100,7 +100,7 @@ const TemplatePage = () => {
       if (selectedTemplate === 'drawing') {
         router.push(`/story/illustrate/${storyId}`);
       } else if (selectedTemplate === 'story') {
-        router.push(`/story/${storyId}`);
+        router.push(`/story/${storyId}/edit`);
       }
     } catch (error) {
       console.error('Error starting story:', error);
