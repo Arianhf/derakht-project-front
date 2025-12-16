@@ -100,7 +100,7 @@ const TemplatePage = () => {
       if (selectedTemplate === 'drawing') {
         router.push(`/story/illustrate/${storyId}`);
       } else if (selectedTemplate === 'story') {
-        router.push(`/story/${storyId}`);
+        router.push(`/story/${storyId}/edit`);
       }
     } catch (error) {
       console.error('Error starting story:', error);
@@ -257,7 +257,7 @@ const TemplatePage = () => {
                                 <div
                                     key={story.id}
                                     className={styles.myStoryCard}
-                                    onClick={() => router.push(`/story/${story.id}`)}
+                                    onClick={() => router.push(`/story/${story.id}/edit`)}
                                 >
                                   <Image
                                       src={story.cover_image || placeholderImage}
