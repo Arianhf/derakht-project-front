@@ -257,7 +257,7 @@ const TemplatePage = () => {
                                 <div
                                     key={story.id}
                                     className={styles.myStoryCard}
-                                    onClick={() => router.push(`/story/edit/${story.id}`)}
+                                    onClick={() => router.push(`/story/${story.id}/edit`)}
                                 >
                                   <Image
                                       src={story.cover_image || placeholderImage}
