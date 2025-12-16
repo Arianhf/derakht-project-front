@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight, FaSave, FaCog, FaPaintBrush, FaFont, FaPencilAlt, FaCheck } from 'react-icons/fa';
+import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight, FaSave, FaCog, FaPencilAlt, FaCheck, FaFlagCheckered } from 'react-icons/fa';
 import styles from './StoryEditorV2.module.scss';
-import { Story, StoryOrientation, StorySize, StoryPart } from '@/types/story';
+import { Story, StoryOrientation, StorySize } from '@/types/story';
 import TextCanvasEditor from './TextCanvasEditor';
 
 interface StoryEditorV2Props {
@@ -16,6 +16,7 @@ interface StoryEditorV2Props {
   onCoverImageSelect?: (imageUrl: string) => void;
   onColorChange?: (backgroundColor?: string, fontColor?: string) => void;
   onTitleChange?: (title: string) => Promise<void>;
+  onFinish?: () => Promise<void>;
   isFullPage?: boolean;
 }
 
@@ -89,6 +90,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   onCoverImageSelect,
   onColorChange,
   onTitleChange,
+  onFinish,
   isFullPage = false,
 }) => {
   const [currentPartIndex, setCurrentPartIndex] = useState(0);
@@ -96,16 +98,15 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   const [isMobile, setIsMobile] = useState(false);
   const [texts, setTexts] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [isFinishing, setIsFinishing] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  const [isCanvasMode, setIsCanvasMode] = useState(false);
   const [canvasStates, setCanvasStates] = useState<{ [key: number]: string }>({});
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState(story.title || '');
   const contentRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const settingsModalRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
 
@@ -222,8 +223,9 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
     if (!isOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't navigate if user is typing in textarea
-      if (document.activeElement === textareaRef.current) {
+      // Don't navigate if user is typing in an input field
+      const activeElement = document.activeElement;
+      if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
         return;
       }
 
@@ -255,13 +257,6 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
     }
   };
 
-  const handleTextChange = (index: number, value: string) => {
-    const newTexts = [...texts];
-    newTexts[index] = value;
-    setTexts(newTexts);
-    setHasUnsavedChanges(true);
-  };
-
   const handleCanvasChange = (index: number, canvasJSON: string) => {
     const newCanvasStates = { ...canvasStates };
     newCanvasStates[index] = canvasJSON;
@@ -269,8 +264,23 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
     setHasUnsavedChanges(true);
   };
 
-  const toggleCanvasMode = () => {
-    setIsCanvasMode(!isCanvasMode);
+  const handleFinish = async () => {
+    if (!onFinish) return;
+
+    try {
+      setIsFinishing(true);
+      // Save any unsaved changes first
+      if (hasUnsavedChanges) {
+        await onSave(texts, canvasStates);
+        setHasUnsavedChanges(false);
+      }
+      await onFinish();
+    } catch (error) {
+      console.error('Error finishing story:', error);
+      alert('خطا در نهایی‌سازی داستان');
+    } finally {
+      setIsFinishing(false);
+    }
   };
 
   const handleCoverImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -384,26 +394,12 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
         <div className={styles.contentInner}>
           {type === 'text' ? (
             <div className={styles.textEditorWrapper}>
-              {isCanvasMode ? (
-                <TextCanvasEditor
-                  key={`canvas-${index}`}
-                  initialState={canvasStates[index]}
-                  onChange={(canvasJSON) => handleCanvasChange(index, canvasJSON)}
-                  backgroundColor={story.background_color || '#FFFFFF'}
-                />
-              ) : (
-                <textarea
-                  ref={currentView === 'text' && isMobile ? textareaRef : null}
-                  className={styles.textEditor}
-                  value={texts[index] || ''}
-                  onChange={(e) => handleTextChange(index, e.target.value)}
-                  placeholder="متن داستان خود را اینجا بنویسید..."
-                  style={{
-                    backgroundColor: story.background_color || '#FFF9F5',
-                    color: story.font_color || '#2B463C',
-                  }}
-                />
-              )}
+              <TextCanvasEditor
+                key={`canvas-${index}`}
+                initialState={canvasStates[index]}
+                onChange={(canvasJSON) => handleCanvasChange(index, canvasJSON)}
+                backgroundColor={story.background_color || '#FFFFFF'}
+              />
             </div>
           ) : (
             <div className={styles.imageContent}>
@@ -521,14 +517,6 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
         </div>
         <div className={styles.headerLeft}>
           <button
-            className={`${styles.editorModeButton} ${isCanvasMode ? styles.active : ''}`}
-            onClick={toggleCanvasMode}
-            aria-label={isCanvasMode ? 'حالت متن ساده' : 'حالت ویرایشگر کنواس'}
-            title={isCanvasMode ? 'تغییر به حالت متن ساده' : 'تغییر به حالت ویرایشگر کنواس'}
-          >
-            {isCanvasMode ? <FaFont /> : <FaPaintBrush />}
-          </button>
-          <button
             className={styles.settingsButton}
             onClick={() => setIsSettingsOpen(true)}
             aria-label="تنظیمات داستان"
@@ -573,15 +561,27 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
           <span className={styles.navText}>قبلی</span>
         </button>
 
-        <button
-          className={`${styles.navButton} ${styles.nextButton}`}
-          onClick={handleNext}
-          disabled={isLastPage}
-          aria-label="صفحه بعدی"
-        >
-          <span className={styles.navText}>بعدی</span>
-          <FaChevronLeft className={styles.navIcon} />
-        </button>
+        {isLastPage && onFinish ? (
+          <button
+            className={`${styles.navButton} ${styles.finishButton}`}
+            onClick={handleFinish}
+            disabled={isFinishing}
+            aria-label="پایان داستان"
+          >
+            <span className={styles.navText}>{isFinishing ? 'در حال پایان...' : 'پایان داستان'}</span>
+            <FaFlagCheckered className={styles.navIcon} />
+          </button>
+        ) : (
+          <button
+            className={`${styles.navButton} ${styles.nextButton}`}
+            onClick={handleNext}
+            disabled={isLastPage}
+            aria-label="صفحه بعدی"
+          >
+            <span className={styles.navText}>بعدی</span>
+            <FaChevronLeft className={styles.navIcon} />
+          </button>
+        )}
       </div>
 
       {/* Settings Modal */}
