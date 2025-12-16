@@ -161,6 +161,20 @@ const StoryEditPage = () => {
     router.push('/story');
   };
 
+  const handleFinish = async () => {
+    if (!story) return;
+
+    try {
+      await storyService.finishStory(story.id, story.title || 'داستان من');
+      toast.success('داستان شما با موفقیت نهایی شد!');
+      router.push('/story');
+    } catch (error) {
+      console.error('Error finishing story:', error);
+      toast.error('خطا در نهایی‌سازی داستان');
+      throw error;
+    }
+  };
+
   // Loading state
   if (loading) {
     return (
@@ -225,6 +239,7 @@ const StoryEditPage = () => {
         onCoverImageSelect={handleCoverImageSelect}
         onColorChange={handleColorChange}
         onTitleChange={handleTitleChange}
+        onFinish={handleFinish}
         isFullPage={true}
       />
     </div>

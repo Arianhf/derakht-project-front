@@ -749,6 +749,27 @@ $transition-speed: 0.3s;
   }
 }
 
+// Finish button styling (green for completion)
+.finishButton {
+  background: #2B8A3E;
+  color: white;
+
+  &:not(:disabled):hover {
+    background: color.adjust(#2B8A3E, $lightness: -10%);
+    box-shadow: 0 6px 20px rgba(#2B8A3E, 0.4);
+
+    .navIcon {
+      transform: scale(1.1);
+    }
+  }
+
+  &:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
 // Settings Modal
 .settingsOverlay {
   position: fixed;
