@@ -15,6 +15,7 @@ html, body {
   color: $dark-text;
   background: $gradient-bg;
   direction: rtl;
+  overflow-x: hidden;
 }
 
 @font-face {

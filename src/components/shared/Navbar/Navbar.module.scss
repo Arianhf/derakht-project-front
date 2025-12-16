@@ -218,7 +218,7 @@
 .cartDropdown, .userDropdown {
   position: absolute;
   top: 45px;
-  left: 0;
+  right: 0;
   background: white;
   box-shadow: $shadow-md;
   border-radius: $border-radius-md;
@@ -233,7 +233,7 @@
     content: "";
     position: absolute;
     top: -10px;
-    left: 15px;
+    right: 15px;
     border-width: 5px;
     border-style: solid;
     border-color: transparent transparent white transparent;
@@ -474,7 +474,7 @@
 
   .rightSection {
     position: absolute;
-    left: 15px;
+    right: 15px;
     gap: 15px;
     z-index: 998;
   }

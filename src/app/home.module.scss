@@ -4,6 +4,8 @@
 .homeContainer {
   min-height: $default-min-height;
   background: $gradient-bg;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .heroSection {
