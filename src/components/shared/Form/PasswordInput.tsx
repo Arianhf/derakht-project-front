@@ -15,6 +15,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   id,
   name,
   className,
+  autoComplete,
   ...rest
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,6 +36,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
           name={name}
           type={showPassword ? 'text' : 'password'}
           className={`${error ? styles.inputError : ''} ${className || ''}`}
+          autoComplete={autoComplete || 'current-password'}
           dir="ltr"
           {...rest}
         />

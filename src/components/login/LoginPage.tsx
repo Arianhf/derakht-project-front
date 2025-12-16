@@ -111,17 +111,19 @@ const LoginPage: React.FC = () => {
                     </div>
                 )}
 
-                <form className={styles.form} onSubmit={handleSubmit}>
+                <form className={styles.form} onSubmit={handleSubmit} method="post">
                     <div className={styles.formGroup}>
                         <label htmlFor="email" className={styles.label}>ایمیل</label>
                         <input
                             id="email"
                             type="email"
+                            name="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className={styles.input}
                             placeholder="example@email.com"
                             required
+                            autoComplete="email"
                             dir="ltr"
                         />
                     </div>
@@ -132,6 +134,7 @@ const LoginPage: React.FC = () => {
                         name="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        autoComplete={isLogin ? 'current-password' : 'new-password'}
                         required
                     />
 
@@ -143,6 +146,7 @@ const LoginPage: React.FC = () => {
                                 name="confirmPassword"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
+                                autoComplete="new-password"
                                 required
                             />
 
@@ -150,6 +154,7 @@ const LoginPage: React.FC = () => {
                                 <label htmlFor="age" className={styles.label}>سن</label>
                                 <input
                                     id="age"
+                                    name="age"
                                     type="number"
                                     value={age || ''}
                                     onChange={(e) => setAge(parseInt(e.target.value) || 0)}
