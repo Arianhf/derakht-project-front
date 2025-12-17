@@ -76,6 +76,21 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
   }, []);
 
   /**
+   * Dispose canvas when canvas data changes (for navigating between stories)
+   */
+  useEffect(() => {
+    // Dispose existing canvas when new canvas data arrives
+    return () => {
+      if (fabricCanvasRef.current) {
+        console.log('Canvas data changing, disposing old canvas');
+        fabricCanvasRef.current.dispose();
+        fabricCanvasRef.current = null;
+        originalCanvasDataRef.current = null;
+      }
+    };
+  }, [canvasData]);
+
+  /**
    * Initialize Fabric.js canvas in read-only mode with responsive scaling
    */
   useEffect(() => {
@@ -138,9 +153,6 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
 
       fabricCanvasRef.current = canvas;
 
-      // Store original canvas data for future rescaling on dimension changes
-      originalCanvasDataRef.current = { canvasJSON, originalWidth, originalHeight };
-
       // Load canvas objects
       canvas.loadFromJSON(canvasJSON, () => {
         // Calculate scale factor (maintain aspect ratio)
@@ -184,6 +196,9 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
 
         canvas.renderAll();
         console.log('Canvas data loaded and scaled in viewer');
+
+        // Store original canvas data AFTER successful load (prevents resize effect from running prematurely)
+        originalCanvasDataRef.current = { canvasJSON, originalWidth, originalHeight };
       });
     } catch (error) {
       console.error('Error loading canvas data:', error);

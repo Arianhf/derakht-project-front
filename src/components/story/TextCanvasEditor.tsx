@@ -247,7 +247,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     // No cleanup on this effect - canvas persists for component lifetime
     // Cleanup only happens when component unmounts (see separate effect below)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFabricLoaded, canvasDimensions, notifyChange]);
+  }, [isFabricLoaded, canvasDimensions]);
 
   /**
    * Update canvas dimensions when container size changes
