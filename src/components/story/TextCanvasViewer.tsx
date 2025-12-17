@@ -25,6 +25,7 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
   const fabricCanvasRef = useRef<any>(null);
   const fabricLibRef = useRef<any>(null);
   const dimensionsCalculatedRef = useRef(false);
+  const originalCanvasDataRef = useRef<{ canvasJSON: any; originalWidth: number; originalHeight: number } | null>(null);
   const [isFabricLoaded, setIsFabricLoaded] = useState(false);
   const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
 
@@ -137,6 +138,9 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
 
       fabricCanvasRef.current = canvas;
 
+      // Store original canvas data for future rescaling on dimension changes
+      originalCanvasDataRef.current = { canvasJSON, originalWidth, originalHeight };
+
       // Load canvas objects
       canvas.loadFromJSON(canvasJSON, () => {
         // Calculate scale factor (maintain aspect ratio)
@@ -187,19 +191,71 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFabricLoaded, canvasDimensions, canvasData]);
+  }, [isFabricLoaded, canvasData]);
 
   /**
-   * Reinitialize canvas when dimensions change (handles responsive resize)
+   * Update canvas dimensions and rescale when container size changes
    */
   useEffect(() => {
-    // Dispose existing canvas when dimensions change to force reinitialization
-    if (fabricCanvasRef.current) {
-      console.log('Dimensions changed, disposing old canvas for reinitialization');
-      fabricCanvasRef.current.dispose();
-      fabricCanvasRef.current = null;
-    }
-  }, [canvasDimensions]);
+    if (!fabricCanvasRef.current || !originalCanvasDataRef.current) return;
+
+    const canvas = fabricCanvasRef.current;
+    const { canvasJSON, originalWidth, originalHeight } = originalCanvasDataRef.current;
+
+    console.log('Container dimensions changed, rescaling canvas:', canvasDimensions);
+
+    // Update canvas dimensions
+    canvas.setDimensions({
+      width: canvasDimensions.width,
+      height: canvasDimensions.height,
+    });
+
+    // Clear all objects
+    canvas.clear();
+    canvas.backgroundColor = backgroundColor;
+
+    // Reload and rescale objects with new dimensions
+    canvas.loadFromJSON(canvasJSON, () => {
+      // Calculate new scale factor
+      const scaleX = canvasDimensions.width / originalWidth;
+      const scaleY = canvasDimensions.height / originalHeight;
+      const scale = Math.min(scaleX, scaleY);
+
+      console.log('Rescaling with new dimensions:', {
+        originalWidth,
+        originalHeight,
+        newWidth: canvasDimensions.width,
+        newHeight: canvasDimensions.height,
+        scale,
+      });
+
+      // Scale all objects
+      canvas.getObjects().forEach((obj: any) => {
+        obj.scaleX = (obj.scaleX || 1) * scale;
+        obj.scaleY = (obj.scaleY || 1) * scale;
+        obj.left = (obj.left || 0) * scale;
+        obj.top = (obj.top || 0) * scale;
+        obj.setCoords();
+      });
+
+      // Center content if needed
+      if (scaleX !== scaleY) {
+        const offsetX = scaleX > scaleY ? (canvasDimensions.width - originalWidth * scale) / 2 : 0;
+        const offsetY = scaleY > scaleX ? (canvasDimensions.height - originalHeight * scale) / 2 : 0;
+
+        if (offsetX > 0 || offsetY > 0) {
+          canvas.getObjects().forEach((obj: any) => {
+            obj.left = (obj.left || 0) + offsetX;
+            obj.top = (obj.top || 0) + offsetY;
+            obj.setCoords();
+          });
+        }
+      }
+
+      canvas.renderAll();
+      console.log('Canvas rescaled successfully');
+    });
+  }, [canvasDimensions, backgroundColor]);
 
   /**
    * Cleanup canvas on unmount
