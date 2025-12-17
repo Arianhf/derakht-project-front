@@ -242,4 +242,13 @@
     height: 32px;
     font-size: 14px;
   }
+
+  .smallIcon {
+    font-size: 10px;
+    margin-top: -4px;
+
+    @media (max-width: $breakpoint-md) {
+      font-size: 8px;
+    }
+  }
 }
