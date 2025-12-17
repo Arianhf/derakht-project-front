@@ -99,7 +99,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
       if (!fabricCanvasRef.current) return;
       const activeObject = fabricCanvasRef.current.getActiveObject();
       if (activeObject) {
-        fabricCanvasRef.current.bringToFront(activeObject);
+        fabricCanvasRef.current.bringObjectToFront(activeObject);
         fabricCanvasRef.current.renderAll();
         if (onChange) {
           const json = JSON.stringify(fabricCanvasRef.current.toJSON());
@@ -114,7 +114,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
       if (!fabricCanvasRef.current) return;
       const activeObject = fabricCanvasRef.current.getActiveObject();
       if (activeObject) {
-        fabricCanvasRef.current.sendToBack(activeObject);
+        fabricCanvasRef.current.sendObjectToBack(activeObject);
         fabricCanvasRef.current.renderAll();
         if (onChange) {
           const json = JSON.stringify(fabricCanvasRef.current.toJSON());
@@ -129,7 +129,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
       if (!fabricCanvasRef.current) return;
       const activeObject = fabricCanvasRef.current.getActiveObject();
       if (activeObject) {
-        fabricCanvasRef.current.bringForward(activeObject);
+        fabricCanvasRef.current.bringObjectForward(activeObject);
         fabricCanvasRef.current.renderAll();
         if (onChange) {
           const json = JSON.stringify(fabricCanvasRef.current.toJSON());
@@ -144,7 +144,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
       if (!fabricCanvasRef.current) return;
       const activeObject = fabricCanvasRef.current.getActiveObject();
       if (activeObject) {
-        fabricCanvasRef.current.sendBackwards(activeObject);
+        fabricCanvasRef.current.sendObjectBackwards(activeObject);
         fabricCanvasRef.current.renderAll();
         if (onChange) {
           const json = JSON.stringify(fabricCanvasRef.current.toJSON());
@@ -609,7 +609,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     if (!fabricCanvasRef.current) return;
     const activeObject = fabricCanvasRef.current.getActiveObject();
     if (activeObject) {
-      fabricCanvasRef.current.bringToFront(activeObject);
+      fabricCanvasRef.current.bringObjectToFront(activeObject);
       fabricCanvasRef.current.renderAll();
       if (onChange) {
         const json = JSON.stringify(fabricCanvasRef.current.toJSON());
@@ -625,7 +625,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     if (!fabricCanvasRef.current) return;
     const activeObject = fabricCanvasRef.current.getActiveObject();
     if (activeObject) {
-      fabricCanvasRef.current.sendToBack(activeObject);
+      fabricCanvasRef.current.sendObjectToBack(activeObject);
       fabricCanvasRef.current.renderAll();
       if (onChange) {
         const json = JSON.stringify(fabricCanvasRef.current.toJSON());
@@ -641,7 +641,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     if (!fabricCanvasRef.current) return;
     const activeObject = fabricCanvasRef.current.getActiveObject();
     if (activeObject) {
-      fabricCanvasRef.current.bringForward(activeObject);
+      fabricCanvasRef.current.bringObjectForward(activeObject);
       fabricCanvasRef.current.renderAll();
       if (onChange) {
         const json = JSON.stringify(fabricCanvasRef.current.toJSON());
@@ -657,7 +657,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     if (!fabricCanvasRef.current) return;
     const activeObject = fabricCanvasRef.current.getActiveObject();
     if (activeObject) {
-      fabricCanvasRef.current.sendBackwards(activeObject);
+      fabricCanvasRef.current.sendObjectBackwards(activeObject);
       fabricCanvasRef.current.renderAll();
       if (onChange) {
         const json = JSON.stringify(fabricCanvasRef.current.toJSON());
