@@ -5,7 +5,6 @@ import styles from './TextCanvasEditor.module.scss';
 import CanvasToolbar from './CanvasToolbar';
 import { toast } from 'react-hot-toast';
 import { Story, CanvasMetadata } from '@/types/story';
-import { getStandardCanvasSize } from '@/constants/canvasSizes';
 import { getLayoutTypeFromStory } from '@/utils/canvasUtils';
 
 export interface TextCanvasEditorProps {
@@ -103,18 +102,32 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     }, []);
 
     /**
-     * Set canvas dimensions to standard size based on story layout
-     * Uses fixed standard sizes instead of container dimensions
+     * Calculate canvas dimensions from container (responsive)
      */
     useEffect(() => {
-        const layoutType = getLayoutTypeFromStory(story);
-        const standardSize = getStandardCanvasSize(layoutType);
+        if (!containerRef.current) return;
 
-        console.log('Using standard canvas size for layout:', layoutType, standardSize);
+        const updateDimensions = () => {
+            if (containerRef.current) {
+                const rect = containerRef.current.getBoundingClientRect();
 
-        setCanvasDimensions(standardSize);
-        dimensionsCalculatedRef.current = true;
-    }, [story.size, story.orientation]);
+                if (rect.width > 0 && rect.height > 0) {
+                    console.log('Updating editor canvas dimensions:', { width: rect.width, height: rect.height });
+                    setCanvasDimensions({ width: rect.width, height: rect.height });
+                    dimensionsCalculatedRef.current = true;
+                }
+            }
+        };
+
+        const timer = setTimeout(updateDimensions, 200);
+        const resizeObserver = new ResizeObserver(updateDimensions);
+        resizeObserver.observe(containerRef.current);
+
+        return () => {
+            clearTimeout(timer);
+            resizeObserver.disconnect();
+        };
+    }, []);
 
     /**
      * Initialize Fabric.js canvas
