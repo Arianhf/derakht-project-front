@@ -167,6 +167,11 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
         const fabricModule = await import('fabric');
         console.log('Fabric.js module loaded:', fabricModule);
 
+        // Debug: Log all available exports to find EraserBrush
+        console.log('Fabric.js exports:', Object.keys(fabricModule));
+        console.log('Has EraserBrush?', 'EraserBrush' in fabricModule);
+        console.log('Has eraserBrush?', 'eraserBrush' in fabricModule);
+
         fabricLibRef.current = fabricModule;
         console.log('Fabric instance stored:', !!fabricLibRef.current);
 
@@ -240,7 +245,12 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
 
     console.log('Initializing Fabric canvas with dimensions:', canvasDimensions);
 
-    const { Canvas, PencilBrush, EraserBrush } = fabricLibRef.current;
+    const fabricLib = fabricLibRef.current;
+    const { Canvas, PencilBrush } = fabricLib;
+
+    // Try to access EraserBrush from different possible locations
+    const EraserBrush = fabricLib.EraserBrush || fabricLib.eraserBrush ||
+                        (fabricLib as any).brushes?.EraserBrush;
 
     const canvas = new Canvas(canvasRef.current, {
       width: canvasDimensions.width,
@@ -265,6 +275,15 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
         (canvas as any)._eraserBrush = eraserBrush;
         (canvas as any)._hasEraserBrush = true;
         console.log('EraserBrush initialized successfully');
+
+        // Set up erasing event handlers
+        canvas.on('erasing:end', (event: any) => {
+          console.log('Erasing completed:', event);
+          if (onChange) {
+            const json = JSON.stringify(canvas.toJSON());
+            onChange(json);
+          }
+        });
       } catch (err) {
         console.warn('EraserBrush not available, will use background color eraser:', err);
         (canvas as any)._hasEraserBrush = false;
@@ -360,7 +379,12 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     if (!fabricCanvasRef.current || !fabricLibRef.current) return;
 
     const canvas = fabricCanvasRef.current;
-    const { PencilBrush, EraserBrush } = fabricLibRef.current;
+    const fabricLib = fabricLibRef.current;
+    const { PencilBrush } = fabricLib;
+
+    // Try to access EraserBrush from different possible locations
+    const EraserBrush = fabricLib.EraserBrush || fabricLib.eraserBrush ||
+                        (fabricLib as any).brushes?.EraserBrush;
     const hasEraserBrush = (canvas as any)._hasEraserBrush;
 
     if (currentTool === 'brush') {
