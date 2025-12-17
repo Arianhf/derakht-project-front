@@ -108,55 +108,20 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
       return;
     }
 
-    if (!canvasData) {
-      return;
-    }
-
     console.log('Initializing read-only Fabric canvas:', canvasDimensions);
 
     const { StaticCanvas } = fabricLibRef.current;
 
-    try {
-      // Parse canvas metadata
-      const parsed: CanvasMetadata = JSON.parse(canvasData);
+    // Create empty canvas at current container size
+    const canvas = new StaticCanvas(canvasRef.current, {
+      width: canvasDimensions.width,
+      height: canvasDimensions.height,
+      backgroundColor,
+      enableRetinaScaling: true,
+    });
 
-      let canvasJSON;
-      let originalWidth;
-      let originalHeight;
-
-      if (parsed.version && parsed.canvasJSON) {
-        // New format with metadata
-        canvasJSON = parsed.canvasJSON;
-        originalWidth = parsed.originalWidth;
-        originalHeight = parsed.originalHeight;
-        console.log('Loading canvas with metadata:', {
-          version: parsed.version,
-          layoutType: parsed.layoutType,
-          originalWidth,
-          originalHeight,
-        });
-      } else {
-        // Legacy format - assume square canvas
-        canvasJSON = parsed;
-        originalWidth = 1000;
-        originalHeight = 1000;
-        console.log('Loading legacy canvas format, assuming 1000x1000 dimensions');
-      }
-
-      // Create canvas at current container size
-      const canvas = new StaticCanvas(canvasRef.current, {
-        width: canvasDimensions.width,
-        height: canvasDimensions.height,
-        backgroundColor,
-        enableRetinaScaling: true,
-      });
-
-      fabricCanvasRef.current = canvas;
-      console.log('Canvas initialized in viewer');
-    } catch (error) {
-      console.error('Error initializing canvas:', error);
-      toast.error('خطا در راه‌اندازی کنواس');
-    }
+    fabricCanvasRef.current = canvas;
+    console.log('Canvas initialized in viewer');
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFabricLoaded, canvasDimensions]);
