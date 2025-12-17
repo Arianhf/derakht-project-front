@@ -103,17 +103,52 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     }, []);
 
     /**
-     * Set canvas dimensions to standard size based on story layout
-     * Uses fixed standard sizes instead of container dimensions
+     * Calculate canvas dimensions based on standard size scaled to fit container
+     * Maintains aspect ratio of the standard canvas size
      */
     useEffect(() => {
-        const layoutType = getLayoutTypeFromStory(story);
-        const standardSize = getStandardCanvasSize(layoutType);
+        if (!containerRef.current) return;
 
-        console.log('Using standard canvas size for layout:', layoutType, standardSize);
+        const updateDimensions = () => {
+            if (containerRef.current) {
+                const rect = containerRef.current.getBoundingClientRect();
 
-        setCanvasDimensions(standardSize);
-        dimensionsCalculatedRef.current = true;
+                if (rect.width > 0 && rect.height > 0) {
+                    // Get standard canvas size for this layout
+                    const layoutType = getLayoutTypeFromStory(story);
+                    const standardSize = getStandardCanvasSize(layoutType);
+
+                    // Calculate scale to fit within container while maintaining aspect ratio
+                    const scaleX = rect.width / standardSize.width;
+                    const scaleY = rect.height / standardSize.height;
+                    const scale = Math.min(scaleX, scaleY);
+
+                    // Apply scale to get final canvas dimensions
+                    const scaledWidth = Math.floor(standardSize.width * scale);
+                    const scaledHeight = Math.floor(standardSize.height * scale);
+
+                    console.log('Scaling canvas to fit container:', {
+                        layoutType,
+                        standardSize,
+                        containerSize: { width: rect.width, height: rect.height },
+                        scale,
+                        scaledSize: { width: scaledWidth, height: scaledHeight },
+                    });
+
+                    setCanvasDimensions({ width: scaledWidth, height: scaledHeight });
+                    dimensionsCalculatedRef.current = true;
+                }
+            }
+        };
+
+        const timer = setTimeout(updateDimensions, 200);
+        const resizeObserver = new ResizeObserver(updateDimensions);
+        resizeObserver.observe(containerRef.current);
+
+        return () => {
+            clearTimeout(timer);
+            resizeObserver.disconnect();
+        };
     }, [story.size, story.orientation]);
 
     /**

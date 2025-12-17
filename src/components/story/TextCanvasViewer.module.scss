@@ -36,6 +36,9 @@
   height: 100%;
   background-color: $card-bg;
   border-radius: $border-radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   canvas {
     display: block;
