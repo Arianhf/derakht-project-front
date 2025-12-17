@@ -32,6 +32,15 @@ export interface StoryPart {
     canvas_data?: string | null;  // Fabric.js canvas JSON for advanced text editing
 }
 
+// Canvas metadata structure for storing canvas data with dimensions
+export interface CanvasMetadata {
+    version: string;              // Version for future compatibility (e.g., "1.0")
+    layoutType: 'square' | 'landscapeRectangle' | 'portraitRectangle' | 'default';
+    originalWidth: number;        // Standard width used during creation
+    originalHeight: number;       // Standard height used during creation
+    canvasJSON: object;           // Fabric.js JSON data
+}
+
 export interface Author {
     id: number;
     first_name: string;

@@ -3,14 +3,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './TextCanvasViewer.module.scss';
 import { toast } from 'react-hot-toast';
+import { CanvasMetadata } from '@/types/story';
 
 export interface TextCanvasViewerProps {
-  /** Canvas state in JSON format */
+  /** Canvas state in JSON format (with metadata) */
   canvasData?: string;
-  /** Width of the canvas in pixels */
-  width?: number;
-  /** Height of the canvas in pixels */
-  height?: number;
   /** Background color of the canvas */
   backgroundColor?: string;
 }
@@ -21,8 +18,6 @@ export interface TextCanvasViewerProps {
  */
 const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
   canvasData,
-  width,
-  height,
   backgroundColor = '#FFFFFF',
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -53,7 +48,7 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
   }, []);
 
   /**
-   * Calculate canvas dimensions from container
+   * Calculate canvas dimensions from container (responsive)
    */
   useEffect(() => {
     if (!containerRef.current) return;
@@ -61,11 +56,9 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
     const updateDimensions = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
-        const newWidth = width || rect.width;
-        const newHeight = height || rect.height;
 
-        if (newWidth > 0 && newHeight > 0) {
-          setCanvasDimensions({ width: newWidth, height: newHeight });
+        if (rect.width > 0 && rect.height > 0) {
+          setCanvasDimensions({ width: rect.width, height: rect.height });
           dimensionsCalculatedRef.current = true;
         }
       }
@@ -79,10 +72,10 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
       clearTimeout(timer);
       resizeObserver.disconnect();
     };
-  }, [width, height]);
+  }, []);
 
   /**
-   * Initialize Fabric.js canvas in read-only mode
+   * Initialize Fabric.js canvas in read-only mode with responsive scaling
    */
   useEffect(() => {
     if (!canvasRef.current || !isFabricLoaded || !fabricLibRef.current) {
@@ -99,48 +92,113 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
       return;
     }
 
+    if (!canvasData) {
+      return;
+    }
+
     console.log('Initializing read-only Fabric canvas:', canvasDimensions);
 
-    const { Canvas, StaticCanvas } = fabricLibRef.current;
+    const { StaticCanvas } = fabricLibRef.current;
 
-    // Use StaticCanvas for completely non-interactive rendering
-    const canvas = new StaticCanvas(canvasRef.current, {
-      width: canvasDimensions.width,
-      height: canvasDimensions.height,
-      backgroundColor,
-      enableRetinaScaling: true,
-    });
+    try {
+      // Parse canvas metadata
+      const parsed: CanvasMetadata = JSON.parse(canvasData);
 
-    fabricCanvasRef.current = canvas;
+      let canvasJSON;
+      let originalWidth;
+      let originalHeight;
 
-    // Load canvas data if provided
-    if (canvasData) {
-      try {
-        console.log('Loading canvas data in viewer...');
-        canvas.loadFromJSON(canvasData, () => {
-          canvas.renderAll();
-          console.log('Canvas data loaded in viewer (static mode)');
+      if (parsed.version && parsed.canvasJSON) {
+        // New format with metadata
+        canvasJSON = parsed.canvasJSON;
+        originalWidth = parsed.originalWidth;
+        originalHeight = parsed.originalHeight;
+        console.log('Loading canvas with metadata:', {
+          version: parsed.version,
+          layoutType: parsed.layoutType,
+          originalWidth,
+          originalHeight,
         });
-      } catch (error) {
-        console.error('Error loading canvas data:', error);
-        toast.error('خطا در بارگذاری محتوای کنواس');
+      } else {
+        // Legacy format - assume square canvas
+        canvasJSON = parsed;
+        originalWidth = 1000;
+        originalHeight = 1000;
+        console.log('Loading legacy canvas format, assuming 1000x1000 dimensions');
       }
+
+      // Create canvas at current container size
+      const canvas = new StaticCanvas(canvasRef.current, {
+        width: canvasDimensions.width,
+        height: canvasDimensions.height,
+        backgroundColor,
+        enableRetinaScaling: true,
+      });
+
+      fabricCanvasRef.current = canvas;
+
+      // Load canvas objects
+      canvas.loadFromJSON(canvasJSON, () => {
+        // Calculate scale factor (maintain aspect ratio)
+        const scaleX = canvasDimensions.width / originalWidth;
+        const scaleY = canvasDimensions.height / originalHeight;
+        const scale = Math.min(scaleX, scaleY);
+
+        console.log('Scaling canvas objects:', {
+          originalWidth,
+          originalHeight,
+          currentWidth: canvasDimensions.width,
+          currentHeight: canvasDimensions.height,
+          scaleX,
+          scaleY,
+          finalScale: scale,
+        });
+
+        // Scale all objects proportionally
+        canvas.getObjects().forEach((obj: any) => {
+          obj.scaleX = (obj.scaleX || 1) * scale;
+          obj.scaleY = (obj.scaleY || 1) * scale;
+          obj.left = (obj.left || 0) * scale;
+          obj.top = (obj.top || 0) * scale;
+          obj.setCoords();
+        });
+
+        // Center content if there's extra space
+        if (scaleX !== scaleY) {
+          const offsetX = scaleX > scaleY ? (canvasDimensions.width - originalWidth * scale) / 2 : 0;
+          const offsetY = scaleY > scaleX ? (canvasDimensions.height - originalHeight * scale) / 2 : 0;
+
+          if (offsetX > 0 || offsetY > 0) {
+            console.log('Centering canvas content with offsets:', { offsetX, offsetY });
+            canvas.getObjects().forEach((obj: any) => {
+              obj.left = (obj.left || 0) + offsetX;
+              obj.top = (obj.top || 0) + offsetY;
+              obj.setCoords();
+            });
+          }
+        }
+
+        canvas.renderAll();
+        console.log('Canvas data loaded and scaled in viewer');
+      });
+    } catch (error) {
+      console.error('Error loading canvas data:', error);
+      toast.error('خطا در بارگذاری محتوای کنواس');
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFabricLoaded, canvasDimensions, canvasData]);
 
   /**
-   * Update canvas dimensions when container size changes
+   * Reinitialize canvas when dimensions change (handles responsive resize)
    */
   useEffect(() => {
-    if (!fabricCanvasRef.current) return;
-
-    fabricCanvasRef.current.setDimensions({
-      width: canvasDimensions.width,
-      height: canvasDimensions.height,
-    });
-    fabricCanvasRef.current.renderAll();
+    // Dispose existing canvas when dimensions change to force reinitialization
+    if (fabricCanvasRef.current) {
+      console.log('Dimensions changed, disposing old canvas for reinitialization');
+      fabricCanvasRef.current.dispose();
+      fabricCanvasRef.current = null;
+    }
   }, [canvasDimensions]);
 
   /**

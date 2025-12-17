@@ -4,16 +4,17 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import styles from './TextCanvasEditor.module.scss';
 import CanvasToolbar from './CanvasToolbar';
 import { toast } from 'react-hot-toast';
+import { Story, CanvasMetadata } from '@/types/story';
+import { getStandardCanvasSize } from '@/constants/canvasSizes';
+import { getLayoutTypeFromStory } from '@/utils/canvasUtils';
 
 export interface TextCanvasEditorProps {
-  /** Initial canvas state in JSON format */
+  /** Initial canvas state in JSON format (with metadata) */
   initialState?: string;
   /** Callback when canvas state changes */
   onChange?: (canvasJSON: string) => void;
-  /** Width of the canvas in pixels */
-  width?: number;
-  /** Height of the canvas in pixels */
-  height?: number;
+  /** Story object to determine canvas layout type */
+  story: Partial<Story>;
   /** Background color of the canvas */
   backgroundColor?: string;
 }
@@ -42,8 +43,7 @@ export interface CanvasTextObject {
 const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
   initialState,
   onChange,
-  width,
-  height,
+  story,
   backgroundColor = '#FFFFFF',
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -55,6 +55,24 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
   const [isCanvasReady, setIsCanvasReady] = useState(false);
   const [isFabricLoaded, setIsFabricLoaded] = useState(false);
   const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
+
+  /**
+   * Helper to notify parent of canvas changes with metadata
+   */
+  const notifyChange = useCallback(() => {
+    if (!onChange || !fabricCanvasRef.current) return;
+
+    const layoutType = getLayoutTypeFromStory(story);
+    const canvasMetadata: CanvasMetadata = {
+      version: '1.0',
+      layoutType,
+      originalWidth: canvasDimensions.width,
+      originalHeight: canvasDimensions.height,
+      canvasJSON: fabricCanvasRef.current.toJSON(),
+    };
+
+    onChange(JSON.stringify(canvasMetadata));
+  }, [onChange, story, canvasDimensions]);
 
   /**
    * Load Fabric.js dynamically (client-side only)
@@ -84,40 +102,18 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
   }, []);
 
   /**
-   * Calculate canvas dimensions from container
+   * Set canvas dimensions to standard size based on story layout
+   * Uses fixed standard sizes instead of container dimensions
    */
   useEffect(() => {
-    if (!containerRef.current) return;
+    const layoutType = getLayoutTypeFromStory(story);
+    const standardSize = getStandardCanvasSize(layoutType);
 
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        const newWidth = width || rect.width;
-        const newHeight = height || rect.height;
+    console.log('Using standard canvas size for layout:', layoutType, standardSize);
 
-        console.log('Container dimensions:', { width: rect.width, height: rect.height });
-        console.log('Setting canvas dimensions:', { newWidth, newHeight });
-
-        // Only update if dimensions are valid
-        if (newWidth > 0 && newHeight > 0) {
-          setCanvasDimensions({ width: newWidth, height: newHeight });
-          dimensionsCalculatedRef.current = true; // Mark as calculated
-        }
-      }
-    };
-
-    // Delay initial measurement to ensure container has rendered
-    const timer = setTimeout(updateDimensions, 200);
-
-    // Observe container size changes
-    const resizeObserver = new ResizeObserver(updateDimensions);
-    resizeObserver.observe(containerRef.current);
-
-    return () => {
-      clearTimeout(timer);
-      resizeObserver.disconnect();
-    };
-  }, [width, height]);
+    setCanvasDimensions(standardSize);
+    dimensionsCalculatedRef.current = true;
+  }, [story.size, story.orientation]);
 
   /**
    * Initialize Fabric.js canvas
@@ -168,7 +164,27 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     if (initialState) {
       try {
         console.log('Loading initial canvas state...');
-        canvas.loadFromJSON(initialState, () => {
+
+        // Parse metadata format
+        const parsed = JSON.parse(initialState);
+        let canvasJSON;
+
+        if (parsed.version && parsed.canvasJSON) {
+          // New format with metadata
+          canvasJSON = parsed.canvasJSON;
+          console.log('Loading initial state with metadata:', {
+            version: parsed.version,
+            layoutType: parsed.layoutType,
+            originalWidth: parsed.originalWidth,
+            originalHeight: parsed.originalHeight,
+          });
+        } else {
+          // Legacy format - direct Fabric.js JSON
+          canvasJSON = parsed;
+          console.log('Loading initial state in legacy format');
+        }
+
+        canvas.loadFromJSON(canvasJSON, () => {
           canvas.renderAll();
           console.log('Initial state loaded');
         });
@@ -192,10 +208,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     };
 
     const handleObjectModified = () => {
-      if (onChange) {
-        const json = JSON.stringify(canvas.toJSON());
-        onChange(json);
-      }
+      notifyChange();
     };
 
     // Register event listeners
@@ -234,7 +247,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     // No cleanup on this effect - canvas persists for component lifetime
     // Cleanup only happens when component unmounts (see separate effect below)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFabricLoaded, canvasDimensions]);
+  }, [isFabricLoaded, canvasDimensions, notifyChange]);
 
   /**
    * Update canvas dimensions when container size changes
@@ -318,13 +331,10 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
 
     canvas.renderAll();
 
-    if (onChange) {
-      const json = JSON.stringify(canvas.toJSON());
-      onChange(json);
-    }
+    notifyChange();
 
     toast.success('متن جدید اضافه شد');
-  }, [onChange]);
+  }, [notifyChange]);
 
   /**
    * Delete the currently selected object
@@ -343,13 +353,10 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     canvas.remove(activeObj);
     canvas.renderAll();
 
-    if (onChange) {
-      const json = JSON.stringify(canvas.toJSON());
-      onChange(json);
-    }
+    notifyChange();
 
     toast.success('شی حذف شد');
-  }, [onChange]);
+  }, [notifyChange]);
 
   /**
    * Update the selected text object's font family
@@ -368,11 +375,8 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     activeObj.set({ fontFamily });
     canvas.renderAll();
 
-    if (onChange) {
-      const json = JSON.stringify(canvas.toJSON());
-      onChange(json);
-    }
-  }, [onChange]);
+    notifyChange();
+  }, [notifyChange]);
 
   /**
    * Update the selected text object's font size
@@ -397,11 +401,8 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     activeObj.set({ fontSize });
     canvas.renderAll();
 
-    if (onChange) {
-      const json = JSON.stringify(canvas.toJSON());
-      onChange(json);
-    }
-  }, [onChange]);
+    notifyChange();
+  }, [notifyChange]);
 
   /**
    * Update the selected text object's color
@@ -420,11 +421,8 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     activeObj.set({ fill: color });
     canvas.renderAll();
 
-    if (onChange) {
-      const json = JSON.stringify(canvas.toJSON());
-      onChange(json);
-    }
-  }, [onChange]);
+    notifyChange();
+  }, [notifyChange]);
 
   /**
    * Update the selected object's dimensions
@@ -450,11 +448,8 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     activeObj.setCoords();
     canvas.renderAll();
 
-    if (onChange) {
-      const json = JSON.stringify(canvas.toJSON());
-      onChange(json);
-    }
-  }, [onChange]);
+    notifyChange();
+  }, [notifyChange]);
 
   /**
    * Update the selected object's skew
@@ -490,11 +485,8 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     activeObj.setCoords();
     canvas.renderAll();
 
-    if (onChange) {
-      const json = JSON.stringify(canvas.toJSON());
-      onChange(json);
-    }
-  }, [onChange]);
+    notifyChange();
+  }, [notifyChange]);
 
   /**
    * Toggle aspect ratio lock for the selected object
@@ -515,21 +507,50 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
   }, []);
 
   /**
-   * Export canvas state as JSON
+   * Export canvas state as JSON with metadata (public API)
    */
   const getCanvasJSON = useCallback((): string => {
     if (!fabricCanvasRef.current) return '{}';
-    return JSON.stringify(fabricCanvasRef.current.toJSON());
-  }, []);
+
+    const layoutType = getLayoutTypeFromStory(story);
+    const canvasMetadata: CanvasMetadata = {
+      version: '1.0',
+      layoutType,
+      originalWidth: canvasDimensions.width,
+      originalHeight: canvasDimensions.height,
+      canvasJSON: fabricCanvasRef.current.toJSON(),
+    };
+
+    return JSON.stringify(canvasMetadata);
+  }, [story, canvasDimensions]);
 
   /**
-   * Load canvas from JSON state
+   * Load canvas from JSON state (handles both new metadata format and legacy format)
    */
   const loadFromJSON = useCallback((json: string) => {
     if (!fabricCanvasRef.current) return;
 
     try {
-      fabricCanvasRef.current.loadFromJSON(json, () => {
+      // Try parsing as new format with metadata
+      const parsed = JSON.parse(json);
+
+      let canvasJSON;
+      if (parsed.version && parsed.canvasJSON) {
+        // New format with metadata
+        canvasJSON = parsed.canvasJSON;
+        console.log('Loading canvas with metadata:', {
+          version: parsed.version,
+          layoutType: parsed.layoutType,
+          originalWidth: parsed.originalWidth,
+          originalHeight: parsed.originalHeight,
+        });
+      } else {
+        // Legacy format - direct Fabric.js JSON
+        canvasJSON = parsed;
+        console.log('Loading legacy canvas format');
+      }
+
+      fabricCanvasRef.current.loadFromJSON(canvasJSON, () => {
         fabricCanvasRef.current?.renderAll();
       });
       toast.success('وضعیت بارگذاری شد');

@@ -396,6 +396,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
             <div className={styles.textEditorWrapper}>
               <TextCanvasEditor
                 key={`canvas-${index}`}
+                story={story}
                 initialState={canvasStates[index]}
                 onChange={(canvasJSON) => handleCanvasChange(index, canvasJSON)}
                 backgroundColor={story.background_color || '#FFFFFF'}
