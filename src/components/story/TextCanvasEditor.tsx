@@ -5,6 +5,7 @@ import styles from './TextCanvasEditor.module.scss';
 import CanvasToolbar from './CanvasToolbar';
 import { toast } from 'react-hot-toast';
 import { Story, CanvasMetadata } from '@/types/story';
+import { getStandardCanvasSize } from '@/constants/canvasSizes';
 import { getLayoutTypeFromStory } from '@/utils/canvasUtils';
 
 export interface TextCanvasEditorProps {
@@ -102,7 +103,8 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     }, []);
 
     /**
-     * Calculate canvas dimensions from container (responsive)
+     * Calculate canvas dimensions based on standard size scaled to fit container
+     * Maintains aspect ratio of the standard canvas size
      */
     useEffect(() => {
         if (!containerRef.current) return;
@@ -112,8 +114,28 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
                 const rect = containerRef.current.getBoundingClientRect();
 
                 if (rect.width > 0 && rect.height > 0) {
-                    console.log('Updating editor canvas dimensions:', { width: rect.width, height: rect.height });
-                    setCanvasDimensions({ width: rect.width, height: rect.height });
+                    // Get standard canvas size for this layout
+                    const layoutType = getLayoutTypeFromStory(story);
+                    const standardSize = getStandardCanvasSize(layoutType);
+
+                    // Calculate scale to fit within container while maintaining aspect ratio
+                    const scaleX = rect.width / standardSize.width;
+                    const scaleY = rect.height / standardSize.height;
+                    const scale = Math.min(scaleX, scaleY);
+
+                    // Apply scale to get final canvas dimensions
+                    const scaledWidth = Math.floor(standardSize.width * scale);
+                    const scaledHeight = Math.floor(standardSize.height * scale);
+
+                    console.log('Scaling canvas to fit container:', {
+                        layoutType,
+                        standardSize,
+                        containerSize: { width: rect.width, height: rect.height },
+                        scale,
+                        scaledSize: { width: scaledWidth, height: scaledHeight },
+                    });
+
+                    setCanvasDimensions({ width: scaledWidth, height: scaledHeight });
                     dimensionsCalculatedRef.current = true;
                 }
             }
@@ -127,7 +149,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
             clearTimeout(timer);
             resizeObserver.disconnect();
         };
-    }, []);
+    }, [story.size, story.orientation]);
 
     /**
      * Initialize Fabric.js canvas
