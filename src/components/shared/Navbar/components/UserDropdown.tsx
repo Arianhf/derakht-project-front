@@ -1,24 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { FaUser, FaUserCircle, FaSignOutAlt, FaShoppingBag } from 'react-icons/fa';
+import { useUser } from '@/contexts/UserContext';
 import ConfirmDialog from '@/components/shared/ConfirmDialog/ConfirmDialog';
 import styles from '../Navbar.module.scss';
 
 const UserDropdown: React.FC = () => {
-    const router = useRouter();
+    const { user, logout } = useUser();
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     const userDropdownRef = useRef<HTMLDivElement>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    useEffect(() => {
-        // Check if user is logged in based on localStorage
-        const token = localStorage.getItem('access_token');
-        setIsLoggedIn(!!token);
-    }, []);
+    const isLoggedIn = !!user;
 
     const handleMouseEnter = () => {
         if (timeoutRef.current) {
@@ -40,12 +35,8 @@ const UserDropdown: React.FC = () => {
     };
 
     const handleLogoutConfirm = () => {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('user');
-        setIsLoggedIn(false);
         setShowLogoutConfirm(false);
-        router.push('/login');
+        logout();
     };
 
     const handleLogoutCancel = () => {

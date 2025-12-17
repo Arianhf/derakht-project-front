@@ -85,5 +85,10 @@ export const userService = {
             localStorage.removeItem('user');
         }
         Cookies.remove('access_token');
+
+        // Explicitly remove Authorization header from axios instance
+        // This prevents race conditions where requests initiated during/after logout
+        // might still have the old token in the interceptor
+        delete api.defaults.headers.common['Authorization'];
     }
 };
