@@ -152,9 +152,57 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
       });
 
       fabricCanvasRef.current = canvas;
+      console.log('Canvas initialized in viewer');
+    } catch (error) {
+      console.error('Error initializing canvas:', error);
+      toast.error('خطا در راه‌اندازی کنواس');
+    }
 
-      // Load canvas objects
-      canvas.loadFromJSON(canvasJSON, () => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFabricLoaded, canvasDimensions]);
+
+  /**
+   * Load and scale canvas data when available (separate from initialization)
+   */
+  useEffect(() => {
+    if (!fabricCanvasRef.current || !canvasData) return;
+
+    console.log('Loading canvas data in viewer');
+
+    try {
+      // Parse canvas metadata
+      const parsed: CanvasMetadata = JSON.parse(canvasData);
+
+      let canvasJSON;
+      let originalWidth;
+      let originalHeight;
+
+      if (parsed.version && parsed.canvasJSON) {
+        // New format with metadata
+        canvasJSON = parsed.canvasJSON;
+        originalWidth = parsed.originalWidth;
+        originalHeight = parsed.originalHeight;
+        console.log('Loading canvas with metadata:', {
+          version: parsed.version,
+          layoutType: parsed.layoutType,
+          originalWidth,
+          originalHeight,
+        });
+      } else {
+        // Legacy format - assume square canvas
+        canvasJSON = parsed;
+        originalWidth = 1000;
+        originalHeight = 1000;
+        console.log('Loading legacy canvas format, assuming 1000x1000 dimensions');
+      }
+
+      // Store metadata for resize effect
+      originalCanvasDataRef.current = { canvasJSON, originalWidth, originalHeight };
+
+      // Load and scale objects
+      fabricCanvasRef.current.loadFromJSON(canvasJSON, () => {
+        if (!fabricCanvasRef.current) return;
+
         // Calculate scale factor (maintain aspect ratio)
         const scaleX = canvasDimensions.width / originalWidth;
         const scaleY = canvasDimensions.height / originalHeight;
@@ -165,13 +213,11 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
           originalHeight,
           currentWidth: canvasDimensions.width,
           currentHeight: canvasDimensions.height,
-          scaleX,
-          scaleY,
-          finalScale: scale,
+          scale,
         });
 
         // Scale all objects proportionally
-        canvas.getObjects().forEach((obj: any) => {
+        fabricCanvasRef.current.getObjects().forEach((obj: any) => {
           obj.scaleX = (obj.scaleX || 1) * scale;
           obj.scaleY = (obj.scaleY || 1) * scale;
           obj.left = (obj.left || 0) * scale;
@@ -186,7 +232,7 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
 
           if (offsetX > 0 || offsetY > 0) {
             console.log('Centering canvas content with offsets:', { offsetX, offsetY });
-            canvas.getObjects().forEach((obj: any) => {
+            fabricCanvasRef.current.getObjects().forEach((obj: any) => {
               obj.left = (obj.left || 0) + offsetX;
               obj.top = (obj.top || 0) + offsetY;
               obj.setCoords();
@@ -194,83 +240,14 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
           }
         }
 
-        canvas.renderAll();
+        fabricCanvasRef.current.renderAll();
         console.log('Canvas data loaded and scaled in viewer');
-
-        // Store original canvas data AFTER successful load (prevents resize effect from running prematurely)
-        originalCanvasDataRef.current = { canvasJSON, originalWidth, originalHeight };
       });
     } catch (error) {
       console.error('Error loading canvas data:', error);
       toast.error('خطا در بارگذاری محتوای کنواس');
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFabricLoaded, canvasDimensions, canvasData]);
-
-  /**
-   * Update canvas dimensions and rescale when container size changes
-   */
-  useEffect(() => {
-    if (!fabricCanvasRef.current || !originalCanvasDataRef.current) return;
-
-    const canvas = fabricCanvasRef.current;
-    const { canvasJSON, originalWidth, originalHeight } = originalCanvasDataRef.current;
-
-    console.log('Container dimensions changed, rescaling canvas:', canvasDimensions);
-
-    // Update canvas dimensions
-    canvas.setDimensions({
-      width: canvasDimensions.width,
-      height: canvasDimensions.height,
-    });
-
-    // Clear all objects
-    canvas.clear();
-    canvas.backgroundColor = backgroundColor;
-
-    // Reload and rescale objects with new dimensions
-    canvas.loadFromJSON(canvasJSON, () => {
-      // Calculate new scale factor
-      const scaleX = canvasDimensions.width / originalWidth;
-      const scaleY = canvasDimensions.height / originalHeight;
-      const scale = Math.min(scaleX, scaleY);
-
-      console.log('Rescaling with new dimensions:', {
-        originalWidth,
-        originalHeight,
-        newWidth: canvasDimensions.width,
-        newHeight: canvasDimensions.height,
-        scale,
-      });
-
-      // Scale all objects
-      canvas.getObjects().forEach((obj: any) => {
-        obj.scaleX = (obj.scaleX || 1) * scale;
-        obj.scaleY = (obj.scaleY || 1) * scale;
-        obj.left = (obj.left || 0) * scale;
-        obj.top = (obj.top || 0) * scale;
-        obj.setCoords();
-      });
-
-      // Center content if needed
-      if (scaleX !== scaleY) {
-        const offsetX = scaleX > scaleY ? (canvasDimensions.width - originalWidth * scale) / 2 : 0;
-        const offsetY = scaleY > scaleX ? (canvasDimensions.height - originalHeight * scale) / 2 : 0;
-
-        if (offsetX > 0 || offsetY > 0) {
-          canvas.getObjects().forEach((obj: any) => {
-            obj.left = (obj.left || 0) + offsetX;
-            obj.top = (obj.top || 0) + offsetY;
-            obj.setCoords();
-          });
-        }
-      }
-
-      canvas.renderAll();
-      console.log('Canvas rescaled successfully');
-    });
-  }, [canvasDimensions, backgroundColor]);
+  }, [canvasData, canvasDimensions]);
 
   /**
    * Cleanup canvas on unmount

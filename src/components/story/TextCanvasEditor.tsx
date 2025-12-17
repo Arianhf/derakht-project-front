@@ -160,40 +160,6 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     console.log('Canvas created with enableRetinaScaling');
     setIsCanvasReady(true);
 
-    // Load initial state if provided (only on first mount)
-    if (initialState) {
-      try {
-        console.log('Loading initial canvas state...');
-
-        // Parse metadata format
-        const parsed = JSON.parse(initialState);
-        let canvasJSON;
-
-        if (parsed.version && parsed.canvasJSON) {
-          // New format with metadata
-          canvasJSON = parsed.canvasJSON;
-          console.log('Loading initial state with metadata:', {
-            version: parsed.version,
-            layoutType: parsed.layoutType,
-            originalWidth: parsed.originalWidth,
-            originalHeight: parsed.originalHeight,
-          });
-        } else {
-          // Legacy format - direct Fabric.js JSON
-          canvasJSON = parsed;
-          console.log('Loading initial state in legacy format');
-        }
-
-        canvas.loadFromJSON(canvasJSON, () => {
-          canvas.renderAll();
-          console.log('Initial state loaded');
-        });
-      } catch (error) {
-        console.error('Error loading canvas state:', error);
-        toast.error('خطا در بارگذاری وضعیت کنواس');
-      }
-    }
-
     // Event handlers
     const handleSelectionCreated = (e: any) => {
       setActiveObject(e.selected?.[0] || null);
@@ -250,6 +216,43 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     // and fabricCanvasRef.current guard prevents re-initialization
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFabricLoaded, canvasDimensions]);
+
+  /**
+   * Load initial state when available (separate from initialization)
+   */
+  useEffect(() => {
+    if (!fabricCanvasRef.current || !initialState) return;
+
+    console.log('Loading/updating canvas with initialState');
+
+    try {
+      const parsed = JSON.parse(initialState);
+      let canvasJSON;
+
+      if (parsed.version && parsed.canvasJSON) {
+        // New format with metadata
+        canvasJSON = parsed.canvasJSON;
+        console.log('Loading canvas with metadata:', {
+          version: parsed.version,
+          layoutType: parsed.layoutType,
+          originalWidth: parsed.originalWidth,
+          originalHeight: parsed.originalHeight,
+        });
+      } else {
+        // Legacy format - direct Fabric.js JSON
+        canvasJSON = parsed;
+        console.log('Loading canvas in legacy format');
+      }
+
+      fabricCanvasRef.current.loadFromJSON(canvasJSON, () => {
+        fabricCanvasRef.current?.renderAll();
+        console.log('Canvas data loaded successfully');
+      });
+    } catch (error) {
+      console.error('Error loading canvas state:', error);
+      toast.error('خطا در بارگذاری وضعیت کنواس');
+    }
+  }, [initialState]);
 
   /**
    * Update canvas dimensions when container size changes
