@@ -1,8 +1,10 @@
 'use client';
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { userService } from '@/services/userService';
 import { toast } from 'react-hot-toast';
+import { getPostLogoutRedirect } from '@/utils/routeUtils';
 
 export interface User {
     id: string;
@@ -41,6 +43,8 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const router = useRouter();
+    const pathname = usePathname();
 
     const fetchUser = async () => {
         try {
@@ -120,6 +124,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         userService.logout();
         setUser(null);
         toast.success('با موفقیت خارج شدید');
+
+        // Determine where to redirect after logout
+        const redirectPath = getPostLogoutRedirect(pathname);
+        router.push(redirectPath);
     };
 
     useEffect(() => {
