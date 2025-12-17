@@ -206,7 +206,7 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFabricLoaded, canvasData]);
+  }, [isFabricLoaded, canvasDimensions, canvasData]);
 
   /**
    * Update canvas dimensions and rescale when container size changes
