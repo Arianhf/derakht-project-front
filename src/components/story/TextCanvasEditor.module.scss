@@ -3,8 +3,6 @@
 .canvasEditorWrapper {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: 100%;
   position: relative;
 }
 
@@ -32,10 +30,9 @@
 
 .canvasContainer {
   position: relative;
-  width: 100%;
-  height: 100%;
   background-color: $card-bg;
   border-radius: $border-radius-sm;
+  display: inline-block;
 
   canvas {
     display: block;
