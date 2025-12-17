@@ -101,16 +101,14 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
 
     console.log('Initializing read-only Fabric canvas:', canvasDimensions);
 
-    const { Canvas } = fabricLibRef.current;
+    const { Canvas, StaticCanvas } = fabricLibRef.current;
 
-    // Initialize canvas in read-only mode
-    const canvas = new Canvas(canvasRef.current, {
+    // Use StaticCanvas for completely non-interactive rendering
+    const canvas = new StaticCanvas(canvasRef.current, {
       width: canvasDimensions.width,
       height: canvasDimensions.height,
       backgroundColor,
-      selection: false, // Disable selection
       enableRetinaScaling: true,
-      interactive: false, // Make it non-interactive
     });
 
     fabricCanvasRef.current = canvas;
@@ -120,20 +118,8 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
       try {
         console.log('Loading canvas data in viewer...');
         canvas.loadFromJSON(canvasData, () => {
-          // Make all objects non-selectable and non-interactive
-          canvas.forEachObject((obj: any) => {
-            obj.selectable = false;
-            obj.evented = false;
-            obj.hasControls = false;
-            obj.hasBorders = false;
-            obj.lockMovementX = true;
-            obj.lockMovementY = true;
-            obj.lockRotation = true;
-            obj.lockScalingX = true;
-            obj.lockScalingY = true;
-          });
           canvas.renderAll();
-          console.log('Canvas data loaded in viewer');
+          console.log('Canvas data loaded in viewer (static mode)');
         });
       } catch (error) {
         console.error('Error loading canvas data:', error);
