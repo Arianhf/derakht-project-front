@@ -103,6 +103,10 @@ api.interceptors.request.use(
 
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+        } else {
+            // Explicitly remove Authorization header when no token is available
+            // This ensures the header doesn't persist after logout
+            delete config.headers.Authorization;
         }
 
         // Add anonymous cart ID header if available and not already authenticated
