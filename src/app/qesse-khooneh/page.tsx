@@ -40,8 +40,15 @@ const QesseKhoonehPage: React.FC = () => {
 
             setHasMore(response.next !== null);
         } catch (err) {
-            setError("مشکلی در دریافت داستان‌ها رخ داده است.");
-            toast.error("مشکلی در دریافت داستان‌ها رخ داده است.");
+            // Stop pagination when an error occurs to prevent infinite loops
+            setHasMore(false);
+
+            // Only show error toast if this is the first page
+            // For subsequent pages, silently fail to avoid spamming the user
+            if (page === 1) {
+                setError("مشکلی در دریافت داستان‌ها رخ داده است.");
+                toast.error("مشکلی در دریافت داستان‌ها رخ داده است.");
+            }
         } finally {
             setLoading(false);
             setLoadingMore(false);
