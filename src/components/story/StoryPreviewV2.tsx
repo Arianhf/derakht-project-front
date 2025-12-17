@@ -238,6 +238,7 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
             part?.canvas_data ? (
               <div className={styles.canvasViewerWrapper}>
                 <TextCanvasViewer
+                  key={`canvas-part-${currentPartIndex}`}
                   canvasData={part.canvas_data}
                   backgroundColor={story.background_color || '#FFFFFF'}
                 />
