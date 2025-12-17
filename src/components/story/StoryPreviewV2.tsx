@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight } from 'react-icons/fa';
 import styles from './StoryPreviewV2.module.scss';
 import { Story, StoryOrientation, StorySize } from '@/types/story';
+import TextCanvasViewer from './TextCanvasViewer';
 
 interface StoryPreviewV2Props {
   story: Story;
@@ -233,15 +234,25 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
       >
         <div className={styles.contentInner}>
           {type === 'text' ? (
-            <div
-              className={styles.textContent}
-              style={{
-                backgroundColor: story.background_color || '#FFF9F5',
-                color: story.font_color || '#2B463C',
-              }}
-            >
-              {content || 'متنی وارد نشده است.'}
-            </div>
+            // Render canvas viewer if canvas_data exists, otherwise show text
+            part?.canvas_data ? (
+              <div className={styles.canvasViewerWrapper}>
+                <TextCanvasViewer
+                  canvasData={part.canvas_data}
+                  backgroundColor={story.background_color || '#FFFFFF'}
+                />
+              </div>
+            ) : (
+              <div
+                className={styles.textContent}
+                style={{
+                  backgroundColor: story.background_color || '#FFF9F5',
+                  color: story.font_color || '#2B463C',
+                }}
+              >
+                {content || 'متنی وارد نشده است.'}
+              </div>
+            )
           ) : (
             <div className={styles.imageContent}>
               <Image
