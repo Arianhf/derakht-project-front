@@ -257,10 +257,22 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     pencilBrush.color = brushColor;
     canvas.freeDrawingBrush = pencilBrush;
 
-    // Store eraser brush for later use
-    const eraserBrush = new EraserBrush(canvas);
-    eraserBrush.width = brushSize * 2;
-    (canvas as any)._eraserBrush = eraserBrush;
+    // Try to set up eraser brush if available
+    if (EraserBrush) {
+      try {
+        const eraserBrush = new EraserBrush(canvas);
+        eraserBrush.width = brushSize * 2;
+        (canvas as any)._eraserBrush = eraserBrush;
+        (canvas as any)._hasEraserBrush = true;
+        console.log('EraserBrush initialized successfully');
+      } catch (err) {
+        console.warn('EraserBrush not available, will use background color eraser:', err);
+        (canvas as any)._hasEraserBrush = false;
+      }
+    } else {
+      console.warn('EraserBrush not available in this Fabric.js version, will use background color eraser');
+      (canvas as any)._hasEraserBrush = false;
+    }
 
     fabricCanvasRef.current = canvas;
     console.log('Canvas created with drawing mode enabled');
@@ -349,6 +361,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
 
     const canvas = fabricCanvasRef.current;
     const { PencilBrush, EraserBrush } = fabricLibRef.current;
+    const hasEraserBrush = (canvas as any)._hasEraserBrush;
 
     if (currentTool === 'brush') {
       // Use pencil brush for drawing
@@ -365,12 +378,33 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
         obj.selectable = false;
       });
     } else if (currentTool === 'eraser') {
-      // Use proper EraserBrush for erasing
-      if (!(canvas.freeDrawingBrush instanceof EraserBrush)) {
-        const eraserBrush = new EraserBrush(canvas);
-        canvas.freeDrawingBrush = eraserBrush;
+      // Use proper EraserBrush if available, otherwise use background color brush
+      if (hasEraserBrush && EraserBrush) {
+        try {
+          if (!(canvas.freeDrawingBrush instanceof EraserBrush)) {
+            const eraserBrush = new EraserBrush(canvas);
+            canvas.freeDrawingBrush = eraserBrush;
+          }
+          canvas.freeDrawingBrush.width = brushSize * 2; // Eraser is typically larger
+        } catch (err) {
+          console.warn('Failed to use EraserBrush, falling back to background color:', err);
+          // Fallback to background color eraser
+          if (!(canvas.freeDrawingBrush instanceof PencilBrush)) {
+            const pencilBrush = new PencilBrush(canvas);
+            canvas.freeDrawingBrush = pencilBrush;
+          }
+          canvas.freeDrawingBrush.color = backgroundColor;
+          canvas.freeDrawingBrush.width = brushSize * 2;
+        }
+      } else {
+        // Use background color as eraser (fallback for older Fabric.js versions)
+        if (!(canvas.freeDrawingBrush instanceof PencilBrush)) {
+          const pencilBrush = new PencilBrush(canvas);
+          canvas.freeDrawingBrush = pencilBrush;
+        }
+        canvas.freeDrawingBrush.color = backgroundColor;
+        canvas.freeDrawingBrush.width = brushSize * 2;
       }
-      canvas.freeDrawingBrush.width = brushSize * 2; // Eraser is typically larger
       canvas.isDrawingMode = true;
       canvas.selection = false;
       // Disable object selection in eraser mode
@@ -389,7 +423,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     }
 
     canvas.renderAll();
-  }, [currentTool, brushSize, brushColor]);
+  }, [currentTool, brushSize, brushColor, backgroundColor]);
 
   /**
    * Cleanup canvas on unmount
