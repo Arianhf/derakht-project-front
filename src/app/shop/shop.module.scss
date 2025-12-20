@@ -25,7 +25,7 @@
 .contentContainer {
   @include tiered-max-width;
   margin: 0 auto;
-  padding: $spacing-lg $spacing-md $spacing-xl;
+  padding: 140px $spacing-md $spacing-xl;
   width: 100%;
 }
 
