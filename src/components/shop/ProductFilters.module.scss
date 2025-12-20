@@ -35,24 +35,24 @@
 }
 
 .sortOptions {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
 }
 
 .sortButton {
   width: 100%;
-  padding: 10px 14px;
+  padding: 12px 10px;
   background: #f5f5f7;
   border: 1px solid transparent;
   border-radius: $border-radius-md;
-  font-size: 15px;
+  font-size: 14px;
   font-family: $font-primary;
   font-weight: 500;
   color: $dark-text;
   cursor: pointer;
   transition: $transition-base;
-  text-align: right;
+  text-align: center;
 
   &:hover {
     background: rgba($primary-color, 0.08);
