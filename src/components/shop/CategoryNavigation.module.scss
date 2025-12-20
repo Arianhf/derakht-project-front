@@ -1,13 +1,13 @@
 @use '../../styles/globals.scss' as *;
 
 .categoryNavigation {
-  background: $card-bg;
-  border-radius: $border-radius-md;
+  background: transparent;
+  border-radius: 0;
   padding: $spacing-md;
-  box-shadow: $shadow-sm;
+  box-shadow: none;
   direction: rtl;
   position: relative;
-  border: 1px solid rgba($primary-color, 0.1);
+  border: none;
 
   &:before {
     content: '';
@@ -17,7 +17,7 @@
     width: 3px;
     height: 100%;
     background: $primary-color;
-    border-radius: $border-radius-md 0 0 $border-radius-md;
+    border-radius: 0;
   }
 }
 

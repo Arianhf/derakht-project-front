@@ -58,18 +58,20 @@ const ShopPage = () => {
             <Toaster position="top-center" />
 
             <div className={styles.contentContainer}>
+                <h1 className={styles.pageTitle}>فروشگاه درخت</h1>
                 <Breadcrumbs items={breadcrumbs} />
 
                 <div className={styles.shopLayout}>
                     <aside className={styles.sidebar}>
-                        <CategoryNavigation />
-                        {products.length >= 10 && (
+                        <div className={styles.sidebarContainer}>
+                            <CategoryNavigation />
+                            <div className={styles.sidebarDivider}></div>
                             <ProductFilters
                                 filters={filters}
                                 onFilterChange={handleFilterChange}
                                 onSearch={handleSearch}
                             />
-                        )}
+                        </div>
                     </aside>
 
                     <main className={styles.mainContent}>

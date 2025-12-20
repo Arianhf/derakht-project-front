@@ -25,10 +25,17 @@
 .contentContainer {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 140px $spacing-md $spacing-xl;
+  padding: $spacing-lg $spacing-md $spacing-xl;
   width: 100%;
 }
 
+.pageTitle {
+  font-size: 32px;
+  font-weight: 700;
+  color: $dark-text;
+  margin-bottom: $spacing-sm;
+  text-align: right;
+}
 
 .shopLayout {
   display: flex;
@@ -42,9 +49,20 @@
   position: sticky;
   top: $spacing-md;
   height: fit-content;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
+}
+
+.sidebarContainer {
+  background: $card-bg;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-sm;
+  border: 1px solid rgba($primary-color, 0.1);
+  overflow: hidden;
+}
+
+.sidebarDivider {
+  height: 1px;
+  background: rgba($primary-color, 0.15);
+  margin: 0;
 }
 
 .mainContent {
@@ -112,6 +130,10 @@
 }
 
 @media screen and (max-width: $breakpoint-md) {
+  .pageTitle {
+    font-size: 28px;
+  }
+
   .productsGrid {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: $spacing-md;
@@ -123,6 +145,10 @@
 }
 
 @media screen and (max-width: $breakpoint-sm) {
+  .pageTitle {
+    font-size: 24px;
+  }
+
   .productsGrid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: $spacing-sm;
