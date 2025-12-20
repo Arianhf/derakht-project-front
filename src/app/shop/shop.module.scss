@@ -79,8 +79,9 @@
 
 .productsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: $spacing-xl;
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  gap: $spacing-lg;
+  max-width: 100%;
 }
 
 .noProducts {
@@ -137,7 +138,7 @@
   }
 
   .productsGrid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
     gap: $spacing-md;
   }
 
@@ -152,7 +153,7 @@
   }
 
   .productsGrid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
     gap: $spacing-sm;
   }
 
