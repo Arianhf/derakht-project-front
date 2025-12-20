@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import ProductCard from '@/components/shop/ProductCard';
 import CategoryNavigation from '@/components/shop/CategoryNavigation';
@@ -9,7 +8,6 @@ import ProductFilters from '@/components/shop/ProductFilters';
 import Breadcrumbs from '@/components/shop/Breadcrumbs';
 import styles from './shop.module.scss';
 import logo from '@/assets/images/logo2.png';
-import heroImage from "../../../public/images/shop_bg.png";
 import { Product, ShopFilters, Breadcrumb } from '@/types/shop';
 import { shopService } from '@/services/shopService';
 import { Toaster } from 'react-hot-toast';
@@ -58,16 +56,6 @@ const ShopPage = () => {
         <div className={styles.shopContainer}>
             <Navbar logo={logo} />
             <Toaster position="top-center" />
-
-            <div className={styles.heroSection}>
-                <Image
-                    src={heroImage}
-                    alt="Shop Hero"
-                    layout="fill"
-                    objectFit="cover"
-                    className={styles.heroImage}
-                />
-            </div>
 
             <div className={styles.contentContainer}>
                 <Breadcrumbs items={breadcrumbs} />
