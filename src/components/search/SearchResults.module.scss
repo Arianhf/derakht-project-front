@@ -1,7 +1,7 @@
 @use '@/styles/globals.scss' as *;
 
 .container {
-  max-width: 1200px;
+  @include tiered-max-width;
   margin: 0 auto;
   padding: $spacing-xl $spacing-md;
 

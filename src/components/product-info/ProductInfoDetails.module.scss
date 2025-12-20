@@ -11,7 +11,7 @@
 }
 
 .contentWrapper {
-    max-width: 1200px;
+    @include tiered-max-width;
     margin: 0 auto;
     padding: 0 20px 60px;
 }

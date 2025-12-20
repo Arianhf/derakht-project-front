@@ -13,7 +13,7 @@
 }
 
 .footerGrid {
-  max-width: 1200px;
+  @include tiered-max-width;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr;
