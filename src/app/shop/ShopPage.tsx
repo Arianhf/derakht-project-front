@@ -67,9 +67,6 @@ const ShopPage = () => {
                     objectFit="cover"
                     className={styles.heroImage}
                 />
-                <div className={styles.heroOverlay}>
-                    <h1 className={styles.heroText}>فروشگاه درخت</h1>
-                </div>
             </div>
 
             <div className={styles.contentContainer}>

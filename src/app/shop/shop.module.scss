@@ -8,6 +8,18 @@
   background: #fafafa;
   position: relative;
   z-index: 0;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: $clouds;
+    z-index: -1;
+    opacity: 0.03;
+  }
 }
 
 .heroSection {
@@ -17,69 +29,10 @@
   margin-bottom: $spacing-lg;
   overflow: hidden;
   border-radius: 0 0 $border-radius-lg $border-radius-lg;
-
-  &:after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    right: 0;
-    height: 40px;
-    background: linear-gradient(to bottom, transparent, $background);
-    z-index: 3;
-  }
 }
 
 .heroImage {
   z-index: 1;
-  transition: transform 8s ease-in-out;
-
-  &:hover {
-    transform: scale(1.05);
-  }
-}
-
-.heroOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(52, 91, 192, 0.90) 0%, rgba(255, 111, 97, 0.85) 50%, rgba(128, 212, 109, 0.90) 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
-  padding: 0 $spacing-lg;
-
-  &:before {
-    content: '🛍️';
-    font-size: 40px;
-    margin-bottom: 5px;
-    animation: bounce 2s ease-in-out infinite;
-  }
-}
-
-.heroText {
-  color: white;
-  font-size: 32px;
-  font-weight: bold;
-  text-align: center;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-  100% { transform: translateY(0px); }
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-10px) rotate(-5deg); }
-  75% { transform: translateY(-5px) rotate(5deg); }
 }
 
 .contentContainer {
@@ -87,13 +40,8 @@
   margin: 0 auto;
   padding: 0 $spacing-md $spacing-xl;
   width: 100%;
-  animation: fadeIn 0.8s ease-out;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 
 .shopLayout {
   display: flex;
@@ -174,27 +122,11 @@
     position: relative;
     top: 0;
   }
-
-  .heroText {
-    font-size: 28px;
-  }
-
-  .heroOverlay:before {
-    font-size: 36px;
-  }
 }
 
 @media screen and (max-width: $breakpoint-md) {
   .heroSection {
     height: 160px;
-  }
-
-  .heroText {
-    font-size: 26px;
-  }
-
-  .heroOverlay:before {
-    font-size: 32px;
   }
 
   .productsGrid {
@@ -211,14 +143,6 @@
   .heroSection {
     height: 140px;
     border-radius: 0;
-  }
-
-  .heroText {
-    font-size: 22px;
-  }
-
-  .heroOverlay:before {
-    font-size: 28px;
   }
 
   .productsGrid {
