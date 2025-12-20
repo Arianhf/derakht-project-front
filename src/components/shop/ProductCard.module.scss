@@ -5,19 +5,26 @@
   display: block;
   border-radius: $border-radius-lg;
   overflow: hidden;
-  box-shadow: $shadow-sm;
+  box-shadow: $shadow-md;
   transition: $transition-base;
-  background-color: $card-bg;
+  background: linear-gradient(135deg, $card-bg 0%, rgba($primary-color, 0.01) 100%);
   text-decoration: none;
   color: inherit;
   position: relative;
+  border: 2px solid rgba($primary-color, 0.05);
 
   &:hover {
-    transform: translateY(-8px);
-    box-shadow: $shadow-md;
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12), 0 0 0 4px rgba($primary-color, 0.1);
+    border-color: rgba($primary-color, 0.15);
 
     .productImage {
-      transform: scale(1.1);
+      transform: scale(1.12) rotate(1deg);
+    }
+
+    &:before {
+      height: 6px;
+      box-shadow: 0 2px 8px rgba($secondary-color, 0.4);
     }
   }
 
@@ -27,22 +34,34 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 8px;
-    background: linear-gradient(90deg, $secondary-color, $primary-color, $accent-color);
+    height: 5px;
+    background: linear-gradient(90deg, $secondary-color 0%, $primary-color 50%, $accent-color 100%);
     z-index: 1;
+    transition: $transition-base;
   }
 }
 
 .imageContainer {
   position: relative;
   width: 100%;
-  height: 220px;
-  background-color: #f9f9f9;
+  height: 240px;
+  background: linear-gradient(135deg, #f9f9f9 0%, rgba($accent-color, 0.05) 100%);
   overflow: hidden;
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(to top, rgba(255, 255, 255, 0.8), transparent);
+    pointer-events: none;
+  }
 }
 
 .productImage {
-  transition: transform 0.5s ease;
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .placeholderImage {
@@ -64,13 +83,13 @@
 .productTitle {
   margin: 0 0 $spacing-sm;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: $dark-text;
   position: relative;
-  padding-right: 15px;
+  padding-right: 12px;
 
   &:before {
     content: '';
@@ -78,18 +97,33 @@
     right: 0;
     top: 50%;
     transform: translateY(-50%);
-    width: 5px;
-    height: 18px;
-    background-color: $secondary-color;
-    border-radius: 3px;
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(180deg, $secondary-color 0%, $accent-color 100%);
+    border-radius: $border-radius-full;
+    box-shadow: 0 0 6px rgba($secondary-color, 0.3);
   }
 }
 
 .productPrice {
-  font-size: 16px;
-  font-weight: 700;
-  color: $accent-color;
+  font-size: 17px;
+  font-weight: 800;
+  background: linear-gradient(135deg, $accent-color 0%, color.adjust($accent-color, $lightness: -15%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: $spacing-md;
+  position: relative;
+  display: inline-block;
+
+  &:after {
+    content: '💰';
+    position: absolute;
+    right: -25px;
+    top: -2px;
+    font-size: 16px;
+    opacity: 0.6;
+  }
 }
 
 // Quantity Controls (New Styles)

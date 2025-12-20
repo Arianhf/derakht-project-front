@@ -1,48 +1,70 @@
 @use '../../styles/globals.scss' as *;
 
 .categoryNavigation {
-  background-color: $card-bg;
-  border-radius: 8px;
-  padding: $spacing-md;
-  box-shadow: $shadow-sm;
+  background: linear-gradient(135deg, $card-bg 0%, rgba($primary-color, 0.02) 100%);
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-md;
   margin-bottom: $spacing-md;
   direction: rtl;
   position: relative;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: $transition-base;
 
   &:before {
     content: '';
     position: absolute;
     top: 0;
     right: 0;
-    width: 8px;
+    width: 6px;
     height: 100%;
-    background: linear-gradient(to bottom, $primary-color, $secondary-color);
-    border-radius: 0 $border-radius-lg $border-radius-lg 0;
+    background: linear-gradient(180deg, $primary-color 0%, $secondary-color 50%, $accent-color 100%);
+    border-radius: $border-radius-lg 0 0 $border-radius-lg;
+  }
+
+  &:hover {
+    box-shadow: $shadow-lg;
+    transform: translateY(-2px);
   }
 }
 
 
 .navigationTitle {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   color: $dark-text;
   margin-bottom: $spacing-md;
-  padding-bottom: $spacing-sm;
-  border-bottom: 1px solid #e1e1e1;
+  padding-bottom: $spacing-md;
+  border-bottom: 2px dashed rgba($primary-color, 0.2);
   position: relative;
   padding-right: 15px;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
 
   &:before {
+    content: '📁';
+    font-size: 24px;
+    animation: wiggle 2s ease-in-out infinite;
+  }
+
+  &:after {
     content: '';
     position: absolute;
+    bottom: -2px;
     right: 0;
-    top: 35%;
-    transform: translateY(-50%);
-    width: 5px;
-    height: 20px;
-    background-color: $secondary-color;
-    border-radius: 3px;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, $secondary-color, transparent);
+    border-radius: $border-radius-full;
   }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
 }
 
 .categoriesList {
@@ -59,19 +81,39 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 10px;
-  border-radius: $border-radius-md;
+  padding: 10px 12px;
+  border-radius: $border-radius-lg;
   transition: $transition-base;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, transparent, $secondary-color, transparent);
+    border-radius: $border-radius-full;
+    opacity: 0;
+    transition: $transition-base;
+  }
 
   &:hover {
-    background-color: rgba($primary-color, 0.05);
+    background: linear-gradient(90deg, rgba($primary-color, 0.08) 0%, rgba($accent-color, 0.05) 100%);
+    transform: translateX(-3px);
+
+    &:before {
+      opacity: 1;
+    }
   }
 }
 
 .categoryLink {
   display: block;
   flex: 1;
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: 500;
   color: $dark-text;
   text-decoration: none;
   transition: $transition-base;
@@ -123,12 +165,25 @@
 }
 
 .activeCategory {
-  background-color: rgba($primary-color, 0.1);
-  border-radius: $border-radius-md;
+  background: linear-gradient(90deg, rgba($primary-color, 0.15) 0%, rgba($secondary-color, 0.08) 100%);
+  border-radius: $border-radius-lg;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: $secondary-color;
+    border-radius: $border-radius-full;
+    box-shadow: 0 0 8px rgba($secondary-color, 0.5);
+  }
 
   .categoryLink {
     color: $primary-color;
-    font-weight: 600;
+    font-weight: 700;
   }
 }
 
