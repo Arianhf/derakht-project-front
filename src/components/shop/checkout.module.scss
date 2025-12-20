@@ -1,4 +1,5 @@
 @use 'sass:color';
+@use '../../styles/globals.scss' as *;
 
 .checkoutContainer {
   min-height: 100vh;
