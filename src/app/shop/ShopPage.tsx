@@ -78,15 +78,14 @@ const ShopPage = () => {
                 <div className={styles.shopLayout}>
                     <aside className={styles.sidebar}>
                         <CategoryNavigation />
-                    </aside>
-
-                    <main className={styles.mainContent}>
                         <ProductFilters
                             filters={filters}
                             onFilterChange={handleFilterChange}
                             onSearch={handleSearch}
                         />
+                    </aside>
 
+                    <main className={styles.mainContent}>
                         <div className={styles.productsSection}>
                             {loading ? (
                                 <LoadingSpinner message="در حال بارگذاری محصولات..." />
