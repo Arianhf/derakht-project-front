@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import ProductCard from '@/components/shop/ProductCard';
 import CategoryNavigation from '@/components/shop/CategoryNavigation';
@@ -9,7 +8,6 @@ import ProductFilters from '@/components/shop/ProductFilters';
 import Breadcrumbs from '@/components/shop/Breadcrumbs';
 import styles from './shop.module.scss';
 import logo from '@/assets/images/logo2.png';
-import heroImage from "../../../public/images/shop_bg.png";
 import { Product, ShopFilters, Breadcrumb } from '@/types/shop';
 import { shopService } from '@/services/shopService';
 import { Toaster } from 'react-hot-toast';
@@ -59,34 +57,24 @@ const ShopPage = () => {
             <Navbar logo={logo} />
             <Toaster position="top-center" />
 
-            <div className={styles.heroSection}>
-                <Image
-                    src={heroImage}
-                    alt="Shop Hero"
-                    layout="fill"
-                    objectFit="cover"
-                    className={styles.heroImage}
-                />
-                <div className={styles.heroOverlay}>
-                    <h1 className={styles.heroText}>فروشگاه درخت</h1>
-                </div>
-            </div>
-
             <div className={styles.contentContainer}>
+                <h1 className={styles.pageTitle}>فروشگاه درخت</h1>
                 <Breadcrumbs items={breadcrumbs} />
 
                 <div className={styles.shopLayout}>
                     <aside className={styles.sidebar}>
-                        <CategoryNavigation />
+                        <div className={styles.sidebarContainer}>
+                            <CategoryNavigation />
+                            <div className={styles.sidebarDivider}></div>
+                            <ProductFilters
+                                filters={filters}
+                                onFilterChange={handleFilterChange}
+                                onSearch={handleSearch}
+                            />
+                        </div>
                     </aside>
 
                     <main className={styles.mainContent}>
-                        <ProductFilters
-                            filters={filters}
-                            onFilterChange={handleFilterChange}
-                            onSearch={handleSearch}
-                        />
-
                         <div className={styles.productsSection}>
                             {loading ? (
                                 <LoadingSpinner message="در حال بارگذاری محصولات..." />

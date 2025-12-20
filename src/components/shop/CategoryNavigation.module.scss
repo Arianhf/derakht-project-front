@@ -1,48 +1,36 @@
 @use '../../styles/globals.scss' as *;
 
 .categoryNavigation {
-  background-color: $card-bg;
-  border-radius: 8px;
+  background: transparent;
+  border-radius: 0;
   padding: $spacing-md;
-  box-shadow: $shadow-sm;
-  margin-bottom: $spacing-md;
+  box-shadow: none;
   direction: rtl;
   position: relative;
+  border: none;
 
   &:before {
     content: '';
     position: absolute;
     top: 0;
     right: 0;
-    width: 8px;
+    width: 3px;
     height: 100%;
-    background: linear-gradient(to bottom, $primary-color, $secondary-color);
-    border-radius: 0 $border-radius-lg $border-radius-lg 0;
+    background: $primary-color;
+    border-radius: 0;
   }
 }
 
 
 .navigationTitle {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   color: $dark-text;
   margin-bottom: $spacing-md;
   padding-bottom: $spacing-sm;
-  border-bottom: 1px solid #e1e1e1;
+  border-bottom: 1px solid rgba($primary-color, 0.15);
   position: relative;
-  padding-right: 15px;
-
-  &:before {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 35%;
-    transform: translateY(-50%);
-    width: 5px;
-    height: 20px;
-    background-color: $secondary-color;
-    border-radius: 3px;
-  }
+  padding-right: 10px;
 }
 
 .categoriesList {
@@ -64,14 +52,15 @@
   transition: $transition-base;
 
   &:hover {
-    background-color: rgba($primary-color, 0.05);
+    background: rgba($primary-color, 0.05);
   }
 }
 
 .categoryLink {
   display: block;
   flex: 1;
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: 500;
   color: $dark-text;
   text-decoration: none;
   transition: $transition-base;
@@ -123,12 +112,12 @@
 }
 
 .activeCategory {
-  background-color: rgba($primary-color, 0.1);
+  background: rgba($primary-color, 0.12);
   border-radius: $border-radius-md;
 
   .categoryLink {
     color: $primary-color;
-    font-weight: 600;
+    font-weight: 700;
   }
 }
 

@@ -7,17 +7,23 @@
   overflow: hidden;
   box-shadow: $shadow-sm;
   transition: $transition-base;
-  background-color: $card-bg;
+  background: $card-bg;
   text-decoration: none;
   color: inherit;
   position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 
   &:hover {
-    transform: translateY(-8px);
-    box-shadow: $shadow-md;
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-color: rgba($primary-color, 0.3);
 
     .productImage {
-      transform: scale(1.1);
+      transform: scale(1.08);
+    }
+
+    &:before {
+      height: 4px;
     }
   }
 
@@ -27,9 +33,10 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 8px;
-    background: linear-gradient(90deg, $secondary-color, $primary-color, $accent-color);
+    height: 3px;
+    background: linear-gradient(90deg, $secondary-color 0%, $primary-color 50%, $accent-color 100%);
     z-index: 1;
+    transition: $transition-base;
   }
 }
 
@@ -37,12 +44,12 @@
   position: relative;
   width: 100%;
   height: 220px;
-  background-color: #f9f9f9;
+  background: #f9f9f9;
   overflow: hidden;
 }
 
 .productImage {
-  transition: transform 0.5s ease;
+  transition: transform 0.4s ease;
 }
 
 .placeholderImage {
@@ -64,13 +71,13 @@
 .productTitle {
   margin: 0 0 $spacing-sm;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: $dark-text;
   position: relative;
-  padding-right: 15px;
+  padding-right: 12px;
 
   &:before {
     content: '';
@@ -78,18 +85,21 @@
     right: 0;
     top: 50%;
     transform: translateY(-50%);
-    width: 5px;
-    height: 18px;
-    background-color: $secondary-color;
-    border-radius: 3px;
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(180deg, $secondary-color 0%, $accent-color 100%);
+    border-radius: $border-radius-full;
+    box-shadow: 0 0 6px rgba($secondary-color, 0.3);
   }
 }
 
 .productPrice {
-  font-size: 16px;
+  font-size: 19px;
   font-weight: 700;
-  color: $accent-color;
+  color: #2B463C;
   margin-bottom: $spacing-md;
+  position: relative;
+  display: block;
 }
 
 // Quantity Controls (New Styles)
@@ -198,13 +208,13 @@
 }
 
 .ageBadge {
-  top: 10px;
-  right: 10px;
-  background-color: rgba($primary-color, 0.8);
+  top: 15px;
+  right: 15px;
+  background-color: rgba($primary-color, 0.95);
   color: white;
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: $border-radius-full;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   animation: float 3s ease-in-out infinite;
 }
 
