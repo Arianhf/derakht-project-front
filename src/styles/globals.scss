@@ -58,6 +58,26 @@ $breakpoint-md: 768px;
 $breakpoint-lg: 992px;
 $breakpoint-xl: 1200px;
 $breakpoint-xxl: 1400px;
+$breakpoint-ultrawide: 1920px;
+$breakpoint-superwide: 2400px;
+
+// Container max-widths for different breakpoints
+$container-max-width-standard: 1200px;
+$container-max-width-large: 1440px;
+$container-max-width-ultrawide: 1600px;
+
+// Mixin for tiered max-width system
+@mixin tiered-max-width {
+  max-width: $container-max-width-standard;
+
+  @media (min-width: $breakpoint-ultrawide) {
+    max-width: $container-max-width-large;
+  }
+
+  @media (min-width: $breakpoint-superwide) {
+    max-width: $container-max-width-ultrawide;
+  }
+}
 
 // Backgrounds
 $clouds: url('/images/patterns/clouds.svg');

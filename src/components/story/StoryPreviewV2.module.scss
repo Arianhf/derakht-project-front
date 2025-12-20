@@ -44,7 +44,7 @@ $transition-speed: 0.3s;
 .previewContainer {
   background: white;
   border-radius: $border-radius;
-  max-width: 1200px;
+  @include tiered-max-width;
   width: 100%;
   max-height: 95vh;
   display: flex;

@@ -9,7 +9,7 @@
 .heroSection {
   position: relative;
   padding: 170px $spacing-md $spacing-xl;
-  max-width: 1200px;
+  @include tiered-max-width;
   margin: 0 auto;
   animation: fadeIn 1s ease-out;
 }
@@ -196,7 +196,7 @@
 
 .featuresSection {
   padding: $spacing-xl $spacing-md;
-  max-width: 1200px;
+  @include tiered-max-width;
   margin: 0 auto;
   animation: fadeIn 1s ease-out;
   animation-delay: 0.3s;
@@ -312,7 +312,7 @@
 
 .valuesSection {
   padding: $spacing-xl $spacing-md;
-  max-width: 1200px;
+  @include tiered-max-width;
   margin: 0 auto;
   animation: fadeIn 1s ease-out;
   animation-delay: 0.5s;
@@ -427,7 +427,7 @@
 
 .ctaSection {
   padding: $spacing-xl $spacing-md;
-  max-width: 1200px;
+  @include tiered-max-width;
   margin: 0 auto;
   text-align: center;
 }
@@ -498,7 +498,7 @@
 }
 
 .footerGrid {
-  max-width: 1200px;
+  @include tiered-max-width;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr;

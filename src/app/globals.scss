@@ -43,9 +43,9 @@ html, body {
 // For CDN usage, add these imports in your component or use Google Fonts
 
 
-// Container Width
+// Container Width - Tiered System
 .container {
-  max-width: 1200px;
+  @include tiered-max-width;
   margin: 0 auto;
   padding: 0 $spacing-md;
 

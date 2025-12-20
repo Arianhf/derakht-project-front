@@ -29,7 +29,7 @@
   text-align: center;
   padding: 150px 20px 60px; // Increased top padding to add more space from navbar
   width: 100%;
-  max-width: 1200px;
+  @include tiered-max-width;
   margin: 0 auto;
   position: relative;
   z-index: 1;
@@ -482,7 +482,7 @@
   margin-bottom: 20px;
   padding: 0 30px;
   justify-items: center;
-  max-width: 1200px;
+  @include tiered-max-width;
   margin-left: auto;
   margin-right: auto;
 

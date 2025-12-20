@@ -65,7 +65,7 @@
 }
 
 .contentContainer {
-  max-width: 1200px;
+  @include tiered-max-width;
   margin: 0 auto;
   padding: 0 $spacing-md $spacing-xl;
   width: 100%;
