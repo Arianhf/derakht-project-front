@@ -140,3 +140,16 @@
     background-color: color.adjust($light-text, $lightness: 40%);
   }
 }
+
+// Responsive
+@media (max-width: $breakpoint-sm) {
+  .sortOptions {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .sortButton {
+    font-size: 15px;
+    text-align: right;
+  }
+}
