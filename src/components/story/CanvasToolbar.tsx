@@ -207,6 +207,7 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
       {/* Add Text Button */}
       <div className={styles.toolbarSection}>
         <button
+          type="button"
           className={styles.addTextButton}
           onClick={onAddText}
           disabled={!isCanvasReady}
@@ -273,6 +274,7 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
 
           <div className={styles.toolbarSection}>
             <button
+              type="button"
               className={styles.deleteButton}
               onClick={onDeleteSelected}
               disabled={!isObjectSelected}
