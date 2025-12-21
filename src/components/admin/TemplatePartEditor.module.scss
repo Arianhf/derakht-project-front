@@ -1,0 +1,217 @@
+@use '../../styles/globals.scss' as *;
+
+.partEditor {
+  background: #f8f9fa;
+  border-radius: $border-radius-md;
+  overflow: hidden;
+  border: 1px solid #e9ecef;
+}
+
+.partHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: white;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.partTitle {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  h3 {
+    font-size: 16px;
+    font-weight: bold;
+    color: $dark-text;
+    margin: 0;
+  }
+}
+
+.positionControl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  label {
+    font-size: 14px;
+    color: $light-text;
+    font-weight: 600;
+  }
+
+  input {
+    width: 70px;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: $border-radius-sm;
+    font-size: 14px;
+    text-align: center;
+
+    &:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+  }
+}
+
+.removeButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 600;
+
+  &:hover {
+    background: darken(#e74c3c, 10%);
+    transform: scale(1.05);
+  }
+}
+
+.tabBar {
+  display: flex;
+  background: white;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: $light-text;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+
+  &:hover {
+    color: #667eea;
+    background: rgba(#667eea, 0.05);
+  }
+
+  &.active {
+    color: #667eea;
+    background: white;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #667eea;
+    }
+  }
+}
+
+.canvasContainer {
+  padding: 20px;
+  min-height: 400px;
+}
+
+.textCanvasWrapper,
+.illustrationCanvasWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.canvasHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: white;
+  border-radius: $border-radius-sm;
+
+  h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: $dark-text;
+    margin: 0;
+  }
+}
+
+.exportButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #4facfe;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 12px;
+  font-weight: 600;
+
+  &:hover {
+    background: darken(#4facfe, 10%);
+    transform: translateY(-2px);
+  }
+}
+
+.canvasEditor {
+  background: white;
+  border-radius: $border-radius-sm;
+  padding: 15px;
+  box-shadow: $shadow-sm;
+  min-height: 500px;
+  height: 600px; // Fixed height to ensure TextCanvasEditor can calculate dimensions
+
+  // Ensure canvas takes full width and height
+  > div {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.canvasHint {
+  font-size: 13px;
+  color: $light-text;
+  text-align: center;
+  padding: 10px;
+  background: white;
+  border-radius: $border-radius-sm;
+  margin: 0;
+}
+
+@media (max-width: $breakpoint-md) {
+  .partHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .partTitle {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .removeButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .canvasContainer {
+    padding: 15px;
+  }
+
+  .canvasEditor {
+    padding: 10px;
+    min-height: 400px;
+  }
+}

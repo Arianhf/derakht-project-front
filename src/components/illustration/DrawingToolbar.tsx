@@ -50,6 +50,7 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
       {/* Tool Selection */}
       <div className={styles.toolSection}>
         <button
+          type="button"
           className={`${styles.toolButton} ${currentTool === 'select' ? styles.active : ''}`}
           onClick={() => onToolChange('select')}
           disabled={!isCanvasReady}
@@ -59,6 +60,7 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
           <FaMousePointer />
         </button>
         <button
+          type="button"
           className={`${styles.toolButton} ${currentTool === 'brush' ? styles.active : ''}`}
           onClick={() => onToolChange('brush')}
           disabled={!isCanvasReady}
@@ -68,6 +70,7 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
           <FaPaintBrush />
         </button>
         <button
+          type="button"
           className={`${styles.toolButton} ${currentTool === 'eraser' ? styles.active : ''}`}
           onClick={() => onToolChange('eraser')}
           disabled={!isCanvasReady}
@@ -116,6 +119,7 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
           style={{ display: 'none' }}
         />
         <button
+          type="button"
           className={styles.actionButton}
           onClick={handleImageButtonClick}
           disabled={!isCanvasReady}
@@ -129,6 +133,7 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
       {/* Action Buttons */}
       <div className={styles.toolSection}>
         <button
+          type="button"
           className={styles.actionButton}
           onClick={onUndo}
           disabled={!isCanvasReady}
@@ -138,6 +143,7 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
           <FaUndo />
         </button>
         <button
+          type="button"
           className={`${styles.actionButton} ${styles.danger}`}
           onClick={onClear}
           disabled={!isCanvasReady}

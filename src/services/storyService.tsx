@@ -1,6 +1,18 @@
 // src/services/storyService.tsx
 import api from './api';
-import { StoryTemplate, StoryResponse, Story, StoryPart, Asset, AssetsResponse } from '@/types/story';
+import {
+  StoryTemplate,
+  StoryResponse,
+  Story,
+  StoryPart,
+  Asset,
+  AssetsResponse,
+  TemplatePart,
+  CreateTemplatePayload,
+  UpdateTemplatePayload,
+  CreateTemplatePartStandalonePayload,
+  UpdateTemplatePartPayload
+} from '@/types/story';
 
 export const storyService = {
   getAllStories: async (): Promise<StoryResponse<StoryTemplate>> => {
@@ -231,5 +243,173 @@ export const storyService = {
    */
   deleteStory: async (storyId: string): Promise<void> => {
     await api.delete(`/stories/${storyId}/`);
+  },
+
+  // ============================================
+  // ADMIN TEMPLATE MANAGEMENT ENDPOINTS
+  // ============================================
+
+  /**
+   * Get all story templates (public endpoint)
+   * @param activityType - Optional filter by activity type
+   */
+  getTemplates: async (activityType?: string): Promise<StoryResponse<StoryTemplate>> => {
+    const response = await api.get('/stories/templates/', {
+      params: activityType ? { activity_type: activityType } : undefined,
+    });
+    return response.data;
+  },
+
+  /**
+   * Get a single template by ID (public endpoint)
+   * @param templateId - The template UUID
+   */
+  getTemplateById: async (templateId: string): Promise<StoryTemplate> => {
+    const response = await api.get(`/stories/templates/${templateId}/`);
+    return response.data;
+  },
+
+  /**
+   * Create a new story template (staff only)
+   * @param payload - Template data including nested parts
+   */
+  createTemplate: async (payload: CreateTemplatePayload): Promise<StoryTemplate> => {
+    // If there's a cover image, use FormData (multipart/form-data)
+    // Otherwise, use JSON to properly handle nested template_parts
+    if (payload.cover_image) {
+      const formData = new FormData();
+
+      formData.append('title', payload.title);
+      formData.append('description', payload.description);
+      formData.append('activity_type', payload.activity_type);
+      formData.append('orientation', payload.orientation);
+      formData.append('size', payload.size);
+      formData.append('cover_image', payload.cover_image);
+
+      if (payload.template_parts && payload.template_parts.length > 0) {
+        formData.append('template_parts', JSON.stringify(payload.template_parts));
+      }
+
+      const response = await api.post('/stories/templates/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } else {
+      // Send as JSON for proper nested serialization
+      const jsonPayload = {
+        title: payload.title,
+        description: payload.description,
+        activity_type: payload.activity_type,
+        orientation: payload.orientation,
+        size: payload.size,
+        template_parts: payload.template_parts || [],
+      };
+
+      const response = await api.post('/stories/templates/', jsonPayload);
+      return response.data;
+    }
+  },
+
+  /**
+   * Update an existing story template (staff only)
+   * @param templateId - The template UUID
+   * @param payload - Updated template data
+   */
+  updateTemplate: async (
+    templateId: string,
+    payload: UpdateTemplatePayload
+  ): Promise<StoryTemplate> => {
+    // For updates, we send JSON unless there's a cover image
+    if (payload.cover_image) {
+      const formData = new FormData();
+
+      if (payload.title) formData.append('title', payload.title);
+      if (payload.description) formData.append('description', payload.description);
+      if (payload.activity_type) formData.append('activity_type', payload.activity_type);
+      if (payload.orientation) formData.append('orientation', payload.orientation);
+      if (payload.size) formData.append('size', payload.size);
+      formData.append('cover_image', payload.cover_image);
+
+      if (payload.template_parts) {
+        formData.append('template_parts', JSON.stringify(payload.template_parts));
+      }
+
+      const response = await api.patch(`/stories/templates/${templateId}/`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } else {
+      // JSON update
+      const response = await api.patch(`/stories/templates/${templateId}/`, payload);
+      return response.data;
+    }
+  },
+
+  /**
+   * Delete a story template (staff only)
+   * @param templateId - The template UUID
+   */
+  deleteTemplate: async (templateId: string): Promise<void> => {
+    await api.delete(`/stories/templates/${templateId}/`);
+  },
+
+  // ============================================
+  // TEMPLATE PARTS MANAGEMENT
+  // ============================================
+
+  /**
+   * List all template parts (staff only)
+   * @param templateId - Optional filter by template UUID
+   */
+  getTemplateParts: async (templateId?: string): Promise<TemplatePart[]> => {
+    const response = await api.get('/stories/template-parts/', {
+      params: templateId ? { template: templateId } : undefined,
+    });
+    return response.data;
+  },
+
+  /**
+   * Get a single template part by ID (staff only)
+   * @param partId - The template part UUID
+   */
+  getTemplatePartById: async (partId: string): Promise<TemplatePart> => {
+    const response = await api.get(`/stories/template-parts/${partId}/`);
+    return response.data;
+  },
+
+  /**
+   * Create a new template part (staff only)
+   * @param payload - Template part data
+   */
+  createTemplatePart: async (
+    payload: CreateTemplatePartStandalonePayload
+  ): Promise<TemplatePart> => {
+    const response = await api.post('/stories/template-parts/', payload);
+    return response.data;
+  },
+
+  /**
+   * Update a template part (staff only)
+   * @param partId - The template part UUID
+   * @param payload - Updated part data
+   */
+  updateTemplatePart: async (
+    partId: string,
+    payload: UpdateTemplatePartPayload
+  ): Promise<TemplatePart> => {
+    const response = await api.patch(`/stories/template-parts/${partId}/`, payload);
+    return response.data;
+  },
+
+  /**
+   * Delete a template part (staff only)
+   * @param partId - The template part UUID
+   */
+  deleteTemplatePart: async (partId: string): Promise<void> => {
+    await api.delete(`/stories/template-parts/${partId}/`);
   },
 };

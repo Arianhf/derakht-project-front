@@ -1,0 +1,277 @@
+@use '../../styles/globals.scss' as *;
+
+.templateForm {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.formSection {
+  background: white;
+  padding: 30px;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-sm;
+  margin-bottom: 25px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: $dark-text;
+  margin-bottom: 20px;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: $dark-text;
+    margin-bottom: 8px;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: $border-radius-sm;
+    font-size: 14px;
+    font-family: $font-primary;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    &::placeholder {
+      color: #aaa;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.imageUpload {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.fileInput {
+  display: none;
+}
+
+.fileInputLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8f9fa;
+  color: $dark-text;
+  padding: 12px 20px;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px dashed #ddd;
+  font-size: 14px;
+  font-weight: 600;
+  max-width: 200px;
+
+  &:hover {
+    background: #e9ecef;
+    border-color: #667eea;
+    color: #667eea;
+  }
+}
+
+.imagePreview {
+  width: 200px;
+  height: 150px;
+  border-radius: $border-radius-sm;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.addPartButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: $border-radius-sm;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #ccc;
+  }
+}
+
+.validationMessage {
+  padding: 15px;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: $border-radius-sm;
+  color: #856404;
+  font-size: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+
+  strong {
+    font-weight: bold;
+  }
+}
+
+.partsList {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.emptyParts {
+  text-align: center;
+  padding: 40px 20px;
+  background: #f8f9fa;
+  border-radius: $border-radius-md;
+  border: 2px dashed #ddd;
+
+  p {
+    color: $light-text;
+    margin-bottom: 15px;
+  }
+}
+
+.addFirstPart {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: $border-radius-sm;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.formActions {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.submitButton,
+.cancelButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: $border-radius-md;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.submitButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: $shadow-sm;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.cancelButton {
+  background: #f8f9fa;
+  color: $dark-text;
+  border: 1px solid #ddd;
+
+  &:hover {
+    background: #e9ecef;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .formSection {
+    padding: 20px;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .formActions {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+
+    .addPartButton {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

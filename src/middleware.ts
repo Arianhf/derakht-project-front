@@ -12,7 +12,8 @@ export function middleware(req: NextRequest) {
         '/account',          // Account management
         '/shop/checkout',    // Checkout process
         '/story/create',     // Creating new stories
-        '/story/edit'        // Editing stories
+        '/story/edit',       // Editing stories
+        '/admin'             // Admin panel (requires auth + staff check on client)
     ];
 
     // Check if current path requires authentication
@@ -39,6 +40,7 @@ export const config = {
         '/story/create/:path*',
         '/story/edit/:path*',
         '/shop/checkout/:path*',
+        '/admin/:path*',
         '/login',
     ],
 };

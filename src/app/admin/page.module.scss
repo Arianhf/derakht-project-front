@@ -1,0 +1,85 @@
+@use '../../styles/globals.scss' as *;
+
+.dashboard {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.title {
+  font-size: 32px;
+  color: $dark-text;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: $light-text;
+  margin-bottom: 40px;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.card {
+  background: white;
+  padding: 30px;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-sm;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: $dark-text;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 2px solid transparent;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $shadow-lg;
+    border-color: var(--card-color);
+
+    .cardIcon {
+      transform: scale(1.1);
+    }
+  }
+}
+
+.cardIcon {
+  font-size: 48px;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease;
+}
+
+.cardTitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: $dark-text;
+}
+
+.cardDescription {
+  font-size: 14px;
+  color: $light-text;
+  line-height: 1.6;
+}
+
+@media (max-width: $breakpoint-md) {
+  .title {
+    font-size: 24px;
+  }
+
+  .cardsGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -10,7 +10,9 @@ export interface StoryTemplate {
     id: string;  // UUID
     title: string;
     description: string;
-    activity_type: 'WRITE_FOR_DRAWING' | string;
+    activity_type: 'WRITE_FOR_DRAWING' | 'ILLUSTRATE' | 'COMPLETE_STORY';
+    orientation: 'PORTRAIT' | 'LANDSCAPE';
+    size: '20x20' | '25x25' | '15x23';
     template_parts: TemplatePart[];
     cover_image: string | null;
 }
@@ -93,4 +95,44 @@ export interface Story {
     status?: 'DRAFT' | 'COMPLETED';
     orientation?: StoryOrientation;
     size?: StorySize;
+}
+
+// Admin Template Management Types
+export interface CreateTemplatePartPayload {
+    position: number;
+    canvas_text_template?: object | null;
+    canvas_illustration_template?: object | null;
+}
+
+export interface CreateTemplatePayload {
+    title: string;
+    description: string;
+    activity_type: 'WRITE_FOR_DRAWING' | 'ILLUSTRATE' | 'COMPLETE_STORY';
+    orientation: 'PORTRAIT' | 'LANDSCAPE';
+    size: '20x20' | '25x25' | '15x23';
+    cover_image?: File | null;
+    template_parts?: CreateTemplatePartPayload[];
+}
+
+export interface UpdateTemplatePayload {
+    title?: string;
+    description?: string;
+    activity_type?: 'WRITE_FOR_DRAWING' | 'ILLUSTRATE' | 'COMPLETE_STORY';
+    orientation?: 'PORTRAIT' | 'LANDSCAPE';
+    size?: '20x20' | '25x25' | '15x23';
+    cover_image?: File | null;
+    template_parts?: CreateTemplatePartPayload[];
+}
+
+export interface CreateTemplatePartStandalonePayload {
+    template: string;  // UUID of the template
+    position: number;
+    canvas_text_template?: object | null;
+    canvas_illustration_template?: object | null;
+}
+
+export interface UpdateTemplatePartPayload {
+    position?: number;
+    canvas_text_template?: object | null;
+    canvas_illustration_template?: object | null;
 }
