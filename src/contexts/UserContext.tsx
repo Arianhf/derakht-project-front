@@ -14,6 +14,7 @@ export interface User {
     phone_number?: string;
     profile_image?: string | null;
     default_address?: UserAddress;
+    is_staff?: boolean;
 }
 
 export interface UserAddress {
@@ -30,6 +31,7 @@ export interface UserAddress {
 interface UserContextType {
     user: User | null;
     loading: boolean;
+    isStaff: boolean;
     fetchUser: () => Promise<void>;
     updateProfile: (userData: Partial<User>) => Promise<void>;
     updateAddress: (addressData: UserAddress) => Promise<void>;
@@ -147,6 +149,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             value={{
                 user,
                 loading,
+                isStaff: user?.is_staff || false,
                 fetchUser,
                 updateProfile,
                 updateAddress,
