@@ -170,7 +170,7 @@ const TemplatePartEditor: React.FC<TemplatePartEditorProps> = ({
                         </div>
                         <div className={styles.canvasEditor}>
                             <TextCanvasEditor
-                                key={`text-${index}`}
+                                key={`text-${index}-${size}-${orientation}`}
                                 story={mockStory}
                                 initialState={part.canvas_text_template ? JSON.stringify(part.canvas_text_template) : undefined}
                                 onChange={handleTextCanvasChange}
@@ -200,7 +200,7 @@ const TemplatePartEditor: React.FC<TemplatePartEditorProps> = ({
                         <div className={styles.canvasEditor}>
                             <DrawingCanvas
                                 ref={drawingCanvasRef}
-                                key={`illustration-${index}`}
+                                key={`illustration-${index}-${size}-${orientation}`}
                                 initialState={part.canvas_illustration_template ? JSON.stringify(part.canvas_illustration_template) : undefined}
                                 onChange={handleIllustrationCanvasChange}
                                 backgroundColor="#FFFFFF"
