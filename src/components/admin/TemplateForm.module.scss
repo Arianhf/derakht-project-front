@@ -145,72 +145,7 @@
 .partsList {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-}
-
-.partCard {
-  background: #f8f9fa;
-  border-radius: $border-radius-md;
-  overflow: hidden;
-  border: 1px solid #e9ecef;
-}
-
-.partHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  background: white;
-  border-bottom: 1px solid #e9ecef;
-
-  h3 {
-    font-size: 16px;
-    font-weight: bold;
-    color: $dark-text;
-    margin: 0;
-  }
-}
-
-.removePartButton {
-  background: #e74c3c;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: $border-radius-sm;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-
-  &:hover {
-    background: darken(#e74c3c, 10%);
-    transform: scale(1.05);
-  }
-}
-
-.partBody {
-  padding: 20px;
-}
-
-.canvasSection {
-  margin-top: 20px;
-  padding: 15px;
-  background: white;
-  border-radius: $border-radius-sm;
-
-  h4 {
-    font-size: 14px;
-    font-weight: 600;
-    color: $dark-text;
-    margin-bottom: 10px;
-  }
-}
-
-.jsonTextarea {
-  font-family: 'Courier New', monospace;
-  font-size: 13px;
-  background: #f8f9fa;
-  direction: ltr;
-  text-align: left;
+  gap: 25px;
 }
 
 .emptyParts {

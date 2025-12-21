@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { CreateTemplatePayload, CreateTemplatePartPayload } from '@/types/story';
-import { FaPlus, FaTrash, FaSave, FaTimes, FaImage } from 'react-icons/fa';
+import { FaPlus, FaSave, FaTimes, FaImage } from 'react-icons/fa';
+import TemplatePartEditor from './TemplatePartEditor';
 import styles from './TemplateForm.module.scss';
 
 interface TemplateFormProps {
@@ -200,76 +201,15 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
                 {formData.template_parts && formData.template_parts.length > 0 ? (
                     <div className={styles.partsList}>
                         {formData.template_parts.map((part, index) => (
-                            <div key={index} className={styles.partCard}>
-                                <div className={styles.partHeader}>
-                                    <h3>بخش {index + 1}</h3>
-                                    <button
-                                        type="button"
-                                        onClick={() => removeTemplatePart(index)}
-                                        className={styles.removePartButton}
-                                    >
-                                        <FaTrash />
-                                    </button>
-                                </div>
-
-                                <div className={styles.partBody}>
-                                    <div className={styles.formGroup}>
-                                        <label>موقعیت</label>
-                                        <input
-                                            type="number"
-                                            value={part.position}
-                                            onChange={(e) =>
-                                                updateTemplatePart(index, 'position', parseInt(e.target.value))
-                                            }
-                                            min="0"
-                                        />
-                                    </div>
-
-                                    <div className={styles.canvasSection}>
-                                        <h4>قالب بوم متن</h4>
-                                        <textarea
-                                            placeholder='JSON قالب بوم متن (مثال: {"elements": [], "background": "#ffffff"})'
-                                            value={
-                                                part.canvas_text_template
-                                                    ? JSON.stringify(part.canvas_text_template, null, 2)
-                                                    : ''
-                                            }
-                                            onChange={(e) => {
-                                                try {
-                                                    const json = e.target.value ? JSON.parse(e.target.value) : null;
-                                                    updateTemplatePart(index, 'canvas_text_template', json);
-                                                } catch (err) {
-                                                    // Invalid JSON, don't update
-                                                }
-                                            }}
-                                            rows={4}
-                                            className={styles.jsonTextarea}
-                                        />
-                                    </div>
-
-                                    <div className={styles.canvasSection}>
-                                        <h4>قالب بوم تصویرسازی</h4>
-                                        <textarea
-                                            placeholder='JSON قالب بوم تصویرسازی (مثال: {"elements": [], "tools": ["pencil"]})'
-                                            value={
-                                                part.canvas_illustration_template
-                                                    ? JSON.stringify(part.canvas_illustration_template, null, 2)
-                                                    : ''
-                                            }
-                                            onChange={(e) => {
-                                                try {
-                                                    const json = e.target.value ? JSON.parse(e.target.value) : null;
-                                                    updateTemplatePart(index, 'canvas_illustration_template', json);
-                                                } catch (err) {
-                                                    // Invalid JSON, don't update
-                                                }
-                                            }}
-                                            rows={4}
-                                            className={styles.jsonTextarea}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+                            <TemplatePartEditor
+                                key={index}
+                                part={part}
+                                index={index}
+                                orientation={formData.orientation}
+                                size={formData.size}
+                                onUpdate={updateTemplatePart}
+                                onRemove={removeTemplatePart}
+                            />
                         ))}
                     </div>
                 ) : (
