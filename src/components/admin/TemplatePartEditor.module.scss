@@ -168,10 +168,12 @@
   padding: 15px;
   box-shadow: $shadow-sm;
   min-height: 500px;
+  height: 600px; // Fixed height to ensure TextCanvasEditor can calculate dimensions
 
-  // Ensure canvas takes full width
+  // Ensure canvas takes full width and height
   > div {
     width: 100%;
+    height: 100%;
   }
 }
 

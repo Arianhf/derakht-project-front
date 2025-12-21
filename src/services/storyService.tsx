@@ -274,28 +274,42 @@ export const storyService = {
    * @param payload - Template data including nested parts
    */
   createTemplate: async (payload: CreateTemplatePayload): Promise<StoryTemplate> => {
-    const formData = new FormData();
-
-    formData.append('title', payload.title);
-    formData.append('description', payload.description);
-    formData.append('activity_type', payload.activity_type);
-    formData.append('orientation', payload.orientation);
-    formData.append('size', payload.size);
-
+    // If there's a cover image, use FormData (multipart/form-data)
+    // Otherwise, use JSON to properly handle nested template_parts
     if (payload.cover_image) {
+      const formData = new FormData();
+
+      formData.append('title', payload.title);
+      formData.append('description', payload.description);
+      formData.append('activity_type', payload.activity_type);
+      formData.append('orientation', payload.orientation);
+      formData.append('size', payload.size);
       formData.append('cover_image', payload.cover_image);
-    }
 
-    if (payload.template_parts && payload.template_parts.length > 0) {
-      formData.append('template_parts', JSON.stringify(payload.template_parts));
-    }
+      if (payload.template_parts && payload.template_parts.length > 0) {
+        formData.append('template_parts', JSON.stringify(payload.template_parts));
+      }
 
-    const response = await api.post('/stories/templates/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
+      const response = await api.post('/stories/templates/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } else {
+      // Send as JSON for proper nested serialization
+      const jsonPayload = {
+        title: payload.title,
+        description: payload.description,
+        activity_type: payload.activity_type,
+        orientation: payload.orientation,
+        size: payload.size,
+        template_parts: payload.template_parts || [],
+      };
+
+      const response = await api.post('/stories/templates/', jsonPayload);
+      return response.data;
+    }
   },
 
   /**
