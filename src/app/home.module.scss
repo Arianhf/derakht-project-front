@@ -3,15 +3,14 @@
 
 .homeContainer {
   min-height: $default-min-height;
-  background: $gradient-bg;
+  background: $background;
 }
 
 .heroSection {
   position: relative;
-  padding: 170px $spacing-md $spacing-xl;
+  padding: 170px $spacing-md 80px;
   @include tiered-max-width;
   margin: 0 auto;
-  animation: fadeIn 1s ease-out;
 }
 
 .heroContent {
@@ -94,42 +93,36 @@
 }
 
 .primaryButton {
-  padding: $spacing-md $spacing-lg;
+  padding: 14px 32px;
   background-color: $primary-color;
   color: white;
   border: none;
-  border-radius: $border-radius-full;
+  border-radius: 12px;
   font-size: $font-size-base;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
-  transition: $transition-base;
-  box-shadow: $shadow-sm;
+  transition: $transition-fast;
   font-family: $font-primary;
 
   &:hover {
-    background-color: color.adjust($primary-color, $lightness: -10%);
-    transform: translateY(-3px);
-    box-shadow: $shadow-md;
+    background-color: color.adjust($primary-color, $lightness: -8%);
   }
 }
 
 .secondaryButton {
-  padding: $spacing-md $spacing-lg;
-  background-color: $secondary-color;
-  color: white;
-  border: none;
-  border-radius: $border-radius-full;
+  padding: 14px 32px;
+  background-color: white;
+  color: $primary-color;
+  border: 2px solid $primary-color;
+  border-radius: 12px;
   font-size: $font-size-base;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
-  transition: $transition-base;
-  box-shadow: $shadow-sm;
+  transition: $transition-fast;
   font-family: $font-primary;
 
   &:hover {
-    background-color: color.adjust($secondary-color, $lightness: -10%);
-    transform: translateY(-3px);
-    box-shadow: $shadow-md;
+    background-color: rgba($primary-color, 0.05);
   }
 }
 
@@ -155,8 +148,7 @@
 
 .heroImage {
   object-fit: cover;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-md;
+  border-radius: 16px;
 }
 
 .floatingCircle {
@@ -195,98 +187,90 @@
 }
 
 .featuresSection {
-  padding: $spacing-xl $spacing-md;
+  padding: 80px $spacing-md;
   @include tiered-max-width;
   margin: 0 auto;
-  animation: fadeIn 1s ease-out;
-  animation-delay: 0.3s;
-  opacity: 0;
-  animation-fill-mode: forwards;
 }
 
 .sectionTitle {
   font-size: $font-size-title;
-  font-weight: bold;
+  font-weight: 700;
   text-align: center;
-  margin-bottom: $spacing-xl;
+  margin-bottom: 48px;
   color: $dark-text;
-  position: relative;
-  display: inline-block;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .titleUnderline {
-  position: absolute;
-  bottom: -10px;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(to right, $primary-color, $secondary-color, $accent-color);
+  display: none;
 }
 
 .featuresGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: $spacing-lg;
+  gap: 24px;
 
   @media (min-width: $breakpoint-md) {
     grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
   }
 
   @media (min-width: $breakpoint-lg) {
     grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
   }
 }
 
 .featureCard {
-  background-color: rgba($card-bg, 0.8);
-  padding: $spacing-md;
-  border-radius: $border-radius-md;
-  box-shadow: $shadow-sm;
+  background-color: $card-bg;
+  padding: 32px 24px;
+  border-radius: 16px;
+  border: 1px solid rgba($dark-text, 0.08);
   text-align: center;
-  transition: $transition-base;
+  transition: $transition-fast;
 
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: $shadow-md;
+    border-color: rgba($primary-color, 0.2);
+    background-color: rgba($primary-color, 0.02);
   }
 }
 
 .featureIconContainer {
-  width: 70px;
-  height: 70px;
-  margin: 0 auto $spacing-sm;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 12px;
+  background-color: rgba($primary-color, 0.08);
+  color: $primary-color;
 }
 
 .purpleIcon {
-  background-color: rgba($primary-color, 0.1);
+  background-color: rgba($primary-color, 0.08);
   color: $primary-color;
 }
 
 .greenIcon {
-  background-color: rgba($accent-color, 0.1);
-  color: $accent-color;
+  background-color: rgba($primary-color, 0.08);
+  color: $primary-color;
 }
 
 .blueIcon {
-  background-color: rgba($primary-color, 0.1);
+  background-color: rgba($primary-color, 0.08);
   color: $primary-color;
 }
 
 .yellowIcon {
-  background-color: rgba($secondary-color, 0.1);
-  color: $secondary-color;
+  background-color: rgba($primary-color, 0.08);
+  color: $primary-color;
 }
 
 .featureTitle {
   font-size: $font-size-lg;
-  font-weight: bold;
-  margin-bottom: $spacing-sm;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: $dark-text;
 }
 
 .purpleTitle {
@@ -294,15 +278,15 @@
 }
 
 .greenTitle {
-  color: $accent-color;
+  color: $dark-text;
 }
 
 .blueTitle {
-  color: $primary-color;
+  color: $dark-text;
 }
 
 .yellowTitle {
-  color: $secondary-color;
+  color: $dark-text;
 }
 
 .featureDescription {
@@ -311,97 +295,77 @@
 }
 
 .valuesSection {
-  padding: $spacing-xl $spacing-md;
+  padding: 80px $spacing-md;
   @include tiered-max-width;
   margin: 0 auto;
-  animation: fadeIn 1s ease-out;
-  animation-delay: 0.5s;
-  opacity: 0;
-  animation-fill-mode: forwards;
 }
 
 .valuesContainer {
-  background-color: rgba($card-bg, 0.7);
-  border-radius: $border-radius-lg;
-  padding: $spacing-lg;
-  box-shadow: $shadow-md;
-  position: relative;
-  overflow: hidden;
+  background-color: $card-bg;
+  border-radius: 16px;
+  padding: 48px 32px;
+  border: 1px solid rgba($dark-text, 0.08);
 }
 
 .valuesTopBorder {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 8px;
-  background: linear-gradient(to right, $primary-color, $secondary-color, $accent-color);
+  display: none;
 }
 
 .valuesTitle {
   font-size: $font-size-xxl;
-  font-weight: bold;
+  font-weight: 700;
   text-align: right;
-  margin-bottom: $spacing-lg;
+  margin-bottom: 32px;
   color: $dark-text;
 }
 
 .valuesGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: $spacing-md;
+  gap: 24px;
 
   @media (min-width: $breakpoint-md) {
     grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
   }
 }
 
 .valueItem {
-  padding: $spacing-sm;
+  padding: 20px 16px;
   text-align: right;
-  border-radius: $border-radius-sm;
+  border-radius: 8px;
   transition: $transition-fast;
-  border-right-width: 4px;
-  border-right-style: solid;
-  padding-right: $spacing-sm;
 }
 
 .purpleBorder {
-  border-right-color: $dark-text;
-
   &:hover {
-    background-color: rgba($dark-text, 0.05);
+    background-color: rgba($primary-color, 0.03);
   }
 }
 
 .greenBorder {
-  border-right-color: $accent-color;
-
   &:hover {
-    background-color: rgba($accent-color, 0.05);
+    background-color: rgba($primary-color, 0.03);
   }
 }
 
 .blueBorder {
-  border-right-color: $primary-color;
-
   &:hover {
-    background-color: rgba($primary-color, 0.05);
+    background-color: rgba($primary-color, 0.03);
   }
 }
 
 .yellowBorder {
-  border-right-color: $secondary-color;
-
   &:hover {
-    background-color: rgba($secondary-color, 0.05);
+    background-color: rgba($primary-color, 0.03);
   }
 }
 
 .valueTitle {
   font-size: $font-size-lg;
-  font-weight: bold;
-  margin-bottom: $spacing-xs;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: $dark-text;
 }
 
 .purpleValueTitle {
@@ -409,15 +373,15 @@
 }
 
 .greenValueTitle {
-  color: $accent-color;
+  color: $dark-text;
 }
 
 .blueValueTitle {
-  color: $primary-color;
+  color: $dark-text;
 }
 
 .yellowValueTitle {
-  color: $secondary-color;
+  color: $dark-text;
 }
 
 .valueDescription {
@@ -426,29 +390,30 @@
 }
 
 .ctaSection {
-  padding: $spacing-xl $spacing-md;
+  padding: 80px $spacing-md;
   @include tiered-max-width;
   margin: 0 auto;
   text-align: center;
 }
 
 .ctaCard {
-  background: linear-gradient(to right, $accent-color, color.adjust($accent-color, $lightness: 15%));
-  border-radius: $border-radius-lg;
-  padding: $spacing-xl;
-  box-shadow: $shadow-md;
+  background-color: rgba($primary-color, 0.05);
+  border-radius: 16px;
+  padding: 64px 32px;
+  border: 1px solid rgba($primary-color, 0.1);
   color: $dark-text;
 }
 
 .ctaTitle {
   font-size: $font-size-xxl;
-  font-weight: bold;
-  margin-bottom: $spacing-md;
+  font-weight: 700;
+  margin-bottom: 16px;
 }
 
 .ctaDescription {
   font-size: $font-size-lg;
-  margin-bottom: $spacing-lg;
+  margin-bottom: 32px;
+  color: $light-text;
 }
 
 .ctaButtons {
@@ -459,13 +424,14 @@
 }
 
 .ctaButton {
-  padding: $spacing-sm $spacing-md;
-  border-radius: $border-radius-full;
+  padding: 14px 32px;
+  border-radius: 12px;
   font-size: $font-size-base;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
-  transition: $transition-base;
+  transition: $transition-fast;
   font-family: $font-primary;
+  border: none;
 }
 
 .yellowButton {
@@ -473,20 +439,17 @@
   color: white;
 
   &:hover {
-    background-color: color.adjust($primary-color, $lightness: -10%);
-    transform: translateY(-3px);
-    box-shadow: $shadow-md;
+    background-color: color.adjust($primary-color, $lightness: -8%);
   }
 }
 
 .whiteButton {
   background-color: white;
   color: $primary-color;
+  border: 2px solid $primary-color;
 
   &:hover {
-    background-color: #f0f0f0;
-    transform: translateY(-3px);
-    box-shadow: $shadow-md;
+    background-color: rgba($primary-color, 0.05);
   }
 }
 
