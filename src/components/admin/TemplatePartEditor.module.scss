@@ -163,7 +163,7 @@
 }
 
 .canvasEditor {
-  background: white;
+  background: #e9ecef; // Light gray background to make canvas boundaries visible
   border-radius: $border-radius-sm;
   padding: 0; // Removed padding to eliminate whitespace around canvas
   box-shadow: $shadow-sm;
