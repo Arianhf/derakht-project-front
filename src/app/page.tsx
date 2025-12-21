@@ -1,7 +1,7 @@
 // src/app/page.tsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
@@ -12,28 +12,6 @@ import logo from '@/assets/images/logo2.png';
 
 const HomePage = () => {
   const router = useRouter();
-
-  // Animation states for elements
-  const [animateHero, setAnimateHero] = useState(false);
-  const [animateFeatures, setAnimateFeatures] = useState(false);
-  const [animateValues, setAnimateValues] = useState(false);
-
-  useEffect(() => {
-    setAnimateHero(true);
-
-    const featuresTimer = setTimeout(() => {
-      setAnimateFeatures(true);
-    }, 500);
-
-    const valuesTimer = setTimeout(() => {
-      setAnimateValues(true);
-    }, 1000);
-
-    return () => {
-      clearTimeout(featuresTimer);
-      clearTimeout(valuesTimer);
-    };
-  }, []);
 
   // Structured Data for Organization
   const organizationSchema = {
@@ -88,15 +66,13 @@ const HomePage = () => {
         <Navbar logo={logo} />
 
         {/* Hero Section */}
-        <section className={styles.heroSection} style={{ opacity: animateHero ? 1 : 0, transform: animateHero ? 'translateY(0)' : 'translateY(10px)' }}>
+        <section className={styles.heroSection}>
           <div className={styles.heroContent}>
             <div className={styles.heroText}>
               <h1 className={styles.heroTitle}>
                 <span>به دنیای رنگارنگ</span>
                 <span className={styles.heroEmphasis}>درخت</span>
                 <span>خوش آمدید!</span>
-                <span className={`${styles.sparkle} ${styles.sparkleTop}`}>✨</span>
-                <span className={`${styles.sparkle} ${styles.sparkleBottom}`}>✨</span>
               </h1>
               <p className={styles.heroDescription}>
                 برای خلق اثری ماندگار از کودکی. مناسب بچه‌های یک تا یک‌صد ساله.
@@ -126,21 +102,15 @@ const HomePage = () => {
                     priority
                     className={styles.heroImage}
                 />
-
-                {/* Floating elements for playful decoration */}
-                <div className={`${styles.floatingCircle} ${styles.yellowCircle}`}></div>
-                <div className={`${styles.floatingCircle} ${styles.pinkCircle}`}></div>
-                <div className={`${styles.floatingCircle} ${styles.blueCircle}`}></div>
               </div>
             </div>
           </div>
         </section>
 
         {/* Features Section */}
-        <section className={styles.featuresSection} style={{ opacity: animateFeatures ? 1 : 0, transform: animateFeatures ? 'translateY(0)' : 'translateY(10px)' }}>
+        <section className={styles.featuresSection}>
           <h2 className={styles.sectionTitle}>
-            <span>در درخت</span>
-            <div className={styles.titleUnderline}></div>
+            در درخت
           </h2>
 
           <div className={styles.featuresGrid}>
@@ -179,10 +149,8 @@ const HomePage = () => {
         </section>
 
         {/* Values Section */}
-        <section className={styles.valuesSection} style={{ opacity: animateValues ? 1 : 0, transform: animateValues ? 'translateY(0)' : 'translateY(10px)' }}>
+        <section className={styles.valuesSection}>
           <div className={styles.valuesContainer}>
-            <div className={styles.valuesTopBorder}></div>
-
             <h2 className={styles.valuesTitle}>
               ارزش‌های ما
             </h2>
