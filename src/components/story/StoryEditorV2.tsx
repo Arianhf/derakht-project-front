@@ -11,7 +11,7 @@ interface StoryEditorV2Props {
   story: Story;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (updatedTexts: string[], canvasData: { [key: number]: string }) => Promise<void>;
+  onSave: (textCanvasData: { [key: number]: object }, illustrationCanvasData: { [key: number]: object }) => Promise<void>;
   onCoverImageUpload?: (file: File) => void;
   onCoverImageSelect?: (imageUrl: string) => void;
   onColorChange?: (backgroundColor?: string, fontColor?: string) => void;
@@ -96,14 +96,14 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   const [currentPartIndex, setCurrentPartIndex] = useState(0);
   const [currentView, setCurrentView] = useState<ViewType>('image');
   const [isMobile, setIsMobile] = useState(false);
-  const [texts, setTexts] = useState<string[]>([]);
+  const [textCanvasStates, setTextCanvasStates] = useState<{ [key: number]: object }>({});
+  const [illustrationCanvasStates, setIllustrationCanvasStates] = useState<{ [key: number]: object }>({});
   const [isSaving, setIsSaving] = useState(false);
   const [isFinishing, setIsFinishing] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  const [canvasStates, setCanvasStates] = useState<{ [key: number]: string }>({});
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState(story.title || '');
   const contentRef = useRef<HTMLDivElement>(null);
@@ -159,13 +159,6 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
     }
   }, [isMobile, isSinglePageMobile, currentView, currentPartIndex]);
 
-  // Initialize texts from story parts
-  useEffect(() => {
-    if (story.parts) {
-      setTexts(story.parts.map(part => part.text || ''));
-    }
-  }, [story.parts]);
-
   // Update edited title when story changes
   useEffect(() => {
     setEditedTitle(story.title || '');
@@ -174,13 +167,18 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   // Initialize canvas states from story parts
   useEffect(() => {
     if (story.parts) {
-      const initialCanvasStates: { [key: number]: string } = {};
+      const initialTextCanvasStates: { [key: number]: object } = {};
+      const initialIllustrationCanvasStates: { [key: number]: object } = {};
       story.parts.forEach((part, index) => {
-        if (part.canvas_data) {
-          initialCanvasStates[index] = part.canvas_data;
+        if (part.canvas_text_data) {
+          initialTextCanvasStates[index] = part.canvas_text_data;
+        }
+        if (part.canvas_illustration_data) {
+          initialIllustrationCanvasStates[index] = part.canvas_illustration_data;
         }
       });
-      setCanvasStates(initialCanvasStates);
+      setTextCanvasStates(initialTextCanvasStates);
+      setIllustrationCanvasStates(initialIllustrationCanvasStates);
     }
   }, [story.parts]);
 
@@ -247,7 +245,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      await onSave(texts, canvasStates);
+      await onSave(textCanvasStates, illustrationCanvasStates);
       setHasUnsavedChanges(false);
     } catch (error) {
       console.error('Error saving story:', error);
@@ -257,10 +255,27 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
     }
   };
 
-  const handleCanvasChange = (index: number, canvasJSON: string) => {
-    const newCanvasStates = { ...canvasStates };
-    newCanvasStates[index] = canvasJSON;
-    setCanvasStates(newCanvasStates);
+  const handleTextCanvasChange = (index: number, canvasJSON: string) => {
+    const newCanvasStates = { ...textCanvasStates };
+    try {
+      newCanvasStates[index] = JSON.parse(canvasJSON);
+    } catch (e) {
+      console.error('Error parsing canvas JSON:', e);
+      return;
+    }
+    setTextCanvasStates(newCanvasStates);
+    setHasUnsavedChanges(true);
+  };
+
+  const handleIllustrationCanvasChange = (index: number, canvasJSON: string) => {
+    const newCanvasStates = { ...illustrationCanvasStates };
+    try {
+      newCanvasStates[index] = JSON.parse(canvasJSON);
+    } catch (e) {
+      console.error('Error parsing canvas JSON:', e);
+      return;
+    }
+    setIllustrationCanvasStates(newCanvasStates);
     setHasUnsavedChanges(true);
   };
 
@@ -271,7 +286,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
       setIsFinishing(true);
       // Save any unsaved changes first
       if (hasUnsavedChanges) {
-        await onSave(texts, canvasStates);
+        await onSave(textCanvasStates, illustrationCanvasStates);
         setHasUnsavedChanges(false);
       }
       await onFinish();
@@ -383,7 +398,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   };
 
   /**
-   * Renders a content box (text editor or image) with proper aspect ratio
+   * Renders a content box (text editor or illustration canvas) with proper aspect ratio
    */
   const renderContentBox = (type: ViewType, part = currentPart, index = currentPartIndex) => {
     return (
@@ -395,23 +410,26 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
           {type === 'text' ? (
             <div className={styles.textEditorWrapper}>
               <TextCanvasEditor
-                key={`canvas-${index}`}
+                key={`text-canvas-${index}`}
                 story={story}
-                initialState={canvasStates[index]}
-                onChange={(canvasJSON) => handleCanvasChange(index, canvasJSON)}
+                initialState={textCanvasStates[index] ? JSON.stringify(textCanvasStates[index]) : undefined}
+                onChange={(canvasJSON) => handleTextCanvasChange(index, canvasJSON)}
                 backgroundColor={story.background_color || '#FFFFFF'}
               />
             </div>
           ) : (
             <div className={styles.imageContent}>
-              <Image
-                src={part?.illustration || '/placeholder-image.jpg'}
-                alt={`تصویر داستان - بخش ${index + 1}`}
-                fill
-                className={styles.storyImage}
-                style={{ objectFit: 'cover' }}
-                priority={index === 0}
-              />
+              {/* TODO: Render illustration canvas data - for now show placeholder */}
+              {part?.canvas_illustration_data ? (
+                <div className={styles.illustrationCanvas}>
+                  {/* Illustration canvas rendering will be implemented */}
+                  <p>قسمت تصویر (Canvas JSON)</p>
+                </div>
+              ) : (
+                <div className={styles.placeholderImage}>
+                  <p>تصویری وجود ندارد</p>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -632,40 +650,8 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
                     </div>
                   )}
 
-                  {/* Select from existing images */}
-                  {onCoverImageSelect && story.parts.length > 0 && (
-                    <div className={styles.existingImagesSection}>
-                      <p className={styles.sectionSubtitle}>انتخاب از تصاویر داستان:</p>
-                      <div className={styles.imageGrid}>
-                        {story.parts
-                          .filter(part => part.illustration)
-                          .map((part, index) => (
-                            <button
-                              key={part.id}
-                              className={`${styles.imageOption} ${
-                                story.cover_image === part.illustration ? styles.selected : ''
-                              }`}
-                              onClick={() => handleSelectExistingImage(part.illustration!)}
-                              aria-label={`انتخاب تصویر بخش ${index + 1}`}
-                            >
-                              <Image
-                                src={part.illustration!}
-                                alt={`تصویر بخش ${index + 1}`}
-                                width={120}
-                                height={120}
-                                className={styles.imageOptionThumb}
-                                style={{ objectFit: 'cover' }}
-                              />
-                              {story.cover_image === part.illustration && (
-                                <div className={styles.selectedBadge}>
-                                  <span className={styles.selectedCheck}>✓</span>
-                                </div>
-                              )}
-                            </button>
-                          ))}
-                      </div>
-                    </div>
-                  )}
+                  {/* Note: Cover image selection from canvas data needs implementation */}
+                  {/* TODO: Implement cover image selection from illustration canvas data */}
 
                   {/* Upload new image */}
                   {onCoverImageUpload && (

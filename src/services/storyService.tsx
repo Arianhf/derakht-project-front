@@ -34,24 +34,48 @@ export const storyService = {
   addStoryPart: async (
     storyId: string,
     storyPartTemplateId: string,
-    text: string,
-    canvasData?: string
+    canvasTextData?: object,
+    canvasIllustrationData?: object
   ): Promise<StoryPart> => {
     const payload: {
-      text: string;
       story_part_template_id: string;
-      canvas_data?: string;
+      canvas_text_data?: object;
+      canvas_illustration_data?: object;
     } = {
-      text,
       story_part_template_id: storyPartTemplateId,
     };
 
-    // Only include canvas_data if it's provided
-    if (canvasData) {
-      payload.canvas_data = canvasData;
+    // Only include canvas data if provided
+    if (canvasTextData) {
+      payload.canvas_text_data = canvasTextData;
+    }
+    if (canvasIllustrationData) {
+      payload.canvas_illustration_data = canvasIllustrationData;
     }
 
     const response = await api.post(`/stories/${storyId}/add_part/`, payload);
+    return response.data;
+  },
+
+  resetStoryPart: async (
+    partId: string,
+    resetText: boolean = true,
+    resetIllustration: boolean = true
+  ): Promise<StoryPart> => {
+    const payload: {
+      reset_text?: boolean;
+      reset_illustration?: boolean;
+    } = {};
+
+    // Include reset flags based on parameters
+    if (resetText !== undefined) {
+      payload.reset_text = resetText;
+    }
+    if (resetIllustration !== undefined) {
+      payload.reset_illustration = resetIllustration;
+    }
+
+    const response = await api.post(`/stories/parts/${partId}/reset/`, payload);
     return response.data;
   },
 

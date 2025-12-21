@@ -183,7 +183,13 @@ const IllustrateStoryPage = () => {
             <div className={styles.mobileContent}>
               <div className={styles.textContainer}>
                 <h2 className={styles.partTitle}>بخش {toPersianNumber(currentIndex + 1)}</h2>
-                <p className={styles.partPrompt}>{currentPart.text}</p>
+                <p className={styles.partPrompt}>
+                  {currentPart.canvas_text_data
+                    ? (typeof currentPart.canvas_text_data === 'string'
+                        ? currentPart.canvas_text_data
+                        : JSON.stringify(currentPart.canvas_text_data))
+                    : 'متنی وجود ندارد'}
+                </p>
               </div>
 
               <div className={styles.uploadContainer}>
@@ -246,7 +252,13 @@ const IllustrateStoryPage = () => {
               <div className={styles.mainContainer}>
                 <div className={styles.textBlock}>
                   <h2 className={styles.partTitle}>بخش {toPersianNumber(currentIndex + 1)}</h2>
-                  <p className={styles.partPrompt}>{currentPart.text}</p>
+                  <p className={styles.partPrompt}>
+                    {currentPart.canvas_text_data
+                      ? (typeof currentPart.canvas_text_data === 'string'
+                          ? currentPart.canvas_text_data
+                          : JSON.stringify(currentPart.canvas_text_data))
+                      : 'متنی وجود ندارد'}
+                  </p>
                   <div className={styles.navigationButtons}>
                     <button
                         className={styles.prevButton}
@@ -373,7 +385,7 @@ const IllustrateStoryPage = () => {
         <StoryPreview
             parts={template.parts.map((part, index) => ({
               illustration: imageUrls[index] || "/placeholder-image.jpg",
-              text: part.text || "متنی وجود ندارد",
+              text: part.canvas_text_data ? JSON.stringify(part.canvas_text_data) : "متنی وجود ندارد",
             }))}
             isOpen={isPreviewOpen}
             onClose={() => setIsPreviewOpen(false)}

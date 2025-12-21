@@ -25,8 +25,8 @@ import { FaPaintBrush, FaPen, FaClock, FaBook } from 'react-icons/fa';
 interface TemplatePart {
   id: string;
   position: number;
-  prompt_text: string;
-  illustration: string;
+  canvas_text_template: object | null;
+  canvas_illustration_template: object | null;
 }
 
 interface Template {
@@ -48,8 +48,8 @@ interface TemplateResponse {
 interface StoryPart {
   id: string;
   position: number;
-  text: string;
-  illustration: string | null;
+  canvas_text_data: object | null;
+  canvas_illustration_data: object | null;
 }
 
 interface Story {
