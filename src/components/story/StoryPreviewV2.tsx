@@ -225,7 +225,9 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
    * Renders a content box (text or image) with proper aspect ratio
    */
   const renderContentBox = (type: ViewType, part = currentPart) => {
-    const content = type === 'text' ? part?.text : part?.illustration;
+    const content = type === 'text'
+      ? (part?.canvas_text_data ? JSON.stringify(part.canvas_text_data) : '')
+      : (part?.canvas_illustration_data ? JSON.stringify(part.canvas_illustration_data) : '');
 
     return (
       <div
@@ -234,12 +236,12 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
       >
         <div className={styles.contentInner}>
           {type === 'text' ? (
-            // Render canvas viewer if canvas_data exists, otherwise show text
-            part?.canvas_data ? (
+            // Render canvas viewer if canvas_text_data exists
+            part?.canvas_text_data ? (
               <div className={styles.canvasViewerWrapper}>
                 <TextCanvasViewer
                   key={`canvas-part-${currentPartIndex}`}
-                  canvasData={part.canvas_data}
+                  canvasData={typeof part.canvas_text_data === 'string' ? part.canvas_text_data : JSON.stringify(part.canvas_text_data)}
                   backgroundColor={story.background_color || '#FFFFFF'}
                 />
               </div>

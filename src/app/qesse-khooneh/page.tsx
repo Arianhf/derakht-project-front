@@ -152,7 +152,7 @@ const QesseKhoonehPage: React.FC = () => {
                                         </p>
                                     </div>
                                     <p className={styles.storyExcerpt}>
-                                        {story.parts[0]?.text.substring(0, 50) || "بدون متن"}...
+                                        {story.parts[0]?.canvas_text_data ? "قصه آماده است..." : "بدون متن"}
                                     </p>
                                     <div className={styles.actions}>
                                         <button

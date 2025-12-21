@@ -20,8 +20,8 @@ const createStoryParts = (count: number): StoryPart[] => {
   return Array.from({ length: count }, (_, i) => ({
     id: `part-${i + 1}`,
     position: i + 1,
-    text: `این متن بخش ${i + 1} از داستان است. در این بخش، کودکان با شخصیت‌های جذاب و ماجراهای هیجان‌انگیز آشنا می‌شوند. هر بخش داستان، پیامی آموزنده و سرگرم‌کننده برای کودکان دارد.`,
-    illustration: `https://picsum.photos/seed/story${i + 1}/800/600`,
+    canvas_text_data: { text: `این متن بخش ${i + 1} از داستان است. در این بخش، کودکان با شخصیت‌های جذاب و ماجراهای هیجان‌انگیز آشنا می‌شوند. هر بخش داستان، پیامی آموزنده و سرگرم‌کننده برای کودکان دارد.` },
+    canvas_illustration_data: { imageUrl: `https://picsum.photos/seed/story${i + 1}/800/600` },
     story_part_template: `template-${i + 1}`,
     created_at: new Date().toISOString(),
   }));

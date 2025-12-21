@@ -54,23 +54,26 @@ const StoryEditPage = () => {
     fetchStory();
   }, [id]);
 
-  const handleSave = async (updatedTexts: string[], canvasData: { [key: number]: string }) => {
+  const handleSave = async (
+    textCanvasData: { [key: number]: object },
+    illustrationCanvasData: { [key: number]: object }
+  ) => {
     if (!story) return;
 
     try {
-      // Update each part's text and canvas data
+      // Update each part's canvas data
       for (let i = 0; i < story.parts.length; i++) {
         const part = story.parts[i];
-        const hasTextChanged = part.text !== updatedTexts[i];
-        const hasCanvasData = canvasData[i] !== undefined && canvasData[i] !== '';
+        const hasTextCanvas = textCanvasData[i] !== undefined;
+        const hasIllustrationCanvas = illustrationCanvasData[i] !== undefined;
 
-        if (hasTextChanged || hasCanvasData) {
-          // Call API to update this part with text and canvas data
+        if (hasTextCanvas || hasIllustrationCanvas) {
+          // Call API to update this part with canvas data
           await storyService.addStoryPart(
             story.id,
             part.story_part_template,
-            updatedTexts[i],
-            hasCanvasData ? canvasData[i] : undefined // Pass canvas data if it exists
+            hasTextCanvas ? textCanvasData[i] : undefined,
+            hasIllustrationCanvas ? illustrationCanvasData[i] : undefined
           );
         }
       }
@@ -80,8 +83,8 @@ const StoryEditPage = () => {
         ...story,
         parts: story.parts.map((part, index) => ({
           ...part,
-          text: updatedTexts[index],
-          canvas_data: canvasData[index] || part.canvas_data, // Preserve or update canvas data
+          canvas_text_data: textCanvasData[index] || part.canvas_text_data,
+          canvas_illustration_data: illustrationCanvasData[index] || part.canvas_illustration_data,
         })),
       };
       setStory(updatedStory);

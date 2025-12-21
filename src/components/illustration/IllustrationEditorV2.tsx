@@ -137,8 +137,10 @@ const IllustrationEditorV2: React.FC<IllustrationEditorV2Props> = ({
     if (story.parts) {
       const initialCanvasStates: { [key: number]: string } = {};
       story.parts.forEach((part, index) => {
-        if (part.canvas_data) {
-          initialCanvasStates[index] = part.canvas_data;
+        if (part.canvas_illustration_data) {
+          initialCanvasStates[index] = typeof part.canvas_illustration_data === 'string'
+            ? part.canvas_illustration_data
+            : JSON.stringify(part.canvas_illustration_data);
         }
       });
       setCanvasStates(initialCanvasStates);
@@ -352,7 +354,13 @@ const IllustrationEditorV2: React.FC<IllustrationEditorV2Props> = ({
             </div>
           ) : (
             <div className={styles.textPrompt}>
-              <p>{part?.text || 'متن داستان'}</p>
+              <p>
+                {part?.canvas_text_data
+                  ? (typeof part.canvas_text_data === 'string'
+                      ? part.canvas_text_data
+                      : JSON.stringify(part.canvas_text_data))
+                  : 'متن داستان'}
+              </p>
             </div>
           )}
         </div>

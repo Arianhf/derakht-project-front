@@ -18,18 +18,17 @@ export interface StoryTemplate {
 export interface TemplatePart {
     id: string;  // UUID
     position: number;
-    prompt_text: string;
-    illustration: string | null;
+    canvas_text_template: object | null;  // Canvas JSON for text canvas template
+    canvas_illustration_template: object | null;  // Canvas JSON for illustration canvas template
 }
 
 export interface StoryPart {
     created_at: string;
     id: string;
     position: number;
-    text: string;
     story_part_template: string;
-    illustration: string | null;
-    canvas_data?: string | null;  // Fabric.js canvas JSON for advanced text editing
+    canvas_text_data: object | null;  // Canvas JSON for text canvas
+    canvas_illustration_data: object | null;  // Canvas JSON for illustration canvas
 }
 
 // Canvas metadata structure for storing canvas data with dimensions
