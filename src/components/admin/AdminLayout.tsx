@@ -42,6 +42,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             if (!user) {
                 router.push('/login?redirect=/admin');
             } else if (!isStaff) {
+                console.log('Admin access denied. User data:', user);
+                console.log('isStaff value:', isStaff);
+                console.log('user.is_staff value:', user?.is_staff);
                 router.push('/');
             }
         }
