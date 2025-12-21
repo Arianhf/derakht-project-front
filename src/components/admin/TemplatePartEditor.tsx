@@ -4,6 +4,7 @@ import React, { useRef, useState } from 'react';
 import TextCanvasEditor from '@/components/story/TextCanvasEditor';
 import DrawingCanvas, { DrawingCanvasRef } from '@/components/illustration/DrawingCanvas';
 import { CreateTemplatePartPayload } from '@/types/story';
+import { getStandardCanvasSize } from '@/constants/canvasSizes';
 import { FaTrash, FaFileDownload } from 'react-icons/fa';
 import styles from './TemplatePartEditor.module.scss';
 
@@ -16,6 +17,28 @@ interface TemplatePartEditorProps {
     onRemove: (index: number) => void;
 }
 
+/**
+ * Determines the layout type based on size and orientation
+ */
+const getLayoutType = (size: '20x20' | '25x25' | '15x23', orientation: 'PORTRAIT' | 'LANDSCAPE') => {
+    // Square layouts
+    if (size === '20x20' || size === '25x25') {
+        return 'square';
+    }
+
+    // Rectangle layouts based on orientation
+    if (size === '15x23') {
+        if (orientation === 'LANDSCAPE') {
+            return 'landscapeRectangle'; // 23:15 ratio (wider)
+        } else if (orientation === 'PORTRAIT') {
+            return 'portraitRectangle'; // 15:23 ratio (taller)
+        }
+    }
+
+    // Default fallback
+    return 'default';
+};
+
 const TemplatePartEditor: React.FC<TemplatePartEditorProps> = ({
     part,
     index,
@@ -26,6 +49,10 @@ const TemplatePartEditor: React.FC<TemplatePartEditorProps> = ({
 }) => {
     const [activeTab, setActiveTab] = useState<'text' | 'illustration'>('text');
     const drawingCanvasRef = useRef<DrawingCanvasRef>(null);
+
+    // Calculate layout type and canvas dimensions
+    const layoutType = getLayoutType(size, orientation);
+    const canvasDimensions = getStandardCanvasSize(layoutType);
 
     // Mock story object for canvas editors
     const mockStory = {
@@ -152,6 +179,8 @@ const TemplatePartEditor: React.FC<TemplatePartEditorProps> = ({
                         </div>
                         <p className={styles.canvasHint}>
                             از این بوم برای افزودن متن‌ها و راهنماهای نوشتاری استفاده کنید
+                            <br />
+                            <small>اندازه بوم: {canvasDimensions.width}x{canvasDimensions.height} ({layoutType})</small>
                         </p>
                     </div>
                 ) : (
@@ -175,10 +204,14 @@ const TemplatePartEditor: React.FC<TemplatePartEditorProps> = ({
                                 initialState={part.canvas_illustration_template ? JSON.stringify(part.canvas_illustration_template) : undefined}
                                 onChange={handleIllustrationCanvasChange}
                                 backgroundColor="#FFFFFF"
+                                width={canvasDimensions.width}
+                                height={canvasDimensions.height}
                             />
                         </div>
                         <p className={styles.canvasHint}>
                             از این بوم برای افزودن تصاویر و عناصر بصری استفاده کنید
+                            <br />
+                            <small>اندازه بوم: {canvasDimensions.width}x{canvasDimensions.height} ({layoutType})</small>
                         </p>
                     </div>
                 )}

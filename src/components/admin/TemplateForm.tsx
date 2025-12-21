@@ -193,10 +193,18 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
                         type="button"
                         onClick={addTemplatePart}
                         className={styles.addPartButton}
+                        disabled={!formData.orientation || !formData.size}
+                        title={!formData.orientation || !formData.size ? 'ابتدا جهت و اندازه را انتخاب کنید' : ''}
                     >
                         <FaPlus /> افزودن بخش
                     </button>
                 </div>
+
+                {(!formData.orientation || !formData.size) && (
+                    <div className={styles.validationMessage}>
+                        ⚠️ برای افزودن بخش‌های قالب، ابتدا <strong>جهت</strong> و <strong>اندازه</strong> را انتخاب کنید
+                    </div>
+                )}
 
                 {formData.template_parts && formData.template_parts.length > 0 ? (
                     <div className={styles.partsList}>
