@@ -26,6 +26,10 @@ export interface DrawingCanvasRef {
   clearCanvas: () => void;
   addImage: (file: File) => void;
   addImageFromUrl: (url: string) => void;
+  bringToFront: () => void;
+  sendToBack: () => void;
+  bringForward: () => void;
+  sendBackwards: () => void;
 }
 
 /**
@@ -91,6 +95,66 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     addImageFromUrl: (url: string) => {
       addImageToCanvas(url);
     },
+    bringToFront: () => {
+      if (!fabricCanvasRef.current) return;
+      const activeObject = fabricCanvasRef.current.getActiveObject();
+      if (activeObject) {
+        fabricCanvasRef.current.bringObjectToFront(activeObject);
+        fabricCanvasRef.current.renderAll();
+        if (onChange) {
+          const json = JSON.stringify(fabricCanvasRef.current.toJSON());
+          onChange(json);
+        }
+        toast.success('شیء به جلو آمد');
+      } else {
+        toast.error('لطفا ابتدا یک شیء را انتخاب کنید');
+      }
+    },
+    sendToBack: () => {
+      if (!fabricCanvasRef.current) return;
+      const activeObject = fabricCanvasRef.current.getActiveObject();
+      if (activeObject) {
+        fabricCanvasRef.current.sendObjectToBack(activeObject);
+        fabricCanvasRef.current.renderAll();
+        if (onChange) {
+          const json = JSON.stringify(fabricCanvasRef.current.toJSON());
+          onChange(json);
+        }
+        toast.success('شیء به عقب رفت');
+      } else {
+        toast.error('لطفا ابتدا یک شیء را انتخاب کنید');
+      }
+    },
+    bringForward: () => {
+      if (!fabricCanvasRef.current) return;
+      const activeObject = fabricCanvasRef.current.getActiveObject();
+      if (activeObject) {
+        fabricCanvasRef.current.bringObjectForward(activeObject);
+        fabricCanvasRef.current.renderAll();
+        if (onChange) {
+          const json = JSON.stringify(fabricCanvasRef.current.toJSON());
+          onChange(json);
+        }
+        toast.success('شیء یک لایه به جلو آمد');
+      } else {
+        toast.error('لطفا ابتدا یک شیء را انتخاب کنید');
+      }
+    },
+    sendBackwards: () => {
+      if (!fabricCanvasRef.current) return;
+      const activeObject = fabricCanvasRef.current.getActiveObject();
+      if (activeObject) {
+        fabricCanvasRef.current.sendObjectBackwards(activeObject);
+        fabricCanvasRef.current.renderAll();
+        if (onChange) {
+          const json = JSON.stringify(fabricCanvasRef.current.toJSON());
+          onChange(json);
+        }
+        toast.success('شیء یک لایه به عقب رفت');
+      } else {
+        toast.error('لطفا ابتدا یک شیء را انتخاب کنید');
+      }
+    },
   }));
 
   /**
@@ -102,6 +166,11 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
         console.log('Loading Fabric.js module...');
         const fabricModule = await import('fabric');
         console.log('Fabric.js module loaded:', fabricModule);
+
+        // Debug: Log all available exports to find EraserBrush
+        console.log('Fabric.js exports:', Object.keys(fabricModule));
+        console.log('Has EraserBrush?', 'EraserBrush' in fabricModule);
+        console.log('Has eraserBrush?', 'eraserBrush' in fabricModule);
 
         fabricLibRef.current = fabricModule;
         console.log('Fabric instance stored:', !!fabricLibRef.current);
@@ -176,7 +245,12 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
 
     console.log('Initializing Fabric canvas with dimensions:', canvasDimensions);
 
-    const { Canvas, PencilBrush } = fabricLibRef.current;
+    const fabricLib = fabricLibRef.current;
+    const { Canvas, PencilBrush } = fabricLib;
+
+    // Try to access EraserBrush from different possible locations
+    const EraserBrush = fabricLib.EraserBrush || fabricLib.eraserBrush ||
+                        (fabricLib as any).brushes?.EraserBrush;
 
     const canvas = new Canvas(canvasRef.current, {
       width: canvasDimensions.width,
@@ -188,10 +262,36 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     });
 
     // Set up the drawing brush
-    const brush = new PencilBrush(canvas);
-    brush.width = brushSize;
-    brush.color = brushColor;
-    canvas.freeDrawingBrush = brush;
+    const pencilBrush = new PencilBrush(canvas);
+    pencilBrush.width = brushSize;
+    pencilBrush.color = brushColor;
+    canvas.freeDrawingBrush = pencilBrush;
+
+    // Try to set up eraser brush if available
+    if (EraserBrush) {
+      try {
+        const eraserBrush = new EraserBrush(canvas);
+        eraserBrush.width = brushSize * 2;
+        (canvas as any)._eraserBrush = eraserBrush;
+        (canvas as any)._hasEraserBrush = true;
+        console.log('EraserBrush initialized successfully');
+
+        // Set up erasing event handlers
+        canvas.on('erasing:end', (event: any) => {
+          console.log('Erasing completed:', event);
+          if (onChange) {
+            const json = JSON.stringify(canvas.toJSON());
+            onChange(json);
+          }
+        });
+      } catch (err) {
+        console.warn('EraserBrush not available, will use background color eraser:', err);
+        (canvas as any)._hasEraserBrush = false;
+      }
+    } else {
+      console.warn('EraserBrush not available in this Fabric.js version, will use background color eraser');
+      (canvas as any)._hasEraserBrush = false;
+    }
 
     fabricCanvasRef.current = canvas;
     console.log('Canvas created with drawing mode enabled');
@@ -276,14 +376,25 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
    * Update brush properties when tool settings change
    */
   useEffect(() => {
-    if (!fabricCanvasRef.current) return;
+    if (!fabricCanvasRef.current || !fabricLibRef.current) return;
 
     const canvas = fabricCanvasRef.current;
-    const brush = canvas.freeDrawingBrush;
+    const fabricLib = fabricLibRef.current;
+    const { PencilBrush } = fabricLib;
+
+    // Try to access EraserBrush from different possible locations
+    const EraserBrush = fabricLib.EraserBrush || fabricLib.eraserBrush ||
+                        (fabricLib as any).brushes?.EraserBrush;
+    const hasEraserBrush = (canvas as any)._hasEraserBrush;
 
     if (currentTool === 'brush') {
-      brush.color = brushColor;
-      brush.width = brushSize;
+      // Use pencil brush for drawing
+      if (!(canvas.freeDrawingBrush instanceof PencilBrush)) {
+        const pencilBrush = new PencilBrush(canvas);
+        canvas.freeDrawingBrush = pencilBrush;
+      }
+      canvas.freeDrawingBrush.color = brushColor;
+      canvas.freeDrawingBrush.width = brushSize;
       canvas.isDrawingMode = true;
       canvas.selection = false;
       // Disable object selection in drawing mode
@@ -291,9 +402,33 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
         obj.selectable = false;
       });
     } else if (currentTool === 'eraser') {
-      // Eraser is just a white brush (or matches background)
-      brush.color = backgroundColor;
-      brush.width = brushSize * 2; // Eraser is typically larger
+      // Use proper EraserBrush if available, otherwise use background color brush
+      if (hasEraserBrush && EraserBrush) {
+        try {
+          if (!(canvas.freeDrawingBrush instanceof EraserBrush)) {
+            const eraserBrush = new EraserBrush(canvas);
+            canvas.freeDrawingBrush = eraserBrush;
+          }
+          canvas.freeDrawingBrush.width = brushSize * 2; // Eraser is typically larger
+        } catch (err) {
+          console.warn('Failed to use EraserBrush, falling back to background color:', err);
+          // Fallback to background color eraser
+          if (!(canvas.freeDrawingBrush instanceof PencilBrush)) {
+            const pencilBrush = new PencilBrush(canvas);
+            canvas.freeDrawingBrush = pencilBrush;
+          }
+          canvas.freeDrawingBrush.color = backgroundColor;
+          canvas.freeDrawingBrush.width = brushSize * 2;
+        }
+      } else {
+        // Use background color as eraser (fallback for older Fabric.js versions)
+        if (!(canvas.freeDrawingBrush instanceof PencilBrush)) {
+          const pencilBrush = new PencilBrush(canvas);
+          canvas.freeDrawingBrush = pencilBrush;
+        }
+        canvas.freeDrawingBrush.color = backgroundColor;
+        canvas.freeDrawingBrush.width = brushSize * 2;
+      }
       canvas.isDrawingMode = true;
       canvas.selection = false;
       // Disable object selection in eraser mode
@@ -467,6 +602,73 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     reader.readAsDataURL(file);
   }, [addImageToCanvas]);
 
+  /**
+   * Layering functions - bring to front, send to back
+   */
+  const bringToFront = useCallback(() => {
+    if (!fabricCanvasRef.current) return;
+    const activeObject = fabricCanvasRef.current.getActiveObject();
+    if (activeObject) {
+      fabricCanvasRef.current.bringObjectToFront(activeObject);
+      fabricCanvasRef.current.renderAll();
+      if (onChange) {
+        const json = JSON.stringify(fabricCanvasRef.current.toJSON());
+        onChange(json);
+      }
+      toast.success('شیء به جلو آمد');
+    } else {
+      toast.error('لطفا ابتدا یک شیء را انتخاب کنید');
+    }
+  }, [onChange]);
+
+  const sendToBack = useCallback(() => {
+    if (!fabricCanvasRef.current) return;
+    const activeObject = fabricCanvasRef.current.getActiveObject();
+    if (activeObject) {
+      fabricCanvasRef.current.sendObjectToBack(activeObject);
+      fabricCanvasRef.current.renderAll();
+      if (onChange) {
+        const json = JSON.stringify(fabricCanvasRef.current.toJSON());
+        onChange(json);
+      }
+      toast.success('شیء به عقب رفت');
+    } else {
+      toast.error('لطفا ابتدا یک شیء را انتخاب کنید');
+    }
+  }, [onChange]);
+
+  const bringForward = useCallback(() => {
+    if (!fabricCanvasRef.current) return;
+    const activeObject = fabricCanvasRef.current.getActiveObject();
+    if (activeObject) {
+      fabricCanvasRef.current.bringObjectForward(activeObject);
+      fabricCanvasRef.current.renderAll();
+      if (onChange) {
+        const json = JSON.stringify(fabricCanvasRef.current.toJSON());
+        onChange(json);
+      }
+      toast.success('شیء یک لایه به جلو آمد');
+    } else {
+      toast.error('لطفا ابتدا یک شیء را انتخاب کنید');
+    }
+  }, [onChange]);
+
+  const sendBackwards = useCallback(() => {
+    if (!fabricCanvasRef.current) return;
+    const activeObject = fabricCanvasRef.current.getActiveObject();
+    if (activeObject) {
+      fabricCanvasRef.current.sendObjectBackwards(activeObject);
+      fabricCanvasRef.current.renderAll();
+      if (onChange) {
+        const json = JSON.stringify(fabricCanvasRef.current.toJSON());
+        onChange(json);
+      }
+      toast.success('شیء یک لایه به عقب رفت');
+    } else {
+      toast.error('لطفا ابتدا یک شیء را انتخاب کنید');
+    }
+  }, [onChange]);
+
   return (
     <div className={styles.canvasEditorWrapper}>
       <div ref={containerRef} className={styles.canvasContainer}>
@@ -490,6 +692,10 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
                 onClear={clearCanvas}
                 onUndo={undo}
                 onImageUpload={handleImageUpload}
+                onBringToFront={bringToFront}
+                onSendToBack={sendToBack}
+                onBringForward={bringForward}
+                onSendBackwards={sendBackwards}
                 isCanvasReady={isCanvasReady}
               />
             </div>

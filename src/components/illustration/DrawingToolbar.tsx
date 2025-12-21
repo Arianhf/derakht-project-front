@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { FaPaintBrush, FaEraser, FaTrash, FaUndo, FaImage, FaMousePointer } from 'react-icons/fa';
+import { FaPaintBrush, FaEraser, FaTrash, FaUndo, FaImage, FaMousePointer, FaLayerGroup, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import styles from './DrawingToolbar.module.scss';
 import ColorPicker from './ColorPicker';
 
@@ -15,6 +15,10 @@ interface DrawingToolbarProps {
   onClear: () => void;
   onUndo: () => void;
   onImageUpload: (file: File) => void;
+  onBringToFront: () => void;
+  onSendToBack: () => void;
+  onBringForward: () => void;
+  onSendBackwards: () => void;
   isCanvasReady: boolean;
 }
 
@@ -28,6 +32,10 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
   onClear,
   onUndo,
   onImageUpload,
+  onBringToFront,
+  onSendToBack,
+  onBringForward,
+  onSendBackwards,
   isCanvasReady,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -125,6 +133,50 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
           <FaImage />
         </button>
       </div>
+
+      {/* Layering Controls - Only show in select mode */}
+      {currentTool === 'select' && (
+        <div className={styles.toolSection}>
+          <button
+            className={styles.actionButton}
+            onClick={onBringToFront}
+            disabled={!isCanvasReady}
+            aria-label="انتقال به جلوترین لایه"
+            title="به جلو (کامل)"
+          >
+            <FaLayerGroup />
+            <FaArrowUp className={styles.smallIcon} />
+          </button>
+          <button
+            className={styles.actionButton}
+            onClick={onBringForward}
+            disabled={!isCanvasReady}
+            aria-label="یک لایه به جلو"
+            title="یک لایه به جلو"
+          >
+            <FaArrowUp />
+          </button>
+          <button
+            className={styles.actionButton}
+            onClick={onSendBackwards}
+            disabled={!isCanvasReady}
+            aria-label="یک لایه به عقب"
+            title="یک لایه به عقب"
+          >
+            <FaArrowDown />
+          </button>
+          <button
+            className={styles.actionButton}
+            onClick={onSendToBack}
+            disabled={!isCanvasReady}
+            aria-label="انتقال به عقب‌ترین لایه"
+            title="به عقب (کامل)"
+          >
+            <FaLayerGroup />
+            <FaArrowDown className={styles.smallIcon} />
+          </button>
+        </div>
+      )}
 
       {/* Action Buttons */}
       <div className={styles.toolSection}>

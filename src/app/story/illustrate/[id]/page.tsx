@@ -2,383 +2,171 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { Navbar } from '@/components/shared/Navbar/Navbar';
-import logo from '@/assets/images/logo2.png';
 import { storyService } from '@/services/storyService';
-import { Story, TemplatePart } from '@/types/story';
-import { toPersianNumber } from '@/utils/convertToPersianNumber';
+import { Story } from '@/types/story';
 import styles from './IllustrateStoryPage.module.scss';
-import { FaTimes, FaUpload, FaImage, FaEye } from 'react-icons/fa';
 import { Toaster, toast } from 'react-hot-toast';
-import StoryPreview from '@/components/story/StoryPreview';
+import IllustrationEditorV2 from '@/components/illustration/IllustrationEditorV2';
 
+/**
+ * Canvas-based illustration editor page
+ * Allows users to draw illustrations for each story part using a canvas
+ */
 const IllustrateStoryPage = () => {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [template, setTemplate] = useState<Story | null>(null);
-  const [images, setImages] = useState<(File | null)[]>([]);
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [storyName, setStoryName] = useState('');
+  const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [isMobileView, setIsMobileView] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    // Check if we're in mobile view
-    const handleResize = () => {
-      setIsMobileView(window.innerWidth <= 768);
-    };
-
-    handleResize(); // Set initial state
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    const fetchTemplate = async () => {
+    const fetchStory = async () => {
       if (!id) return;
 
       try {
+        setLoading(true);
         const response = await storyService.getStoryById(id);
-        setTemplate(response);
-        // Initialize the images array with nulls based on the number of parts
-        setImages(new Array(response.parts.length).fill(null));
-        setImageUrls(new Array(response.parts.length).fill(''));
+        setStory(response);
       } catch (err) {
-        setError('خطا در دریافت قالب داستان');
+        setError('خطا در دریافت داستان');
         console.error(err);
+        toast.error('خطا در دریافت داستان');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTemplate();
+    fetchStory();
   }, [id]);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-
-    const file = e.target.files[0];
-
-    // Update the images array
-    const newImages = [...images];
-    newImages[currentIndex] = file;
-    setImages(newImages);
-
-    // Create a URL for the image to display it
-    const newImageUrls = [...imageUrls];
-    const url = URL.createObjectURL(file);
-    newImageUrls[currentIndex] = url;
-    setImageUrls(newImageUrls);
-
-    toast.success('تصویر با موفقیت آپلود شد');
-  };
-
-  const uploadCurrentImage = async () => {
-    // If there's no image for the current part, notify user and don't proceed
-    if (!images[currentIndex]) {
-      toast.error('لطفا برای این بخش تصویر آپلود کنید');
-      return false;
-    }
+  /**
+   * Save illustrations to backend
+   * For each part with canvas data, we need to:
+   * 1. Export canvas as image
+   * 2. Upload image to backend
+   * 3. Save canvas JSON state
+   */
+  const handleSave = async (illustrations: { [key: number]: { canvasData: string; imageData: string } }) => {
+    if (!story) return;
 
     try {
-      setLoading(true);
+      setIsSaving(true);
 
-      // Create FormData for the current image
-      const formData = new FormData();
-      // Convert 0-based index to 1-based position for backend
-      formData.append('part_position', (currentIndex + 1).toString());
-      formData.append('story_id', id as string);
-      formData.append('image', images[currentIndex] as File);
+      let uploadedCount = 0;
 
-      // Upload image for this part
-      await storyService.uploadImageForPart(formData);
+      // For each illustration, upload to backend
+      for (const [indexStr, data] of Object.entries(illustrations)) {
+        const index = parseInt(indexStr);
+        const part = story.parts[index];
 
-      toast.success('تصویر با موفقیت ذخیره شد');
-      return true;
-    } catch (err) {
-      console.error('Error uploading image:', err);
-      toast.error('خطا در آپلود تصویر');
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+        if (!part) continue;
 
-  const handleNavigate = async (direction: 'next' | 'prev') => {
-    if (direction === 'prev' && currentIndex > 0) {
-      // Simply go to previous part without validating
-      setCurrentIndex(currentIndex - 1);
-    } else if (direction === 'next') {
-      if (currentIndex < (template?.parts.length || 0) - 1) {
-        // Upload current image before proceeding to next part
-        const uploadSuccess = await uploadCurrentImage();
-        if (uploadSuccess) {
-          setCurrentIndex(currentIndex + 1);
-        }
-      } else {
-        // We're at the last part, check if image is uploaded and show modal
-        if (images[currentIndex]) {
-          const uploadSuccess = await uploadCurrentImage();
-          if (uploadSuccess) {
-            setIsModalOpen(true);
+        // If we have image data, convert data URL to blob and upload
+        if (data.imageData) {
+          try {
+            // Convert data URL to blob
+            const response = await fetch(data.imageData);
+            const blob = await response.blob();
+
+            // Create FormData for upload
+            const formData = new FormData();
+            formData.append('part_position', (index + 1).toString());
+            formData.append('story_id', id);
+            formData.append('image', blob, `illustration-${index + 1}.png`);
+
+            // Upload to backend
+            await storyService.uploadImageForPart(formData);
+            uploadedCount++;
+
+            console.log(`✓ Part ${index + 1} uploaded successfully`);
+          } catch (uploadErr) {
+            console.error(`Error uploading part ${index + 1}:`, uploadErr);
+            toast.error(`خطا در آپلود بخش ${index + 1}`);
           }
-        } else {
-          toast.error('لطفا برای این بخش تصویر آپلود کنید');
         }
       }
+
+      if (uploadedCount > 0) {
+        toast.success(`${uploadedCount} تصویر با موفقیت ذخیره شد`);
+
+        // Refresh story data
+        const updatedStory = await storyService.getStoryById(id);
+        setStory(updatedStory);
+      } else {
+        toast.error('هیچ تصویری برای ذخیره وجود ندارد');
+      }
+    } catch (err) {
+      console.error('Error saving illustrations:', err);
+      toast.error('خطا در ذخیره تصاویر');
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  const handleShowPreview = () => {
-    if (images.some(img => img === null)) {
-      toast.error('لطفا برای تمام بخش‌ها تصویر آپلود کنید');
-      return;
-    }
-    setIsPreviewOpen(true);
+  const handleClose = () => {
+    router.push('/story');
   };
 
-  const handleFinishStory = async () => {
-    if (!template || storyName.trim() === '') {
-      toast.error('لطفا نام داستان را وارد کنید');
-      return;
-    }
+  /**
+   * Handle title change
+   */
+  const handleTitleChange = async (newTitle: string) => {
+    if (!story) return;
 
     try {
-      setLoading(true);
+      // Update story title via backend API
+      await storyService.updateStoryTitle(id, newTitle);
 
-      // Since all images have already been uploaded,
-      // we just need to finalize the story with its title
-      const response = await storyService.finalizeStory(id as string, storyName);
+      // Update local story state
+      setStory({ ...story, title: newTitle });
 
-      toast.success('داستان با موفقیت ذخیره شد');
-      setIsModalOpen(false);
-      router.push('/story');
+      toast.success('عنوان با موفقیت به‌روزرسانی شد');
     } catch (err) {
-      console.error('Error finishing story:', err);
-      toast.error('خطا در ذخیره داستان');
-    } finally {
-      setLoading(false);
+      console.error('Error updating title:', err);
+      toast.error('خطا در به‌روزرسانی عنوان');
     }
   };
 
-  if (loading) return <div className={styles.loadingContainer}>در حال بارگذاری...</div>;
-  if (error) return <div className={styles.errorContainer}>{error}</div>;
-  if (!template) return <div className={styles.errorContainer}>قالب داستان یافت نشد</div>;
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingContent}>
+          <div className={styles.spinner}></div>
+          <p>در حال بارگذاری...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const currentPart = template.parts[currentIndex];
+  if (error || !story) {
+    return (
+      <div className={styles.errorContainer}>
+        <div className={styles.errorContent}>
+          <h2>خطا</h2>
+          <p>{error || 'داستان یافت نشد'}</p>
+          <button onClick={() => router.push('/story')} className={styles.backButton}>
+            بازگشت به داستان‌ها
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-      <div className={styles.illustratePage}>
-        <Navbar logo={logo} />
-        <Toaster position="top-center" />
+    <div className={styles.illustratePage}>
+      <Toaster position="top-center" />
 
-        {isMobileView ? (
-            // Mobile View Layout
-            <div className={styles.mobileContent}>
-              <div className={styles.textContainer}>
-                <h2 className={styles.partTitle}>بخش {toPersianNumber(currentIndex + 1)}</h2>
-                <p className={styles.partPrompt}>{currentPart.text}</p>
-              </div>
-
-              <div className={styles.uploadContainer}>
-                {imageUrls[currentIndex] ? (
-                    <div className={styles.imagePreviewContainer}>
-                      <Image
-                          src={imageUrls[currentIndex]}
-                          alt="تصویر آپلود شده"
-                          width={300}
-                          height={200}
-                          className={styles.imagePreview}
-                      />
-                      <button
-                          className={styles.changeImageButton}
-                          onClick={() => document.getElementById('image-upload-mobile')?.click()}
-                      >
-                        تغییر تصویر
-                      </button>
-                    </div>
-                ) : (
-                    <div className={styles.uploadPlaceholder} onClick={() => document.getElementById('image-upload-mobile')?.click()}>
-                      <FaUpload className={styles.uploadIcon} />
-                      <p>برای آپلود تصویر کلیک کنید</p>
-                      <input
-                          id="image-upload-mobile"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageUpload}
-                          className={styles.fileInput}
-                      />
-                    </div>
-                )}
-              </div>
-
-              <div className={styles.navigationButtons}>
-                <button
-                    className={styles.prevButton}
-                    onClick={() => handleNavigate('prev')}
-                    disabled={currentIndex === 0}
-                >
-                  قبلی
-                </button>
-                <button
-                    className={styles.previewButton}
-                    onClick={handleShowPreview}
-                >
-                  <FaEye /> پیش‌نمایش
-                </button>
-                <button
-                    className={styles.nextButton}
-                    onClick={() => handleNavigate('next')}
-                >
-                  {currentIndex === template.parts.length - 1 ? "پایان" : "بعدی"}
-                </button>
-              </div>
-            </div>
-        ) : (
-            // Desktop View Layout
-            <div className={styles.desktopContent}>
-              <div className={styles.mainContainer}>
-                <div className={styles.textBlock}>
-                  <h2 className={styles.partTitle}>بخش {toPersianNumber(currentIndex + 1)}</h2>
-                  <p className={styles.partPrompt}>{currentPart.text}</p>
-                  <div className={styles.navigationButtons}>
-                    <button
-                        className={styles.prevButton}
-                        onClick={() => handleNavigate('prev')}
-                        disabled={currentIndex === 0}
-                    >
-                      قبلی
-                    </button>
-                    <button
-                        className={styles.previewButton}
-                        onClick={handleShowPreview}
-                    >
-                      <FaEye /> پیش‌نمایش
-                    </button>
-                    <button
-                        className={styles.nextButton}
-                        onClick={() => handleNavigate('next')}
-                    >
-                      {currentIndex === template.parts.length - 1 ? "پایان" : "بعدی"}
-                    </button>
-                  </div>
-                </div>
-
-                <div className={styles.uploadBlock}>
-                  {imageUrls[currentIndex] ? (
-                      <div className={styles.imagePreviewContainer}>
-                        <Image
-                            src={imageUrls[currentIndex]}
-                            alt="تصویر آپلود شده"
-                            width={400}
-                            height={300}
-                            className={styles.imagePreview}
-                        />
-                        <button
-                            className={styles.changeImageButton}
-                            onClick={() => document.getElementById('image-upload')?.click()}
-                        >
-                          تغییر تصویر
-                        </button>
-                      </div>
-                  ) : (
-                      <div className={styles.uploadPlaceholder} onClick={() => document.getElementById('image-upload')?.click()}>
-                        <FaUpload className={styles.uploadIcon} />
-                        <p>برای آپلود تصویر کلیک کنید</p>
-                        <input
-                            id="image-upload"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            className={styles.fileInput}
-                        />
-                      </div>
-                  )}
-                </div>
-              </div>
-
-              <div className={styles.thumbnailsContainer}>
-                <div className={styles.imageGallery}>
-                  {template.parts.map((part, index) => (
-                      <div key={part.id} className={styles.galleryItem}>
-                        {currentIndex === index && (
-                            <span className={styles.imageNumber}>{toPersianNumber(index + 1)}</span>
-                        )}
-                        <div
-                            className={`${styles.galleryImageContainer} ${currentIndex === index ? styles.selected : ''}`}
-                            onClick={() => setCurrentIndex(index)}
-                        >
-                          {imageUrls[index] ? (
-                              <Image
-                                  src={imageUrls[index]}
-                                  alt={`تصویر ${index + 1}`}
-                                  fill
-                                  className={styles.galleryImage}
-                              />
-                          ) : (
-                              <div className={styles.emptyImagePlaceholder}>
-                                <FaImage />
-                              </div>
-                          )}
-                        </div>
-                      </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-        )}
-
-        {isModalOpen && (
-            <div className={styles.modalOverlay}>
-              <div className={styles.modalContent}>
-                <h2>اسم این داستانی که تصویرسازی کردی چیه؟</h2>
-                <input
-                    type="text"
-                    value={storyName}
-                    onChange={(e) => setStoryName(e.target.value)}
-                    placeholder="نام داستان"
-                    className={styles.storyNameInput}
-                />
-                <div className={styles.modalButtons}>
-                  <button
-                      className={styles.modalButton}
-                      onClick={handleFinishStory}
-                      disabled={loading}
-                  >
-                    {loading ? 'در حال ذخیره...' : 'تایید'}
-                  </button>
-                  <button
-                      className={styles.cancelModalButton}
-                      onClick={() => setIsModalOpen(false)}
-                  >
-                    انصراف
-                  </button>
-                </div>
-                <button
-                    className={styles.closeModalButton}
-                    onClick={() => setIsModalOpen(false)}
-                >
-                  <FaTimes />
-                </button>
-              </div>
-            </div>
-        )}
-
-        <StoryPreview
-            parts={template.parts.map((part, index) => ({
-              illustration: imageUrls[index] || "/placeholder-image.jpg",
-              text: part.text || "متنی وجود ندارد",
-            }))}
-            isOpen={isPreviewOpen}
-            onClose={() => setIsPreviewOpen(false)}
-        />
-      </div>
+      <IllustrationEditorV2
+        story={story}
+        isOpen={true}
+        onClose={handleClose}
+        onSave={handleSave}
+        onTitleChange={handleTitleChange}
+        isFullPage={true}
+      />
+    </div>
   );
 };
 
