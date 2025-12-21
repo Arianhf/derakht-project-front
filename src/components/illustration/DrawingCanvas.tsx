@@ -118,6 +118,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
 
   /**
    * Calculate canvas dimensions from container
+   * If width/height props are provided, scale them to fit within container while maintaining aspect ratio
    */
   useEffect(() => {
     if (!containerRef.current) return;
@@ -125,13 +126,34 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     const updateDimensions = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
-        const newWidth = width || rect.width;
-        const newHeight = height || rect.height;
 
-        console.log('Container dimensions:', { width: rect.width, height: rect.height });
-        console.log('Setting canvas dimensions:', { newWidth, newHeight });
+        if (rect.width > 0 && rect.height > 0) {
+          let newWidth: number;
+          let newHeight: number;
 
-        if (newWidth > 0 && newHeight > 0) {
+          if (width && height) {
+            // If width and height props are provided, scale to fit container while maintaining aspect ratio
+            const scaleX = rect.width / width;
+            const scaleY = rect.height / height;
+            const scale = Math.min(scaleX, scaleY);
+
+            newWidth = Math.floor(width * scale);
+            newHeight = Math.floor(height * scale);
+
+            console.log('Scaling canvas to fit container:', {
+              standardSize: { width, height },
+              containerSize: { width: rect.width, height: rect.height },
+              scale,
+              scaledSize: { width: newWidth, height: newHeight },
+            });
+          } else {
+            // Fallback to container dimensions if no props provided
+            newWidth = rect.width;
+            newHeight = rect.height;
+
+            console.log('Using container dimensions:', { width: newWidth, height: newHeight });
+          }
+
           setCanvasDimensions({ width: newWidth, height: newHeight });
           dimensionsCalculatedRef.current = true;
         }
