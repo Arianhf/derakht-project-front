@@ -6,6 +6,7 @@ import { FaTimes, FaChevronLeft, FaChevronRight, FaArrowRight, FaSave, FaCog, Fa
 import styles from './StoryEditorV2.module.scss';
 import { Story, StoryOrientation, StorySize } from '@/types/story';
 import TextCanvasEditor from './TextCanvasEditor';
+import IllustrationCanvasEditor from './IllustrationCanvasEditor';
 
 interface StoryEditorV2Props {
   story: Story;
@@ -419,17 +420,13 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
             </div>
           ) : (
             <div className={styles.imageContent}>
-              {/* TODO: Render illustration canvas data - for now show placeholder */}
-              {part?.canvas_illustration_data ? (
-                <div className={styles.illustrationCanvas}>
-                  {/* Illustration canvas rendering will be implemented */}
-                  <p>قسمت تصویر (Canvas JSON)</p>
-                </div>
-              ) : (
-                <div className={styles.placeholderImage}>
-                  <p>تصویری وجود ندارد</p>
-                </div>
-              )}
+              <IllustrationCanvasEditor
+                key={`illustration-canvas-${index}`}
+                story={story}
+                initialState={illustrationCanvasStates[index] ? JSON.stringify(illustrationCanvasStates[index]) : undefined}
+                onChange={(canvasJSON) => handleIllustrationCanvasChange(index, canvasJSON)}
+                backgroundColor={story.background_color || '#FFFFFF'}
+              />
             </div>
           )}
         </div>
