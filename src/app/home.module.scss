@@ -322,8 +322,9 @@
 }
 
 .featureDescription {
-  color: $light-text;
+  color: rgba($dark-text, 0.7);
   line-height: $line-height-base;
+  font-size: $font-size-base;
 }
 
 .valuesSection {
@@ -475,23 +476,54 @@
 }
 
 .ctaCard {
-  background-color: rgba($primary-color, 0.05);
+  background: linear-gradient(135deg,
+    rgba($primary-color, 0.08) 0%,
+    rgba($accent-color, 0.12) 50%,
+    rgba($primary-color, 0.08) 100%);
   border-radius: 32px;
   padding: 64px 32px;
-  border: 1px solid rgba($primary-color, 0.1);
+  border: 2px solid rgba($primary-color, 0.15);
   color: $dark-text;
+  box-shadow: 0 8px 24px rgba($primary-color, 0.12);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+      circle at center,
+      rgba(white, 0.3) 0%,
+      transparent 70%
+    );
+    opacity: 0.5;
+  }
 }
 
 .ctaTitle {
   font-size: $font-size-xxl;
   font-weight: 700;
   margin-bottom: 16px;
+  color: $dark-text;
+  position: relative;
+  z-index: 1;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $font-size-title;
+  }
 }
 
 .ctaDescription {
   font-size: $font-size-lg;
   margin-bottom: 32px;
-  color: $light-text;
+  color: rgba($dark-text, 0.75);
+  position: relative;
+  z-index: 1;
+  line-height: $line-height-base;
 }
 
 .ctaButtons {
@@ -499,6 +531,8 @@
   flex-wrap: wrap;
   gap: $spacing-sm;
   justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
 .ctaButton {
