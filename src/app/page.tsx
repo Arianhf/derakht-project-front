@@ -1,17 +1,36 @@
 // src/app/page.tsx
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import Footer from '@/components/shared/Footer/Footer';
-import { FaBook, FaShoppingCart, FaPencilAlt, FaStar } from 'react-icons/fa';
+import { FaBook, FaShoppingCart, FaPencilAlt, FaStar, FaArrowLeft } from 'react-icons/fa';
 import styles from './home.module.scss';
 import logo from '@/assets/images/logo2.png';
+import { shopService } from '@/services/shopService';
+import { Product } from '@/types/shop';
 
 const HomePage = () => {
   const router = useRouter();
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const data = await shopService.getProducts({ sort: 'popular' });
+        setFeaturedProducts(data.results.slice(0, 4)); // Get top 4 products
+      } catch (error) {
+        console.error('Error fetching featured products:', error);
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
 
   // Structured Data for Organization
   const organizationSchema = {
@@ -213,6 +232,63 @@ const HomePage = () => {
               </div>
             </div>
           </div>
+        </section>
+
+        {/* Featured Products Section */}
+        <section className={styles.featuredSection}>
+          <div className={styles.featuredHeader}>
+            <h2 className={styles.featuredTitle}>محصولات پرفروش</h2>
+            <button
+              onClick={() => router.push('/shop')}
+              className={styles.viewAllButton}
+            >
+              مشاهده همه
+              <FaArrowLeft className={styles.arrowIcon} />
+            </button>
+          </div>
+
+          {loadingProducts ? (
+            <div className={styles.featuredGrid}>
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className={styles.skeletonCard}>
+                  <div className={styles.skeletonImage}></div>
+                  <div className={styles.skeletonText}></div>
+                  <div className={styles.skeletonTextShort}></div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.featuredGrid}>
+              {featuredProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className={styles.productCard}
+                  onClick={() => router.push(`/shop/${product.slug}`)}
+                >
+                  <div className={styles.productImageWrapper}>
+                    {product.images && product.images.length > 0 ? (
+                      <Image
+                        src={product.images[0].image}
+                        alt={product.name}
+                        fill
+                        className={styles.productImage}
+                      />
+                    ) : (
+                      <div className={styles.noProductImage}>
+                        <FaBook size={40} />
+                      </div>
+                    )}
+                  </div>
+                  <div className={styles.productInfo}>
+                    <h3 className={styles.productName}>{product.name}</h3>
+                    <p className={styles.productPrice}>
+                      {product.price.toLocaleString('fa-IR')} تومان
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Call to Action */}
