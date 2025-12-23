@@ -118,11 +118,17 @@
   font-size: $font-size-base;
   font-weight: 600;
   cursor: pointer;
-  transition: $transition-fast;
+  transition: all 0.3s ease;
   font-family: $font-primary;
 
   &:hover {
     background-color: color.adjust($primary-color, $lightness: -8%);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba($primary-color, 0.3);
+  }
+
+  &:active {
+    transform: translateY(-1px);
   }
 }
 
@@ -135,11 +141,18 @@
   font-size: $font-size-base;
   font-weight: 600;
   cursor: pointer;
-  transition: $transition-fast;
+  transition: all 0.3s ease;
   font-family: $font-primary;
 
   &:hover {
-    background-color: rgba($primary-color, 0.05);
+    background-color: $primary-color;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba($primary-color, 0.3);
+  }
+
+  &:active {
+    transform: translateY(-1px);
   }
 }
 
@@ -258,11 +271,18 @@
   border-radius: 24px;
   border: 1px solid rgba($dark-text, 0.08);
   text-align: center;
-  transition: $transition-fast;
+  transition: all 0.3s ease;
+  cursor: pointer;
 
   &:hover {
-    border-color: rgba($primary-color, 0.2);
-    background-color: rgba($primary-color, 0.02);
+    border-color: rgba($primary-color, 0.3);
+    background-color: rgba($primary-color, 0.05);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba($primary-color, 0.15);
+
+    .featureIconContainer {
+      transform: scale(1.1) rotate(5deg);
+    }
   }
 }
 
@@ -276,6 +296,7 @@
   border-radius: 20px;
   background-color: rgba($primary-color, 0.08);
   color: $primary-color;
+  transition: all 0.3s ease;
 }
 
 .purpleIcon {
@@ -388,8 +409,9 @@
   padding: 32px 24px;
   text-align: center;
   border-radius: 20px;
-  transition: $transition-fast;
+  transition: all 0.3s ease;
   background-color: rgba($card-bg, 0.5);
+  cursor: pointer;
 
   @media (min-width: $breakpoint-md) {
     text-align: right;
@@ -398,25 +420,49 @@
 
 .purpleBorder {
   &:hover {
-    background-color: rgba($primary-color, 0.03);
+    background-color: rgba($primary-color, 0.08);
+    transform: scale(1.02);
+    box-shadow: 0 8px 16px rgba($primary-color, 0.12);
+
+    .valueIconWrapper {
+      transform: scale(1.1);
+    }
   }
 }
 
 .greenBorder {
   &:hover {
-    background-color: rgba($primary-color, 0.03);
+    background-color: rgba($accent-color, 0.08);
+    transform: scale(1.02);
+    box-shadow: 0 8px 16px rgba($accent-color, 0.12);
+
+    .valueIconWrapper {
+      transform: scale(1.1);
+    }
   }
 }
 
 .blueBorder {
   &:hover {
-    background-color: rgba($primary-color, 0.03);
+    background-color: rgba($primary-color, 0.08);
+    transform: scale(1.02);
+    box-shadow: 0 8px 16px rgba($primary-color, 0.12);
+
+    .valueIconWrapper {
+      transform: scale(1.1);
+    }
   }
 }
 
 .yellowBorder {
   &:hover {
-    background-color: rgba($primary-color, 0.03);
+    background-color: rgba($accent-color, 0.08);
+    transform: scale(1.02);
+    box-shadow: 0 8px 16px rgba($accent-color, 0.12);
+
+    .valueIconWrapper {
+      transform: scale(1.1);
+    }
   }
 }
 
@@ -456,6 +502,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
 
   @media (min-width: $breakpoint-md) {
     margin: 0 0 20px auto;
@@ -549,9 +596,16 @@
 .yellowButton {
   background-color: $primary-color;
   color: white;
+  transition: all 0.3s ease;
 
   &:hover {
     background-color: color.adjust($primary-color, $lightness: -8%);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba($primary-color, 0.3);
+  }
+
+  &:active {
+    transform: translateY(-1px);
   }
 }
 
@@ -559,9 +613,17 @@
   background-color: white;
   color: $primary-color;
   border: 2px solid $primary-color;
+  transition: all 0.3s ease;
 
   &:hover {
-    background-color: rgba($primary-color, 0.05);
+    background-color: $primary-color;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba($primary-color, 0.3);
+  }
+
+  &:active {
+    transform: translateY(-1px);
   }
 }
 
@@ -633,6 +695,28 @@
   }
 }
 
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @keyframes bounce {
   0%, 100% {
     transform: translateY(0);
@@ -640,4 +724,38 @@
   50% {
     transform: translateY(-15px);
   }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+// Scroll animations
+.heroContent {
+  animation: fadeIn 0.8s ease-out;
+}
+
+.featuresGrid {
+  .featureCard {
+    animation: slideUp 0.6s ease-out;
+    animation-fill-mode: both;
+
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+  }
+}
+
+.valuesContainer {
+  animation: fadeInScale 0.8s ease-out;
+}
+
+.ctaCard {
+  animation: slideUp 0.8s ease-out;
 }
