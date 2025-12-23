@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Shield -->
+  <path d="M32 12 L20 18 L20 32 C20 40 26 48 32 52 C38 48 44 40 44 32 L44 18 Z"
+        fill="#E3F2FD" stroke="#345BC0" stroke-width="2" stroke-linejoin="round"/>
+
+  <!-- Checkmark -->
+  <path d="M26 30 L30 36 L40 24" stroke="#345BC0" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Heart in center -->
+  <path d="M32 38 C28 36 24 34 24 30 C24 28 25 26 27 26 C28.5 26 30 27 32 29
+           C34 27 35.5 26 37 26 C39 26 40 28 40 30 C40 34 36 36 32 38 Z"
+        fill="#FF6F61" opacity="0.6"/>
+</svg>

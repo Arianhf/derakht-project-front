@@ -353,6 +353,7 @@
   border-radius: 32px;
   padding: 48px 32px;
   border: 1px solid rgba($dark-text, 0.08);
+  box-shadow: $shadow-sm;
 }
 
 .valuesTopBorder {
@@ -370,19 +371,28 @@
 .valuesGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: 32px;
 
   @media (min-width: $breakpoint-md) {
     grid-template-columns: repeat(2, 1fr);
-    gap: 32px;
+    gap: 40px;
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    gap: 48px;
   }
 }
 
 .valueItem {
-  padding: 20px 16px;
-  text-align: right;
-  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  border-radius: 20px;
   transition: $transition-fast;
+  background-color: rgba($card-bg, 0.5);
+
+  @media (min-width: $breakpoint-md) {
+    text-align: right;
+  }
 }
 
 .purpleBorder {
@@ -435,6 +445,26 @@
 .valueDescription {
   color: $light-text;
   line-height: $line-height-base;
+  font-size: $font-size-base;
+}
+
+.valueIconWrapper {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (min-width: $breakpoint-md) {
+    margin: 0 0 20px auto;
+  }
+}
+
+.valueIcon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .ctaSection {

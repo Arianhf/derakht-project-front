@@ -157,21 +157,57 @@ const HomePage = () => {
 
             <div className={styles.valuesGrid}>
               <div className={`${styles.valueItem} ${styles.purpleBorder}`}>
+                <div className={styles.valueIconWrapper}>
+                  <Image
+                    src="/images/icons/creativity.svg"
+                    alt="خلاقیت"
+                    width={80}
+                    height={80}
+                    className={styles.valueIcon}
+                  />
+                </div>
                 <h3 className={`${styles.valueTitle} ${styles.purpleValueTitle}`}>خلاقیت</h3>
                 <p className={styles.valueDescription}>ما معتقدیم هر کودک استعدادی منحصر به فرد دارد. با ابزارهای ما، کودکان می‌توانند خلاقیت خود را کشف و شکوفا کنند.</p>
               </div>
 
               <div className={`${styles.valueItem} ${styles.greenBorder}`}>
+                <div className={styles.valueIconWrapper}>
+                  <Image
+                    src="/images/icons/learning.svg"
+                    alt="یادگیری فعال"
+                    width={80}
+                    height={80}
+                    className={styles.valueIcon}
+                  />
+                </div>
                 <h3 className={`${styles.valueTitle} ${styles.greenValueTitle}`}>یادگیری فعال</h3>
                 <p className={styles.valueDescription}>ما به یادگیری از طریق تجربه و بازی باور داریم. محتوای ما به گونه‌ای طراحی شده که یادگیری را سرگرم‌کننده و جذاب می‌کند.</p>
               </div>
 
               <div className={`${styles.valueItem} ${styles.blueBorder}`}>
+                <div className={styles.valueIconWrapper}>
+                  <Image
+                    src="/images/icons/safety.svg"
+                    alt="امنیت و اعتماد"
+                    width={80}
+                    height={80}
+                    className={styles.valueIcon}
+                  />
+                </div>
                 <h3 className={`${styles.valueTitle} ${styles.blueValueTitle}`}>امنیت و اعتماد</h3>
                 <p className={styles.valueDescription}>محیطی امن برای کودکان ایجاد می‌کنیم تا والدین با خیال راحت از محصولات و خدمات ما استفاده کنند.</p>
               </div>
 
               <div className={`${styles.valueItem} ${styles.yellowBorder}`}>
+                <div className={styles.valueIconWrapper}>
+                  <Image
+                    src="/images/icons/growth.svg"
+                    alt="رشد همه‌جانبه"
+                    width={80}
+                    height={80}
+                    className={styles.valueIcon}
+                  />
+                </div>
                 <h3 className={`${styles.valueTitle} ${styles.yellowValueTitle}`}>رشد همه‌جانبه</h3>
                 <p className={styles.valueDescription}>محصولات ما ابعاد مختلف رشد کودکان از جمله مهارت‌های زبانی، تفکر خلاق، و هوش هیجانی را پرورش می‌دهند.</p>
               </div>
