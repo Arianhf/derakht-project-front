@@ -25,7 +25,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         console.log('[StoryEdit] Story fetch result:', {
             exists: !!story,
             storyId: story?.id,
-            storyTitle: story?.name,
+            storyTitle: story?.title,
             partsCount: story?.parts?.length,
             fullStoryData: JSON.stringify(story).substring(0, 200) + '...'
         });

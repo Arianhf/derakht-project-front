@@ -19,8 +19,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         console.log('[StoryView] Story fetched:', {
             exists: !!story,
             id: story?.id,
-            name: story?.name,
-            isPublic: story?.is_public
+            title: story?.title
         });
 
         if (!story) {
