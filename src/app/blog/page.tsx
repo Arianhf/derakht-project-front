@@ -6,6 +6,8 @@ import logoImage from '@/assets/images/logo2.png';
 import styles from './page.module.scss';
 import { blogService } from '@/services/blogService';
 
+export const dynamic = 'force-dynamic';
+
 // SEO Metadata for blog listing page
 export const metadata: Metadata = {
     title: 'بلاگ درخت | مقالات آموزشی کودکان',

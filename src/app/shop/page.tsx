@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import ShopPageClient from './ShopPageClient';
 import { shopService } from '@/services/shopService';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'فروشگاه درخت | محصولات',
   description: 'محصولات آموزشی و سرگرمی درخت برای کودکان و نوجوانان',

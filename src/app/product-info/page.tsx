@@ -11,6 +11,8 @@ export const metadata = {
     description: 'اطلاعات و راهنمای محصولات',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function Page() {
     try {
         const response = await api.get('/v2/product-info/');
