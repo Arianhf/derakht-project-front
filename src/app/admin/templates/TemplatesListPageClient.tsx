@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { storyService } from '@/services/storyService';
 import { StoryTemplate } from '@/types/story';
@@ -115,10 +116,12 @@ const TemplatesListPageClient: React.FC<TemplatesListPageClientProps> = ({ initi
                             <div key={template.id} className={styles.templateCard}>
                                 <div className={styles.cardHeader}>
                                     {template.cover_image && (
-                                        <img
+                                        <Image
                                             src={template.cover_image}
                                             alt={template.title}
                                             className={styles.coverImage}
+                                            width={300}
+                                            height={300}
                                         />
                                     )}
                                     <div className={styles.cardBadge}>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { CreateTemplatePayload, CreateTemplatePartPayload } from '@/types/story';
 import { FaPlus, FaSave, FaTimes, FaImage } from 'react-icons/fa';
 import TemplatePartEditor from './TemplatePartEditor';
@@ -179,7 +180,7 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
                         </label>
                         {coverImagePreview && (
                             <div className={styles.imagePreview}>
-                                <img src={coverImagePreview} alt="پیش‌نمایش" />
+                                <Image src={coverImagePreview} alt="پیش‌نمایش" width={200} height={200} />
                             </div>
                         )}
                     </div>

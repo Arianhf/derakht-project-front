@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { storyService } from '@/services/storyService';
 import { StoryTemplate } from '@/types/story';
@@ -73,7 +74,7 @@ const TemplateDetailPageClient: React.FC<TemplateDetailPageClientProps> = ({ tem
                 <div className={styles.content}>
                     {template.cover_image && (
                         <div className={styles.coverImage}>
-                            <img src={template.cover_image} alt={template.title} />
+                            <Image src={template.cover_image} alt={template.title} width={400} height={400} />
                         </div>
                     )}
 
