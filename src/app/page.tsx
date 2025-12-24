@@ -178,7 +178,7 @@ const HomePage = () => {
               <div className={`${styles.valueItem} ${styles.purpleBorder}`}>
                 <div className={styles.valueIconWrapper}>
                   <Image
-                    src="/images/icons/creativity.svg"
+                    src="/images/home/creativity.png"
                     alt="خلاقیت"
                     width={80}
                     height={80}
@@ -192,7 +192,7 @@ const HomePage = () => {
               <div className={`${styles.valueItem} ${styles.greenBorder}`}>
                 <div className={styles.valueIconWrapper}>
                   <Image
-                    src="/images/icons/learning.svg"
+                    src="/images/home/learning.png"
                     alt="یادگیری فعال"
                     width={80}
                     height={80}
@@ -206,7 +206,7 @@ const HomePage = () => {
               <div className={`${styles.valueItem} ${styles.blueBorder}`}>
                 <div className={styles.valueIconWrapper}>
                   <Image
-                    src="/images/icons/safety.svg"
+                    src="/images/home/security.png"
                     alt="امنیت و اعتماد"
                     width={80}
                     height={80}
@@ -220,7 +220,7 @@ const HomePage = () => {
               <div className={`${styles.valueItem} ${styles.yellowBorder}`}>
                 <div className={styles.valueIconWrapper}>
                   <Image
-                    src="/images/icons/growth.svg"
+                    src="/images/home/growth.png"
                     alt="رشد همه‌جانبه"
                     width={80}
                     height={80}
@@ -269,7 +269,7 @@ const HomePage = () => {
                     {product.images && product.images.length > 0 ? (
                       <Image
                         src={product.images[0].image}
-                        alt={product.name}
+                        alt={product.title}
                         fill
                         className={styles.productImage}
                       />
@@ -280,7 +280,7 @@ const HomePage = () => {
                     )}
                   </div>
                   <div className={styles.productInfo}>
-                    <h3 className={styles.productName}>{product.name}</h3>
+                    <h3 className={styles.productName}>{product.title}</h3>
                     <p className={styles.productPrice}>
                       {product.price.toLocaleString('fa-IR')} تومان
                     </p>

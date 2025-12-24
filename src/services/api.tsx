@@ -95,25 +95,72 @@ const refreshAccessToken = async (): Promise<string> => {
 };
 
 api.interceptors.request.use(
-    (config) => {
+    async (config) => {
+        console.log('[API] ========== Request Interceptor ==========');
+        console.log('[API] Request URL:', config.url);
+        console.log('[API] Is Server:', typeof window === 'undefined');
+
         // Add auth token if available
-        const cookieToken = Cookies.get("access_token");
-        const localStorageToken = typeof window !== 'undefined' ? localStorage.getItem("access_token") : null;
-        const token = cookieToken || localStorageToken;
+        let token: string | null = null;
+
+        // Check if we're on the server or client
+        if (typeof window === 'undefined') {
+            // Server-side: Dynamically import and use Next.js cookies() function
+            try {
+                console.log('[API] Server-side: Getting cookies from next/headers');
+                const { cookies } = await import('next/headers');
+                const cookieStore = await cookies();
+                const accessTokenCookie = cookieStore.get('access_token');
+                token = accessTokenCookie?.value || null;
+                console.log('[API] Server token found:', !!token);
+                if (token) {
+                    console.log('[API] Server token (first 20 chars):', token.substring(0, 20) + '...');
+                }
+            } catch (error) {
+                console.error('[API] Error getting server cookies:', error);
+                token = null;
+            }
+        } else {
+            // Client-side: Use js-cookie and localStorage
+            console.log('[API] Client-side: Getting cookies from js-cookie');
+            const cookieToken = Cookies.get("access_token");
+            const localStorageToken = localStorage.getItem("access_token");
+            token = cookieToken || localStorageToken;
+            console.log('[API] Client cookie token found:', !!cookieToken);
+            console.log('[API] Client localStorage token found:', !!localStorageToken);
+            console.log('[API] Client final token found:', !!token);
+        }
 
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+            console.log('[API] Authorization header set');
         } else {
             // Explicitly remove Authorization header when no token is available
             // This ensures the header doesn't persist after logout
             delete config.headers.Authorization;
+            console.log('[API] No token available - Authorization header removed');
         }
 
         // Add anonymous cart ID header if available and not already authenticated
         if (!token) {
-            const anonymousCartId = Cookies.get("anonymous_cart_id");
-            if (anonymousCartId) {
-                config.headers["X-Anonymous-Cart-ID"] = anonymousCartId;
+            if (typeof window !== 'undefined') {
+                const anonymousCartId = Cookies.get("anonymous_cart_id");
+                if (anonymousCartId) {
+                    config.headers["X-Anonymous-Cart-ID"] = anonymousCartId;
+                    console.log('[API] Anonymous cart ID header added');
+                }
+            } else {
+                try {
+                    const { cookies } = await import('next/headers');
+                    const cookieStore = await cookies();
+                    const anonymousCartId = cookieStore.get("anonymous_cart_id")?.value;
+                    if (anonymousCartId) {
+                        config.headers["X-Anonymous-Cart-ID"] = anonymousCartId;
+                        console.log('[API] Server anonymous cart ID header added');
+                    }
+                } catch (error) {
+                    // Ignore errors getting anonymous cart ID
+                }
             }
         }
 
@@ -121,6 +168,11 @@ api.interceptors.request.use(
         addBreadcrumb('http', `${config.method?.toUpperCase()} ${config.url}`, {
             method: config.method,
             url: config.url,
+        });
+
+        console.log('[API] Final request headers:', {
+            Authorization: config.headers.Authorization ? 'Bearer ***' : 'None',
+            'X-Anonymous-Cart-ID': config.headers['X-Anonymous-Cart-ID'] || 'None'
         });
 
         return config;

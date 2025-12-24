@@ -9,15 +9,16 @@ export const metadata = {
     description: 'ویرایش قالب داستان',
 };
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     try {
-        const template = await storyService.getTemplateById(params.id);
+        const template = await storyService.getTemplateById(id);
 
         if (!template) {
             notFound();
         }
 
-        return <EditTemplatePageClient template={template} templateId={params.id} />;
+        return <EditTemplatePageClient template={template} templateId={id} />;
     } catch (error) {
         return (
             <AdminLayout>

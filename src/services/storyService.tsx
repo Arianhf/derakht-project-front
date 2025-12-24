@@ -21,8 +21,38 @@ export const storyService = {
   },
 
   getStoryById: async (id: string): Promise<Story> => {
-    const response = await api.get(`/stories/${id}/`);
-    return response.data;
+    console.log('[storyService] ========== getStoryById called ==========');
+    console.log('[storyService] Request ID:', id);
+    console.log('[storyService] Request URL:', `/stories/${id}/`);
+    console.log('[storyService] ID type:', typeof id);
+    console.log('[storyService] ID is valid UUID:', /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
+
+    try {
+      console.log('[storyService] Making GET request to API...');
+      const response = await api.get(`/stories/${id}/`);
+
+      console.log('[storyService] Response received');
+      console.log('[storyService] Response status:', response.status);
+      console.log('[storyService] Response headers:', response.headers);
+      console.log('[storyService] Response data type:', typeof response.data);
+      console.log('[storyService] Response data keys:', response.data ? Object.keys(response.data) : 'null');
+      console.log('[storyService] Story ID from response:', response.data?.id);
+      console.log('[storyService] Story name from response:', response.data?.name);
+      console.log('[storyService] Story parts count:', response.data?.parts?.length);
+
+      return response.data;
+    } catch (error: any) {
+      console.error('[storyService] ========== API Error ==========');
+      console.error('[storyService] Error occurred in getStoryById');
+      console.error('[storyService] Error type:', typeof error);
+      console.error('[storyService] Error message:', error?.message);
+      console.error('[storyService] Error code:', error?.code);
+      console.error('[storyService] Error response status:', error?.response?.status);
+      console.error('[storyService] Error response data:', error?.response?.data);
+      console.error('[storyService] Full error:', error);
+
+      throw error;
+    }
   },
 
   createStory: async (storyData: FormData): Promise<StoryTemplate> => {

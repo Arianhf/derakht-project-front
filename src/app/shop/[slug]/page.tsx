@@ -10,12 +10,13 @@ export const metadata = {
   description: 'مشاهده جزئیات محصول و خرید آنلاین از فروشگاه درخت',
 };
 
-export default async function Page({ params }: { params: { slug: string } }) {
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   // Fetch product and comments on server
   try {
     const [product, commentsResponse] = await Promise.all([
-      shopService.getProductBySlug(params.slug),
-      shopService.getProductComments(params.slug).catch(() => ({ items: [] } as CommentsResponse))
+      shopService.getProductBySlug(slug),
+      shopService.getProductComments(slug).catch(() => ({ items: [] } as CommentsResponse))
     ]);
 
     if (!product) {
