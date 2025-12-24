@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import ProductCard from '@/components/shop/ProductCard';
 import CategoryNavigation from '@/components/shop/CategoryNavigation';
@@ -13,9 +13,13 @@ import { shopService } from '@/services/shopService';
 import { Toaster } from 'react-hot-toast';
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
-const ShopPage = () => {
-    const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
+interface ShopPageClientProps {
+    initialProducts: Product[];
+}
+
+const ShopPageClient = ({ initialProducts }: ShopPageClientProps) => {
+    const [products, setProducts] = useState<Product[]>(initialProducts);
+    const [loading, setLoading] = useState(false);
     const [filters, setFilters] = useState<ShopFilters>({
         sort: 'newest'
     });
@@ -23,11 +27,6 @@ const ShopPage = () => {
     const breadcrumbs: Breadcrumb[] = [
         { label: 'فروشگاه', href: '/shop' }
     ];
-
-    useEffect(() => {
-        // Fetch products on mount with initial filters
-        fetchProducts({ sort: 'newest' });
-    }, []);
 
     const fetchProducts = async (appliedFilters: ShopFilters) => {
         try {
@@ -100,4 +99,4 @@ const ShopPage = () => {
     );
 };
 
-export default ShopPage;
+export default ShopPageClient;
