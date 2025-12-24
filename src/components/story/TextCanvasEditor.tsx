@@ -149,6 +149,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
             clearTimeout(timer);
             resizeObserver.disconnect();
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [story.size, story.orientation]);
 
     /**

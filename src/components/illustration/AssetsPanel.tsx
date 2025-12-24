@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { FaPlus, FaTrash, FaTimes, FaSpinner } from 'react-icons/fa';
 import Image from 'next/image';
 import styles from './AssetsPanel.module.scss';
@@ -26,14 +26,7 @@ const AssetsPanel: React.FC<AssetsPanelProps> = ({ isOpen, onClose, onAssetSelec
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch assets when panel opens
-  useEffect(() => {
-    if (isOpen) {
-      fetchAssets();
-    }
-  }, [isOpen]);
-
-  const fetchAssets = async () => {
+  const fetchAssets = useCallback(async () => {
     if (!user?.id) {
       console.warn('Cannot fetch assets: user not authenticated');
       return;
@@ -52,7 +45,14 @@ const AssetsPanel: React.FC<AssetsPanelProps> = ({ isOpen, onClose, onAssetSelec
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user?.id]);
+
+  // Fetch assets when panel opens
+  useEffect(() => {
+    if (isOpen) {
+      fetchAssets();
+    }
+  }, [isOpen, fetchAssets]);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
