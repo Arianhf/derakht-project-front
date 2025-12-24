@@ -12,15 +12,23 @@ import EmptyState from '@/components/shared/EmptyState/EmptyState';
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import Pagination from '@/components/shared/Pagination/Pagination';
 
-const OrderHistory: React.FC = () => {
+interface OrderHistoryProps {
+    initialOrders: Order[];
+    initialTotalItems: number;
+}
+
+const OrderHistory: React.FC<OrderHistoryProps> = ({ initialOrders, initialTotalItems }) => {
     const router = useRouter();
-    const [orders, setOrders] = useState<Order[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [orders, setOrders] = useState<Order[]>(initialOrders);
+    const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalItems, setTotalItems] = useState(0);
+    const [totalPages, setTotalPages] = useState(() => {
+        const itemsPerPage = 10;
+        return Math.ceil(initialTotalItems / itemsPerPage);
+    });
+    const [totalItems, setTotalItems] = useState(initialTotalItems);
     const [searchTerm, setSearchTerm] = useState('');
-    const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+    const [filteredOrders, setFilteredOrders] = useState<Order[]>(initialOrders);
 
     const fetchOrders = useCallback(async () => {
         try {

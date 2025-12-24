@@ -5,16 +5,17 @@ import React from 'react';
 import AccountLayout from '@/components/account/AccountLayout';
 import OrderDetail from '@/components/account/OrderDetail';
 import { UserProvider } from '@/contexts/UserContext';
+import { Order } from '@/types/shop';
 
 interface OrderDetailClientProps {
-    id: string;
+    order: Order;
 }
 
-const OrderDetailClient: React.FC<OrderDetailClientProps> = ({ id }) => {
+const OrderDetailClient: React.FC<OrderDetailClientProps> = ({ order }) => {
     return (
         <UserProvider>
             <AccountLayout>
-                <OrderDetail orderId={id} />
+                <OrderDetail order={order} />
             </AccountLayout>
         </UserProvider>
     );

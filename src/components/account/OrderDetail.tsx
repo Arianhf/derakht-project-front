@@ -1,45 +1,20 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { userService } from '@/services/userService';
 import { Order } from '@/types/shop';
 import { toPersianNumber } from '@/utils/convertToPersianNumber';
 import { FaArrowRight } from 'react-icons/fa';
 import styles from './OrderDetail.module.scss';
-import LoadingSpinner from "@/components/shared/LoadingSpinner";
-import ErrorMessage from "@/components/shared/ErrorMessage";
 import OrderStatusBadge from '@/components/shared/OrderStatusBadge/OrderStatusBadge';
 
 interface OrderDetailProps {
-    orderId: string;
+    order: Order;
 }
 
-const OrderDetail: React.FC<OrderDetailProps> = ({ orderId }) => {
+const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
     const router = useRouter();
-    const [order, setOrder] = useState<Order | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    const fetchOrderDetails = useCallback(async () => {
-        try {
-            setLoading(true);
-            const data = await userService.getOrderDetails(orderId);
-            setOrder(data);
-        } catch (err: any) {
-            console.error('Error fetching order details:', err);
-            setError('خطا در دریافت اطلاعات سفارش');
-        } finally {
-            setLoading(false);
-        }
-    }, [orderId]);
-
-    useEffect(() => {
-        if (orderId) {
-            fetchOrderDetails();
-        }
-    }, [orderId, fetchOrderDetails]);
 
     const formatPrice = (amount: number): string => {
         // Convert to toman from rial
@@ -50,24 +25,6 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ orderId }) => {
     const goBack = () => {
         router.push('/account/orders');
     };
-
-    if (loading) {
-        return <LoadingSpinner message="در حال بارگذاری اطلاعات سفارش..." />;
-    }
-
-    if (error || !order) {
-        return (
-            <>
-                <ErrorMessage message={error || 'اطلاعات سفارش یافت نشد'} />
-                <button
-                    className={styles.backButton}
-                    onClick={goBack}
-                >
-                    <FaArrowRight /> بازگشت به سفارش‌ها
-                </button>
-            </>
-        );
-    }
 
     return (
         <div className={styles.orderDetailContainer}>

@@ -1,17 +1,13 @@
-// src/components/blog/BlogPost.tsx
+// src/components/blog/BlogPostClient.tsx
 'use client';
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import Image from 'next/image';
 import { FaUserCircle, FaCalendarAlt, FaClock, FaStar } from 'react-icons/fa';
 import styles from "./BlogPage.module.scss";
-import { blogService } from '@/services/blogService';
 import { BlogPost } from '@/types';
-import { UI_CONSTANTS } from '@/constants';
 import { formatJalaliDate, toPersianNumber } from "@/utils/convertToPersianNumber";
-import LoadingSpinner from "@/components/shared/LoadingSpinner";
-import ErrorMessage from "@/components/shared/ErrorMessage";
 import HeroCarousel from "./HeroCarousel";
 import CategoriesSection from "./CategoriesSection";
 
@@ -193,45 +189,16 @@ const RegularBlogCard: React.FC<RegularBlogCardProps> = ({blog, onNavigate, onTa
     </div>
 );
 
+// Props interface for the client component
+interface BlogPostClientProps {
+  blogs: BlogPost[];
+  featuredBlogs: BlogPost[];
+  heroPosts: BlogPost[];
+}
 
-// Main BlogPostList component
-const BlogPostList: React.FC = () => {
-  const [blogs, setBlogs] = useState<BlogPost[]>([]);
-  const [featuredBlogs, setFeaturedBlogs] = useState<BlogPost[]>([]);
-  const [heroPosts, setHeroPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+// Main BlogPostClient component - receives data as props
+const BlogPostClient: React.FC<BlogPostClientProps> = ({ blogs, featuredBlogs, heroPosts }) => {
   const router = useRouter();
-
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        setLoading(true);
-        // Fetch all three types of blog posts in parallel
-        const [regularPosts, featuredPosts, heroPostsResponse] = await Promise.all([
-          blogService.getAllPosts(),
-          blogService.getFeaturedPosts(),
-          blogService.getHeroPosts()
-        ]);
-
-        setBlogs(regularPosts.items);
-
-        // Filter featured posts that are not hero posts
-        const featured = featuredPosts.items.filter(post =>
-            post.featured && !post.hero);
-        setFeaturedBlogs(featured);
-
-        // Set hero posts from the updated API
-        setHeroPosts(heroPostsResponse.items || []);
-      } catch (err) {
-        setError(UI_CONSTANTS.ERROR_MESSAGE);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBlogs();
-  }, []);
 
   const handleNavigate = (id: number) => {
     router.push(`/blog/${id}`);
@@ -240,9 +207,6 @@ const BlogPostList: React.FC = () => {
   const handleTagClick = (tag: string) => {
     router.push(`/blog/tag?tag=${tag}`);
   };
-
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} />;
 
   // If there are no blog posts of any kind, show empty state
   if (blogs.length === 0 && featuredBlogs.length === 0 && heroPosts.length === 0) {
@@ -260,7 +224,7 @@ const BlogPostList: React.FC = () => {
               />
           )}
 
-          {/* Categories Section - NEW COMPONENT */}
+          {/* Categories Section */}
           <CategoriesSection />
 
           {/* Featured Blogs Section */}
@@ -301,4 +265,4 @@ const BlogPostList: React.FC = () => {
   );
 };
 
-export default BlogPostList;
+export default BlogPostClient;
