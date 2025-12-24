@@ -1,7 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['derakht-storage.darkube.app', 'darakht.darkube.app', 'picsum.photos'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'derakht-storage.darkube.app',
+      },
+      {
+        protocol: 'https',
+        hostname: 'darakht.darkube.app',
+      },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+      },
+    ],
   },
   output: 'standalone',
 };
