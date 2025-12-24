@@ -16,7 +16,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   try {
     const [product, commentsResponse] = await Promise.all([
       shopService.getProductBySlug(slug),
-      shopService.getProductComments(slug).catch(() => ({ items: [] } as CommentsResponse))
+      shopService.getProductComments(slug).catch(() => ({ items: [], total: 0 } as CommentsResponse))
     ]);
 
     if (!product) {
