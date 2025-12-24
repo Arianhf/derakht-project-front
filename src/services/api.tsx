@@ -1,7 +1,6 @@
 // src/services/api.tsx with anonymous cart ID and error handling
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
-import { cookies } from "next/headers";
 import { StandardErrorResponse, ErrorCode } from "@/types/error";
 import { addBreadcrumb } from "@/utils/errorLogger";
 
@@ -106,9 +105,10 @@ api.interceptors.request.use(
 
         // Check if we're on the server or client
         if (typeof window === 'undefined') {
-            // Server-side: Use Next.js cookies() function
+            // Server-side: Dynamically import and use Next.js cookies() function
             try {
                 console.log('[API] Server-side: Getting cookies from next/headers');
+                const { cookies } = await import('next/headers');
                 const cookieStore = await cookies();
                 const accessTokenCookie = cookieStore.get('access_token');
                 token = accessTokenCookie?.value || null;
@@ -151,6 +151,7 @@ api.interceptors.request.use(
                 }
             } else {
                 try {
+                    const { cookies } = await import('next/headers');
                     const cookieStore = await cookies();
                     const anonymousCartId = cookieStore.get("anonymous_cart_id")?.value;
                     if (anonymousCartId) {
