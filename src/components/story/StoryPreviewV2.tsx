@@ -257,16 +257,32 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
               </div>
             )
           ) : (
-            <div className={styles.imageContent}>
-              <Image
-                src={content || '/placeholder-image.jpg'}
-                alt={`تصویر داستان - بخش ${currentPartIndex + 1}`}
-                fill
-                className={styles.storyImage}
-                style={{ objectFit: 'cover' }}
-                priority={currentPartIndex === 0}
-              />
-            </div>
+            // Render canvas viewer if canvas_illustration_data exists
+            part?.canvas_illustration_data ? (
+              <div className={styles.canvasViewerWrapper}>
+                <TextCanvasViewer
+                  key={`canvas-illustration-part-${currentPartIndex}`}
+                  canvasData={typeof part.canvas_illustration_data === 'string' ? part.canvas_illustration_data : JSON.stringify(part.canvas_illustration_data)}
+                  backgroundColor={story.background_color || '#FFFFFF'}
+                />
+              </div>
+            ) : (
+              <div className={styles.imageContent}>
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: story.background_color || '#FFF9F5',
+                    color: story.font_color || '#2B463C',
+                  }}
+                >
+                  تصویری وارد نشده است.
+                </div>
+              </div>
+            )
           )}
         </div>
       </div>
