@@ -1,9 +1,10 @@
 import React from 'react';
 import { Metadata } from 'next';
-import BlogPost from '../../components/blog/BlogPost';
+import BlogPostClient from '../../components/blog/BlogPostClient';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import logoImage from '@/assets/images/logo2.png';
 import styles from './page.module.scss';
+import { blogService } from '@/services/blogService';
 
 // SEO Metadata for blog listing page
 export const metadata: Metadata = {
@@ -45,7 +46,22 @@ export const metadata: Metadata = {
     },
 };
 
-const BlogPage: React.FC = () => {
+const BlogPage = async () => {
+    // Fetch all three types of blog posts on server
+    const [regularPosts, featuredPosts, heroPostsResponse] = await Promise.all([
+        blogService.getAllPosts(),
+        blogService.getFeaturedPosts(),
+        blogService.getHeroPosts()
+    ]);
+
+    const blogs = regularPosts.items;
+
+    // Filter featured posts that are not hero posts
+    const featuredBlogs = featuredPosts.items.filter(post =>
+        post.featured && !post.hero);
+
+    // Set hero posts from the updated API
+    const heroPosts = heroPostsResponse.items || [];
     // Structured Data for Blog Page
     const structuredData = {
         '@context': 'https://schema.org',
@@ -99,7 +115,11 @@ const BlogPage: React.FC = () => {
             <div className={styles.blogPageWrapper}>
                 <Navbar logo={logoImage} />
                 <main className={styles.mainContent}>
-                    <BlogPost />
+                    <BlogPostClient
+                        blogs={blogs}
+                        featuredBlogs={featuredBlogs}
+                        heroPosts={heroPosts}
+                    />
                 </main>
             </div>
         </>
