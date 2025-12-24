@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next';
 import { blogService } from '@/services/blogService';
 
+export const revalidate = 3600; // Revalidate every hour
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://derakht.com';
 
