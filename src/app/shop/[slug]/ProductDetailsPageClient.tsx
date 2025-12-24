@@ -1,95 +1,39 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import { Button } from '@/components/shared/Button';
 import Breadcrumbs from '@/components/shop/Breadcrumbs';
 import ProductImageGallery from '@/components/shared/ProductImageGallery/ProductImageGallery';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 import styles from './productDetails.module.scss';
 import logo from '@/assets/images/logo2.png';
 import heroImage from "../../../../public/images/shop_bg.png";
 import { FaPlus, FaMinus, FaTrash, FaArrowRight, FaSpinner, FaShoppingCart } from 'react-icons/fa';
 import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
-import { Product, ProductImage, Breadcrumb, ProductComment, CommentsResponse } from '@/types/shop';
+import { Product, Breadcrumb, ProductComment } from '@/types/shop';
 import { shopService } from '@/services/shopService';
 import toast, { Toaster } from 'react-hot-toast';
 import { useProductQuantity } from '@/hooks/useProductQuantity';
 import { StandardErrorResponse } from '@/types/error';
 import { ERROR_MESSAGES } from '@/constants/errorMessages';
 
-const ProductDetailsPage: React.FC = () => {
+interface ProductDetailsPageClientProps {
+    product: Product;
+    initialComments: ProductComment[];
+    breadcrumbs: Breadcrumb[];
+}
+
+const ProductDetailsPageClient: React.FC<ProductDetailsPageClientProps> = ({
+    product,
+    initialComments,
+    breadcrumbs
+}) => {
     const router = useRouter();
-    const params = useParams();
-    const productSlug = params.slug as string;
-
-    const [product, setProduct] = useState<Product | null>(null);
-    const [loading, setLoading] = useState(true);
     const [comment, setComment] = useState('');
-    const [comments, setComments] = useState<ProductComment[]>([]);
-    const [commentsLoading, setCommentsLoading] = useState(false);
+    const [comments, setComments] = useState<ProductComment[]>(initialComments);
     const [commentSubmitting, setCommentSubmitting] = useState(false);
-    const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([
-        { label: 'فروشگاه', href: '/shop' },
-    ]);
-
-    const fetchProduct = useCallback(async () => {
-        try {
-            setLoading(true);
-            const data = await shopService.getProductBySlug(productSlug);
-            setProduct(data);
-
-            // Update breadcrumbs
-            const updatedBreadcrumbs = [
-                { label: 'فروشگاه', href: '/shop' }
-            ];
-
-            if (data.category) {
-                updatedBreadcrumbs.push({
-                    label: data.category.name,
-                    href: `/shop/category/${data.category.slug}`
-                });
-            }
-
-            updatedBreadcrumbs.push({
-                label: data.title,
-                href: `/shop/${data.slug}`
-            });
-
-            setBreadcrumbs(updatedBreadcrumbs);
-        } catch (error) {
-            // Error fetching product - silently handle in production
-        } finally {
-            setLoading(false);
-        }
-    }, [productSlug]);
-
-    // Fetch comments
-    const fetchComments = useCallback(async () => {
-        if (!productSlug) return;
-
-        try {
-            setCommentsLoading(true);
-            const response: CommentsResponse = await shopService.getProductComments(productSlug);
-            setComments(response.items || []);
-        } catch (error) {
-            // Silently handle error - comments are not critical
-            setComments([]);
-        } finally {
-            setCommentsLoading(false);
-        }
-    }, [productSlug]);
-
-    // Use effect to fetch product on component mount
-    useEffect(() => {
-        if (productSlug) {
-            fetchProduct();
-            fetchComments();
-        }
-    }, [productSlug, fetchProduct, fetchComments]);
 
     // Use the product quantity hook
     const {
@@ -98,7 +42,7 @@ const ProductDetailsPage: React.FC = () => {
         handleAddToCart,
         handleIncreaseQuantity,
         handleDecreaseQuantity
-    } = useProductQuantity(product || {} as Product);
+    } = useProductQuantity(product);
 
     // Comment submission handler
     const handleSubmitComment = async () => {
@@ -114,7 +58,7 @@ const ProductDetailsPage: React.FC = () => {
 
         try {
             setCommentSubmitting(true);
-            const newComment = await shopService.createProductComment(productSlug, comment.trim());
+            const newComment = await shopService.createProductComment(product.slug, comment.trim());
 
             // Add the new comment to the list
             setComments((prev) => [newComment, ...prev]);
@@ -155,39 +99,6 @@ const ProductDetailsPage: React.FC = () => {
             return '';
         }
     };
-
-    // Render loading state
-    if (loading) {
-        return (
-            <div className={styles.productContainer}>
-                <Navbar logo={logo} />
-                <div className={styles.loadingContainer}>
-                    <FaSpinner className={styles.spinner} />
-                    <p>در حال بارگذاری محصول...</p>
-                </div>
-            </div>
-        );
-    }
-
-    // Render not found state
-    if (!product) {
-        return (
-            <div className={styles.productContainer}>
-                <Navbar logo={logo} />
-                <div className={styles.notFound}>
-                    <h2>محصول مورد نظر یافت نشد</h2>
-                    <Button
-                        variant="primary"
-                        onClick={goBack}
-                        icon={<FaArrowRight />}
-                        iconPosition="right"
-                    >
-                        بازگشت به فروشگاه
-                    </Button>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className={styles.productContainer}>
@@ -288,12 +199,7 @@ const ProductDetailsPage: React.FC = () => {
                 <div className={styles.commentsContainer}>
                     <h2 className={styles.commentsTitle}>نظرات کاربران</h2>
                     <div className={styles.commentsBox}>
-                        {commentsLoading ? (
-                            <div className={styles.commentsLoading}>
-                                <FaSpinner className={styles.spinner} />
-                                <p>در حال بارگذاری نظرات...</p>
-                            </div>
-                        ) : comments.length === 0 ? (
+                        {comments.length === 0 ? (
                             <p className={styles.noComments}>هنوز نظری ثبت نشده است. اولین نفری باشید که نظر می‌دهد!</p>
                         ) : (
                             <ul className={styles.commentsList}>
@@ -347,4 +253,4 @@ const ProductDetailsPage: React.FC = () => {
     );
 };
 
-export default ProductDetailsPage;
+export default ProductDetailsPageClient;
