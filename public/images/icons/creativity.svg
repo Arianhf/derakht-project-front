@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Lightbulb -->
+  <circle cx="32" cy="28" r="12" fill="#FFE4B5" stroke="#345BC0" stroke-width="2"/>
+  <path d="M32 16 L32 12" stroke="#345BC0" stroke-width="2" stroke-linecap="round"/>
+  <path d="M20 20 L17 17" stroke="#345BC0" stroke-width="2" stroke-linecap="round"/>
+  <path d="M44 20 L47 17" stroke="#345BC0" stroke-width="2" stroke-linecap="round"/>
+  <path d="M16 28 L12 28" stroke="#345BC0" stroke-width="2" stroke-linecap="round"/>
+  <path d="M48 28 L52 28" stroke="#345BC0" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Base -->
+  <rect x="28" y="40" width="8" height="6" rx="2" fill="#345BC0"/>
+  <rect x="26" y="46" width="12" height="3" rx="1.5" fill="#345BC0"/>
+
+  <!-- Sparkles -->
+  <circle cx="26" cy="24" r="1.5" fill="#FF6F61"/>
+  <circle cx="38" cy="26" r="1.5" fill="#80D46D"/>
+  <circle cx="32" cy="34" r="1.5" fill="#FF6F61"/>
+</svg>
