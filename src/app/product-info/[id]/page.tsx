@@ -12,9 +12,10 @@ export const metadata = {
     description: 'جزئیات محصول',
 };
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     try {
-        const response = await api.get(`/v2/product-info/${params.id}/`);
+        const response = await api.get(`/v2/product-info/${id}/`);
         const productInfo = response.data;
 
         if (!productInfo) {
