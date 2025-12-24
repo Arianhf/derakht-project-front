@@ -1,7 +1,7 @@
-// src/app/shop/category/[slug]/CategoryPage.tsx
+// src/app/shop/category/[slug]/CategoryPageClient.tsx
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import ProductCard from '@/components/shop/ProductCard';
@@ -11,56 +11,40 @@ import Breadcrumbs from '@/components/shop/Breadcrumbs';
 import styles from '../../shop.module.scss';
 import logo from '@/assets/images/logo2.png';
 import heroImage from '@/assets/images/header1.jpg';
-import { useCart } from '@/contexts/CartContext';
 import { Product, ShopFilters, Breadcrumb, ProductCategory } from '@/types/shop';
 import { shopService } from '@/services/shopService';
-import { categoryService } from '@/services/categoryService';
 import { Toaster } from 'react-hot-toast';
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 
-interface CategoryPageProps {
-    params: {
-        slug: string;
-    };
+interface CategoryPageClientProps {
+    category: ProductCategory;
+    initialProducts: Product[];
+    categorySlug: string;
 }
 
-const CategoryPage: React.FC<CategoryPageProps> = ({ params }) => {
-    const { slug } = params;
-    const [category, setCategory] = useState<ProductCategory | null>(null);
-    const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
-    const { addToCart } = useCart();
+const CategoryPageClient: React.FC<CategoryPageClientProps> = ({
+    category,
+    initialProducts,
+    categorySlug
+}) => {
+    const [products, setProducts] = useState<Product[]>(initialProducts);
+    const [loading, setLoading] = useState(false);
     const [filters, setFilters] = useState<ShopFilters>({
-        category: slug,
+        category: categorySlug,
         sort: 'newest'
     });
 
-    const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([
+    const breadcrumbs: Breadcrumb[] = [
         { label: 'فروشگاه', href: '/shop' },
-        { label: 'دسته‌بندی', href: `/shop/category/${slug}` }
-    ]);
+        { label: category.name, href: `/shop/category/${categorySlug}` }
+    ];
 
-    const fetchCategory = useCallback(async () => {
-        try {
-            const data = await categoryService.getCategoryBySlug(slug);
-            setCategory(data);
-
-            // Update breadcrumbs with correct category name
-            setBreadcrumbs([
-                { label: 'فروشگاه', href: '/shop' },
-                { label: data.name, href: `/shop/category/${slug}` }
-            ]);
-        } catch (error) {
-            console.error('Error fetching category:', error);
-        }
-    }, [slug]);
-
-    const fetchProducts = useCallback(async (appliedFilters: ShopFilters) => {
+    const fetchProducts = async (appliedFilters: ShopFilters) => {
         try {
             setLoading(true);
             // Use the special category endpoint for filtering by category
             const data = await shopService.getProductsByCategory(
-                slug,
+                categorySlug,
                 {
                     searchTerm: appliedFilters.searchTerm,
                     price: appliedFilters.price,
@@ -69,27 +53,21 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ params }) => {
             );
             setProducts(data.results || []);
         } catch (error) {
-            console.error('Error fetching products:', error);
+            // Silently handle error
         } finally {
             setLoading(false);
         }
-    }, [slug]);
-
-    useEffect(() => {
-        fetchCategory();
-        fetchProducts({ ...filters, category: slug });
-    }, [slug, fetchCategory, fetchProducts, filters]);
+    };
 
     const handleFilterChange = (newFilters: ShopFilters) => {
         // Preserve the category while updating other filters
-        const updatedFilters = { ...newFilters, category: slug };
+        const updatedFilters = { ...newFilters, category: categorySlug };
         setFilters(updatedFilters);
         fetchProducts(updatedFilters);
     };
 
     const handleSearch = (searchTerm: string) => {
         const newFilters = { ...filters, searchTerm: searchTerm || undefined };
-
         setFilters(newFilters);
         fetchProducts(newFilters);
     };
@@ -117,7 +95,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ params }) => {
 
                 <div className={styles.shopLayout}>
                     <aside className={styles.sidebar}>
-                        <CategoryNavigation activeCategory={slug} />
+                        <CategoryNavigation activeCategory={categorySlug} />
                     </aside>
 
                     <main className={styles.mainContent}>
@@ -152,4 +130,4 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ params }) => {
     );
 };
 
-export default CategoryPage;
+export default CategoryPageClient;

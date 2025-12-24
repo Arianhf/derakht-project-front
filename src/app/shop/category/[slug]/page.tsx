@@ -1,6 +1,9 @@
 // src/app/shop/category/[slug]/page.tsx
 import { Metadata } from 'next';
-import CategoryPage from './CategoryPage';
+import CategoryPageClient from './CategoryPageClient';
+import { categoryService } from '@/services/categoryService';
+import { shopService } from '@/services/shopService';
+import { notFound } from 'next/navigation';
 
 export type CategoryParams = Promise<{ slug: string }>;
 
@@ -17,5 +20,26 @@ export async function generateMetadata({ params }: { params: CategoryParams }): 
 
 export default async function Page({ params }: { params: CategoryParams }) {
     const { slug } = await params;
-    return <CategoryPage params={{ slug }} />;
+
+    try {
+        // Fetch category and products on server
+        const [category, productsData] = await Promise.all([
+            categoryService.getCategoryBySlug(slug),
+            shopService.getProductsByCategory(slug, { sort: 'newest' })
+        ]);
+
+        if (!category) {
+            notFound();
+        }
+
+        return (
+            <CategoryPageClient
+                category={category}
+                initialProducts={productsData.results || []}
+                categorySlug={slug}
+            />
+        );
+    } catch (error) {
+        notFound();
+    }
 }
