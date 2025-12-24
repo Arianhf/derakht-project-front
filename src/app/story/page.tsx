@@ -6,6 +6,8 @@ export const metadata = {
     description: 'مشاهده و مدیریت داستان‌های خود',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function Page() {
     // Fetch initial stories on server
     const response = await storyService.getApiStories(1, 12);

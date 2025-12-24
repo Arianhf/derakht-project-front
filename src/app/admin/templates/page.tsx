@@ -6,6 +6,8 @@ export const metadata = {
     description: 'مدیریت قالب‌های داستان',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function Page() {
     // Fetch initial templates on server
     const response = await storyService.getTemplates();

@@ -9,6 +9,8 @@ export const metadata = {
     description: 'مشاهده و مدیریت سفارش‌ها',
 };
 
+export const dynamic = 'force-dynamic';
+
 const OrdersPage = async () => {
     // Fetch initial orders on server (first page)
     const ordersResponse = await userService.getOrders(1);
