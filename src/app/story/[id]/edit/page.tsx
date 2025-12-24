@@ -8,9 +8,10 @@ export const metadata = {
     description: 'ویرایش داستان خود',
 };
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     try {
-        const story = await storyService.getStoryById(params.id);
+        const story = await storyService.getStoryById(id);
 
         if (!story) {
             notFound();
