@@ -115,7 +115,8 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
 
   const layoutType = getLayoutType(story.size || null, story.orientation || null);
   const aspectRatio = getAspectRatioPadding(layoutType);
-  const isSinglePageMobile = layoutType.includes('Rectangle');
+  // On mobile (< 768px), show one canvas per page for ALL layouts
+  const isSinglePageMobile = isMobile;
 
   // Navigation handlers - defined early to be used in useEffect
   const handleClose = useCallback(() => {

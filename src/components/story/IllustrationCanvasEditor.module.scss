@@ -60,6 +60,6 @@
   @media (max-width: $breakpoint-md) {
     top: $spacing-xs;
     right: $spacing-xs;
-    left: $spacing-xs;
+    // Remove left to keep toolbar compact and right-aligned
   }
 }
