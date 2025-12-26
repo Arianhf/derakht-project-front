@@ -37,6 +37,7 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
     const fabricLibRef = useRef<any>(null);
     const dimensionsCalculatedRef = useRef(false);
     const initialStateLoadedRef = useRef(false);
+    const standardSizeRef = useRef({ width: 1000, height: 1000 }); // Store standard canvas size
     const [isCanvasReady, setIsCanvasReady] = useState(false);
     const [isFabricLoaded, setIsFabricLoaded] = useState(false);
     const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
@@ -96,6 +97,9 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
                 if (rect.width > 0 && rect.height > 0) {
                     const layoutType = getLayoutTypeFromStory(story);
                     const standardSize = getStandardCanvasSize(layoutType);
+
+                    // Store standard size for zoom calculation
+                    standardSizeRef.current = standardSize;
 
                     const scaleX = rect.width / standardSize.width;
                     const scaleY = rect.height / standardSize.height;
@@ -158,14 +162,28 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
 
         const { Canvas, PencilBrush } = fabricLibRef.current;
 
+        // Calculate initial zoom level based on standard size
+        const standardSize = standardSizeRef.current;
+        const initialZoom = canvasDimensions.width / standardSize.width;
+
+        // Initialize the canvas with standard dimensions and zoom
         const canvas = new Canvas(canvasRef.current, {
-            width: canvasDimensions.width,
-            height: canvasDimensions.height,
+            width: standardSize.width,
+            height: standardSize.height,
             backgroundColor,
             isDrawingMode: false,
             selection: true,
             preserveObjectStacking: true,
             enableRetinaScaling: true,
+        });
+
+        // Set zoom to scale down to container size
+        canvas.setZoom(initialZoom);
+
+        // Update canvas element dimensions to match container
+        canvas.setDimensions({
+            width: canvasDimensions.width,
+            height: canvasDimensions.height,
         });
 
         // Set up the drawing brush
@@ -175,7 +193,7 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
         canvas.freeDrawingBrush = brush;
 
         fabricCanvasRef.current = canvas;
-        console.log('Illustration canvas created');
+        console.log('Illustration canvas created with zoom:', initialZoom);
         setIsCanvasReady(true);
 
         // Event handlers
@@ -263,16 +281,30 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
     }, [initialState, isCanvasReady]);
 
     /**
-     * Update canvas dimensions when container size changes
+     * Update canvas zoom and dimensions when container size changes
+     * This ensures objects scale proportionally across all devices
      */
     useEffect(() => {
         if (!fabricCanvasRef.current) return;
 
-        console.log('Updating illustration canvas dimensions to:', canvasDimensions);
+        const standardSize = standardSizeRef.current;
+        const zoom = canvasDimensions.width / standardSize.width;
+
+        console.log('Updating illustration canvas zoom:', {
+            canvasDimensions,
+            standardSize,
+            zoom,
+        });
+
+        // Set zoom to scale all objects proportionally
+        fabricCanvasRef.current.setZoom(zoom);
+
+        // Update canvas element dimensions to match container
         fabricCanvasRef.current.setDimensions({
             width: canvasDimensions.width,
             height: canvasDimensions.height,
         });
+
         fabricCanvasRef.current.renderAll();
     }, [canvasDimensions]);
 

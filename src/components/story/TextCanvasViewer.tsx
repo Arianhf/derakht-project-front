@@ -26,6 +26,7 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
     const fabricLibRef = useRef<any>(null);
     const dimensionsCalculatedRef = useRef(false);
     const originalCanvasDataRef = useRef<{ canvasJSON: any; originalWidth: number; originalHeight: number } | null>(null);
+    const standardSizeRef = useRef({ width: 1000, height: 1000 }); // Store original canvas size
     const [isFabricLoaded, setIsFabricLoaded] = useState(false);
     const [isCanvasReady, setIsCanvasReady] = useState(false);
     const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
@@ -114,17 +115,28 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
 
         const { StaticCanvas } = fabricLibRef.current;
 
-        // Create empty canvas at current container size
+        // Use standard size and zoom approach for consistent scaling
+        const standardSize = standardSizeRef.current;
+        const initialZoom = canvasDimensions.width / standardSize.width;
+
+        // Create canvas with standard dimensions
         const canvas = new StaticCanvas(canvasRef.current, {
-            width: canvasDimensions.width,
-            height: canvasDimensions.height,
+            width: standardSize.width,
+            height: standardSize.height,
             backgroundColor,
             enableRetinaScaling: true,
         });
 
+        // Apply zoom and adjust dimensions
+        canvas.setZoom(initialZoom);
+        canvas.setDimensions({
+            width: canvasDimensions.width,
+            height: canvasDimensions.height,
+        });
+
         fabricCanvasRef.current = canvas;
         setIsCanvasReady(true);
-        console.log('Canvas initialized in viewer');
+        console.log('Canvas initialized in viewer with zoom:', initialZoom);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isFabricLoaded, canvasDimensions]);
@@ -172,53 +184,39 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
                     console.log('Loading legacy canvas format, assuming 1000x1000 dimensions');
                 }
 
-                // Store metadata for resize effect
+                // Store metadata and update standard size
                 originalCanvasDataRef.current = { canvasJSON, originalWidth, originalHeight };
+                standardSizeRef.current = { width: originalWidth, height: originalHeight };
 
                 // Load canvas data using Promise-based API (Fabric.js v6)
                 await fabricCanvasRef.current.loadFromJSON(canvasJSON);
 
                 if (!fabricCanvasRef.current) return;
 
-                // Calculate scale factor (maintain aspect ratio)
+                // Calculate zoom based on original dimensions
                 const scaleX = canvasDimensions.width / originalWidth;
                 const scaleY = canvasDimensions.height / originalHeight;
-                const scale = Math.min(scaleX, scaleY);
+                const zoom = Math.min(scaleX, scaleY);
 
-                console.log('Scaling canvas objects:', {
+                console.log('Setting canvas zoom:', {
                     originalWidth,
                     originalHeight,
                     currentWidth: canvasDimensions.width,
                     currentHeight: canvasDimensions.height,
-                    scale,
+                    zoom,
                 });
 
-                // Scale all objects proportionally
-                fabricCanvasRef.current.getObjects().forEach((obj: any) => {
-                    obj.scaleX = (obj.scaleX || 1) * scale;
-                    obj.scaleY = (obj.scaleY || 1) * scale;
-                    obj.left = (obj.left || 0) * scale;
-                    obj.top = (obj.top || 0) * scale;
-                    obj.setCoords();
+                // Apply zoom to scale all objects proportionally
+                fabricCanvasRef.current.setZoom(zoom);
+
+                // Update dimensions to match container
+                fabricCanvasRef.current.setDimensions({
+                    width: canvasDimensions.width,
+                    height: canvasDimensions.height,
                 });
-
-                // Center content if there's extra space
-                if (scaleX !== scaleY) {
-                    const offsetX = scaleX > scaleY ? (canvasDimensions.width - originalWidth * scale) / 2 : 0;
-                    const offsetY = scaleY > scaleX ? (canvasDimensions.height - originalHeight * scale) / 2 : 0;
-
-                    if (offsetX > 0 || offsetY > 0) {
-                        console.log('Centering canvas content with offsets:', { offsetX, offsetY });
-                        fabricCanvasRef.current.getObjects().forEach((obj: any) => {
-                            obj.left = (obj.left || 0) + offsetX;
-                            obj.top = (obj.top || 0) + offsetY;
-                            obj.setCoords();
-                        });
-                    }
-                }
 
                 fabricCanvasRef.current.renderAll();
-                console.log('Canvas data loaded and scaled in viewer, objects count:', fabricCanvasRef.current.getObjects().length);
+                console.log('Canvas data loaded with zoom in viewer, objects count:', fabricCanvasRef.current.getObjects().length);
             } catch (error) {
                 console.error('Error loading canvas data:', error);
                 toast.error('خطا در بارگذاری محتوای کنواس');
