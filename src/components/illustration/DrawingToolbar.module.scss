@@ -71,6 +71,12 @@
     background-color: $primary-color;
     color: white;
     border-color: $primary-color;
+
+    // Ensure SVG icons are white with high contrast
+    svg {
+      color: white;
+      fill: currentColor;
+    }
   }
 
   &:disabled {
@@ -204,6 +210,12 @@
   font-size: 16px;
   cursor: pointer;
   transition: $transition-fast;
+
+  // Ensure SVG icons are white with high contrast
+  svg {
+    color: white;
+    fill: currentColor;
+  }
 
   &:hover:not(:disabled) {
     background-color: color.adjust($primary-color, $lightness: -10%);

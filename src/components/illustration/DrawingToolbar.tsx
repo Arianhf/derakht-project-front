@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { FaPaintBrush, FaEraser, FaTrash, FaUndo, FaImage, FaMousePointer } from 'react-icons/fa';
+import { FaPaintBrush, FaEraser, FaTrash, FaUndo, FaImage, FaMousePointer, FaEyeSlash } from 'react-icons/fa';
 import styles from './DrawingToolbar.module.scss';
 import ColorPicker from './ColorPicker';
 
@@ -16,6 +16,8 @@ interface DrawingToolbarProps {
   onUndo: () => void;
   onImageUpload: (file: File) => void;
   isCanvasReady: boolean;
+  onToggleVisibility?: () => void;
+  isVisible?: boolean;
 }
 
 const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
@@ -29,6 +31,8 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
   onUndo,
   onImageUpload,
   isCanvasReady,
+  onToggleVisibility,
+  isVisible = true,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -153,6 +157,22 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
           <FaTrash />
         </button>
       </div>
+
+      {/* Hide Toolbar Button */}
+      {onToggleVisibility && (
+        <div className={styles.toolSection}>
+          <button
+            type="button"
+            className={styles.actionButton}
+            onClick={onToggleVisibility}
+            disabled={!isCanvasReady}
+            aria-label="مخفی کردن نوار ابزار"
+            title="مخفی کردن نوار ابزار"
+          >
+            <FaEyeSlash />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

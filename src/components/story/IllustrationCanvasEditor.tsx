@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import styles from './IllustrationCanvasEditor.module.scss';
 import DrawingToolbar from '../illustration/DrawingToolbar';
 import { toast } from 'react-hot-toast';
@@ -31,18 +31,34 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
     story,
     backgroundColor = '#FFFFFF',
 }) => {
+    // Calculate standard canvas size based on story layout
+    const standardCanvasSize = useMemo(() => {
+        const layoutType = getLayoutTypeFromStory(story);
+        return getStandardCanvasSize(layoutType);
+    }, [story.size, story.orientation]);
+
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const fabricCanvasRef = useRef<any>(null);
     const fabricLibRef = useRef<any>(null);
     const dimensionsCalculatedRef = useRef(false);
     const initialStateLoadedRef = useRef(false);
+    const standardSizeRef = useRef(standardCanvasSize); // Store standard canvas size
     const [isCanvasReady, setIsCanvasReady] = useState(false);
     const [isFabricLoaded, setIsFabricLoaded] = useState(false);
     const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
     const [currentTool, setCurrentTool] = useState<DrawingTool>('select');
     const [brushSize, setBrushSize] = useState(5);
     const [brushColor, setBrushColor] = useState('#2B463C');
+    const [isToolbarVisible, setIsToolbarVisible] = useState(true);
+
+    /**
+     * Update standard size ref when layout changes
+     */
+    useEffect(() => {
+        standardSizeRef.current = standardCanvasSize;
+        console.log('Standard illustration canvas size updated:', standardCanvasSize);
+    }, [standardCanvasSize]);
 
     /**
      * Helper to notify parent of canvas changes with metadata
@@ -93,8 +109,8 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
                 const rect = containerRef.current.getBoundingClientRect();
 
                 if (rect.width > 0 && rect.height > 0) {
-                    const layoutType = getLayoutTypeFromStory(story);
-                    const standardSize = getStandardCanvasSize(layoutType);
+                    // Use the pre-calculated standard canvas size
+                    const standardSize = standardSizeRef.current;
 
                     const scaleX = rect.width / standardSize.width;
                     const scaleY = rect.height / standardSize.height;
@@ -104,7 +120,6 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
                     const scaledHeight = Math.floor(standardSize.height * scale);
 
                     console.log('Scaling illustration canvas:', {
-                        layoutType,
                         standardSize,
                         containerSize: { width: rect.width, height: rect.height },
                         scale,
@@ -157,14 +172,28 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
 
         const { Canvas, PencilBrush } = fabricLibRef.current;
 
+        // Calculate initial zoom level based on standard size
+        const standardSize = standardSizeRef.current;
+        const initialZoom = canvasDimensions.width / standardSize.width;
+
+        // Initialize the canvas with standard dimensions and zoom
         const canvas = new Canvas(canvasRef.current, {
-            width: canvasDimensions.width,
-            height: canvasDimensions.height,
+            width: standardSize.width,
+            height: standardSize.height,
             backgroundColor,
             isDrawingMode: false,
             selection: true,
             preserveObjectStacking: true,
             enableRetinaScaling: true,
+        });
+
+        // Set zoom to scale down to container size
+        canvas.setZoom(initialZoom);
+
+        // Update canvas element dimensions to match container
+        canvas.setDimensions({
+            width: canvasDimensions.width,
+            height: canvasDimensions.height,
         });
 
         // Set up the drawing brush
@@ -174,7 +203,7 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
         canvas.freeDrawingBrush = brush;
 
         fabricCanvasRef.current = canvas;
-        console.log('Illustration canvas created');
+        console.log('Illustration canvas created with zoom:', initialZoom);
         setIsCanvasReady(true);
 
         // Event handlers
@@ -262,16 +291,30 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
     }, [initialState, isCanvasReady]);
 
     /**
-     * Update canvas dimensions when container size changes
+     * Update canvas zoom and dimensions when container size changes
+     * This ensures objects scale proportionally across all devices
      */
     useEffect(() => {
         if (!fabricCanvasRef.current) return;
 
-        console.log('Updating illustration canvas dimensions to:', canvasDimensions);
+        const standardSize = standardSizeRef.current;
+        const zoom = canvasDimensions.width / standardSize.width;
+
+        console.log('Updating illustration canvas zoom:', {
+            canvasDimensions,
+            standardSize,
+            zoom,
+        });
+
+        // Set zoom to scale all objects proportionally
+        fabricCanvasRef.current.setZoom(zoom);
+
+        // Update canvas element dimensions to match container
         fabricCanvasRef.current.setDimensions({
             width: canvasDimensions.width,
             height: canvasDimensions.height,
         });
+
         fabricCanvasRef.current.renderAll();
     }, [canvasDimensions]);
 
@@ -447,7 +490,7 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
                         <canvas ref={canvasRef} />
 
                         {/* Floating toolbar overlay */}
-                        <div className={styles.floatingToolbar}>
+                        <div className={`${styles.floatingToolbar} ${!isToolbarVisible ? styles.hidden : ''}`}>
                             <DrawingToolbar
                                 currentTool={currentTool}
                                 brushSize={brushSize}
@@ -459,8 +502,24 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
                                 onUndo={undo}
                                 onImageUpload={handleImageUpload}
                                 isCanvasReady={isCanvasReady}
+                                onToggleVisibility={() => setIsToolbarVisible(false)}
+                                isVisible={isToolbarVisible}
                             />
                         </div>
+
+                        {/* Show toolbar button - visible when toolbar is hidden */}
+                        {!isToolbarVisible && (
+                            <button
+                                className={styles.showToolbarButton}
+                                onClick={() => setIsToolbarVisible(true)}
+                                aria-label="نمایش نوار ابزار"
+                                title="نمایش نوار ابزار"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                                    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                </svg>
+                            </button>
+                        )}
                     </>
                 )}
             </div>
