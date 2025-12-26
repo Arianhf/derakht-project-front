@@ -472,7 +472,9 @@ $transition-speed: 0.3s;
   }
 
   @media (max-width: $mobile-breakpoint) {
-    padding: 16px;
+    padding: 12px;
+    // Ensure content doesn't overflow on mobile
+    overflow-x: hidden;
   }
 
   // Custom scrollbar
@@ -519,6 +521,13 @@ $transition-speed: 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    // Ensure canvas scales properly on mobile
+    canvas {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
   }
 
   // Type-specific styles
@@ -528,6 +537,22 @@ $transition-speed: 0.3s;
 
   &.image {
     background: #F5F5F5;
+  }
+
+  // Mobile optimizations for better fit
+  @media (max-width: $mobile-breakpoint) {
+    // Reduce shadow for better performance on mobile
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      transform: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .contentInner {
+      // Ensure content stays within safe area on mobile
+      padding: 4px;
+    }
   }
 }
 

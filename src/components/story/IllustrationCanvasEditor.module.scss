@@ -56,10 +56,81 @@
   border-radius: $border-radius-sm;
   box-shadow: $shadow-lg;
   padding: $spacing-xs;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  transform: translateX(0);
+  opacity: 1;
+
+  &.hidden {
+    transform: translateX(calc(100% + #{$spacing-sm}));
+    opacity: 0;
+    pointer-events: none;
+  }
 
   @media (max-width: $breakpoint-md) {
     top: $spacing-xs;
     right: $spacing-xs;
     // Remove left to keep toolbar compact and right-aligned
+  }
+}
+
+.showToolbarButton {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 2px solid $primary-color;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-lg;
+  cursor: pointer;
+  color: $primary-color;
+  transition: $transition-fast;
+  animation: fadeIn 0.3s ease-in-out;
+
+  &:hover {
+    background: $primary-color;
+    color: white;
+    transform: scale(1.05);
+
+    svg {
+      color: white;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  svg {
+    color: $primary-color;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    top: $spacing-xs;
+    right: $spacing-xs;
+    width: 36px;
+    height: 36px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

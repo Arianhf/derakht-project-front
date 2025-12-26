@@ -107,6 +107,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState(story.title || '');
+  const [isInteractingWithCanvas, setIsInteractingWithCanvas] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const settingsModalRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -362,6 +363,14 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
 
   // Touch handlers for swipe navigation
   const handleTouchStart = (e: React.TouchEvent) => {
+    // Check if touch started on a canvas element
+    const target = e.target as HTMLElement;
+    const isCanvas = target.tagName === 'CANVAS' || target.closest('canvas');
+
+    if (isCanvas) {
+      setIsInteractingWithCanvas(true);
+    }
+
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
   };
@@ -372,6 +381,14 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
 
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
+
+    // Don't navigate if user is interacting with canvas
+    if (isInteractingWithCanvas) {
+      setIsInteractingWithCanvas(false);
+      setTouchStart(null);
+      setTouchEnd(null);
+      return;
+    }
 
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > MIN_SWIPE_DISTANCE;
