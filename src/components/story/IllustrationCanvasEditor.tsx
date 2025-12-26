@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import styles from './IllustrationCanvasEditor.module.scss';
 import DrawingToolbar from '../illustration/DrawingToolbar';
 import { toast } from 'react-hot-toast';
@@ -31,13 +31,19 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
     story,
     backgroundColor = '#FFFFFF',
 }) => {
+    // Calculate standard canvas size based on story layout
+    const standardCanvasSize = useMemo(() => {
+        const layoutType = getLayoutTypeFromStory(story);
+        return getStandardCanvasSize(layoutType);
+    }, [story.size, story.orientation]);
+
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const fabricCanvasRef = useRef<any>(null);
     const fabricLibRef = useRef<any>(null);
     const dimensionsCalculatedRef = useRef(false);
     const initialStateLoadedRef = useRef(false);
-    const standardSizeRef = useRef({ width: 1000, height: 1000 }); // Store standard canvas size
+    const standardSizeRef = useRef(standardCanvasSize); // Store standard canvas size
     const [isCanvasReady, setIsCanvasReady] = useState(false);
     const [isFabricLoaded, setIsFabricLoaded] = useState(false);
     const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
@@ -45,6 +51,14 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
     const [brushSize, setBrushSize] = useState(5);
     const [brushColor, setBrushColor] = useState('#2B463C');
     const [isToolbarVisible, setIsToolbarVisible] = useState(true);
+
+    /**
+     * Update standard size ref when layout changes
+     */
+    useEffect(() => {
+        standardSizeRef.current = standardCanvasSize;
+        console.log('Standard illustration canvas size updated:', standardCanvasSize);
+    }, [standardCanvasSize]);
 
     /**
      * Helper to notify parent of canvas changes with metadata
@@ -95,11 +109,8 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
                 const rect = containerRef.current.getBoundingClientRect();
 
                 if (rect.width > 0 && rect.height > 0) {
-                    const layoutType = getLayoutTypeFromStory(story);
-                    const standardSize = getStandardCanvasSize(layoutType);
-
-                    // Store standard size for zoom calculation
-                    standardSizeRef.current = standardSize;
+                    // Use the pre-calculated standard canvas size
+                    const standardSize = standardSizeRef.current;
 
                     const scaleX = rect.width / standardSize.width;
                     const scaleY = rect.height / standardSize.height;
@@ -109,7 +120,6 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
                     const scaledHeight = Math.floor(standardSize.height * scale);
 
                     console.log('Scaling illustration canvas:', {
-                        layoutType,
                         standardSize,
                         containerSize: { width: rect.width, height: rect.height },
                         scale,

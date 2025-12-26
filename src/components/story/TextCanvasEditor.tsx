@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import styles from './TextCanvasEditor.module.scss';
 import CanvasToolbar from './CanvasToolbar';
 import { toast } from 'react-hot-toast';
@@ -46,17 +46,31 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
                                                                story,
                                                                backgroundColor = '#FFFFFF',
                                                            }) => {
+    // Calculate standard canvas size based on story layout
+    const standardCanvasSize = useMemo(() => {
+        const layoutType = getLayoutTypeFromStory(story);
+        return getStandardCanvasSize(layoutType);
+    }, [story.size, story.orientation]);
+
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const fabricCanvasRef = useRef<any>(null);
     const fabricLibRef = useRef<any>(null); // Store fabric library instance
     const dimensionsCalculatedRef = useRef(false); // Track if dimensions are ready
     const initialStateLoadedRef = useRef(false); // Track if initial state has been loaded
-    const standardSizeRef = useRef({ width: 1000, height: 1000 }); // Store standard canvas size
+    const standardSizeRef = useRef(standardCanvasSize); // Store standard canvas size
     const [activeObject, setActiveObject] = useState<CanvasTextObject | null>(null);
     const [isCanvasReady, setIsCanvasReady] = useState(false);
     const [isFabricLoaded, setIsFabricLoaded] = useState(false);
     const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
+
+    /**
+     * Update standard size ref when layout changes
+     */
+    useEffect(() => {
+        standardSizeRef.current = standardCanvasSize;
+        console.log('Standard canvas size updated:', standardCanvasSize);
+    }, [standardCanvasSize]);
 
     /**
      * Helper to notify parent of canvas changes with metadata
@@ -115,12 +129,8 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
                 const rect = containerRef.current.getBoundingClientRect();
 
                 if (rect.width > 0 && rect.height > 0) {
-                    // Get standard canvas size for this layout
-                    const layoutType = getLayoutTypeFromStory(story);
-                    const standardSize = getStandardCanvasSize(layoutType);
-
-                    // Store standard size for zoom calculation
-                    standardSizeRef.current = standardSize;
+                    // Use the pre-calculated standard canvas size
+                    const standardSize = standardSizeRef.current;
 
                     // Calculate scale to fit within container while maintaining aspect ratio
                     const scaleX = rect.width / standardSize.width;
@@ -132,7 +142,6 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
                     const scaledHeight = Math.floor(standardSize.height * scale);
 
                     console.log('Scaling canvas to fit container:', {
-                        layoutType,
                         standardSize,
                         containerSize: { width: rect.width, height: rect.height },
                         scale,
