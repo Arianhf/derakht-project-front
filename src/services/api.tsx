@@ -5,8 +5,21 @@ import { StandardErrorResponse, ErrorCode } from "@/types/error";
 import { addBreadcrumb } from "@/utils/errorLogger";
 
 function getBaseUrl() {
-    if (process.env.NEXT_PUBLIC_BASE_URL) {
-        return process.env.NEXT_PUBLIC_BASE_URL;
+    const configuredUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+    // Check if we're on the server-side
+    const isServer = typeof window === 'undefined';
+
+    if (configuredUrl) {
+        // If the configured URL is relative and we're on the server, make it absolute
+        if (isServer && configuredUrl.startsWith('/')) {
+            // Use localhost for development, or construct from environment
+            const host = process.env.NEXT_PUBLIC_API_HOST || 'http://localhost:3000';
+            const fullUrl = `${host}${configuredUrl}`;
+            console.log('[API] Server-side: Using absolute URL:', fullUrl);
+            return fullUrl;
+        }
+        return configuredUrl;
     }
 
     // Warn if NEXT_PUBLIC_BASE_URL is not set
@@ -15,6 +28,14 @@ function getBaseUrl() {
             'NEXT_PUBLIC_BASE_URL environment variable is not set. Falling back to "/api/". ' +
             'Please set NEXT_PUBLIC_BASE_URL in your .env file for proper API configuration.'
         );
+    }
+
+    // Default fallback
+    if (isServer) {
+        const host = process.env.NEXT_PUBLIC_API_HOST || 'http://localhost:3000';
+        const fullUrl = `${host}/api/`;
+        console.log('[API] Server-side: Using default absolute URL:', fullUrl);
+        return fullUrl;
     }
 
     return '/api/';
