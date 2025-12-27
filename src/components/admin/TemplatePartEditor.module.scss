@@ -164,12 +164,15 @@
 }
 
 .canvasEditor {
-  background: white;
+  background: #e9ecef; // Light gray background to make canvas boundaries visible
   border-radius: $border-radius-sm;
-  padding: 15px;
+  padding: 0; // Removed padding to eliminate whitespace around canvas
   box-shadow: $shadow-sm;
   min-height: 500px;
   height: 600px; // Fixed height to ensure TextCanvasEditor can calculate dimensions
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   // Ensure canvas takes full width and height
   > div {
@@ -212,7 +215,7 @@
   }
 
   .canvasEditor {
-    padding: 10px;
+    padding: 0; // Removed padding to eliminate whitespace around canvas
     min-height: 400px;
   }
 }
