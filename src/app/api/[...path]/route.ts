@@ -53,6 +53,18 @@ async function proxyRequest(
   const hasTrailingSlash = url.pathname.endsWith('/');
   const backendUrl = `${BACKEND_URL}/${pathname}${hasTrailingSlash ? '/' : ''}${url.search}`;
 
+  // DEBUG LOGGING
+  console.log('========== API PROXY DEBUG ==========');
+  console.log('[Proxy] Method:', method);
+  console.log('[Proxy] Original URL:', request.url);
+  console.log('[Proxy] URL pathname:', url.pathname);
+  console.log('[Proxy] Path array:', path);
+  console.log('[Proxy] Joined pathname:', pathname);
+  console.log('[Proxy] Has trailing slash?:', hasTrailingSlash);
+  console.log('[Proxy] Query string:', url.search);
+  console.log('[Proxy] Final backend URL:', backendUrl);
+  console.log('====================================');
+
   // Copy headers from incoming request
   const headers: HeadersInit = {};
   request.headers.forEach((value, key) => {
@@ -83,6 +95,10 @@ async function proxyRequest(
   try {
     // Make request to backend
     const response = await fetch(backendUrl, options);
+
+    // DEBUG LOGGING - Response
+    console.log('[Proxy] Response status:', response.status, response.statusText);
+    console.log('[Proxy] Response headers:', Object.fromEntries(response.headers.entries()));
 
     // Copy response headers, but skip encoding-related headers
     // The fetch API already handles decompression, so we don't want the browser to try again
