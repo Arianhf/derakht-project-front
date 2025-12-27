@@ -41,12 +41,16 @@ function getBaseUrl() {
     return '/api/';
 }
 
+const baseURL = getBaseUrl();
 const api = axios.create({
-    baseURL: getBaseUrl(),
+    baseURL: baseURL,
     headers: {
         "Content-Type": "application/json",
     },
 });
+
+// Log the configured baseURL for debugging
+console.log('[API] Axios instance created with baseURL:', baseURL);
 
 // Token refresh state management
 let isRefreshing = false;
@@ -119,6 +123,8 @@ api.interceptors.request.use(
     async (config) => {
         console.log('[API] ========== Request Interceptor ==========');
         console.log('[API] Request URL:', config.url);
+        console.log('[API] Base URL:', config.baseURL);
+        console.log('[API] Full URL:', `${config.baseURL}${config.url}`);
         console.log('[API] Is Server:', typeof window === 'undefined');
 
         // Add auth token if available
