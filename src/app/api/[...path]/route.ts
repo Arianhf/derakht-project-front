@@ -48,10 +48,20 @@ async function proxyRequest(
   const pathname = path.join('/');
 
   // Build the backend URL with query parameters
-  // IMPORTANT: Preserve trailing slash if present in original request
+  // IMPORTANT: Django REST Framework expects trailing slashes
+  // Next.js catch-all routes don't preserve trailing slashes in path params,
+  // so we need to add them back for Django endpoints
   const url = new URL(request.url);
-  const hasTrailingSlash = url.pathname.endsWith('/');
-  const backendUrl = `${BACKEND_URL}/${pathname}${hasTrailingSlash ? '/' : ''}${url.search}`;
+
+  // Check if original request had trailing slash (before Next.js stripped it)
+  const originalHasTrailingSlash = url.pathname.endsWith('/');
+
+  // For Django endpoints, we should always add trailing slash
+  // Exception: static files or specific endpoints that don't need it
+  const needsTrailingSlash = !pathname.match(/\.(jpg|jpeg|png|gif|svg|css|js|json)$/i);
+
+  const shouldAddTrailingSlash = originalHasTrailingSlash || needsTrailingSlash;
+  const backendUrl = `${BACKEND_URL}/${pathname}${shouldAddTrailingSlash ? '/' : ''}${url.search}`;
 
   // DEBUG LOGGING
   console.log('========== API PROXY DEBUG ==========');
@@ -60,7 +70,9 @@ async function proxyRequest(
   console.log('[Proxy] URL pathname:', url.pathname);
   console.log('[Proxy] Path array:', path);
   console.log('[Proxy] Joined pathname:', pathname);
-  console.log('[Proxy] Has trailing slash?:', hasTrailingSlash);
+  console.log('[Proxy] Original has trailing slash?:', originalHasTrailingSlash);
+  console.log('[Proxy] Needs trailing slash?:', needsTrailingSlash);
+  console.log('[Proxy] Will add trailing slash?:', shouldAddTrailingSlash);
   console.log('[Proxy] Query string:', url.search);
   console.log('[Proxy] Final backend URL:', backendUrl);
   console.log('====================================');

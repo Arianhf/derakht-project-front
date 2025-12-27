@@ -5,8 +5,21 @@ import { StandardErrorResponse, ErrorCode } from "@/types/error";
 import { addBreadcrumb } from "@/utils/errorLogger";
 
 function getBaseUrl() {
-    if (process.env.NEXT_PUBLIC_BASE_URL) {
-        return process.env.NEXT_PUBLIC_BASE_URL;
+    const configuredUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+    // Check if we're on the server-side
+    const isServer = typeof window === 'undefined';
+
+    if (configuredUrl) {
+        // If the configured URL is relative and we're on the server, make it absolute
+        if (isServer && configuredUrl.startsWith('/')) {
+            // Use localhost for development, or construct from environment
+            const host = process.env.NEXT_PUBLIC_API_HOST || 'http://localhost:3000';
+            const fullUrl = `${host}${configuredUrl}`;
+            console.log('[API] Server-side: Using absolute URL:', fullUrl);
+            return fullUrl;
+        }
+        return configuredUrl;
     }
 
     // Warn if NEXT_PUBLIC_BASE_URL is not set
@@ -17,15 +30,27 @@ function getBaseUrl() {
         );
     }
 
+    // Default fallback
+    if (isServer) {
+        const host = process.env.NEXT_PUBLIC_API_HOST || 'http://localhost:3000';
+        const fullUrl = `${host}/api/`;
+        console.log('[API] Server-side: Using default absolute URL:', fullUrl);
+        return fullUrl;
+    }
+
     return '/api/';
 }
 
+const baseURL = getBaseUrl();
 const api = axios.create({
-    baseURL: getBaseUrl(),
+    baseURL: baseURL,
     headers: {
         "Content-Type": "application/json",
     },
 });
+
+// Log the configured baseURL for debugging
+console.log('[API] Axios instance created with baseURL:', baseURL);
 
 // Token refresh state management
 let isRefreshing = false;
@@ -98,6 +123,8 @@ api.interceptors.request.use(
     async (config) => {
         console.log('[API] ========== Request Interceptor ==========');
         console.log('[API] Request URL:', config.url);
+        console.log('[API] Base URL:', config.baseURL);
+        console.log('[API] Full URL:', `${config.baseURL}${config.url}`);
         console.log('[API] Is Server:', typeof window === 'undefined');
 
         // Add auth token if available
