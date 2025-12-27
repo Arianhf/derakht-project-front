@@ -48,8 +48,10 @@ async function proxyRequest(
   const pathname = path.join('/');
 
   // Build the backend URL with query parameters
+  // IMPORTANT: Preserve trailing slash if present in original request
   const url = new URL(request.url);
-  const backendUrl = `${BACKEND_URL}/${pathname}${url.search}`;
+  const hasTrailingSlash = url.pathname.endsWith('/');
+  const backendUrl = `${BACKEND_URL}/${pathname}${hasTrailingSlash ? '/' : ''}${url.search}`;
 
   // Copy headers from incoming request
   const headers: HeadersInit = {};
