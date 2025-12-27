@@ -4,54 +4,54 @@ import { BlogPost, HeroPost, Category } from '@/types';
 // Blog service uses publicApi (no auth required) to enable static page generation
 export const blogService = {
     getHeroPosts: async (): Promise<BlogServiceResponse<BlogPost>> => {
-        const response = await publicApi.get('blog/posts/hero/');
+        const response = await publicApi.get('/blog/posts/hero/');
         return response.data;
     },
 
     getAllPosts: async (): Promise<BlogServiceResponse<BlogPost>> => {
-        const response = await publicApi.get('blog/posts/');
+        const response = await publicApi.get('/blog/posts/');
         return response.data;
     },
 
     getFeaturedPosts: async (): Promise<BlogServiceResponse<BlogPost>> => {
-        const response = await publicApi.get('blog/posts/featured/');
+        const response = await publicApi.get('/blog/posts/featured/');
         return response.data;
     },
 
     getPostById: async (id: string): Promise<BlogPost> => {
-        const response = await publicApi.get(`blog/posts/${id}/`);
+        const response = await publicApi.get(`/blog/posts/${id}/`);
         return response.data;
     },
 
     getPostBySlug: async (slug: string): Promise<BlogPost> => {
-        const response = await publicApi.get(`blog/posts/${slug}/`);
+        const response = await publicApi.get(`/blog/posts/${slug}/`);
         return response.data;
     },
 
     // New function to get posts by tag
     getPostsByTag: async (tag: string): Promise<BlogServiceResponse<BlogPost>> => {
-        const response = await publicApi.get(`blog/posts/?tag=${tag}`);
+        const response = await publicApi.get(`/blog/posts/?tag=${tag}`);
         return response.data;
     },
 
     getAllCategories: async (): Promise<CategoryServiceResponse> => {
-        const response = await publicApi.get('blog/categories/');
+        const response = await publicApi.get('/blog/categories/');
         return response.data;
     },
 
     getPostsByCategory: async (categorySlug: string): Promise<BlogServiceResponse<BlogPost>> => {
-        const response = await publicApi.get(`blog/posts/?category=${categorySlug}`);
+        const response = await publicApi.get(`/blog/posts/?category=${categorySlug}`);
         return response.data;
     },
 
     getRelatedPosts: async (postId: string): Promise<RelatedPost[]> => {
-        const response = await publicApi.get(`blog/related-posts/${postId}`);
+        const response = await publicApi.get(`/blog/related-posts/${postId}/`);
         return response.data;
     },
 
     // New function to get all post slugs for sitemap
     getAllPostSlugs: async (): Promise<PostSlugResponse[]> => {
-        const response = await publicApi.get('blog/posts/slugs/');
+        const response = await publicApi.get('/blog/posts/slugs/');
         return response.data.items || response.data;
     },
 }
