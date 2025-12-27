@@ -48,10 +48,10 @@ async function proxyRequest(
   const pathname = path.join('/');
 
   // Build the backend URL with query parameters
-  // IMPORTANT: Preserve trailing slash if present in original request
+  // IMPORTANT: Django requires trailing slashes, so always append one
+  // Next.js strips trailing slashes by default, so we can't rely on the incoming URL
   const url = new URL(request.url);
-  const hasTrailingSlash = url.pathname.endsWith('/');
-  const backendUrl = `${BACKEND_URL}/${pathname}${hasTrailingSlash ? '/' : ''}${url.search}`;
+  const backendUrl = `${BACKEND_URL}/${pathname}/${url.search}`;
 
   // DEBUG LOGGING
   console.log('========== API PROXY DEBUG ==========');
@@ -60,9 +60,8 @@ async function proxyRequest(
   console.log('[Proxy] URL pathname:', url.pathname);
   console.log('[Proxy] Path array:', path);
   console.log('[Proxy] Joined pathname:', pathname);
-  console.log('[Proxy] Has trailing slash?:', hasTrailingSlash);
   console.log('[Proxy] Query string:', url.search);
-  console.log('[Proxy] Final backend URL:', backendUrl);
+  console.log('[Proxy] Final backend URL (with trailing slash):', backendUrl);
   console.log('====================================');
 
   // Copy headers from incoming request
