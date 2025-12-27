@@ -14,6 +14,25 @@ interface BlogDetailPageProps {
     }>;
 }
 
+// Enable ISR with 1 hour revalidation
+export const revalidate = 3600;
+
+// Allow dynamic params for new blog posts
+export const dynamicParams = true;
+
+// Generate static params for all blog posts at build time
+export async function generateStaticParams() {
+    try {
+        const posts = await blogService.getAllPosts();
+        return posts.items.map((post) => ({
+            id: post.id.toString(),
+        }));
+    } catch (error) {
+        console.error('Error generating static params for blog posts:', error);
+        return [];
+    }
+}
+
 // Generate metadata for SEO
 export async function generateMetadata({ params }: BlogDetailPageProps): Promise<Metadata> {
     try {
