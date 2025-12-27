@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react';
 import Link from 'next/link';
-import { FaUser, FaUserCircle, FaSignOutAlt, FaShoppingBag } from 'react-icons/fa';
+import { FaUser, FaUserCircle, FaSignOutAlt, FaShoppingBag, FaUserShield } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
 import ConfirmDialog from '@/components/shared/ConfirmDialog/ConfirmDialog';
 import styles from '../Navbar.module.scss';
 
 const UserDropdown: React.FC = () => {
-    const { user, logout } = useUser();
+    const { user, logout, isStaff } = useUser();
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -77,6 +77,12 @@ const UserDropdown: React.FC = () => {
                                     <FaShoppingBag className={styles.dropdownIcon} />
                                     <span>سفارش‌های من</span>
                                 </Link>
+                                {isStaff && (
+                                    <Link href="/admin" className={styles.userDropdownItem}>
+                                        <FaUserShield className={styles.dropdownIcon} />
+                                        <span>پنل مدیریت</span>
+                                    </Link>
+                                )}
                                 <div
                                     className={styles.userDropdownItem}
                                     onClick={handleLogoutClick}
