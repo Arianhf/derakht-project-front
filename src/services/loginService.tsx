@@ -7,7 +7,7 @@ import { StandardErrorResponse } from "@/types/error";
 export const loginService = {
     signup: async (email: string, password: string, confirmPassword: string, age: number) => {
         try {
-            const response = await api.post("/users/signup/", {
+            const response = await api.post("users/signup/", {
                 email,
                 password,
                 confirm_password: confirmPassword,
@@ -29,7 +29,7 @@ export const loginService = {
 
     login: async (email: string, password: string) => {
         try {
-            const response = await api.post("/users/login/", {
+            const response = await api.post("users/login/", {
                 email,
                 password,
             });
