@@ -12,12 +12,12 @@ function getBaseUrl() {
     // Warn if NEXT_PUBLIC_BASE_URL is not set
     if (process.env.NODE_ENV === 'development') {
         console.warn(
-            'NEXT_PUBLIC_BASE_URL environment variable is not set. Falling back to "/api". ' +
+            'NEXT_PUBLIC_BASE_URL environment variable is not set. Falling back to "/api/". ' +
             'Please set NEXT_PUBLIC_BASE_URL in your .env file for proper API configuration.'
         );
     }
 
-    return '/api';
+    return '/api/';
 }
 
 const api = axios.create({
