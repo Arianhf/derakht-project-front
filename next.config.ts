@@ -17,6 +17,8 @@ const nextConfig = {
     ],
   },
   output: 'standalone',
+  // Enable React Compiler for automatic memoization and performance optimization
+  reactCompiler: true,
 };
 
 module.exports = nextConfig;
