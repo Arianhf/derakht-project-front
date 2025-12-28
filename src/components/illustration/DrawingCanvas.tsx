@@ -537,17 +537,62 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
 
   /**
    * Handle image upload from toolbar
+   * Uses the same logic as addImage (exposed via ref) to upload and get URL
    */
-  const handleImageUpload = useCallback((file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target?.result as string;
-      if (dataUrl) {
-        addImageToCanvas(dataUrl);
+  const handleImageUpload = useCallback(async (file: File) => {
+    if (!fabricCanvasRef.current || !fabricLibRef.current) return;
+
+    // Check if templateId and partIndex are provided
+    if (!templateId || partIndex === undefined) {
+      toast.error('اطلاعات قالب موجود نیست. لطفاً قالب را ذخیره کنید.');
+      return;
+    }
+
+    try {
+      // Step 1: Validate image
+      const validation = validateImageFile(file);
+      if (!validation.valid) {
+        toast.error(validation.error || 'فایل نامعتبر است');
+        return;
       }
-    };
-    reader.readAsDataURL(file);
-  }, [addImageToCanvas]);
+
+      // Step 2: Compress image
+      const compressToastId = toast.loading('در حال فشرده‌سازی تصویر...');
+      const compressionResult = await compressImage(file, {
+        maxWidth: 2400,      // High quality for modern displays
+        maxHeight: 2400,     // Supports 4K and retina
+        quality: 0.88,       // High quality - minimal visible loss
+        outputFormat: 'image/jpeg'
+      });
+
+      const compressedFile = blobToFile(
+        compressionResult.blob,
+        file.name,
+        'jpg'
+      );
+
+      toast.success(
+        `تصویر فشرده شد (${formatFileSize(compressionResult.originalSize)} → ${formatFileSize(compressionResult.compressedSize)})`,
+        { id: compressToastId }
+      );
+
+      // Step 3: Upload to backend
+      const uploadToastId = toast.loading('در حال آپلود تصویر...');
+      const uploadResult = await storyService.uploadTemplateImage(
+        templateId,
+        partIndex,
+        compressedFile
+      );
+      toast.success('تصویر آپلود شد', { id: uploadToastId });
+
+      // Step 4: Add to canvas using URL (not base64)
+      addImageToCanvas(uploadResult.url, uploadResult.id);
+    } catch (error: any) {
+      console.error('Error uploading image:', error);
+      const errorMessage = error?.response?.data?.error || 'خطا در آپلود تصویر';
+      toast.error(errorMessage);
+    }
+  }, [addImageToCanvas, templateId, partIndex]);
 
   return (
     <div className={styles.canvasEditorWrapper}>
