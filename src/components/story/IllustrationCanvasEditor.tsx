@@ -7,6 +7,9 @@ import { toast } from 'react-hot-toast';
 import { Story, CanvasMetadata } from '@/types/story';
 import { getStandardCanvasSize } from '@/constants/canvasSizes';
 import { getLayoutTypeFromStory } from '@/utils/canvasUtils';
+import { compressImage, blobToFile, formatFileSize } from '@/utils/imageCompression';
+import { validateImageFile } from '@/utils/imageValidation';
+import { storyService } from '@/services/storyService';
 
 export interface IllustrationCanvasEditorProps {
     /** Initial canvas state in JSON format (with metadata) */
@@ -17,6 +20,10 @@ export interface IllustrationCanvasEditorProps {
     story: Partial<Story>;
     /** Background color of the canvas */
     backgroundColor?: string;
+    /** Template ID (required for uploading images) */
+    templateId?: string;
+    /** Part index (required for uploading images) */
+    partIndex?: number;
 }
 
 type DrawingTool = 'brush' | 'eraser' | 'select';
@@ -30,6 +37,8 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
     onChange,
     story,
     backgroundColor = '#FFFFFF',
+    templateId,
+    partIndex,
 }) => {
     // Calculate standard canvas size based on story layout
     const standardCanvasSize = useMemo(() => {
@@ -428,55 +437,97 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
 
     /**
      * Handle image upload from toolbar
+     * New implementation: Compresses image and uploads to backend, stores URL in canvas
      */
-    const handleImageUpload = useCallback((file: File) => {
+    const handleImageUpload = useCallback(async (file: File) => {
         if (!fabricCanvasRef.current || !fabricLibRef.current) {
             toast.error('کنواس آماده نیست');
             return;
         }
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const dataUrl = e.target?.result as string;
-            if (dataUrl && fabricLibRef.current) {
-                const canvas = fabricCanvasRef.current;
-                const { FabricImage } = fabricLibRef.current;
+        // Check if templateId and partIndex are provided
+        if (!templateId || partIndex === undefined) {
+            toast.error('اطلاعات قالب موجود نیست. لطفاً قالب را ذخیره کنید.');
+            return;
+        }
 
-                FabricImage.fromURL(dataUrl, {
-                    crossOrigin: 'anonymous',
-                }).then((img: any) => {
-                    // Scale image to fit canvas if it's too large
-                    const maxWidth = canvas.width * 0.5;
-                    const maxHeight = canvas.height * 0.5;
-
-                    if (img.width > maxWidth || img.height > maxHeight) {
-                        const scale = Math.min(maxWidth / img.width, maxHeight / img.height);
-                        img.scale(scale);
-                    }
-
-                    // Center the image
-                    img.set({
-                        left: canvas.width / 2,
-                        top: canvas.height / 2,
-                        originX: 'center',
-                        originY: 'center',
-                    });
-
-                    canvas.add(img);
-                    canvas.setActiveObject(img);
-                    canvas.renderAll();
-
-                    notifyChange();
-
-                    toast.success('تصویر اضافه شد');
-                }).catch((error: Error) => {
-                    console.error('Error loading image:', error);
-                    toast.error('خطا در بارگذاری تصویر');
-                });
+        try {
+            // Step 1: Validate image
+            const validation = validateImageFile(file);
+            if (!validation.valid) {
+                toast.error(validation.error || 'فایل نامعتبر است');
+                return;
             }
-        };
-        reader.readAsDataURL(file);
-    }, [notifyChange]);
+
+            // Step 2: Compress image
+            const compressToastId = toast.loading('در حال فشرده‌سازی تصویر...');
+            const compressionResult = await compressImage(file, {
+                maxWidth: 2400,      // High quality for modern displays
+                maxHeight: 2400,     // Supports 4K and retina
+                quality: 0.88,       // High quality - minimal visible loss
+                outputFormat: 'image/jpeg'
+            });
+
+            const compressedFile = blobToFile(
+                compressionResult.blob,
+                file.name,
+                'jpg'
+            );
+
+            toast.success(
+                `تصویر فشرده شد (${formatFileSize(compressionResult.originalSize)} → ${formatFileSize(compressionResult.compressedSize)})`,
+                { id: compressToastId }
+            );
+
+            // Step 3: Upload to backend
+            const uploadToastId = toast.loading('در حال آپلود تصویر...');
+            const uploadResult = await storyService.uploadTemplateImage(
+                templateId,
+                partIndex,
+                compressedFile
+            );
+            toast.success('تصویر آپلود شد', { id: uploadToastId });
+
+            // Step 4: Add to canvas using URL (not base64)
+            const canvas = fabricCanvasRef.current;
+            const { FabricImage } = fabricLibRef.current;
+
+            const img = await FabricImage.fromURL(uploadResult.url, {
+                crossOrigin: 'anonymous',
+            });
+
+            // Scale image to fit canvas if it's too large
+            const maxWidth = canvas.width * 0.5;
+            const maxHeight = canvas.height * 0.5;
+
+            if (img.width > maxWidth || img.height > maxHeight) {
+                const scale = Math.min(maxWidth / img.width, maxHeight / img.height);
+                img.scale(scale);
+            }
+
+            // Center the image and add metadata
+            img.set({
+                left: canvas.width / 2,
+                top: canvas.height / 2,
+                originX: 'center',
+                originY: 'center',
+                // Store image ID for cleanup tracking (important!)
+                templateImageId: uploadResult.id,
+            });
+
+            canvas.add(img);
+            canvas.setActiveObject(img);
+            canvas.renderAll();
+
+            notifyChange();
+
+            toast.success('تصویر به کنواس اضافه شد');
+        } catch (error: any) {
+            console.error('Error uploading image:', error);
+            const errorMessage = error?.response?.data?.error || 'خطا در آپلود تصویر';
+            toast.error(errorMessage);
+        }
+    }, [templateId, partIndex, notifyChange]);
 
     return (
         <div className={styles.canvasEditorWrapper}>

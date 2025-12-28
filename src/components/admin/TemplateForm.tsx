@@ -12,6 +12,7 @@ interface TemplateFormProps {
     onSubmit: (data: CreateTemplatePayload) => void;
     onCancel: () => void;
     loading?: boolean;
+    templateId?: string; // Template ID for editing (required for image uploads)
 }
 
 const TemplateForm: React.FC<TemplateFormProps> = ({
@@ -19,6 +20,7 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
     onSubmit,
     onCancel,
     loading = false,
+    templateId,
 }) => {
     const [formData, setFormData] = useState<CreateTemplatePayload>({
         title: initialData?.title || '',
@@ -218,6 +220,8 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
                                 size={formData.size}
                                 onUpdate={updateTemplatePart}
                                 onRemove={removeTemplatePart}
+                                templateId={templateId}
+                                partIndex={index}
                             />
                         ))}
                     </div>

@@ -15,6 +15,8 @@ interface TemplatePartEditorProps {
     size: '20x20' | '25x25' | '15x23';
     onUpdate: (index: number, field: keyof CreateTemplatePartPayload, value: any) => void;
     onRemove: (index: number) => void;
+    templateId?: string;
+    partIndex?: number;
 }
 
 /**
@@ -46,6 +48,8 @@ const TemplatePartEditor: React.FC<TemplatePartEditorProps> = ({
     size,
     onUpdate,
     onRemove,
+    templateId,
+    partIndex,
 }) => {
     const [activeTab, setActiveTab] = useState<'text' | 'illustration'>('text');
     const drawingCanvasRef = useRef<DrawingCanvasRef>(null);
@@ -206,6 +210,8 @@ const TemplatePartEditor: React.FC<TemplatePartEditorProps> = ({
                                 backgroundColor="#FFFFFF"
                                 width={canvasDimensions.width}
                                 height={canvasDimensions.height}
+                                templateId={templateId}
+                                partIndex={partIndex}
                             />
                         </div>
                         <p className={styles.canvasHint}>

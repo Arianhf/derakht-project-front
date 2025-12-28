@@ -61,6 +61,7 @@ const EditTemplatePageClient: React.FC<EditTemplatePageClientProps> = ({ templat
                     onSubmit={handleSubmit}
                     onCancel={handleCancel}
                     loading={submitting}
+                    templateId={templateId}
                 />
             </div>
         </AdminLayout>

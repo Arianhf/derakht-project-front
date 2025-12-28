@@ -387,6 +387,41 @@ export const storyService = {
     await api.delete(`/stories/templates/${templateId}/`);
   },
 
+  /**
+   * Upload an image for a template part (staff only)
+   * This uploads the image to storage and returns a URL that should be
+   * used in the canvas JSON instead of base64 encoding.
+   *
+   * @param templateId - The template UUID
+   * @param partIndex - Index of the template part (0-based)
+   * @param imageFile - The image file to upload
+   * @param onProgress - Optional progress callback
+   * @returns Object with id, url, part_index, and created_at
+   */
+  uploadTemplateImage: async (
+    templateId: string,
+    partIndex: number,
+    imageFile: File,
+    onProgress?: (progressEvent: any) => void
+  ): Promise<{ id: string; url: string; part_index: number; created_at: string }> => {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    formData.append('part_index', partIndex.toString());
+
+    const response = await api.post(
+      `/stories/templates/${templateId}/upload_template_image/`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: onProgress,
+      }
+    );
+
+    return response.data;
+  },
+
   // ============================================
   // TEMPLATE PARTS MANAGEMENT
   // ============================================

@@ -4,6 +4,9 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import styles from './DrawingCanvas.module.scss';
 import DrawingToolbar from './DrawingToolbar';
 import { toast } from 'react-hot-toast';
+import { compressImage, blobToFile, formatFileSize } from '@/utils/imageCompression';
+import { validateImageFile } from '@/utils/imageValidation';
+import { storyService } from '@/services/storyService';
 
 export interface DrawingCanvasProps {
   /** Initial canvas state in JSON format */
@@ -16,6 +19,10 @@ export interface DrawingCanvasProps {
   height?: number;
   /** Background color of the canvas */
   backgroundColor?: string;
+  /** Template ID (required for uploading images) */
+  templateId?: string;
+  /** Part index (required for uploading images) */
+  partIndex?: number;
 }
 
 type DrawingTool = 'brush' | 'eraser' | 'select';
@@ -38,6 +45,8 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
   width,
   height,
   backgroundColor = '#FFFFFF',
+  templateId,
+  partIndex,
 }, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -76,17 +85,59 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
         onChange(json);
       }
     },
-    addImage: (file: File) => {
+    addImage: async (file: File) => {
       if (!fabricCanvasRef.current || !fabricLibRef.current) return;
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const dataUrl = e.target?.result as string;
-        if (dataUrl) {
-          addImageToCanvas(dataUrl);
+      // Check if templateId and partIndex are provided
+      if (!templateId || partIndex === undefined) {
+        toast.error('اطلاعات قالب موجود نیست. لطفاً قالب را ذخیره کنید.');
+        return;
+      }
+
+      try {
+        // Step 1: Validate image
+        const validation = validateImageFile(file);
+        if (!validation.valid) {
+          toast.error(validation.error || 'فایل نامعتبر است');
+          return;
         }
-      };
-      reader.readAsDataURL(file);
+
+        // Step 2: Compress image
+        const compressToastId = toast.loading('در حال فشرده‌سازی تصویر...');
+        const compressionResult = await compressImage(file, {
+          maxWidth: 2400,      // High quality for modern displays
+          maxHeight: 2400,     // Supports 4K and retina
+          quality: 0.88,       // High quality - minimal visible loss
+          outputFormat: 'image/jpeg'
+        });
+
+        const compressedFile = blobToFile(
+          compressionResult.blob,
+          file.name,
+          'jpg'
+        );
+
+        toast.success(
+          `تصویر فشرده شد (${formatFileSize(compressionResult.originalSize)} → ${formatFileSize(compressionResult.compressedSize)})`,
+          { id: compressToastId }
+        );
+
+        // Step 3: Upload to backend
+        const uploadToastId = toast.loading('در حال آپلود تصویر...');
+        const uploadResult = await storyService.uploadTemplateImage(
+          templateId,
+          partIndex,
+          compressedFile
+        );
+        toast.success('تصویر آپلود شد', { id: uploadToastId });
+
+        // Step 4: Add to canvas using URL (not base64)
+        addImageToCanvas(uploadResult.url, uploadResult.id);
+      } catch (error: any) {
+        console.error('Error uploading image:', error);
+        const errorMessage = error?.response?.data?.error || 'خطا در آپلود تصویر';
+        toast.error(errorMessage);
+      }
     },
     addImageFromUrl: (url: string) => {
       addImageToCanvas(url);
@@ -352,8 +403,10 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
 
   /**
    * Add an image to the canvas from a URL or data URL
+   * @param url - Image URL
+   * @param imageId - Optional template image ID for cleanup tracking
    */
-  const addImageToCanvas = useCallback((url: string) => {
+  const addImageToCanvas = useCallback((url: string, imageId?: string) => {
     if (!fabricCanvasRef.current || !fabricLibRef.current) {
       toast.error('کنواس آماده نیست');
       return;
@@ -375,13 +428,20 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
         img.scale(scale);
       }
 
-      // Center the image
-      img.set({
+      // Center the image and add metadata
+      const imageProps: any = {
         left: canvas.width / 2,
         top: canvas.height / 2,
         originX: 'center',
         originY: 'center',
-      });
+      };
+
+      // Store template image ID if provided (for cleanup tracking)
+      if (imageId) {
+        imageProps.templateImageId = imageId;
+      }
+
+      img.set(imageProps);
 
       canvas.add(img);
       canvas.setActiveObject(img);
