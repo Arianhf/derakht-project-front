@@ -274,10 +274,19 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     if (initialState) {
       try {
         console.log('Loading initial canvas state...');
-        canvas.loadFromJSON(initialState, () => {
-          canvas.renderAll();
-          console.log('Initial state loaded');
-        });
+        canvas.loadFromJSON(
+          initialState,
+          () => {
+            canvas.renderAll();
+            console.log('Initial state loaded');
+          },
+          (o: any, object: any) => {
+            // Set crossOrigin for all image objects to prevent CORS errors
+            if (object.type === 'image') {
+              object.crossOrigin = 'anonymous';
+            }
+          }
+        );
       } catch (error) {
         console.error('Error loading canvas state:', error);
         toast.error('خطا در بارگذاری وضعیت کنواس');
@@ -525,9 +534,18 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     if (!fabricCanvasRef.current) return;
 
     try {
-      fabricCanvasRef.current.loadFromJSON(json, () => {
-        fabricCanvasRef.current?.renderAll();
-      });
+      fabricCanvasRef.current.loadFromJSON(
+        json,
+        () => {
+          fabricCanvasRef.current?.renderAll();
+        },
+        (o: any, object: any) => {
+          // Set crossOrigin for all image objects to prevent CORS errors
+          if (object.type === 'image') {
+            object.crossOrigin = 'anonymous';
+          }
+        }
+      );
       toast.success('وضعیت بارگذاری شد');
     } catch (error) {
       console.error('Error loading JSON:', error);

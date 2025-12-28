@@ -320,10 +320,20 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
                 // Mark as loaded BEFORE async operation to prevent race conditions
                 initialStateLoadedRef.current = true;
 
-                // Fabric.js v6 uses Promise-based API
-                await fabricCanvasRef.current.loadFromJSON(canvasJSON);
-                fabricCanvasRef.current.renderAll();
-                console.log('Initial state loaded successfully, objects count:', fabricCanvasRef.current.getObjects().length);
+                // Fabric.js v6 uses Promise-based API with reviver to set crossOrigin
+                await fabricCanvasRef.current.loadFromJSON(
+                    canvasJSON,
+                    () => {
+                        fabricCanvasRef.current.renderAll();
+                        console.log('Initial state loaded successfully, objects count:', fabricCanvasRef.current.getObjects().length);
+                    },
+                    (o: any, object: any) => {
+                        // Set crossOrigin for all image objects to prevent CORS errors
+                        if (object.type === 'image') {
+                            object.crossOrigin = 'anonymous';
+                        }
+                    }
+                );
             } catch (error) {
                 console.error('Error loading canvas state:', error);
                 // Reset flag on error so it can retry
@@ -653,9 +663,19 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
                 console.log('Loading legacy canvas format');
             }
 
-            // Fabric.js v6 uses Promise-based API
-            await fabricCanvasRef.current.loadFromJSON(canvasJSON);
-            fabricCanvasRef.current.renderAll();
+            // Fabric.js v6 uses Promise-based API with reviver to set crossOrigin
+            await fabricCanvasRef.current.loadFromJSON(
+                canvasJSON,
+                () => {
+                    fabricCanvasRef.current.renderAll();
+                },
+                (o: any, object: any) => {
+                    // Set crossOrigin for all image objects to prevent CORS errors
+                    if (object.type === 'image') {
+                        object.crossOrigin = 'anonymous';
+                    }
+                }
+            );
             toast.success('وضعیت بارگذاری شد');
         } catch (error) {
             console.error('Error loading JSON:', error);

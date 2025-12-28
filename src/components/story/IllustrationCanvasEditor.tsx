@@ -286,9 +286,20 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
 
                 initialStateLoadedRef.current = true;
 
-                await fabricCanvasRef.current.loadFromJSON(canvasJSON);
-                fabricCanvasRef.current.renderAll();
-                console.log('Illustration initial state loaded, objects count:', fabricCanvasRef.current.getObjects().length);
+                // Load canvas JSON with reviver to set crossOrigin for images
+                await fabricCanvasRef.current.loadFromJSON(
+                    canvasJSON,
+                    () => {
+                        fabricCanvasRef.current.renderAll();
+                        console.log('Illustration initial state loaded, objects count:', fabricCanvasRef.current.getObjects().length);
+                    },
+                    (o: any, object: any) => {
+                        // Set crossOrigin for all image objects to prevent CORS errors
+                        if (object.type === 'image') {
+                            object.crossOrigin = 'anonymous';
+                        }
+                    }
+                );
             } catch (error) {
                 console.error('Error loading illustration canvas state:', error);
                 initialStateLoadedRef.current = false;

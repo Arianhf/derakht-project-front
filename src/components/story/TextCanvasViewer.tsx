@@ -188,8 +188,17 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
                 originalCanvasDataRef.current = { canvasJSON, originalWidth, originalHeight };
                 standardSizeRef.current = { width: originalWidth, height: originalHeight };
 
-                // Load canvas data using Promise-based API (Fabric.js v6)
-                await fabricCanvasRef.current.loadFromJSON(canvasJSON);
+                // Load canvas data using Promise-based API (Fabric.js v6) with reviver to set crossOrigin
+                await fabricCanvasRef.current.loadFromJSON(
+                    canvasJSON,
+                    () => {},
+                    (o: any, object: any) => {
+                        // Set crossOrigin for all image objects to prevent CORS errors
+                        if (object.type === 'image') {
+                            object.crossOrigin = 'anonymous';
+                        }
+                    }
+                );
 
                 if (!fabricCanvasRef.current) return;
 
