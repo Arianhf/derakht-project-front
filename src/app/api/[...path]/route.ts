@@ -95,12 +95,30 @@ async function proxyRequest(
   // Add body for POST, PUT, PATCH requests
   if (method !== 'GET' && method !== 'DELETE') {
     try {
-      const body = await request.text();
-      if (body) {
-        options.body = body;
+      // Special handling for upload_template_image endpoint
+      const isImageUpload = pathname.includes('upload_template_image');
+
+      if (isImageUpload) {
+        console.log('========== IMAGE UPLOAD DEBUG ==========');
+        console.log('[ImageUpload] Endpoint detected:', pathname);
+        console.log('[ImageUpload] Content-Type:', request.headers.get('content-type'));
+        console.log('[ImageUpload] Content-Length:', request.headers.get('content-length'));
+
+        // For multipart/form-data, we need to preserve the boundary
+        // So we read as blob and pass it through
+        const blob = await request.blob();
+        console.log('[ImageUpload] Body blob size:', blob.size);
+        console.log('[ImageUpload] Body blob type:', blob.type);
+        options.body = blob;
+        console.log('========================================');
+      } else {
+        const body = await request.text();
+        if (body) {
+          options.body = body;
+        }
       }
     } catch (error) {
-      // No body or error reading body
+      console.error('[Proxy] Error reading request body:', error);
     }
   }
 
@@ -111,6 +129,26 @@ async function proxyRequest(
     // DEBUG LOGGING - Response
     console.log('[Proxy] Response status:', response.status, response.statusText);
     console.log('[Proxy] Response headers:', Object.fromEntries(response.headers.entries()));
+
+    // Special logging for image upload responses
+    const isImageUpload = pathname.includes('upload_template_image');
+    if (isImageUpload) {
+      console.log('========== IMAGE UPLOAD RESPONSE ==========');
+      console.log('[ImageUpload Response] Status:', response.status);
+      console.log('[ImageUpload Response] Status Text:', response.statusText);
+      console.log('[ImageUpload Response] Content-Type:', response.headers.get('content-type'));
+
+      // Clone response to read body without consuming it
+      const clonedResponse = response.clone();
+      try {
+        const responseText = await clonedResponse.text();
+        console.log('[ImageUpload Response] Body length:', responseText.length);
+        console.log('[ImageUpload Response] Body preview (first 500 chars):', responseText.substring(0, 500));
+      } catch (e) {
+        console.error('[ImageUpload Response] Could not read response body:', e);
+      }
+      console.log('===========================================');
+    }
 
     // Copy response headers, but skip encoding-related headers
     // The fetch API already handles decompression, so we don't want the browser to try again

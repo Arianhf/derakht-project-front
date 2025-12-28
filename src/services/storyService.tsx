@@ -404,22 +404,76 @@ export const storyService = {
     imageFile: File,
     onProgress?: (progressEvent: any) => void
   ): Promise<{ id: string; url: string; part_index: number; created_at: string }> => {
+    console.log('========== uploadTemplateImage CALLED ==========');
+    console.log('[uploadTemplateImage] Template ID:', templateId);
+    console.log('[uploadTemplateImage] Part Index:', partIndex);
+    console.log('[uploadTemplateImage] File name:', imageFile.name);
+    console.log('[uploadTemplateImage] File size:', imageFile.size, 'bytes');
+    console.log('[uploadTemplateImage] File type:', imageFile.type);
+    console.log('[uploadTemplateImage] Last modified:', new Date(imageFile.lastModified).toISOString());
+
     const formData = new FormData();
     formData.append('image', imageFile);
     formData.append('part_index', partIndex.toString());
 
-    const response = await api.post(
-      `/stories/templates/${templateId}/upload_template_image/`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        onUploadProgress: onProgress,
+    console.log('[uploadTemplateImage] FormData created');
+    console.log('[uploadTemplateImage] FormData entries:');
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`  - ${key}: File(${value.name}, ${value.size} bytes, ${value.type})`);
+      } else {
+        console.log(`  - ${key}:`, value);
       }
-    );
+    }
 
-    return response.data;
+    const endpoint = `/stories/templates/${templateId}/upload_template_image/`;
+    console.log('[uploadTemplateImage] Endpoint:', endpoint);
+    console.log('[uploadTemplateImage] Making POST request...');
+
+    try {
+      const response = await api.post(
+        endpoint,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          onUploadProgress: (progressEvent) => {
+            console.log('[uploadTemplateImage] Upload progress:', {
+              loaded: progressEvent.loaded,
+              total: progressEvent.total,
+              percentage: progressEvent.total ? Math.round((progressEvent.loaded * 100) / progressEvent.total) : 0,
+            });
+            if (onProgress) {
+              onProgress(progressEvent);
+            }
+          },
+        }
+      );
+
+      console.log('[uploadTemplateImage] ========== RESPONSE RECEIVED ==========');
+      console.log('[uploadTemplateImage] Response status:', response.status);
+      console.log('[uploadTemplateImage] Response headers:', response.headers);
+      console.log('[uploadTemplateImage] Response data:', response.data);
+      console.log('[uploadTemplateImage] Response data type:', typeof response.data);
+      if (response.data) {
+        console.log('[uploadTemplateImage] Response data keys:', Object.keys(response.data));
+      }
+      console.log('====================================================');
+
+      return response.data;
+    } catch (error: any) {
+      console.error('[uploadTemplateImage] ========== ERROR ==========');
+      console.error('[uploadTemplateImage] Error occurred');
+      console.error('[uploadTemplateImage] Error type:', typeof error);
+      console.error('[uploadTemplateImage] Error message:', error?.message);
+      console.error('[uploadTemplateImage] Error code:', error?.code);
+      console.error('[uploadTemplateImage] Response status:', error?.response?.status);
+      console.error('[uploadTemplateImage] Response data:', error?.response?.data);
+      console.error('[uploadTemplateImage] Full error:', error);
+      console.error('================================================');
+      throw error;
+    }
   },
 
   // ============================================

@@ -123,16 +123,34 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
         );
 
         // Step 3: Upload to backend
+        console.log('========== [DrawingCanvas] STARTING IMAGE UPLOAD ==========');
+        console.log('[DrawingCanvas] Template ID:', templateId);
+        console.log('[DrawingCanvas] Part Index:', partIndex);
+        console.log('[DrawingCanvas] Compressed File:', {
+          name: compressedFile.name,
+          size: compressedFile.size,
+          type: compressedFile.type
+        });
+
         const uploadToastId = toast.loading('در حال آپلود تصویر...');
         const uploadResult = await storyService.uploadTemplateImage(
           templateId,
           partIndex,
           compressedFile
         );
+
+        console.log('[DrawingCanvas] ========== UPLOAD COMPLETE ==========');
+        console.log('[DrawingCanvas] Upload Result:', uploadResult);
+        console.log('[DrawingCanvas] Returned URL:', uploadResult?.url);
+        console.log('[DrawingCanvas] Returned ID:', uploadResult?.id);
+        console.log('======================================================');
+
         toast.success('تصویر آپلود شد', { id: uploadToastId });
 
         // Step 4: Add to canvas using URL (not base64)
+        console.log('[DrawingCanvas] Calling addImageToCanvas with URL:', uploadResult.url);
         addImageToCanvas(uploadResult.url, uploadResult.id);
+        console.log('[DrawingCanvas] addImageToCanvas called successfully');
       } catch (error: any) {
         console.error('Error uploading image:', error);
         const errorMessage = error?.response?.data?.error || 'خطا در آپلود تصویر';
@@ -577,16 +595,34 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
       );
 
       // Step 3: Upload to backend
+      console.log('========== [handleImageUpload] STARTING IMAGE UPLOAD ==========');
+      console.log('[handleImageUpload] Template ID:', templateId);
+      console.log('[handleImageUpload] Part Index:', partIndex);
+      console.log('[handleImageUpload] Compressed File:', {
+        name: compressedFile.name,
+        size: compressedFile.size,
+        type: compressedFile.type
+      });
+
       const uploadToastId = toast.loading('در حال آپلود تصویر...');
       const uploadResult = await storyService.uploadTemplateImage(
         templateId,
         partIndex,
         compressedFile
       );
+
+      console.log('[handleImageUpload] ========== UPLOAD COMPLETE ==========');
+      console.log('[handleImageUpload] Upload Result:', uploadResult);
+      console.log('[handleImageUpload] Returned URL:', uploadResult?.url);
+      console.log('[handleImageUpload] Returned ID:', uploadResult?.id);
+      console.log('==============================================================');
+
       toast.success('تصویر آپلود شد', { id: uploadToastId });
 
       // Step 4: Add to canvas using URL (not base64)
+      console.log('[handleImageUpload] Calling addImageToCanvas with URL:', uploadResult.url);
       addImageToCanvas(uploadResult.url, uploadResult.id);
+      console.log('[handleImageUpload] addImageToCanvas called successfully');
     } catch (error: any) {
       console.error('Error uploading image:', error);
       const errorMessage = error?.response?.data?.error || 'خطا در آپلود تصویر';
