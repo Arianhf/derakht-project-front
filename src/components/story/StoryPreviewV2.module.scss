@@ -207,11 +207,13 @@ $transition-speed: 0.3s;
 .content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 24px;
   display: flex;
   flex-direction: column;
   background: $gradient-bg; // Use Derakht gradient
   position: relative;
+  min-height: 0; // Allow flex item to shrink below content size
 
   // Cloud pattern with opacity
   &::before {
@@ -389,11 +391,26 @@ $transition-speed: 0.3s;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  height: 100%;
   align-items: center;
+  max-height: 100%;
 
   @media (max-width: $mobile-breakpoint) {
     display: none; // Hidden on mobile
+  }
+
+  // Override contentBox to use height-based constraints in side-by-side view
+  .contentBox {
+    height: auto;
+    max-height: 100%;
+    padding-bottom: 0 !important; // Remove aspect ratio padding
+    aspect-ratio: var(--aspect-ratio, 1); // Use CSS aspect-ratio instead
+    max-width: 100%;
+
+    .contentInner {
+      position: static; // Change from absolute positioning
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 

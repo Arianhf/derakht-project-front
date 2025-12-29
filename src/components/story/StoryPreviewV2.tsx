@@ -246,10 +246,20 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
       ? (part?.canvas_text_data ? JSON.stringify(part.canvas_text_data) : '')
       : (part?.canvas_illustration_data ? JSON.stringify(part.canvas_illustration_data) : '');
 
+    // Calculate CSS aspect-ratio value from paddingBottom percentage
+    // paddingBottom "100%" → aspect-ratio 1, "65.22%" → 1.533, "153.33%" → 0.652
+    const aspectRatioNumeric = aspectRatio === '100%' ? 1
+      : aspectRatio === `${(15 / 23) * 100}%` ? 23 / 15  // landscape
+      : aspectRatio === `${(23 / 15) * 100}%` ? 15 / 23  // portrait
+      : 4 / 3; // default
+
     return (
       <div
         className={`${styles.contentBox} ${styles[layoutType]} ${styles[type]}`}
-        style={{ paddingBottom: aspectRatio }}
+        style={{
+          paddingBottom: aspectRatio,
+          '--aspect-ratio': aspectRatioNumeric
+        } as React.CSSProperties}
       >
         <div className={styles.contentInner}>
           {type === 'text' ? (
