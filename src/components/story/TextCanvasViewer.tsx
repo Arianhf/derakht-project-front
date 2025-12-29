@@ -52,6 +52,7 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
 
     /**
      * Calculate canvas dimensions from container (responsive)
+     * Maintains aspect ratio based on original canvas dimensions
      */
     useEffect(() => {
         if (!containerRef.current) return;
@@ -61,7 +62,23 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
                 const rect = containerRef.current.getBoundingClientRect();
 
                 if (rect.width > 0 && rect.height > 0) {
-                    setCanvasDimensions({ width: rect.width, height: rect.height });
+                    // Use original aspect ratio from standardSizeRef (defaults to 1:1)
+                    const originalAspectRatio = standardSizeRef.current.width / standardSizeRef.current.height;
+                    const containerAspectRatio = rect.width / rect.height;
+
+                    let canvasWidth, canvasHeight;
+
+                    if (containerAspectRatio > originalAspectRatio) {
+                        // Container is wider than canvas aspect ratio - fit to height
+                        canvasHeight = rect.height;
+                        canvasWidth = canvasHeight * originalAspectRatio;
+                    } else {
+                        // Container is taller than canvas aspect ratio - fit to width
+                        canvasWidth = rect.width;
+                        canvasHeight = canvasWidth / originalAspectRatio;
+                    }
+
+                    setCanvasDimensions({ width: canvasWidth, height: canvasHeight });
                     dimensionsCalculatedRef.current = true;
                 }
             }
@@ -188,31 +205,53 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
                 originalCanvasDataRef.current = { canvasJSON, originalWidth, originalHeight };
                 standardSizeRef.current = { width: originalWidth, height: originalHeight };
 
+                // Recalculate canvas dimensions with correct aspect ratio
+                let canvasWidth = canvasDimensions.width;
+                let canvasHeight = canvasDimensions.height;
+
+                if (containerRef.current) {
+                    const rect = containerRef.current.getBoundingClientRect();
+                    const originalAspectRatio = originalWidth / originalHeight;
+                    const containerAspectRatio = rect.width / rect.height;
+
+                    if (containerAspectRatio > originalAspectRatio) {
+                        // Container is wider than canvas aspect ratio - fit to height
+                        canvasHeight = rect.height;
+                        canvasWidth = canvasHeight * originalAspectRatio;
+                    } else {
+                        // Container is taller than canvas aspect ratio - fit to width
+                        canvasWidth = rect.width;
+                        canvasHeight = canvasWidth / originalAspectRatio;
+                    }
+
+                    setCanvasDimensions({ width: canvasWidth, height: canvasHeight });
+                }
+
                 // Load canvas data using Promise-based API (Fabric.js v6)
                 await fabricCanvasRef.current.loadFromJSON(canvasJSON);
 
                 if (!fabricCanvasRef.current) return;
 
                 // Calculate zoom based on original dimensions
-                const scaleX = canvasDimensions.width / originalWidth;
-                const scaleY = canvasDimensions.height / originalHeight;
+                const scaleX = canvasWidth / originalWidth;
+                const scaleY = canvasHeight / originalHeight;
                 const zoom = Math.min(scaleX, scaleY);
 
                 console.log('Setting canvas zoom:', {
                     originalWidth,
                     originalHeight,
-                    currentWidth: canvasDimensions.width,
-                    currentHeight: canvasDimensions.height,
+                    currentWidth: canvasWidth,
+                    currentHeight: canvasHeight,
                     zoom,
                 });
 
                 // Apply zoom to scale all objects proportionally
                 fabricCanvasRef.current.setZoom(zoom);
 
-                // Update dimensions to match container
+                // Update dimensions to match calculated dimensions
                 fabricCanvasRef.current.setDimensions({
-                    width: canvasDimensions.width,
-                    height: canvasDimensions.height,
+                    width: canvasWidth,
+                    height: canvasHeight,
                 });
 
                 fabricCanvasRef.current.renderAll();
