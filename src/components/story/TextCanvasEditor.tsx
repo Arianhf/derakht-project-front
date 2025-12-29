@@ -79,16 +79,17 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         if (!onChange || !fabricCanvasRef.current) return;
 
         const layoutType = getLayoutTypeFromStory(story);
+        const standardSize = standardSizeRef.current;
         const canvasMetadata: CanvasMetadata = {
             version: '1.0',
             layoutType,
-            originalWidth: canvasDimensions.width,
-            originalHeight: canvasDimensions.height,
+            originalWidth: standardSize.width,
+            originalHeight: standardSize.height,
             canvasJSON: fabricCanvasRef.current.toJSON(),
         };
 
         onChange(JSON.stringify(canvasMetadata));
-    }, [onChange, story, canvasDimensions]);
+    }, [onChange, story]);
 
     /**
      * Load Fabric.js dynamically (client-side only)
@@ -616,16 +617,17 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         if (!fabricCanvasRef.current) return '{}';
 
         const layoutType = getLayoutTypeFromStory(story);
+        const standardSize = standardSizeRef.current;
         const canvasMetadata: CanvasMetadata = {
             version: '1.0',
             layoutType,
-            originalWidth: canvasDimensions.width,
-            originalHeight: canvasDimensions.height,
+            originalWidth: standardSize.width,
+            originalHeight: standardSize.height,
             canvasJSON: fabricCanvasRef.current.toJSON(),
         };
 
         return JSON.stringify(canvasMetadata);
-    }, [story, canvasDimensions]);
+    }, [story]);
 
     /**
      * Load canvas from JSON state (handles both new metadata format and legacy format)
