@@ -323,8 +323,26 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
 
                 // Fabric.js v6 uses Promise-based API
                 await fabricCanvasRef.current.loadFromJSON(canvasJSON);
+
+                // IMPORTANT: Reset canvas logical dimensions to current standard size
+                // This prevents old saved dimensions from persisting
+                const currentStandardSize = standardSizeRef.current;
+                fabricCanvasRef.current.setWidth(currentStandardSize.width);
+                fabricCanvasRef.current.setHeight(currentStandardSize.height);
+
+                // Recalculate zoom based on standard size
+                const currentZoom = canvasDimensions.width / currentStandardSize.width;
+                fabricCanvasRef.current.setZoom(currentZoom);
+
+                // Update display dimensions
+                fabricCanvasRef.current.setDimensions({
+                    width: canvasDimensions.width,
+                    height: canvasDimensions.height,
+                });
+
                 fabricCanvasRef.current.renderAll();
                 console.log('Initial state loaded successfully, objects count:', fabricCanvasRef.current.getObjects().length);
+                console.log('Canvas dimensions reset to:', currentStandardSize);
             } catch (error) {
                 console.error('Error loading canvas state:', error);
                 // Reset flag on error so it can retry
