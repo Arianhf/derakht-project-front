@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import TextCanvasEditor from '@/components/story/TextCanvasEditor';
-import DrawingCanvas, { DrawingCanvasRef } from '@/components/illustration/DrawingCanvas';
+import IllustrationCanvasEditor from '@/components/story/IllustrationCanvasEditor';
 import { CreateTemplatePartPayload } from '@/types/story';
 import { getStandardCanvasSize } from '@/constants/canvasSizes';
 import { FaTrash, FaFileDownload } from 'react-icons/fa';
@@ -52,7 +52,6 @@ const TemplatePartEditor: React.FC<TemplatePartEditorProps> = ({
     partIndex,
 }) => {
     const [activeTab, setActiveTab] = useState<'text' | 'illustration'>('text');
-    const drawingCanvasRef = useRef<DrawingCanvasRef>(null);
 
     // Calculate layout type and canvas dimensions
     const layoutType = getLayoutType(size, orientation);
@@ -202,14 +201,12 @@ const TemplatePartEditor: React.FC<TemplatePartEditorProps> = ({
                             )}
                         </div>
                         <div className={styles.canvasEditor}>
-                            <DrawingCanvas
-                                ref={drawingCanvasRef}
+                            <IllustrationCanvasEditor
                                 key={`illustration-${index}-${size}-${orientation}`}
+                                story={mockStory}
                                 initialState={part.canvas_illustration_template ? JSON.stringify(part.canvas_illustration_template) : undefined}
                                 onChange={handleIllustrationCanvasChange}
                                 backgroundColor="#FFFFFF"
-                                width={canvasDimensions.width}
-                                height={canvasDimensions.height}
                                 templateId={templateId}
                                 partIndex={partIndex}
                             />
