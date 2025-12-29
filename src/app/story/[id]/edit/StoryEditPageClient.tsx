@@ -130,25 +130,23 @@ const StoryEditPageClient: React.FC<StoryEditPageClientProps> = ({ initialStory 
     // Check if story has parts
     if (!story.parts || story.parts.length === 0) {
         return (
-            <div className={styles.pageContainer}>
-                <div className={styles.errorContainer}>
-                    <div className={styles.errorIcon}>📖</div>
-                    <h2>داستان خالی است</h2>
-                    <p>این داستان هنوز محتوایی ندارد</p>
-                    <button
-                        className={styles.backButton}
-                        onClick={handleClose}
-                    >
-                        بازگشت
-                    </button>
-                </div>
+            <div className={styles.errorContainer}>
+                <div className={styles.errorIcon}>📖</div>
+                <h2>داستان خالی است</h2>
+                <p>این داستان هنوز محتوایی ندارد</p>
+                <button
+                    className={styles.backButton}
+                    onClick={handleClose}
+                >
+                    بازگشت
+                </button>
             </div>
         );
     }
 
     // Render editor
     return (
-        <div className={styles.pageContainer}>
+        <>
             <Toaster position="top-center" />
 
             <StoryEditorV2
@@ -163,7 +161,7 @@ const StoryEditPageClient: React.FC<StoryEditPageClientProps> = ({ initialStory 
                 onFinish={handleFinish}
                 isFullPage={true}
             />
-        </div>
+        </>
     );
 };
 
