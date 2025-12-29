@@ -43,5 +43,8 @@
   canvas {
     display: block;
     border-radius: $border-radius-sm;
+    // Ensure canvas maintains its intrinsic dimensions
+    max-width: 100%;
+    max-height: 100%;
   }
 }
