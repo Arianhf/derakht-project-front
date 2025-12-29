@@ -65,20 +65,20 @@ const getLayoutType = (size: StorySize, orientation: StoryOrientation): LayoutTy
 };
 
 /**
- * Returns the aspect ratio padding percentage for maintaining aspect ratios
+ * Returns the aspect ratio for CSS aspect-ratio property
  */
-const getAspectRatioPadding = (layoutType: LayoutType): string => {
+const getAspectRatio = (layoutType: LayoutType): string => {
   switch (layoutType) {
     case 'square':
-      return '100%';
+      return '1 / 1';
     case 'landscapeRectangle':
-      return `${(15 / 23) * 100}%`;
+      return '23 / 15';
     case 'portraitRectangle':
-      return `${(23 / 15) * 100}%`;
+      return '15 / 23';
     case 'default':
-      return '75%';
+      return '4 / 3';
     default:
-      return '100%';
+      return '1 / 1';
   }
 };
 
@@ -115,7 +115,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   const MIN_SWIPE_DISTANCE = 50;
 
   const layoutType = getLayoutType(story.size || null, story.orientation || null);
-  const aspectRatio = getAspectRatioPadding(layoutType);
+  const aspectRatio = getAspectRatio(layoutType);
   // On mobile (< 768px), show one canvas per page for ALL layouts
   const isSinglePageMobile = isMobile;
 
@@ -423,29 +423,25 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
     return (
       <div
         className={`${styles.contentBox} ${styles[layoutType]} ${styles[type]}`}
-        style={{ paddingBottom: aspectRatio }}
+        style={{ aspectRatio }}
       >
         <div className={styles.contentInner}>
           {type === 'text' ? (
-            <div className={styles.textEditorWrapper}>
-              <TextCanvasEditor
-                key={`text-canvas-${index}`}
-                story={story}
-                initialState={textCanvasStates[index] ? JSON.stringify(textCanvasStates[index]) : undefined}
-                onChange={(canvasJSON) => handleTextCanvasChange(index, canvasJSON)}
-                backgroundColor={story.background_color || '#FFFFFF'}
-              />
-            </div>
+            <TextCanvasEditor
+              key={`text-canvas-${index}`}
+              story={story}
+              initialState={textCanvasStates[index] ? JSON.stringify(textCanvasStates[index]) : undefined}
+              onChange={(canvasJSON) => handleTextCanvasChange(index, canvasJSON)}
+              backgroundColor={story.background_color || '#FFFFFF'}
+            />
           ) : (
-            <div className={styles.imageContent}>
-              <IllustrationCanvasEditor
-                key={`illustration-canvas-${index}`}
-                story={story}
-                initialState={illustrationCanvasStates[index] ? JSON.stringify(illustrationCanvasStates[index]) : undefined}
-                onChange={(canvasJSON) => handleIllustrationCanvasChange(index, canvasJSON)}
-                backgroundColor={story.background_color || '#FFFFFF'}
-              />
-            </div>
+            <IllustrationCanvasEditor
+              key={`illustration-canvas-${index}`}
+              story={story}
+              initialState={illustrationCanvasStates[index] ? JSON.stringify(illustrationCanvasStates[index]) : undefined}
+              onChange={(canvasJSON) => handleIllustrationCanvasChange(index, canvasJSON)}
+              backgroundColor={story.background_color || '#FFFFFF'}
+            />
           )}
         </div>
       </div>

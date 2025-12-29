@@ -44,21 +44,20 @@ const getLayoutType = (size: StorySize, orientation: StoryOrientation): LayoutTy
 };
 
 /**
- * Returns the aspect ratio padding percentage for maintaining aspect ratios
- * Formula: (height / width) * 100
+ * Returns the aspect ratio for CSS aspect-ratio property
  */
-const getAspectRatioPadding = (layoutType: LayoutType): string => {
+const getAspectRatio = (layoutType: LayoutType): string => {
   switch (layoutType) {
     case 'square':
-      return '100%'; // 1:1 ratio
+      return '1 / 1';
     case 'landscapeRectangle':
-      return `${(15 / 23) * 100}%`; // 15:23 in landscape (width:height) = ~65.22%
+      return '23 / 15';
     case 'portraitRectangle':
-      return `${(23 / 15) * 100}%`; // 23:15 in portrait (height:width) = ~153.33%
+      return '15 / 23';
     case 'default':
-      return '75%'; // Default 4:3 ratio
+      return '4 / 3';
     default:
-      return '100%';
+      return '1 / 1';
   }
 };
 
@@ -81,7 +80,7 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
 
   // Determine layout type
   const layoutType = getLayoutType(story.size || null, story.orientation || null);
-  const aspectRatio = getAspectRatioPadding(layoutType);
+  const aspectRatio = getAspectRatio(layoutType);
 
   // Check if we should show single-page view on mobile (for rectangle layouts)
   const isSinglePageMobile = layoutType.includes('Rectangle');
@@ -246,20 +245,10 @@ const StoryPreviewV2: React.FC<StoryPreviewV2Props> = ({
       ? (part?.canvas_text_data ? JSON.stringify(part.canvas_text_data) : '')
       : (part?.canvas_illustration_data ? JSON.stringify(part.canvas_illustration_data) : '');
 
-    // Calculate CSS aspect-ratio value from paddingBottom percentage
-    // paddingBottom "100%" → aspect-ratio 1, "65.22%" → 1.533, "153.33%" → 0.652
-    const aspectRatioNumeric = aspectRatio === '100%' ? 1
-      : aspectRatio === `${(15 / 23) * 100}%` ? 23 / 15  // landscape
-      : aspectRatio === `${(23 / 15) * 100}%` ? 15 / 23  // portrait
-      : 4 / 3; // default
-
     return (
       <div
         className={`${styles.contentBox} ${styles[layoutType]} ${styles[type]}`}
-        style={{
-          paddingBottom: aspectRatio,
-          '--aspect-ratio': aspectRatioNumeric
-        } as React.CSSProperties}
+        style={{ aspectRatio }}
       >
         <div className={styles.contentInner}>
           {type === 'text' ? (
