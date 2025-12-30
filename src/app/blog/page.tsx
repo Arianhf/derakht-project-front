@@ -49,21 +49,31 @@ export const metadata: Metadata = {
 };
 
 const BlogPage = async () => {
-    // Fetch all three types of blog posts on server
-    const [regularPosts, featuredPosts, heroPostsResponse] = await Promise.all([
-        blogService.getAllPosts(),
-        blogService.getFeaturedPosts(),
-        blogService.getHeroPosts()
-    ]);
+    let blogs = [];
+    let featuredBlogs = [];
+    let heroPosts = [];
 
-    const blogs = regularPosts.items;
+    try {
+        // Fetch all three types of blog posts on server
+        const [regularPosts, featuredPosts, heroPostsResponse] = await Promise.all([
+            blogService.getAllPosts(),
+            blogService.getFeaturedPosts(),
+            blogService.getHeroPosts()
+        ]);
 
-    // Filter featured posts that are not hero posts
-    const featuredBlogs = featuredPosts.items.filter(post =>
-        post.featured && !post.hero);
+        blogs = regularPosts.items;
 
-    // Set hero posts from the updated API
-    const heroPosts = heroPostsResponse.items || [];
+        // Filter featured posts that are not hero posts
+        featuredBlogs = featuredPosts.items.filter(post =>
+            post.featured && !post.hero);
+
+        // Set hero posts from the updated API
+        heroPosts = heroPostsResponse.items || [];
+    } catch (error) {
+        // Log error for debugging
+        console.error('Error fetching blog posts:', error);
+        // Return empty arrays as fallback - page will still render with empty state
+    }
     // Structured Data for Blog Page
     const structuredData = {
         '@context': 'https://schema.org',
