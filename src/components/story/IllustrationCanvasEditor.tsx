@@ -24,6 +24,10 @@ export interface IllustrationCanvasEditorProps {
     templateId?: string;
     /** Part index (required for uploading images) */
     partIndex?: number;
+    /** Story part ID for reset functionality */
+    partId?: string;
+    /** Callback to reset illustration canvas to template default */
+    onResetIllustration?: () => Promise<void>;
 }
 
 type DrawingTool = 'brush' | 'eraser' | 'select';
@@ -39,6 +43,8 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
     backgroundColor = '#FFFFFF',
     templateId,
     partIndex,
+    partId,
+    onResetIllustration,
 }) => {
     // Calculate standard canvas size based on story layout
     const standardCanvasSize = useMemo(() => {
@@ -418,6 +424,20 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
     }, [backgroundColor, notifyChange]);
 
     /**
+     * Handle reset illustration canvas to template default
+     */
+    const handleResetIllustration = useCallback(async () => {
+        if (!onResetIllustration) return;
+        try {
+            await onResetIllustration();
+            toast.success('تصویر کنواس به حالت اولیه بازگردانده شد');
+        } catch (error) {
+            console.error('Error resetting illustration canvas:', error);
+            toast.error('خطا در بازگردانی تصویر کنواس');
+        }
+    }, [onResetIllustration]);
+
+    /**
      * Undo last action
      */
     const undo = useCallback(() => {
@@ -556,6 +576,7 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
                                 isCanvasReady={isCanvasReady}
                                 onToggleVisibility={() => setIsToolbarVisible(false)}
                                 isVisible={isToolbarVisible}
+                                onResetIllustration={handleResetIllustration}
                             />
                         </div>
 

@@ -17,6 +17,10 @@ export interface TextCanvasEditorProps {
     story: Partial<Story>;
     /** Background color of the canvas */
     backgroundColor?: string;
+    /** Story part ID for reset functionality */
+    partId?: string;
+    /** Callback to reset text canvas to template default */
+    onResetText?: () => Promise<void>;
 }
 
 export interface CanvasTextObject {
@@ -45,6 +49,8 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
                                                                onChange,
                                                                story,
                                                                backgroundColor = '#FFFFFF',
+                                                               partId,
+                                                               onResetText,
                                                            }) => {
     // Calculate standard canvas size based on story layout
     const standardCanvasSize = useMemo(() => {
@@ -463,6 +469,20 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
     }, [notifyChange]);
 
     /**
+     * Handle reset text canvas to template default
+     */
+    const handleResetText = useCallback(async () => {
+        if (!onResetText) return;
+        try {
+            await onResetText();
+            toast.success('متن کنواس به حالت اولیه بازگردانده شد');
+        } catch (error) {
+            console.error('Error resetting text canvas:', error);
+            toast.error('خطا در بازگردانی متن کنواس');
+        }
+    }, [onResetText]);
+
+    /**
      * Update the selected text object's font family
      */
     const updateFontFamily = useCallback((fontFamily: string) => {
@@ -690,6 +710,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
                                 onSkewChange={updateSkew}
                                 onAspectRatioLockChange={toggleAspectRatioLock}
                                 isCanvasReady={isCanvasReady}
+                                onResetText={handleResetText}
                             />
                         </div>
                     </>
