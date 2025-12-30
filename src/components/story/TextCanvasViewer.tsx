@@ -30,6 +30,7 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
     const [isFabricLoaded, setIsFabricLoaded] = useState(false);
     const [isCanvasReady, setIsCanvasReady] = useState(false);
     const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
+    const [canvasVersion, setCanvasVersion] = useState(0); // Increment to trigger re-initialization
 
     /**
      * Load Fabric.js dynamically (client-side only)
@@ -106,6 +107,7 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
                 fabricCanvasRef.current = null;
                 originalCanvasDataRef.current = null;
                 setIsCanvasReady(false);
+                setCanvasVersion(prev => prev + 1); // Trigger re-initialization
             }
         };
     }, [canvasData]);
@@ -156,7 +158,7 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
         console.log('Canvas initialized in viewer with zoom:', initialZoom);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isFabricLoaded, canvasDimensions]);
+    }, [isFabricLoaded, canvasDimensions, canvasVersion]);
 
     /**
      * Load and scale canvas data when available (separate from initialization)
@@ -223,14 +225,22 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
                         canvasWidth = rect.width;
                         canvasHeight = canvasWidth / originalAspectRatio;
                     }
+                }
 
-                    setCanvasDimensions({ width: canvasWidth, height: canvasHeight });
+                // Check canvas validity before loading (prevent race condition)
+                if (!fabricCanvasRef.current) {
+                    console.log('Canvas was disposed before loading, aborting');
+                    return;
                 }
 
                 // Load canvas data using Promise-based API (Fabric.js v6)
                 await fabricCanvasRef.current.loadFromJSON(canvasJSON);
 
-                if (!fabricCanvasRef.current) return;
+                // Check again after async operation
+                if (!fabricCanvasRef.current) {
+                    console.log('Canvas was disposed during loading, aborting');
+                    return;
+                }
 
                 // Calculate zoom based on original dimensions
                 const scaleX = canvasWidth / originalWidth;

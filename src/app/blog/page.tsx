@@ -5,6 +5,7 @@ import { Navbar } from '@/components/shared/Navbar/Navbar';
 import logoImage from '@/assets/images/logo2.png';
 import styles from './page.module.scss';
 import { blogService } from '@/services/blogService';
+import { BlogPost } from '@/types';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,9 +50,9 @@ export const metadata: Metadata = {
 };
 
 const BlogPage = async () => {
-    let blogs = [];
-    let featuredBlogs = [];
-    let heroPosts = [];
+    let blogs: BlogPost[] = [];
+    let featuredBlogs: BlogPost[] = [];
+    let heroPosts: BlogPost[] = [];
 
     try {
         // Fetch all three types of blog posts on server
