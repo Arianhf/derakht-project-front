@@ -44,6 +44,8 @@
     "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^9.39.2",
     "eslint-config-next": "16.1.1",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
     "fabric": "^6.9.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.2.0",
