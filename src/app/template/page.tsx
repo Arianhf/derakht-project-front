@@ -67,6 +67,7 @@ const TemplatePage = () => {
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingStories, setIsLoadingStories] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   const startStory = useCallback(async (templateId: string) => {
@@ -109,6 +110,11 @@ const TemplatePage = () => {
       setIsLoading(false);
     }
   }, [selectedTemplate, router]);
+
+  // Set mounted state to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (selectedTemplate) {
@@ -241,7 +247,7 @@ const TemplatePage = () => {
                 </div>
 
                 {/* My Stories Section */}
-                {loginService.isAuthenticated() && (
+                {mounted && loginService.isAuthenticated() && (
                     <div className={styles.myStoriesSection}>
                       <h2 className={styles.myStoriesTitle}>
                         <FaBook className={styles.myStoriesIcon} />
