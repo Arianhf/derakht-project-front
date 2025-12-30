@@ -64,3 +64,6 @@ export interface BlogPost {
 export interface HeroPost extends BlogPost {
     tags: string[];
 }
+
+// Export canvas types
+export * from './canvas';
