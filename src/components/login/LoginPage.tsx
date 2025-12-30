@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { loginService } from '@/services/loginService';
 import { useUser } from '@/contexts/UserContext';
 import PasswordInput from '@/components/shared/Form/PasswordInput';
-import styles from './login.module.scss';
+import styles from './LoginPage.module.scss';
 import logo from '@/assets/images/logo2.png';
 import { toast } from 'react-hot-toast';
 

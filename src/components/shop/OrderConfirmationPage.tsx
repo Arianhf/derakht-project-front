@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import styles from './orderConfirmation.module.scss';
+import styles from './OrderConfirmationPage.module.scss';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import logo from '@/assets/images/logo2.png';
 import { FaCheckCircle, FaHome, FaListAlt } from 'react-icons/fa';
