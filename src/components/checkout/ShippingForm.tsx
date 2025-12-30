@@ -1,17 +1,10 @@
 import React from 'react';
-import AddressForm from '@/components/shared/AddressForm/AddressForm';
+import AddressForm, { AddressFormData } from '@/components/shared/AddressForm/AddressForm';
 import styles from './ShippingForm.module.scss';
 
 interface ShippingFormProps {
-    initialData: {
-        fullName: string;
-        address: string;
-        city: string;
-        province: string;
-        postalCode: string;
-        phoneNumber: string;
-    };
-    onSubmit: (data: any) => void;
+    initialData: AddressFormData;
+    onSubmit: (data: AddressFormData) => void;
     onCancel?: () => void; // Optional cancel handler for returning to default address
 }
 

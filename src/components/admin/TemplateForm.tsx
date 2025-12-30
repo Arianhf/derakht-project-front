@@ -74,7 +74,7 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
     const updateTemplatePart = (
         index: number,
         field: keyof CreateTemplatePartPayload,
-        value: any
+        value: CreateTemplatePartPayload[keyof CreateTemplatePartPayload]
     ) => {
         setFormData((prev) => ({
             ...prev,
