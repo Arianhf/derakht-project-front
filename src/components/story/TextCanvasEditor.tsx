@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import styles from './TextCanvasEditor.module.scss';
-import CanvasToolbar from './CanvasToolbar';
 import { toast } from 'react-hot-toast';
 import { Story, CanvasMetadata } from '@/types/story';
 import { getStandardCanvasSize } from '@/constants/canvasSizes';
 import { getLayoutTypeFromStory } from '@/utils/canvasUtils';
+import CanvasToolbar from './CanvasToolbar';
+import styles from './TextCanvasEditor.module.scss';
 
 export interface TextCanvasEditorProps {
     /** Initial canvas state in JSON format (with metadata) */

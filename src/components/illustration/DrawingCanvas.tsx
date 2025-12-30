@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import styles from './DrawingCanvas.module.scss';
-import DrawingToolbar from './DrawingToolbar';
 import { toast } from 'react-hot-toast';
 import { compressImage, blobToFile, formatFileSize } from '@/utils/imageCompression';
 import { validateImageFile } from '@/utils/imageValidation';
 import { storyService } from '@/services/storyService';
+import DrawingToolbar from './DrawingToolbar';
+import styles from './DrawingCanvas.module.scss';
 
 export interface DrawingCanvasProps {
   /** Initial canvas state in JSON format */

@@ -2,22 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import toast, { Toaster } from 'react-hot-toast';
+import { FaArrowRight, FaSpinner, FaEdit } from 'react-icons/fa';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
-import styles from './CheckoutPage.module.scss';
-import logo from '@/assets/images/logo2.png';
-import { useCart } from '@/contexts/CartContext';
-import { useUser } from '@/contexts/UserContext';
-import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
 import { ShippingForm } from '@/components/checkout/ShippingForm';
 import { PaymentMethod } from '@/components/checkout/PaymentMethod';
 import { CardToCardPayment } from '@/components/checkout/CardToCardPayment';
 import { OrderSummary } from '@/components/checkout/OrderSummary';
 import { ShippingMethodSelector } from '@/components/checkout/ShippingMethodSelector';
-import { Toaster } from 'react-hot-toast';
-import { FaArrowRight, FaSpinner, FaEdit } from 'react-icons/fa';
+import { useCart } from '@/contexts/CartContext';
+import { useUser } from '@/contexts/UserContext';
 import { shopService } from '@/services/shopService';
-import toast from 'react-hot-toast';
 import { ShippingMethod, ShippingEstimateResponse } from '@/types/shop';
+import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
+import logo from '@/assets/images/logo2.png';
+import styles from './CheckoutPage.module.scss';
 
 // Checkout steps
 enum CheckoutStep {
