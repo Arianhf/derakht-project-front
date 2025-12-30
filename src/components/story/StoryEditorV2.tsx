@@ -7,6 +7,8 @@ import styles from './StoryEditorV2.module.scss';
 import { Story, StoryOrientation, StorySize } from '@/types/story';
 import TextCanvasEditor from './TextCanvasEditor';
 import IllustrationCanvasEditor from './IllustrationCanvasEditor';
+import ConfirmDialog from '@/components/shared/ConfirmDialog/ConfirmDialog';
+import { storyService } from '@/services/storyService';
 
 interface StoryEditorV2Props {
   story: Story;
@@ -108,6 +110,11 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState(story.title || '');
   const [isInteractingWithCanvas, setIsInteractingWithCanvas] = useState(false);
+  const [resetConfirmDialog, setResetConfirmDialog] = useState({
+    isOpen: false,
+    type: null as 'text' | 'illustration' | null,
+  });
+  const [canvasResetCounter, setCanvasResetCounter] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
   const settingsModalRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -361,6 +368,85 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
     }
   };
 
+  // Reset canvas handlers
+  const handleRequestResetText = () => {
+    setResetConfirmDialog({
+      isOpen: true,
+      type: 'text',
+    });
+  };
+
+  const handleConfirmResetText = async () => {
+    try {
+      const currentPart = story.parts[currentPartIndex];
+      if (!currentPart) return;
+
+      const resetPart = await storyService.resetStoryPart(
+        currentPart.id,
+        true,  // resetText
+        false  // resetIllustration
+      );
+
+      // Update text canvas state with reset data
+      const newTextStates = { ...textCanvasStates };
+      if (resetPart.canvas_text_data) {
+        newTextStates[currentPartIndex] = resetPart.canvas_text_data;
+      } else {
+        // If no template data, clear the canvas
+        delete newTextStates[currentPartIndex];
+      }
+      setTextCanvasStates(newTextStates);
+      setResetConfirmDialog({ isOpen: false, type: null });
+      // Increment counter to force canvas re-render
+      setCanvasResetCounter(prev => prev + 1);
+    } catch (error) {
+      console.error('Error resetting text canvas:', error);
+      alert('خطا در بازگردانی متن کنواس');
+      setResetConfirmDialog({ isOpen: false, type: null });
+    }
+  };
+
+  const handleRequestResetIllustration = () => {
+    setResetConfirmDialog({
+      isOpen: true,
+      type: 'illustration',
+    });
+  };
+
+  const handleConfirmResetIllustration = async () => {
+    try {
+      const currentPart = story.parts[currentPartIndex];
+      if (!currentPart) return;
+
+      const resetPart = await storyService.resetStoryPart(
+        currentPart.id,
+        false,  // resetText
+        true    // resetIllustration
+      );
+
+      // Update illustration canvas state with reset data
+      const newIllustrationStates = { ...illustrationCanvasStates };
+      if (resetPart.canvas_illustration_data) {
+        newIllustrationStates[currentPartIndex] = resetPart.canvas_illustration_data;
+      } else {
+        // If no template data, clear the canvas
+        delete newIllustrationStates[currentPartIndex];
+      }
+      setIllustrationCanvasStates(newIllustrationStates);
+      setResetConfirmDialog({ isOpen: false, type: null });
+      // Increment counter to force canvas re-render
+      setCanvasResetCounter(prev => prev + 1);
+    } catch (error) {
+      console.error('Error resetting illustration canvas:', error);
+      alert('خطا در بازگردانی تصویر کنواس');
+      setResetConfirmDialog({ isOpen: false, type: null });
+    }
+  };
+
+  const handleCancelReset = () => {
+    setResetConfirmDialog({ isOpen: false, type: null });
+  };
+
   // Touch handlers for swipe navigation
   const handleTouchStart = (e: React.TouchEvent) => {
     // Check if touch started on a canvas element
@@ -428,19 +514,23 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
         <div className={styles.contentInner}>
           {type === 'text' ? (
             <TextCanvasEditor
-              key={`text-canvas-${index}`}
+              key={`text-canvas-${index}-${canvasResetCounter}`}
               story={story}
+              partId={story.parts[index]?.id}
               initialState={textCanvasStates[index] ? JSON.stringify(textCanvasStates[index]) : undefined}
               onChange={(canvasJSON) => handleTextCanvasChange(index, canvasJSON)}
               backgroundColor={story.background_color || '#FFFFFF'}
+              onResetText={handleRequestResetText}
             />
           ) : (
             <IllustrationCanvasEditor
-              key={`illustration-canvas-${index}`}
+              key={`illustration-canvas-${index}-${canvasResetCounter}`}
               story={story}
+              partId={story.parts[index]?.id}
               initialState={illustrationCanvasStates[index] ? JSON.stringify(illustrationCanvasStates[index]) : undefined}
               onChange={(canvasJSON) => handleIllustrationCanvasChange(index, canvasJSON)}
               backgroundColor={story.background_color || '#FFFFFF'}
+              onResetIllustration={handleRequestResetIllustration}
             />
           )}
         </div>
@@ -740,6 +830,25 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
           </div>
         </div>
       )}
+
+      {/* Reset Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={resetConfirmDialog.isOpen}
+        title={resetConfirmDialog.type === 'text' ? 'بازگردانی متن' : 'بازگردانی تصویر'}
+        message={
+          resetConfirmDialog.type === 'text'
+            ? 'آیا مطمئن هستید که می‌خواهید متن کنواس را به حالت اولیه بازگردانید؟ این عمل قابل بازگشت نیست.'
+            : 'آیا مطمئن هستید که می‌خواهید تصویر کنواس را به حالت اولیه بازگردانید؟ این عمل قابل بازگشت نیست.'
+        }
+        confirmText="بازگردانی"
+        cancelText="انصراف"
+        onConfirm={
+          resetConfirmDialog.type === 'text'
+            ? handleConfirmResetText
+            : handleConfirmResetIllustration
+        }
+        onCancel={handleCancelReset}
+      />
     </div>
   );
 
