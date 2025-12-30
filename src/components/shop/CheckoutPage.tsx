@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
-import styles from './checkout.module.scss';
+import styles from './CheckoutPage.module.scss';
 import logo from '@/assets/images/logo2.png';
 import { useCart } from '@/contexts/CartContext';
 import { useUser } from '@/contexts/UserContext';
