@@ -94,6 +94,47 @@
   }
 }
 
+// Reset Button
+.resetButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  background-color: #FF9800; // Orange for restore action
+  color: white;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-size: 14px;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:hover:not(:disabled) {
+    background-color: #F57C00; // Darker orange on hover
+    transform: scale(1.05);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    background-color: $light-text;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:focus {
+    outline: 2px solid #FF9800;
+    outline-offset: 2px;
+  }
+
+  span {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+
 // Select Dropdown
 .select {
   padding: $spacing-xs $spacing-sm;
@@ -146,5 +187,14 @@
     width: 32px;
     height: 32px;
     font-size: 14px;
+  }
+
+  .resetButton {
+    font-size: 12px;
+    padding: $spacing-xs;
+
+    span {
+      font-size: 11px;
+    }
   }
 }

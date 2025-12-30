@@ -255,3 +255,59 @@
     font-size: 14px;
   }
 }
+
+// Reset Button
+.resetButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  background-color: #FF9800; // Orange for restore action
+  color: white;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-size: 14px;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  // Ensure SVG icons are white with high contrast
+  svg {
+    color: white;
+    fill: currentColor;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: #F57C00; // Darker orange on hover
+    transform: scale(1.05);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    background-color: $light-text;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:focus {
+    outline: 2px solid #FF9800;
+    outline-offset: 2px;
+  }
+
+  span {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 12px;
+    padding: $spacing-xs;
+
+    span {
+      font-size: 11px;
+    }
+  }
+}

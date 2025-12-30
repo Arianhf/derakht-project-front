@@ -18,6 +18,7 @@ interface DrawingToolbarProps {
   isCanvasReady: boolean;
   onToggleVisibility?: () => void;
   isVisible?: boolean;
+  onResetIllustration?: () => Promise<void>;
 }
 
 const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
@@ -33,8 +34,10 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
   isCanvasReady,
   onToggleVisibility,
   isVisible = true,
+  onResetIllustration,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isResetting, setIsResetting] = React.useState(false);
 
   const handleImageButtonClick = () => {
     fileInputRef.current?.click();
@@ -46,6 +49,16 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
       onImageUpload(file);
       // Reset input so same file can be selected again
       e.target.value = '';
+    }
+  };
+
+  const handleResetClick = async () => {
+    if (!onResetIllustration) return;
+    setIsResetting(true);
+    try {
+      await onResetIllustration();
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -156,6 +169,19 @@ const DrawingToolbar: React.FC<DrawingToolbarProps> = ({
         >
           <FaTrash />
         </button>
+        {onResetIllustration && (
+          <button
+            type="button"
+            className={styles.resetButton}
+            onClick={handleResetClick}
+            disabled={!isCanvasReady || isResetting}
+            aria-label="بازگردانی تصویر به حالت اولیه"
+            title="بازگردانی به حالت اولیه"
+          >
+            <FaUndo />
+            <span>{isResetting ? 'در حال بازگردانی...' : 'بازگردانی'}</span>
+          </button>
+        )}
       </div>
 
       {/* Hide Toolbar Button */}

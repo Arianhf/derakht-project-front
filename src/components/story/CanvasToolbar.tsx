@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { FaPlus, FaTrash, FaLock, FaUnlock } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaLock, FaUnlock, FaUndo } from 'react-icons/fa';
 import styles from './CanvasToolbar.module.scss';
 import { CanvasTextObject } from './TextCanvasEditor';
 
@@ -26,6 +26,8 @@ interface CanvasToolbarProps {
   onAspectRatioLockChange: (locked: boolean) => void;
   /** Whether the canvas is ready */
   isCanvasReady: boolean;
+  /** Callback to reset text canvas to template default */
+  onResetText?: () => Promise<void>;
 }
 
 // Available fonts
@@ -66,6 +68,7 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
   onSkewChange,
   onAspectRatioLockChange,
   isCanvasReady,
+  onResetText,
 }) => {
   const [selectedFont, setSelectedFont] = useState(FONTS[0].value);
   const [selectedFontSize, setSelectedFontSize] = useState(24);
@@ -75,6 +78,7 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
   const [skewX, setSkewX] = useState<number>(0);
   const [skewY, setSkewY] = useState<number>(0);
   const [isAspectRatioLocked, setIsAspectRatioLocked] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
   const isObjectSelected = !!activeObject;
 
@@ -200,6 +204,19 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
     onAspectRatioLockChange(newLocked);
   };
 
+  /**
+   * Handle reset text canvas to template default
+   */
+  const handleResetClick = async () => {
+    if (!onResetText) return;
+    setIsResetting(true);
+    try {
+      await onResetText();
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   const isTextObject = activeObject?.type === 'i-text';
 
   return (
@@ -217,6 +234,23 @@ const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
           <FaPlus />
         </button>
       </div>
+
+      {/* Reset Button */}
+      {onResetText && (
+        <div className={styles.toolbarSection}>
+          <button
+            type="button"
+            className={styles.resetButton}
+            onClick={handleResetClick}
+            disabled={!isCanvasReady || isResetting}
+            aria-label="بازگردانی متن به حالت اولیه"
+            title="بازگردانی به حالت اولیه"
+          >
+            <FaUndo />
+            <span>{isResetting ? 'در حال بازگردانی...' : 'بازگردانی'}</span>
+          </button>
+        </div>
+      )}
 
       {/* Font Controls - Only for text objects */}
       {isTextObject && (
