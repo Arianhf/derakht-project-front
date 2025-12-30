@@ -72,6 +72,26 @@ pnpm test -- path/to/test.test.ts --watch
 4. Relative imports (./types, ./styles)
 5. Styles last
 
+**ESLint Enforcement**: Import order is enforced by `eslint-plugin-import` with the `import/order` rule. ESLint will automatically flag violations.
+
+### Type Safety Rules
+
+**Enforced by ESLint**:
+- **No explicit `any` types**: `@typescript-eslint/no-explicit-any` is set to `error`
+  - Use specific types instead of `any`
+  - For truly unknown types, use `unknown` and type guards
+  - Example of error handling:
+    ```typescript
+    try {
+      // code
+    } catch (error) {
+      const standardError = error as StandardErrorResponse; // ✅ Correct
+      // NOT: catch (err: any) { ... } // ❌ Will cause ESLint error
+    }
+    ```
+
+**Temporary Ignores**: Some files with existing violations are temporarily ignored in `eslint.config.mjs` until they are refactored. These will be removed as violations are fixed in subsequent PRs.
+
 ## Component Patterns
 
 ### Component Structure Template
