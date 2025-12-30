@@ -263,7 +263,7 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
         };
 
         loadCanvasData();
-    }, [canvasData, isCanvasReady, canvasDimensions]);
+    }, [canvasData, isCanvasReady]);
 
     /**
      * Cleanup canvas on unmount
