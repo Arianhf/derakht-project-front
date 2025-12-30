@@ -369,7 +369,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
   };
 
   // Reset canvas handlers
-  const handleRequestResetText = () => {
+  const handleRequestResetText = async () => {
     setResetConfirmDialog({
       isOpen: true,
       type: 'text',
@@ -406,7 +406,7 @@ const StoryEditorV2: React.FC<StoryEditorV2Props> = ({
     }
   };
 
-  const handleRequestResetIllustration = () => {
+  const handleRequestResetIllustration = async () => {
     setResetConfirmDialog({
       isOpen: true,
       type: 'illustration',
