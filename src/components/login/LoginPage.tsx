@@ -4,12 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 import { loginService } from '@/services/loginService';
 import { useUser } from '@/contexts/UserContext';
 import PasswordInput from '@/components/shared/Form/PasswordInput';
+import { StandardErrorResponse } from '@/types/error';
 import styles from './LoginPage.module.scss';
 import logo from '@/assets/images/logo2.png';
-import { toast } from 'react-hot-toast';
 
 const LoginPage: React.FC = () => {
     const [isLogin, setIsLogin] = useState(true);
@@ -74,9 +75,10 @@ const LoginPage: React.FC = () => {
 
                 router.push(redirectPath);
             }
-        } catch (err: any) {
-            console.error('Authentication error:', err);
-            setError(err.message || 'خطا در فرآیند احراز هویت');
+        } catch (error) {
+            console.error('Authentication error:', error);
+            const standardError = error as StandardErrorResponse;
+            setError(standardError.message || 'خطا در فرآیند احراز هویت');
         } finally {
             setLoading(false);
         }
