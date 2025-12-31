@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
 import { Story, CanvasMetadata } from '@/types/story';
+import { FabricCanvas, FabricObject } from '@/types/canvas';
 import { getStandardCanvasSize } from '@/constants/canvasSizes';
 import { getLayoutTypeFromStory } from '@/utils/canvasUtils';
 import CanvasToolbar from './CanvasToolbar';
@@ -35,9 +36,9 @@ export interface CanvasTextObject {
     scaleX?: number;
     scaleY?: number;
     lockUniScaling?: boolean;
-    set?: (props: any) => void;
+    set?: (props: Partial<FabricObject>) => void;
     setCoords?: () => void;
-    setControlsVisibility?: (controls: any) => void;
+    setControlsVisibility?: (controls: Record<string, boolean>) => void;
 }
 
 /**
@@ -60,8 +61,8 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-    const fabricCanvasRef = useRef<any>(null);
-    const fabricLibRef = useRef<any>(null); // Store fabric library instance
+    const fabricCanvasRef = useRef<FabricCanvas | null>(null);
+    const fabricLibRef = useRef<typeof import('fabric') | null>(null); // Store fabric library instance
     const dimensionsCalculatedRef = useRef(false); // Track if dimensions are ready
     const initialStateLoadedRef = useRef(false); // Track if initial state has been loaded
     const standardSizeRef = useRef(standardCanvasSize); // Store standard canvas size
@@ -91,7 +92,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
             layoutType,
             originalWidth: standardSize.width,
             originalHeight: standardSize.height,
-            canvasJSON: fabricCanvasRef.current.toJSON(),
+            canvasJSON: fabricCanvasRef.current?.toJSON?.() ?? {},
         };
 
         onChange(JSON.stringify(canvasMetadata));
@@ -226,7 +227,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
             height: canvasDimensions.height,
         });
 
-        fabricCanvasRef.current = canvas;
+        fabricCanvasRef.current = canvas as unknown as FabricCanvas;
         console.log('Canvas created with zoom:', initialZoom);
         setIsCanvasReady(true);
 
@@ -248,21 +249,21 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         };
 
         // Register event listeners
-        canvas.on('selection:created', handleSelectionCreated);
-        canvas.on('selection:updated', handleSelectionUpdated);
-        canvas.on('selection:cleared', handleSelectionCleared);
-        canvas.on('object:modified', handleObjectModified);
-        canvas.on('object:scaling', handleObjectModified);
-        canvas.on('object:rotating', handleObjectModified);
-        canvas.on('object:skewing', handleObjectModified);
-        canvas.on('object:moving', handleObjectModified);
+        canvas.on?.('selection:created', handleSelectionCreated);
+        canvas.on?.('selection:updated', handleSelectionUpdated);
+        canvas.on?.('selection:cleared', handleSelectionCleared);
+        canvas.on?.('object:modified', handleObjectModified);
+        canvas.on?.('object:scaling', handleObjectModified);
+        canvas.on?.('object:rotating', handleObjectModified);
+        canvas.on?.('object:skewing', handleObjectModified);
+        canvas.on?.('object:moving', handleObjectModified);
 
         // Keyboard shortcuts
         const handleKeyDown = (e: KeyboardEvent) => {
             // Delete key - delete selected object
             // BUT NOT if we're editing text!
             if (e.key === 'Delete' || e.key === 'Backspace') {
-                const activeObj = canvas.getActiveObject();
+                const activeObj = canvas.getActiveObject?.();
 
                 // Check if we're editing text (isEditing property)
                 if (activeObj && (activeObj as any).isEditing) {
@@ -328,9 +329,9 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
                 initialStateLoadedRef.current = true;
 
                 // Fabric.js v6 uses Promise-based API
-                await fabricCanvasRef.current.loadFromJSON(canvasJSON);
-                fabricCanvasRef.current.renderAll();
-                console.log('Initial state loaded successfully, objects count:', fabricCanvasRef.current.getObjects().length);
+                await fabricCanvasRef.current?.loadFromJSON?.(canvasJSON);
+                fabricCanvasRef.current?.renderAll?.();
+                console.log('Initial state loaded successfully, objects count:', fabricCanvasRef.current?.getObjects?.().length ?? 0);
             } catch (error) {
                 console.error('Error loading canvas state:', error);
                 // Reset flag on error so it can retry
@@ -359,15 +360,15 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         });
 
         // Set zoom to scale all objects proportionally
-        fabricCanvasRef.current.setZoom(zoom);
+        fabricCanvasRef.current?.setZoom?.(zoom);
 
         // Update canvas element dimensions to match container
-        fabricCanvasRef.current.setDimensions({
+        fabricCanvasRef.current?.setDimensions?.({
             width: canvasDimensions.width,
             height: canvasDimensions.height,
         });
 
-        fabricCanvasRef.current.renderAll();
+        fabricCanvasRef.current?.renderAll?.();
     }, [canvasDimensions]);
 
     /**
@@ -377,7 +378,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         return () => {
             if (fabricCanvasRef.current) {
                 console.log('Component unmounting, cleaning up canvas...');
-                fabricCanvasRef.current.dispose();
+                fabricCanvasRef.current.dispose?.();
                 fabricCanvasRef.current = null;
                 setIsCanvasReady(false);
             }
@@ -431,15 +432,15 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
             mtr: true, // rotation handle
         });
 
-        canvas.add(text);
-        canvas.setActiveObject(text);
+        canvas.add?.(text as unknown as FabricObject);
+        canvas.setActiveObject?.(text as unknown as FabricObject);
 
         // Enter editing mode and set cursor at the end
         text.enterEditing();
         text.selectAll();
         text.setSelectionEnd(text.text?.length || 0);
 
-        canvas.renderAll();
+        canvas.renderAll?.();
 
         notifyChange();
 
@@ -453,15 +454,15 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         if (!fabricCanvasRef.current) return;
 
         const canvas = fabricCanvasRef.current;
-        const activeObj = canvas.getActiveObject();
+        const activeObj = canvas.getActiveObject?.();
 
         if (!activeObj) {
             toast.error('لطفاً ابتدا یک شی را انتخاب کنید');
             return;
         }
 
-        canvas.remove(activeObj);
-        canvas.renderAll();
+        canvas.remove?.(activeObj);
+        canvas.renderAll?.();
 
         notifyChange();
 
@@ -489,15 +490,15 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         if (!fabricCanvasRef.current) return;
 
         const canvas = fabricCanvasRef.current;
-        const activeObj = canvas.getActiveObject();
+        const activeObj = canvas.getActiveObject?.();
 
         if (!activeObj || activeObj.type !== 'i-text') {
             toast.error('لطفاً ابتدا یک متن را انتخاب کنید');
             return;
         }
 
-        activeObj.set({ fontFamily });
-        canvas.renderAll();
+        activeObj.set?.({ fontFamily });
+        canvas.renderAll?.();
 
         notifyChange();
     }, [notifyChange]);
@@ -509,7 +510,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         if (!fabricCanvasRef.current) return;
 
         const canvas = fabricCanvasRef.current;
-        const activeObj = canvas.getActiveObject();
+        const activeObj = canvas.getActiveObject?.();
 
         if (!activeObj || activeObj.type !== 'i-text') {
             toast.error('لطفاً ابتدا یک متن را انتخاب کنید');
@@ -522,8 +523,8 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
             return;
         }
 
-        activeObj.set({ fontSize });
-        canvas.renderAll();
+        activeObj.set?.({ fontSize });
+        canvas.renderAll?.();
 
         notifyChange();
     }, [notifyChange]);
@@ -535,15 +536,15 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         if (!fabricCanvasRef.current) return;
 
         const canvas = fabricCanvasRef.current;
-        const activeObj = canvas.getActiveObject();
+        const activeObj = canvas.getActiveObject?.();
 
         if (!activeObj || activeObj.type !== 'i-text') {
             toast.error('لطفاً ابتدا یک متن را انتخاب کنید');
             return;
         }
 
-        activeObj.set({ fill: color });
-        canvas.renderAll();
+        activeObj.set?.({ fill: color });
+        canvas.renderAll?.();
 
         notifyChange();
     }, [notifyChange]);
@@ -555,7 +556,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         if (!fabricCanvasRef.current) return;
 
         const canvas = fabricCanvasRef.current;
-        const activeObj = canvas.getActiveObject();
+        const activeObj = canvas.getActiveObject?.();
 
         if (!activeObj) {
             toast.error('لطفاً ابتدا یک شی را انتخاب کنید');
@@ -563,14 +564,14 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         }
 
         if (width !== undefined) {
-            activeObj.set({ width: width / (activeObj.scaleX || 1) });
+            activeObj.set?.({ width: width / (activeObj.scaleX || 1) });
         }
         if (height !== undefined) {
-            activeObj.set({ height: height / (activeObj.scaleY || 1) });
+            activeObj.set?.({ height: height / (activeObj.scaleY || 1) });
         }
 
-        activeObj.setCoords();
-        canvas.renderAll();
+        activeObj.setCoords?.();
+        canvas.renderAll?.();
 
         notifyChange();
     }, [notifyChange]);
@@ -582,7 +583,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         if (!fabricCanvasRef.current) return;
 
         const canvas = fabricCanvasRef.current;
-        const activeObj = canvas.getActiveObject();
+        const activeObj = canvas.getActiveObject?.();
 
         if (!activeObj) {
             toast.error('لطفاً ابتدا یک شی را انتخاب کنید');
@@ -600,14 +601,14 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         }
 
         if (skewX !== undefined) {
-            activeObj.set({ skewX });
+            activeObj.set?.({ skewX });
         }
         if (skewY !== undefined) {
-            activeObj.set({ skewY });
+            activeObj.set?.({ skewY });
         }
 
-        activeObj.setCoords();
-        canvas.renderAll();
+        activeObj.setCoords?.();
+        canvas.renderAll?.();
 
         notifyChange();
     }, [notifyChange]);
@@ -619,15 +620,15 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
         if (!fabricCanvasRef.current) return;
 
         const canvas = fabricCanvasRef.current;
-        const activeObj = canvas.getActiveObject();
+        const activeObj = canvas.getActiveObject?.();
 
         if (!activeObj) {
             toast.error('لطفاً ابتدا یک شی را انتخاب کنید');
             return;
         }
 
-        activeObj.set({ lockUniScaling: locked });
-        canvas.renderAll();
+        activeObj.set?.({ lockUniScaling: locked });
+        canvas.renderAll?.();
     }, []);
 
     /**
@@ -643,7 +644,7 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
             layoutType,
             originalWidth: standardSize.width,
             originalHeight: standardSize.height,
-            canvasJSON: fabricCanvasRef.current.toJSON(),
+            canvasJSON: fabricCanvasRef.current?.toJSON?.() ?? {},
         };
 
         return JSON.stringify(canvasMetadata);
@@ -676,8 +677,8 @@ const TextCanvasEditor: React.FC<TextCanvasEditorProps> = ({
             }
 
             // Fabric.js v6 uses Promise-based API
-            await fabricCanvasRef.current.loadFromJSON(canvasJSON);
-            fabricCanvasRef.current.renderAll();
+            await fabricCanvasRef.current?.loadFromJSON?.(canvasJSON);
+            fabricCanvasRef.current?.renderAll?.();
             toast.success('وضعیت بارگذاری شد');
         } catch (error) {
             console.error('Error loading JSON:', error);
