@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import styles from './IllustrationCanvasEditor.module.scss';
-import DrawingToolbar from '../illustration/DrawingToolbar';
 import { toast } from 'react-hot-toast';
 import { Story, CanvasMetadata } from '@/types/story';
 import { getStandardCanvasSize } from '@/constants/canvasSizes';
@@ -10,6 +8,9 @@ import { getLayoutTypeFromStory } from '@/utils/canvasUtils';
 import { compressImage, blobToFile, formatFileSize } from '@/utils/imageCompression';
 import { validateImageFile } from '@/utils/imageValidation';
 import { storyService } from '@/services/storyService';
+import { StandardErrorResponse } from '@/types/error';
+import DrawingToolbar from '../illustration/DrawingToolbar';
+import styles from './IllustrationCanvasEditor.module.scss';
 
 export interface IllustrationCanvasEditorProps {
     /** Initial canvas state in JSON format (with metadata) */
@@ -543,10 +544,10 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
             notifyChange();
 
             toast.success('تصویر به کنواس اضافه شد');
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error uploading image:', error);
-            const errorMessage = error?.response?.data?.error || 'خطا در آپلود تصویر';
-            toast.error(errorMessage);
+            const standardError = error as StandardErrorResponse;
+            toast.error(standardError.message || 'خطا در آپلود تصویر');
         }
     }, [templateId, partIndex, notifyChange]);
 
