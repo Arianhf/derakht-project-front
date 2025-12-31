@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import styles from './TextCanvasViewer.module.scss';
 import { toast } from 'react-hot-toast';
 import { CanvasMetadata } from '@/types/story';
+import { CanvasJSON } from '@/types/canvas';
+import styles from './TextCanvasViewer.module.scss';
 
 export interface TextCanvasViewerProps {
     /** Canvas state in JSON format (with metadata) */
@@ -25,7 +26,7 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
     const fabricCanvasRef = useRef<any>(null);
     const fabricLibRef = useRef<any>(null);
     const dimensionsCalculatedRef = useRef(false);
-    const originalCanvasDataRef = useRef<{ canvasJSON: any; originalWidth: number; originalHeight: number } | null>(null);
+    const originalCanvasDataRef = useRef<{ canvasJSON: CanvasJSON; originalWidth: number; originalHeight: number } | null>(null);
     const standardSizeRef = useRef({ width: 1000, height: 1000 }); // Store original canvas size
     const [isFabricLoaded, setIsFabricLoaded] = useState(false);
     const [isCanvasReady, setIsCanvasReady] = useState(false);
@@ -180,13 +181,13 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
                 // Parse canvas metadata
                 const parsed: CanvasMetadata = JSON.parse(canvasData);
 
-                let canvasJSON;
-                let originalWidth;
-                let originalHeight;
+                let canvasJSON: CanvasJSON;
+                let originalWidth: number;
+                let originalHeight: number;
 
                 if (parsed.version && parsed.canvasJSON) {
                     // New format with metadata
-                    canvasJSON = parsed.canvasJSON;
+                    canvasJSON = parsed.canvasJSON as CanvasJSON;
                     originalWidth = parsed.originalWidth;
                     originalHeight = parsed.originalHeight;
                     console.log('Loading canvas with metadata:', {
@@ -197,7 +198,7 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
                     });
                 } else {
                     // Legacy format - assume square canvas
-                    canvasJSON = parsed;
+                    canvasJSON = parsed as unknown as CanvasJSON;
                     originalWidth = 1000;
                     originalHeight = 1000;
                     console.log('Loading legacy canvas format, assuming 1000x1000 dimensions');
