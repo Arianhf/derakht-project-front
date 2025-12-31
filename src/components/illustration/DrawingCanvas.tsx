@@ -6,6 +6,7 @@ import { compressImage, blobToFile, formatFileSize } from '@/utils/imageCompress
 import { validateImageFile } from '@/utils/imageValidation';
 import { storyService } from '@/services/storyService';
 import { StandardErrorResponse } from '@/types/error';
+import { FabricObject, FabricImage } from '@/types/canvas';
 import DrawingToolbar from './DrawingToolbar';
 import styles from './DrawingCanvas.module.scss';
 
@@ -310,7 +311,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
         e.preventDefault();
         const activeObjects = canvas.getActiveObjects();
         if (activeObjects && activeObjects.length > 0) {
-          activeObjects.forEach((obj: any) => canvas.remove(obj));
+          activeObjects.forEach((obj: FabricObject) => canvas.remove(obj));
           canvas.discardActiveObject();
           canvas.renderAll();
 
@@ -361,7 +362,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
       canvas.isDrawingMode = true;
       canvas.selection = false;
       // Disable object selection in drawing mode
-      canvas.forEachObject((obj: any) => {
+      canvas.forEachObject((obj: FabricObject) => {
         obj.selectable = false;
       });
     } else if (currentTool === 'eraser') {
@@ -371,7 +372,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
       canvas.isDrawingMode = true;
       canvas.selection = false;
       // Disable object selection in eraser mode
-      canvas.forEachObject((obj: any) => {
+      canvas.forEachObject((obj: FabricObject) => {
         obj.selectable = false;
       });
     } else if (currentTool === 'select') {
@@ -379,7 +380,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
       canvas.isDrawingMode = false;
       canvas.selection = true;
       // Enable object selection and movement
-      canvas.forEachObject((obj: any) => {
+      canvas.forEachObject((obj: FabricObject) => {
         obj.selectable = true;
         obj.evented = true;
       });
@@ -419,18 +420,18 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     // Load image
     FabricImage.fromURL(url, {
       crossOrigin: 'anonymous',
-    }).then((img: any) => {
+    }).then((img: FabricImage) => {
       // Scale image to fit canvas if it's too large
       const maxWidth = canvas.width * 0.5;
       const maxHeight = canvas.height * 0.5;
 
-      if (img.width > maxWidth || img.height > maxHeight) {
+      if (img.width && img.height && (img.width > maxWidth || img.height > maxHeight)) {
         const scale = Math.min(maxWidth / img.width, maxHeight / img.height);
-        img.scale(scale);
+        img.scale?.(scale);
       }
 
       // Center the image and add metadata
-      const imageProps: any = {
+      const imageProps: Partial<FabricObject> = {
         left: canvas.width / 2,
         top: canvas.height / 2,
         originX: 'center',
