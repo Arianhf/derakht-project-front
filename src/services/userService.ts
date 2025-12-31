@@ -1,6 +1,7 @@
 import api from './api';
 import Cookies from 'js-cookie';
 import { User, UserAddress } from '@/contexts/UserContext';
+import { Order } from '@/types/shop';
 
 export interface ApiResponse<T> {
     count: number;
@@ -44,7 +45,7 @@ export const userService = {
         return response.data;
     },
 
-    getOrders: async (page = 1, limit = 10): Promise<ApiResponse<any>> => {
+    getOrders: async (page = 1, limit = 10): Promise<ApiResponse<Order>> => {
         const response = await api.get(`/shop/orders/?page=${page}&limit=${limit}`);
         return response.data;
     },
