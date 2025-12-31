@@ -46,9 +46,6 @@ export interface ErrorDetails {
   /** Multiple field errors */
   fields?: FieldError[];
 
-  /** Value that caused the error */
-  value?: any;
-
   /** Limit that was exceeded (for rate limiting, length validation, etc.) */
   limit?: number;
 
@@ -58,8 +55,8 @@ export interface ErrorDetails {
   /** Time until retry is allowed (in seconds) */
   retryAfter?: number;
 
-  /** Additional custom data */
-  [key: string]: any;
+  /** Additional custom data (including value that caused the error) */
+  [key: string]: unknown;
 }
 
 /**
