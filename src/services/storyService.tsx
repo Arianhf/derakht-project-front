@@ -1,4 +1,5 @@
 // src/services/storyService.tsx
+import { AxiosProgressEvent } from 'axios';
 import api from './api';
 import {
   StoryTemplate,
@@ -13,6 +14,19 @@ import {
   CreateTemplatePartStandalonePayload,
   UpdateTemplatePartPayload
 } from '@/types/story';
+
+/**
+ * Backend asset response structure
+ */
+interface BackendAssetResponse {
+  id: string;
+  file?: string;
+  url?: string;
+  name?: string;
+  created_at: string;
+  size?: number;
+  mime_type?: string;
+}
 
 export const storyService = {
   getAllStories: async (): Promise<StoryResponse<StoryTemplate>> => {
@@ -41,15 +55,11 @@ export const storyService = {
       console.log('[storyService] Story parts count:', response.data?.parts?.length);
 
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
       console.error('[storyService] ========== API Error ==========');
       console.error('[storyService] Error occurred in getStoryById');
       console.error('[storyService] Error type:', typeof error);
-      console.error('[storyService] Error message:', error?.message);
-      console.error('[storyService] Error code:', error?.code);
-      console.error('[storyService] Error response status:', error?.response?.status);
-      console.error('[storyService] Error response data:', error?.response?.data);
-      console.error('[storyService] Full error:', error);
+      console.error('[storyService] Error:', error);
 
       throw error;
     }
@@ -238,9 +248,9 @@ export const storyService = {
 
     // Map backend response if needed
     const data = response.data;
-    const assets = (data.results || data.assets || []).map((asset: any) => ({
+    const assets = (data.results || data.assets || []).map((asset: BackendAssetResponse): Asset => ({
       id: asset.id,
-      url: asset.file || asset.url, // Backend returns 'file', frontend expects 'url'
+      url: asset.file || asset.url || '', // Backend returns 'file', frontend expects 'url'
       name: asset.name || 'asset',
       created_at: asset.created_at,
       size: asset.size || 0,
@@ -402,7 +412,7 @@ export const storyService = {
     templateId: string,
     partIndex: number,
     imageFile: File,
-    onProgress?: (progressEvent: any) => void
+    onProgress?: (progressEvent: AxiosProgressEvent) => void
   ): Promise<{ id: string; url: string; part_index: number; created_at: string }> => {
     const formData = new FormData();
     formData.append('image', imageFile);

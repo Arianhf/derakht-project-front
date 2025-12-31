@@ -221,13 +221,13 @@ api.interceptors.response.use(
     async (error: AxiosError) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
         const status = error.response?.status;
-        const responseData = error.response?.data as any;
+        const responseData = error.response?.data as BackendErrorResponse | undefined;
 
         // Check if this is a token expiry error
         const isTokenExpired =
             status === 401 &&
             responseData?.code === "token_not_valid" &&
-            responseData?.messages?.some((msg: any) => msg.message === "Token is expired");
+            responseData?.messages?.some((msg: TokenErrorMessage) => msg.message === "Token is expired");
 
         // Attempt to refresh token if:
         // 1. Status is 401 (Unauthorized)
@@ -293,6 +293,14 @@ api.interceptors.response.use(
 );
 
 /**
+ * Token error message structure from backend
+ */
+interface TokenErrorMessage {
+    message: string;
+    token_type?: string;
+}
+
+/**
  * Backend error response structure (can vary)
  */
 interface BackendErrorResponse {
@@ -307,6 +315,7 @@ interface BackendErrorResponse {
     detail?: string;
     error_code?: string;
     error_message?: string;
+    messages?: TokenErrorMessage[];
 }
 
 /**
