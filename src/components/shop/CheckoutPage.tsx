@@ -14,6 +14,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useUser } from '@/contexts/UserContext';
 import { shopService } from '@/services/shopService';
 import { ShippingMethod, ShippingEstimateResponse } from '@/types/shop';
+import { AddressFormData } from '@/components/shared/AddressForm/AddressForm';
 import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
 import logo from '@/assets/images/logo2.png';
 import styles from './CheckoutPage.module.scss';
@@ -166,7 +167,7 @@ const CheckoutPage: React.FC = () => {
         }
     };
 
-    const handleShippingSubmit = async (data: any) => {
+    const handleShippingSubmit = async (data: AddressFormData) => {
         setShippingInfo(data);
 
         // Fetch shipping methods based on entered address

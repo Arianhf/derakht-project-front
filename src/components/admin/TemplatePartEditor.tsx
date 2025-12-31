@@ -8,12 +8,15 @@ import { getStandardCanvasSize } from '@/constants/canvasSizes';
 import { FaTrash, FaFileDownload } from 'react-icons/fa';
 import styles from './TemplatePartEditor.module.scss';
 
+// Type for template part field values
+type TemplatePartFieldValue = CreateTemplatePartPayload[keyof CreateTemplatePartPayload];
+
 interface TemplatePartEditorProps {
     part: CreateTemplatePartPayload;
     index: number;
     orientation: 'PORTRAIT' | 'LANDSCAPE';
     size: '20x20' | '25x25' | '15x23';
-    onUpdate: (index: number, field: keyof CreateTemplatePartPayload, value: any) => void;
+    onUpdate: (index: number, field: keyof CreateTemplatePartPayload, value: TemplatePartFieldValue) => void;
     onRemove: (index: number) => void;
     templateId?: string;
     partIndex?: number;

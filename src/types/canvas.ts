@@ -28,12 +28,12 @@ export interface FabricObject {
   angle?: number;
 
   // Origin points for transformations
-  originX?: 'left' | 'center' | 'right';
-  originY?: 'top' | 'center' | 'bottom';
+  originX?: 'left' | 'center' | 'right' | number;
+  originY?: 'top' | 'center' | 'bottom' | number;
 
   // Styling
-  fill?: string;
-  stroke?: string;
+  fill?: string | null;
+  stroke?: string | null;
   strokeWidth?: number;
   opacity?: number;
 
@@ -116,6 +116,7 @@ export interface FabricCanvas {
   setActiveObject?: (object: FabricObject) => void;
   getActiveObject?: () => FabricObject | null;
   getActiveObjects?: () => FabricObject[];
+  getObjects?: () => FabricObject[];
   discardActiveObject?: () => void;
   forEachObject?: (callback: (obj: FabricObject) => void) => void;
   toJSON?: (propertiesToInclude?: string[]) => CanvasJSON;
@@ -126,6 +127,7 @@ export interface FabricCanvas {
     multiplier?: number;
   }) => string;
   setDimensions?: (dimensions: { width: number; height: number }) => void;
+  setZoom?: (value: number) => void;
   calcOffset?: () => void;
   on?: (eventName: string, handler: (e: FabricEvent) => void) => void;
   off?: (eventName: string, handler?: (e: FabricEvent) => void) => void;
