@@ -21,6 +21,7 @@ import {
   ERROR_ACTIONS,
   RETRYABLE_ERRORS,
   FALLBACK_MESSAGES,
+  ErrorMessageDetails,
 } from '@/constants/errorMessages';
 import { logError } from './errorLogger';
 
@@ -390,7 +391,7 @@ export class ErrorHandler {
     const messageTemplate = ERROR_MESSAGES[error.code];
     if (messageTemplate) {
       if (typeof messageTemplate === 'function') {
-        return messageTemplate(error.details);
+        return messageTemplate(error.details as ErrorMessageDetails | undefined);
       }
       return messageTemplate;
     }

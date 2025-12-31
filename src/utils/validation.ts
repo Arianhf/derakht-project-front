@@ -13,14 +13,14 @@ import { ErrorCode } from '@/types/error';
 export interface ValidationResult {
   isValid: boolean;
   errorCode?: string;
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 /**
  * Field validation rules
  */
 export interface ValidationRule {
-  validate: (value: any) => ValidationResult;
+  validate: (value: unknown) => ValidationResult;
   errorCode: string;
 }
 
@@ -249,7 +249,7 @@ export function validateAge(
  * Required field validation
  */
 export function validateRequired(
-  value: any,
+  value: unknown,
   fieldName: string
 ): ValidationResult {
   if (
@@ -348,7 +348,7 @@ export function validateRange(
  * Returns all field errors
  */
 export function validateForm(
-  values: Record<string, any>,
+  values: Record<string, unknown>,
   rules: Record<string, ValidationRule[]>
 ): {
   isValid: boolean;
@@ -379,7 +379,7 @@ export function validateForm(
  * Create validation rule
  */
 export function createRule(
-  validate: (value: any) => ValidationResult
+  validate: (value: unknown) => ValidationResult
 ): ValidationRule {
   return {
     validate,
@@ -391,9 +391,9 @@ export function createRule(
  * Compose multiple validation rules
  */
 export function composeValidators(
-  ...validators: Array<(value: any) => ValidationResult>
-): (value: any) => ValidationResult {
-  return (value: any) => {
+  ...validators: Array<(value: unknown) => ValidationResult>
+): (value: unknown) => ValidationResult {
+  return (value: unknown) => {
     for (const validator of validators) {
       const result = validator(value);
       if (!result.isValid) {
@@ -409,27 +409,27 @@ export function composeValidators(
  */
 export const validationRules = {
   email: (): ValidationRule => ({
-    validate: validateEmail,
+    validate: (value) => validateEmail(String(value ?? '')),
     errorCode: ErrorCode.INVALID_EMAIL,
   }),
 
   password: (minLength = 8): ValidationRule => ({
-    validate: (value) => validatePassword(value, { minLength }),
+    validate: (value) => validatePassword(String(value ?? ''), { minLength }),
     errorCode: ErrorCode.PASSWORD_TOO_SHORT,
   }),
 
   passwordMatch: (password: string): ValidationRule => ({
-    validate: (value) => validatePasswordMatch(password, value),
+    validate: (value) => validatePasswordMatch(password, String(value ?? '')),
     errorCode: ErrorCode.PASSWORDS_DO_NOT_MATCH,
   }),
 
   phone: (): ValidationRule => ({
-    validate: validatePhone,
+    validate: (value) => validatePhone(String(value ?? '')),
     errorCode: ErrorCode.INVALID_PHONE,
   }),
 
   postalCode: (): ValidationRule => ({
-    validate: validatePostalCode,
+    validate: (value) => validatePostalCode(String(value ?? '')),
     errorCode: ErrorCode.INVALID_POSTAL_CODE,
   }),
 
@@ -439,17 +439,21 @@ export const validationRules = {
   }),
 
   minLength: (min: number, fieldName?: string): ValidationRule => ({
-    validate: (value) => validateLength(value, { min, fieldName }),
+    validate: (value) => validateLength(String(value ?? ''), { min, fieldName }),
     errorCode: ErrorCode.VALUE_TOO_SHORT,
   }),
 
   maxLength: (max: number, fieldName?: string): ValidationRule => ({
-    validate: (value) => validateLength(value, { max, fieldName }),
+    validate: (value) => validateLength(String(value ?? ''), { max, fieldName }),
     errorCode: ErrorCode.VALUE_TOO_LONG,
   }),
 
   age: (min = 3, max = 150): ValidationRule => ({
-    validate: (value) => validateAge(value, { min, max }),
+    validate: (value) =>
+      validateAge(
+        typeof value === 'number' ? value : String(value ?? ''),
+        { min, max }
+      ),
     errorCode: ErrorCode.AGE_TOO_YOUNG,
   }),
 };
