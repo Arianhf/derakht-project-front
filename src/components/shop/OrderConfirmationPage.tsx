@@ -3,15 +3,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import styles from './OrderConfirmationPage.module.scss';
-import { Navbar } from '@/components/shared/Navbar/Navbar';
-import logo from '@/assets/images/logo2.png';
 import { FaCheckCircle, FaHome, FaListAlt } from 'react-icons/fa';
 import { shopService } from '@/services/shopService';
 import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
 import { Order } from '@/types/shop';
+import { StandardErrorResponse } from '@/types/error';
+import { Navbar } from '@/components/shared/Navbar/Navbar';
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import ErrorMessage from "@/components/shared/ErrorMessage";
+import styles from './OrderConfirmationPage.module.scss';
+import logo from '@/assets/images/logo2.png';
 
 const OrderConfirmationPage: React.FC = () => {
     const router = useRouter();
@@ -27,9 +28,10 @@ const OrderConfirmationPage: React.FC = () => {
             setLoading(true);
             const data = await shopService.getOrderById(orderId);
             setOrder(data);
-        } catch (err: any) {
-            console.error('Error fetching order:', err);
-            setError('خطا در دریافت اطلاعات سفارش');
+        } catch (error) {
+            console.error('Error fetching order:', error);
+            const standardError = error as StandardErrorResponse;
+            setError(standardError.message || 'خطا در دریافت اطلاعات سفارش');
         } finally {
             setLoading(false);
         }
