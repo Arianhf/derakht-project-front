@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
 import { Story, CanvasMetadata } from '@/types/story';
+import { FabricCanvas, FabricObject } from '@/types/canvas';
 import { getStandardCanvasSize } from '@/constants/canvasSizes';
 import { getLayoutTypeFromStory } from '@/utils/canvasUtils';
 import { compressImage, blobToFile, formatFileSize } from '@/utils/imageCompression';
@@ -349,7 +350,7 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
             brush.width = brushSize;
             canvas.isDrawingMode = true;
             canvas.selection = false;
-            canvas.forEachObject((obj: any) => {
+            canvas.forEachObject((obj: FabricObject) => {
                 obj.selectable = false;
             });
         } else if (currentTool === 'eraser') {
@@ -357,13 +358,13 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
             brush.width = brushSize * 2;
             canvas.isDrawingMode = true;
             canvas.selection = false;
-            canvas.forEachObject((obj: any) => {
+            canvas.forEachObject((obj: FabricObject) => {
                 obj.selectable = false;
             });
         } else if (currentTool === 'select') {
             canvas.isDrawingMode = false;
             canvas.selection = true;
-            canvas.forEachObject((obj: any) => {
+            canvas.forEachObject((obj: FabricObject) => {
                 obj.selectable = true;
                 obj.evented = true;
             });
@@ -400,7 +401,7 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
             return;
         }
 
-        activeObjects.forEach((obj: any) => canvas.remove(obj));
+        activeObjects.forEach((obj: FabricObject) => canvas.remove(obj));
         canvas.discardActiveObject();
         canvas.renderAll();
 
