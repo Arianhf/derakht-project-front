@@ -11,7 +11,7 @@ import { ProcessedError } from '@/types/error';
  * Error log entry interface
  */
 interface ErrorLogEntry {
-  originalError: any;
+  originalError: unknown;
   processedError: ProcessedError;
   timestamp: string;
   environment: 'development' | 'production';
@@ -121,7 +121,7 @@ function logToConsole(entry: ErrorLogEntry): void {
     }
 
     // Log stack trace if available
-    if (config.includeStackTrace && originalError?.stack) {
+    if (config.includeStackTrace && originalError && typeof originalError === 'object' && 'stack' in originalError) {
       console.log('%cStack Trace:', 'color: #64748b;');
       console.log(originalError.stack);
     }
@@ -245,15 +245,25 @@ function logToCustomService(entry: ErrorLogEntry): void {
 }
 
 /**
- * Breadcrumb tracking for error context
- * This helps understand what actions led to an error
+ * Breadcrumb data type for additional context
  */
-const breadcrumbs: Array<{
+type BreadcrumbData = Record<string, unknown>;
+
+/**
+ * Breadcrumb entry interface
+ */
+interface BreadcrumbEntry {
   timestamp: string;
   category: string;
   message: string;
-  data?: any;
-}> = [];
+  data?: BreadcrumbData;
+}
+
+/**
+ * Breadcrumb tracking for error context
+ * This helps understand what actions led to an error
+ */
+const breadcrumbs: BreadcrumbEntry[] = [];
 
 const MAX_BREADCRUMBS = 50;
 
@@ -263,7 +273,7 @@ const MAX_BREADCRUMBS = 50;
 export function addBreadcrumb(
   category: string,
   message: string,
-  data?: any
+  data?: BreadcrumbData
 ): void {
   if (!config.includeBreadcrumbs) return;
 
@@ -283,7 +293,7 @@ export function addBreadcrumb(
 /**
  * Get recent breadcrumbs
  */
-export function getBreadcrumbs(count?: number): typeof breadcrumbs {
+export function getBreadcrumbs(count?: number): BreadcrumbEntry[] {
   if (!count) return [...breadcrumbs];
   return breadcrumbs.slice(-count);
 }
@@ -298,7 +308,7 @@ export function clearBreadcrumbs(): void {
 /**
  * Log info message (for non-error logging)
  */
-export function logInfo(message: string, data?: any): void {
+export function logInfo(message: string, data?: Record<string, unknown>): void {
   if (process.env.NODE_ENV === 'development') {
     console.log(`[Info] ${message}`, data || '');
   }
@@ -307,14 +317,14 @@ export function logInfo(message: string, data?: any): void {
 /**
  * Log warning message
  */
-export function logWarning(message: string, data?: any): void {
+export function logWarning(message: string, data?: Record<string, unknown>): void {
   console.warn(`[Warning] ${message}`, data || '');
 }
 
 /**
  * Log debug message (only in development)
  */
-export function logDebug(message: string, data?: any): void {
+export function logDebug(message: string, data?: Record<string, unknown>): void {
   if (process.env.NODE_ENV === 'development') {
     console.debug(`[Debug] ${message}`, data || '');
   }
