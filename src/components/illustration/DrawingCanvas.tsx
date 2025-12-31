@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import { compressImage, blobToFile, formatFileSize } from '@/utils/imageCompression';
 import { validateImageFile } from '@/utils/imageValidation';
 import { storyService } from '@/services/storyService';
+import { StandardErrorResponse } from '@/types/error';
 import DrawingToolbar from './DrawingToolbar';
 import styles from './DrawingCanvas.module.scss';
 
@@ -133,10 +134,10 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
 
         // Step 4: Add to canvas using URL (not base64)
         addImageToCanvas(uploadResult.url, uploadResult.id);
-      } catch (error: any) {
+      } catch (error) {
         console.error('Error uploading image:', error);
-        const errorMessage = error?.response?.data?.error || 'خطا در آپلود تصویر';
-        toast.error(errorMessage);
+        const standardError = error as StandardErrorResponse;
+        toast.error(standardError.message || 'خطا در آپلود تصویر');
       }
     },
     addImageFromUrl: (url: string) => {
@@ -587,10 +588,10 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
 
       // Step 4: Add to canvas using URL (not base64)
       addImageToCanvas(uploadResult.url, uploadResult.id);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error uploading image:', error);
-      const errorMessage = error?.response?.data?.error || 'خطا در آپلود تصویر';
-      toast.error(errorMessage);
+      const standardError = error as StandardErrorResponse;
+      toast.error(standardError.message || 'خطا در آپلود تصویر');
     }
   }, [addImageToCanvas, templateId, partIndex]);
 

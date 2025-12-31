@@ -3,11 +3,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { FaPlus, FaTrash, FaTimes, FaSpinner } from 'react-icons/fa';
 import Image from 'next/image';
-import styles from './AssetsPanel.module.scss';
 import { toast } from 'react-hot-toast';
 import { Asset } from '@/types/story';
 import { storyService } from '@/services/storyService';
 import { useUser } from '@/contexts/UserContext';
+import { StandardErrorResponse } from '@/types/error';
+import styles from './AssetsPanel.module.scss';
 
 interface AssetsPanelProps {
   isOpen: boolean;
@@ -36,11 +37,13 @@ const AssetsPanel: React.FC<AssetsPanelProps> = ({ isOpen, onClose, onAssetSelec
     try {
       const response = await storyService.getUserAssets(user.id);
       setAssets(response.assets);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error fetching assets:', error);
+      const standardError = error as StandardErrorResponse;
       // Only show error if it's not a 404 (no assets yet)
-      if (error?.response?.status !== 404) {
-        toast.error('خطا در بارگذاری تصاویر');
+      // Note: With StandardErrorResponse, check error code instead of response.status
+      if (standardError.code !== 'USER_NOT_FOUND') {
+        toast.error(standardError.message || 'خطا در بارگذاری تصاویر');
       }
     } finally {
       setIsLoading(false);
