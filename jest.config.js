@@ -48,7 +48,7 @@ const customJestConfig = {
     '<rootDir>/__tests__/e2e/',
   ],
   transformIgnorePatterns: [
-    'node_modules/(?!(fabric)/)',
+    'node_modules/(?!(fabric|uuid)/)',
   ],
 }
 
