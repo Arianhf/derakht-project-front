@@ -8,9 +8,21 @@
 import { ErrorCode } from '@/types/error';
 
 /**
+ * Error message details that can be passed to template functions
+ */
+export interface ErrorMessageDetails {
+  limit?: number;
+  field?: string;
+  productName?: string;
+  max?: number;
+  retryAfter?: number;
+  [key: string]: string | number | boolean | undefined;
+}
+
+/**
  * Error message template type
  */
-export type ErrorMessageTemplate = string | ((details?: any) => string);
+export type ErrorMessageTemplate = string | ((details?: ErrorMessageDetails) => string);
 
 /**
  * User-facing error messages in Persian
@@ -19,27 +31,27 @@ export const ERROR_MESSAGES: Record<string, ErrorMessageTemplate> = {
   // Validation Errors
   [ErrorCode.INVALID_EMAIL]: 'فرمت ایمیل نامعتبر است',
   [ErrorCode.INVALID_PASSWORD]: 'رمز عبور نامعتبر است',
-  [ErrorCode.PASSWORD_TOO_SHORT]: (details?: any) =>
+  [ErrorCode.PASSWORD_TOO_SHORT]: (details?: ErrorMessageDetails) =>
     `رمز عبور باید حداقل ${details?.limit || 8} کاراکتر باشد`,
   [ErrorCode.PASSWORD_TOO_WEAK]:
     'رمز عبور باید شامل حروف بزرگ، کوچک و عدد باشد',
   [ErrorCode.PASSWORDS_DO_NOT_MATCH]: 'رمز عبور و تکرار آن یکسان نیستند',
   [ErrorCode.INVALID_PHONE]: 'شماره تلفن نامعتبر است',
   [ErrorCode.INVALID_POSTAL_CODE]: 'کد پستی نامعتبر است',
-  [ErrorCode.REQUIRED_FIELD]: (details?: any) =>
+  [ErrorCode.REQUIRED_FIELD]: (details?: ErrorMessageDetails) =>
     details?.field
       ? `فیلد ${getFieldName(details.field)} الزامی است`
       : 'این فیلد الزامی است',
-  [ErrorCode.INVALID_FORMAT]: (details?: any) =>
+  [ErrorCode.INVALID_FORMAT]: (details?: ErrorMessageDetails) =>
     details?.field
       ? `فرمت ${getFieldName(details.field)} نامعتبر است`
       : 'فرمت ورودی نامعتبر است',
-  [ErrorCode.VALUE_TOO_LONG]: (details?: any) =>
+  [ErrorCode.VALUE_TOO_LONG]: (details?: ErrorMessageDetails) =>
     `حداکثر ${details?.limit || 255} کاراکتر مجاز است`,
-  [ErrorCode.VALUE_TOO_SHORT]: (details?: any) =>
+  [ErrorCode.VALUE_TOO_SHORT]: (details?: ErrorMessageDetails) =>
     `حداقل ${details?.limit || 1} کاراکتر لازم است`,
   [ErrorCode.INVALID_AGE]: 'سن وارد شده نامعتبر است',
-  [ErrorCode.AGE_TOO_YOUNG]: (details?: any) =>
+  [ErrorCode.AGE_TOO_YOUNG]: (details?: ErrorMessageDetails) =>
     `حداقل سن مجاز ${details?.limit || 3} سال است`,
 
   // Authentication Errors
@@ -59,14 +71,14 @@ export const ERROR_MESSAGES: Record<string, ErrorMessageTemplate> = {
     'دسترسی شما برای انجام این عملیات کافی نیست',
 
   // Business Logic Errors
-  [ErrorCode.PRODUCT_OUT_OF_STOCK]: (details?: any) =>
+  [ErrorCode.PRODUCT_OUT_OF_STOCK]: (details?: ErrorMessageDetails) =>
     details?.productName
       ? `محصول ${details.productName} موجود نیست`
       : 'این محصول موجود نیست',
   [ErrorCode.PRODUCT_NOT_FOUND]: 'محصول مورد نظر یافت نشد',
   [ErrorCode.CART_EMPTY]: 'سبد خرید شما خالی است',
   [ErrorCode.CART_ITEM_NOT_FOUND]: 'محصول مورد نظر در سبد خرید یافت نشد',
-  [ErrorCode.INVALID_QUANTITY]: (details?: any) => {
+  [ErrorCode.INVALID_QUANTITY]: (details?: ErrorMessageDetails) => {
     if (details?.max) {
       return `حداکثر تعداد قابل سفارش: ${details.max}`;
     }
@@ -84,15 +96,15 @@ export const ERROR_MESSAGES: Record<string, ErrorMessageTemplate> = {
   [ErrorCode.SHIPPING_METHOD_REQUIRED]: 'لطفاً روش ارسال را انتخاب کنید',
   [ErrorCode.SHIPPING_METHOD_UNAVAILABLE]: 'روش ارسال انتخابی برای این منطقه در دسترس نیست',
   [ErrorCode.SHIPPING_ESTIMATE_FAILED]: 'خطا در محاسبه هزینه ارسال. لطفاً دوباره تلاش کنید',
-  [ErrorCode.COMMENT_TOO_SHORT]: (details?: any) =>
+  [ErrorCode.COMMENT_TOO_SHORT]: (details?: ErrorMessageDetails) =>
     `نظر شما باید حداقل ${details?.limit || 10} کاراکتر باشد`,
-  [ErrorCode.COMMENT_TOO_LONG]: (details?: any) =>
+  [ErrorCode.COMMENT_TOO_LONG]: (details?: ErrorMessageDetails) =>
     `نظر شما نباید بیشتر از ${details?.limit || 1000} کاراکتر باشد`,
   [ErrorCode.COMMENT_NOT_FOUND]: 'نظر مورد نظر یافت نشد',
   [ErrorCode.COMMENT_SUBMIT_FAILED]: 'ارسال نظر با خطا مواجه شد. لطفاً دوباره تلاش کنید',
 
   // Rate Limiting Errors
-  [ErrorCode.RATE_LIMIT_EXCEEDED]: (details?: any) => {
+  [ErrorCode.RATE_LIMIT_EXCEEDED]: (details?: ErrorMessageDetails) => {
     if (details?.retryAfter) {
       const minutes = Math.ceil(details.retryAfter / 60);
       return `تعداد درخواست‌های شما از حد مجاز گذشته است. لطفاً ${minutes} دقیقه دیگر تلاش کنید`;
@@ -101,7 +113,7 @@ export const ERROR_MESSAGES: Record<string, ErrorMessageTemplate> = {
   },
   [ErrorCode.TOO_MANY_REQUESTS]:
     'درخواست‌های شما بیش از حد مجاز است. لطفاً کمی صبر کنید',
-  [ErrorCode.TOO_MANY_LOGIN_ATTEMPTS]: (details?: any) => {
+  [ErrorCode.TOO_MANY_LOGIN_ATTEMPTS]: (details?: ErrorMessageDetails) => {
     if (details?.retryAfter) {
       const minutes = Math.ceil(details.retryAfter / 60);
       return `تعداد تلاش‌های ورود بیش از حد مجاز است. لطفاً ${minutes} دقیقه دیگر تلاش کنید`;
