@@ -46,6 +46,9 @@ pnpm test -- path/to/test.test.ts --watch
 
 ### Naming Conventions
 - Components: PascalCase (`StoryCard.tsx`)
+- **SCSS Modules**: MUST match component name (`StoryCard.tsx` → `StoryCard.module.scss`)
+  - ❌ WRONG: `storyCard.module.scss`, `story-card.module.scss`
+  - ✅ CORRECT: `StoryCard.module.scss`
 - Hooks: camelCase with `use` prefix (`useStoryProgress.ts`)
 - Services: camelCase (`storyService.ts`)
 - Types/Interfaces: PascalCase, no `I` prefix (`StoryMeta`, not `IStoryMeta`)
@@ -57,22 +60,55 @@ pnpm test -- path/to/test.test.ts --watch
 - Co-locate component, styles, types, and tests:
   ```
   src/components/StoryCard/
-    index.ts           # Re-export
+    index.ts           # Re-export (REQUIRED)
     StoryCard.tsx      # Component
     StoryCard.module.scss
-    StoryCard.test.tsx
+    StoryCard.test.tsx # REQUIRED for new components
     StoryCard.types.ts # If types are complex
   ```
-- Barrel exports via `index.ts` for cleaner imports
+- **MANDATORY**: All component directories MUST have `index.ts` barrel exports
+  ```typescript
+  // index.ts pattern
+  export { StoryCard } from './StoryCard';
+  export type { StoryCardProps } from './StoryCard';
+  ```
+- **MANDATORY**: All new components MUST include co-located test files
 
 ### Import Order
-1. React/Next.js imports
+1. React/Next.js imports (always first)
 2. Third-party libraries
 3. Internal aliases (@/services, @/components, etc.)
-4. Relative imports (./types, ./styles)
-5. Styles last
+4. Relative imports (./types, ./ComponentName)
+5. **Styles ALWAYS last**
 
 **ESLint Enforcement**: Import order is enforced by `eslint-plugin-import` with the `import/order` rule. ESLint will automatically flag violations.
+
+**Example of CORRECT import order**:
+```typescript
+// 1. React/Next.js
+import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+
+// 2. Third-party
+import { fabric } from 'fabric';
+import toast from 'react-hot-toast';
+
+// 3. Internal aliases
+import { storyService } from '@/services/storyService';
+import { ErrorMessage } from '@/components/shared/ErrorMessage';
+
+// 4. Relative imports
+import { DrawingToolbar } from './DrawingToolbar';
+import type { DrawingToolType } from './types';
+
+// 5. Styles LAST
+import styles from './DrawingCanvas.module.scss';
+```
+
+**Common Mistakes to Avoid**:
+- ❌ Importing styles before relative imports
+- ❌ Importing same library multiple times (e.g., `import toast` and `import { Toaster }` separately)
+- ✅ Combine: `import toast, { Toaster } from 'react-hot-toast';`
 
 ### Type Safety Rules
 
@@ -80,15 +116,78 @@ pnpm test -- path/to/test.test.ts --watch
 - **No explicit `any` types**: `@typescript-eslint/no-explicit-any` is set to `error`
   - Use specific types instead of `any`
   - For truly unknown types, use `unknown` and type guards
-  - Example of error handling:
-    ```typescript
-    try {
-      // code
-    } catch (error) {
-      const standardError = error as StandardErrorResponse; // ✅ Correct
-      // NOT: catch (err: any) { ... } // ❌ Will cause ESLint error
-    }
-    ```
+  - **NEVER use `any` in**:
+    - Component props or callbacks
+    - Error handling (`catch` blocks)
+    - Service method parameters or return types
+    - Utility function parameters
+
+**Common Type Safety Patterns**:
+
+1. **Error Handling** (MOST COMMON):
+   ```typescript
+   // ❌ WRONG
+   try {
+     await saveStory();
+   } catch (error: any) {
+     toast.error(error.message);
+   }
+
+   // ✅ CORRECT
+   import { StandardErrorResponse } from '@/types/error';
+
+   try {
+     await saveStory();
+   } catch (error) {
+     const standardError = error as StandardErrorResponse;
+     toast.error(standardError.message || ERROR_MESSAGES.GENERIC);
+   }
+   ```
+
+2. **Component Props with Callbacks**:
+   ```typescript
+   // ❌ WRONG
+   interface ShippingFormProps {
+     onSubmit: (data: any) => void;
+   }
+
+   // ✅ CORRECT
+   import { AddressFormData } from '@/types/shop';
+   interface ShippingFormProps {
+     onSubmit: (data: AddressFormData) => void;
+   }
+   ```
+
+3. **Utility Functions**:
+   ```typescript
+   // ❌ WRONG
+   export function getErrorMessage(error: any): string { ... }
+
+   // ✅ CORRECT
+   export function getErrorMessage(error: unknown): string {
+     if (isStandardErrorResponse(error)) {
+       return error.message;
+     }
+     return ERROR_MESSAGES.GENERIC;
+   }
+   ```
+
+4. **Progress/Event Callbacks**:
+   ```typescript
+   // ❌ WRONG
+   async uploadImage(
+     file: File,
+     onProgress?: (progressEvent: any) => void
+   ): Promise<string>
+
+   // ✅ CORRECT
+   import { AxiosProgressEvent } from 'axios';
+
+   async uploadImage(
+     file: File,
+     onProgress?: (progressEvent: AxiosProgressEvent) => void
+   ): Promise<string>
+   ```
 
 **Temporary Ignores**: Some files with existing violations are temporarily ignored in `eslint.config.mjs` until they are refactored. These will be removed as violations are fixed in subsequent PRs.
 
@@ -145,6 +244,38 @@ export function ComponentName({ title, onAction, className }: ComponentNameProps
 - Inline styles (use SCSS modules)
 - Anonymous functions in JSX for complex logic (extract to named handlers)
 - Prop drilling beyond 2 levels (use context or composition)
+
+## Code Quality Checklist
+
+Before submitting a PR, verify ALL of these requirements:
+
+### Type Safety ✅
+- [ ] No `any` types anywhere (error handling, props, services, utilities)
+- [ ] Error handling uses `catch (error)` then `as StandardErrorResponse`
+- [ ] Component props have specific types (not `any` in callbacks)
+- [ ] Canvas/Fabric.js code uses types from `@/types/canvas.ts`
+- [ ] Progress/event callbacks use proper types (e.g., `AxiosProgressEvent`)
+
+### File Organization ✅
+- [ ] Component directory has `index.ts` barrel export
+- [ ] Component has co-located test file (`ComponentName.test.tsx`)
+- [ ] SCSS module file matches component name (PascalCase)
+- [ ] All imports follow correct order (React → Third-party → Internal → Relative → Styles)
+- [ ] No duplicate imports from same library
+
+### Testing ✅
+- [ ] Component test file exists and covers key scenarios
+- [ ] Error states are tested
+- [ ] User interactions are tested
+- [ ] Accessibility features are tested (if applicable)
+
+### Code Style ✅
+- [ ] Persian text for all user-facing content
+- [ ] No ESLint errors or warnings
+- [ ] TypeScript compiles without errors
+- [ ] `pnpm build` succeeds
+
+**If any checkbox is unchecked, DO NOT submit the PR.**
 
 ## Architecture
 
@@ -304,16 +435,33 @@ try {
 
 ## Testing Infrastructure
 
+**CRITICAL REQUIREMENT**: All new components and services MUST include tests before PR approval.
+
 ### Test Organization
 - `__tests__/unit/` - Services, utils, hooks (60% of tests)
 - `__tests__/integration/` - Contexts, API flows (30% of tests)
 - `__tests__/components/` - React component tests
+- Co-located component tests: `ComponentName.test.tsx` next to `ComponentName.tsx`
 - E2E tests in Playwright test files
 
 ### Key Testing Patterns
 - MSW for API mocking (network-level interception)
 - Context providers tested by mocking hooks, not wrapping with providers
 - Path alias `@/*` resolves to `src/*` in tests via `jest.config.js`
+
+### Test File Requirements
+
+**When creating a new component**:
+1. ✅ Create `ComponentName.test.tsx` in the same directory
+2. ✅ Test key user interactions and states
+3. ✅ Test error states
+4. ✅ Verify accessibility (aria labels, keyboard navigation)
+
+**When creating a new service**:
+1. ✅ Create test file in `__tests__/unit/services/`
+2. ✅ Mock API responses with MSW
+3. ✅ Test error handling paths
+4. ✅ Test all public methods
 
 ### Test Naming
 ```tsx
@@ -402,6 +550,81 @@ When adding router.push(), links, or navigation to a new page:
 
 Do not create broken links to pages that don't exist and aren't planned. If you need to link to a page that doesn't exist yet, discuss it first before implementing.
 
+## Canvas/Fabric.js Integration
+
+When working with Fabric.js canvas components, follow these patterns to maintain type safety:
+
+### Canvas Type Definitions
+
+Use typed wrappers from `src/types/canvas.ts`:
+
+```typescript
+import type {
+  FabricObject,
+  CanvasJSON,
+  CanvasData,
+  DrawingToolType
+} from '@/types/canvas';
+```
+
+**Pattern for Fabric.js Objects**:
+```typescript
+// ❌ WRONG
+activeObjects.forEach((obj: any) => {
+  obj.set({ strokeWidth: 5 });
+});
+
+const imageProps: any = { ... };
+
+// ✅ CORRECT
+import type { FabricObject } from '@/types/canvas';
+
+activeObjects.forEach((obj: FabricObject) => {
+  obj.set({ strokeWidth: 5 });
+});
+
+const imageProps: Partial<fabric.Image> = {
+  left: 0,
+  top: 0,
+  scaleX: 1,
+  scaleY: 1,
+};
+```
+
+**Pattern for Canvas Data**:
+```typescript
+// ❌ WRONG
+const canvasRef = useRef<{
+  canvasJSON: any;
+  originalWidth: number;
+  originalHeight: number
+} | null>(null);
+
+// ✅ CORRECT
+import type { CanvasData } from '@/types/canvas';
+
+const canvasRef = useRef<CanvasData | null>(null);
+```
+
+### When to Create New Canvas Types
+
+If you encounter Fabric.js objects that need custom properties:
+
+1. Add interface to `src/types/canvas.ts`
+2. Extend from appropriate Fabric type
+3. Document custom properties with JSDoc
+
+**Example**:
+```typescript
+// src/types/canvas.ts
+export interface CustomFabricImage extends fabric.Image {
+  /** Asset ID from backend */
+  assetId?: string;
+  /** Original source URL before processing */
+  originalSource?: string;
+}
+```
+
 ## Type Safety
 
 - Strict TypeScript enabled in `tsconfig.json`
@@ -410,6 +633,7 @@ Do not create broken links to pages that don't exist and aren't planned. If you 
     - `error.ts` - Error handling types
     - `story.ts` - Story creation types
     - `search.ts` - Search result types
+    - `canvas.ts` - Fabric.js and canvas types
 - Image types in `src/types/images.d.ts` for static imports
 
 ## Deployment
@@ -442,3 +666,10 @@ Do not create broken links to pages that don't exist and aren't planned. If you 
 4. **Persian Text**: Use Persian for all user-facing strings; check `src/constants/errorMessages.ts` for common messages
 5. **Provider Nesting**: UserProvider at root, FeatureFlagProvider always on, CartProvider only on shop routes
 6. **Test Mocking**: Mock context hooks (e.g., `useUser`) rather than wrapping components with providers in tests
+7. **Type Safety - Error Handling**: NEVER use `catch (error: any)` - always use `catch (error)` then cast to `StandardErrorResponse`
+8. **SCSS File Naming**: SCSS module files MUST match their component name exactly (PascalCase)
+9. **Barrel Exports**: Every component directory MUST have an `index.ts` file exporting the component and its types
+10. **Import Order**: Styles MUST always be imported last, after all other imports
+11. **Duplicate Imports**: Combine imports from the same library into a single import statement
+12. **Canvas Types**: Never use `any` for Fabric.js objects - use types from `@/types/canvas.ts` or create new typed interfaces
+13. **New Components**: MUST include co-located test file before PR approval - no exceptions
