@@ -1,7 +1,7 @@
 // src/services/api.tsx with anonymous cart ID and error handling
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
-import { StandardErrorResponse, ErrorCode } from "@/types/error";
+import { StandardErrorResponse, ErrorCode, ApiErrorResponse } from "@/types/error";
 import { addBreadcrumb } from "@/utils/errorLogger";
 
 function getBaseUrl() {
@@ -223,10 +223,11 @@ api.interceptors.response.use(
         const status = error.response?.status;
         const responseData = error.response?.data as BackendErrorResponse | undefined;
 
-        // Check if this is a token expiry error
+        // Check if this is a token expiry error (support both old and new formats)
+        const errorCode = responseData?.error?.code || responseData?.code;
         const isTokenExpired =
             status === 401 &&
-            responseData?.code === "token_not_valid" &&
+            errorCode === "token_not_valid" &&
             responseData?.messages?.some((msg: TokenErrorMessage) => msg.message === "Token is expired");
 
         // Attempt to refresh token if:
@@ -302,8 +303,17 @@ interface TokenErrorMessage {
 
 /**
  * Backend error response structure (can vary)
+ * Supports both the new standardized format (PR #34) and legacy formats
  */
 interface BackendErrorResponse {
+    // New standardized format (PR #34)
+    error?: {
+        code: string;
+        message: string;
+        details: Record<string, string[] | unknown>;
+    };
+
+    // Legacy formats
     code?: string;
     message?: string;
     userMessage?: string;
@@ -311,7 +321,6 @@ interface BackendErrorResponse {
     severity?: string;
     timestamp?: string;
     requestId?: string;
-    error?: string;
     detail?: string;
     error_code?: string;
     error_message?: string;
@@ -325,7 +334,18 @@ function transformAxiosErrorToStandard(error: AxiosError): StandardErrorResponse
     const responseData = error.response?.data as BackendErrorResponse | undefined;
     const status = error.response?.status;
 
-    // Check if backend already sends standard format
+    // Check for new standardized format (PR #34) FIRST
+    if (responseData?.error && typeof responseData.error === 'object' && 'code' in responseData.error) {
+        const errorData = responseData.error;
+        return {
+            code: errorData.code,
+            message: errorData.message,
+            details: errorData.details,
+            severity: mapErrorCodeToSeverity(errorData.code),
+        };
+    }
+
+    // Check if backend already sends legacy standard format
     if (responseData?.code && responseData?.message && responseData?.severity) {
         return {
             code: responseData.code,
@@ -338,16 +358,13 @@ function transformAxiosErrorToStandard(error: AxiosError): StandardErrorResponse
         };
     }
 
-    // Handle common backend error formats
-    if (responseData?.error) {
-        return inferErrorFromMessage(responseData.error, status);
-    }
-
-    if (responseData?.detail) {
+    // Handle legacy error.detail format (string)
+    if (responseData?.detail && typeof responseData.detail === 'string') {
         return inferErrorFromMessage(responseData.detail, status);
     }
 
-    if (responseData?.message) {
+    // Handle legacy single-level message
+    if (responseData?.message && typeof responseData.message === 'string') {
         return inferErrorFromMessage(responseData.message, status);
     }
 
@@ -380,6 +397,33 @@ function transformAxiosErrorToStandard(error: AxiosError): StandardErrorResponse
 
     // Fallback to status-based inference
     return inferErrorFromStatus(status, error.message);
+}
+
+/**
+ * Map error code to severity level
+ * Used for the new standardized error format (PR #34)
+ */
+function mapErrorCodeToSeverity(code: string): 'error' | 'warning' | 'info' {
+    switch (code) {
+        case 'THROTTLED':
+        case 'RATE_LIMIT_EXCEEDED':
+            return 'warning';
+        case 'VALIDATION_ERROR':
+        case 'PARSE_ERROR':
+            return 'error';
+        case 'NOT_AUTHENTICATED':
+        case 'AUTHENTICATION_FAILED':
+        case 'PERMISSION_DENIED':
+            return 'error';
+        case 'NOT_FOUND':
+        case 'METHOD_NOT_ALLOWED':
+            return 'error';
+        case 'INTERNAL_ERROR':
+        case 'UNKNOWN_ERROR':
+            return 'error';
+        default:
+            return 'error';
+    }
 }
 
 /**
