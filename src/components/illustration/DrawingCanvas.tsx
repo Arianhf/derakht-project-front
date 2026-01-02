@@ -443,7 +443,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
         imageProps.templateImageId = imageId;
       }
 
-      img.set(imageProps);
+      img.set?.(imageProps);
 
       canvas.add(img);
       canvas.setActiveObject(img);
