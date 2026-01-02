@@ -10,7 +10,22 @@
 export type ErrorSeverity = 'error' | 'warning' | 'info';
 
 /**
- * Standard API error response format
+ * Backend API error response format (PR #34)
+ * All backend errors now return this standardized structure
+ */
+export interface ApiErrorResponse {
+  error: {
+    /** Machine-readable error code */
+    code: string;
+    /** User-friendly error message (Persian) */
+    message: string;
+    /** Additional error context (e.g., field-level validation errors) */
+    details: Record<string, string[] | unknown>;
+  };
+}
+
+/**
+ * Standard API error response format (internal use after transformation)
  * All backend errors should conform to this structure
  */
 export interface StandardErrorResponse {
@@ -94,6 +109,19 @@ export enum ErrorCategory {
  * Standard error codes used throughout the application
  */
 export enum ErrorCode {
+  // Backend standardized error codes (PR #34)
+  VALIDATION_ERROR = 'VALIDATION_ERROR',
+  NOT_AUTHENTICATED = 'NOT_AUTHENTICATED',
+  AUTHENTICATION_FAILED = 'AUTHENTICATION_FAILED',
+  PERMISSION_DENIED = 'PERMISSION_DENIED',
+  NOT_FOUND = 'NOT_FOUND',
+  METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED',
+  PARSE_ERROR = 'PARSE_ERROR',
+  THROTTLED = 'THROTTLED',
+  UNSUPPORTED_MEDIA_TYPE = 'UNSUPPORTED_MEDIA_TYPE',
+  INTERNAL_ERROR = 'INTERNAL_ERROR',
+  UNKNOWN_ERROR = 'UNKNOWN_ERROR',
+
   // Validation Errors
   INVALID_EMAIL = 'INVALID_EMAIL',
   INVALID_PASSWORD = 'INVALID_PASSWORD',
@@ -157,8 +185,7 @@ export enum ErrorCode {
   SERVICE_UNAVAILABLE = 'SERVICE_UNAVAILABLE',
   DATABASE_ERROR = 'DATABASE_ERROR',
 
-  // Unknown/Generic Errors
-  UNKNOWN_ERROR = 'UNKNOWN_ERROR',
+  // Generic Errors
   UNEXPECTED_ERROR = 'UNEXPECTED_ERROR',
 }
 
@@ -166,6 +193,19 @@ export enum ErrorCode {
  * Error code to category mapping
  */
 export const ERROR_CATEGORY_MAP: Record<string, ErrorCategory> = {
+  // Backend standardized error codes (PR #34)
+  [ErrorCode.VALIDATION_ERROR]: ErrorCategory.VALIDATION,
+  [ErrorCode.NOT_AUTHENTICATED]: ErrorCategory.AUTHENTICATION,
+  [ErrorCode.AUTHENTICATION_FAILED]: ErrorCategory.AUTHENTICATION,
+  [ErrorCode.PERMISSION_DENIED]: ErrorCategory.AUTHORIZATION,
+  [ErrorCode.NOT_FOUND]: ErrorCategory.BUSINESS_LOGIC,
+  [ErrorCode.METHOD_NOT_ALLOWED]: ErrorCategory.BUSINESS_LOGIC,
+  [ErrorCode.PARSE_ERROR]: ErrorCategory.VALIDATION,
+  [ErrorCode.THROTTLED]: ErrorCategory.RATE_LIMITING,
+  [ErrorCode.UNSUPPORTED_MEDIA_TYPE]: ErrorCategory.VALIDATION,
+  [ErrorCode.INTERNAL_ERROR]: ErrorCategory.SERVER,
+  [ErrorCode.UNKNOWN_ERROR]: ErrorCategory.UNKNOWN,
+
   // Validation
   [ErrorCode.INVALID_EMAIL]: ErrorCategory.VALIDATION,
   [ErrorCode.INVALID_PASSWORD]: ErrorCategory.VALIDATION,
@@ -229,8 +269,7 @@ export const ERROR_CATEGORY_MAP: Record<string, ErrorCategory> = {
   [ErrorCode.SERVICE_UNAVAILABLE]: ErrorCategory.SERVER,
   [ErrorCode.DATABASE_ERROR]: ErrorCategory.SERVER,
 
-  // Unknown
-  [ErrorCode.UNKNOWN_ERROR]: ErrorCategory.UNKNOWN,
+  // Generic
   [ErrorCode.UNEXPECTED_ERROR]: ErrorCategory.UNKNOWN,
 };
 

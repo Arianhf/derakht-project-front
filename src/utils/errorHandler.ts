@@ -150,13 +150,27 @@ export class ErrorHandler {
 
   /**
    * Transform Axios error to standard format
-   * Handles various backend response formats
+   * Handles various backend response formats including the new standardized format (PR #34)
    */
   private transformAxiosError(error: { response?: { data: unknown; status?: number } }): StandardErrorResponse {
     const responseData = error.response?.data as Record<string, unknown> | undefined;
     const status = error.response?.status;
 
-    // Check if backend already sends standard format
+    // Check for new standardized format (PR #34) FIRST
+    // Format: { error: { code: "...", message: "...", details: {...} } }
+    if (responseData?.error && typeof responseData.error === 'object' && responseData.error !== null) {
+      const errorObj = responseData.error as Record<string, unknown>;
+      if (typeof errorObj.code === 'string' && typeof errorObj.message === 'string') {
+        return {
+          code: errorObj.code,
+          message: errorObj.message,
+          details: errorObj.details as Record<string, unknown> | undefined,
+          severity: this.mapErrorCodeToSeverity(errorObj.code),
+        };
+      }
+    }
+
+    // Check if backend already sends legacy standard format
     if (responseData && typeof responseData.code === 'string' && typeof responseData.message === 'string') {
       return {
         code: responseData.code,
@@ -169,23 +183,18 @@ export class ErrorHandler {
       };
     }
 
-    // Handle common backend error formats
-    // Format 1: { error: "message" }
-    if (responseData && typeof responseData.error === 'string') {
-      return this.inferErrorFromMessage(responseData.error, status);
-    }
-
-    // Format 2: { detail: "message" }
+    // Handle legacy backend error formats
+    // Format 1: { detail: "message" }
     if (responseData && typeof responseData.detail === 'string') {
       return this.inferErrorFromMessage(responseData.detail, status);
     }
 
-    // Format 3: { message: "message" }
+    // Format 2: { message: "message" }
     if (responseData && typeof responseData.message === 'string') {
       return this.inferErrorFromMessage(responseData.message, status);
     }
 
-    // Format 4: { error_code: "...", error_message: "..." } (existing format)
+    // Format 3: { error_code: "...", error_message: "..." } (existing format)
     if (responseData && (responseData.error_code || responseData.error_message)) {
       return {
         code: this.normalizeErrorCode(typeof responseData.error_code === 'string' ? responseData.error_code : undefined) || ErrorCode.UNKNOWN_ERROR,
@@ -196,6 +205,19 @@ export class ErrorHandler {
 
     // Infer from HTTP status code
     return this.inferErrorFromStatus(status);
+  }
+
+  /**
+   * Map error code to severity level (for new standardized format PR #34)
+   */
+  private mapErrorCodeToSeverity(code: string): ErrorSeverity {
+    switch (code) {
+      case 'THROTTLED':
+      case 'RATE_LIMIT_EXCEEDED':
+        return 'warning';
+      default:
+        return 'error';
+    }
   }
 
   /**
