@@ -4,17 +4,18 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
 import { FaArrowRight, FaSpinner, FaEdit } from 'react-icons/fa';
-import { Navbar } from '@/components/shared/Navbar/Navbar';
-import { ShippingForm } from '@/components/checkout/ShippingForm';
-import { PaymentMethod } from '@/components/checkout/PaymentMethod';
 import { CardToCardPayment } from '@/components/checkout/CardToCardPayment';
 import { OrderSummary } from '@/components/checkout/OrderSummary';
+import { PaymentMethod } from '@/components/checkout/PaymentMethod';
+import { ShippingForm } from '@/components/checkout/ShippingForm';
 import { ShippingMethodSelector } from '@/components/checkout/ShippingMethodSelector';
+import { AddressFormData } from '@/components/shared/AddressForm/AddressForm';
+import { Navbar } from '@/components/shared/Navbar/Navbar';
 import { useCart } from '@/contexts/CartContext';
 import { useUser } from '@/contexts/UserContext';
 import { shopService } from '@/services/shopService';
+import { StandardErrorResponse } from '@/types/error';
 import { ShippingMethod, ShippingEstimateResponse } from '@/types/shop';
-import { AddressFormData } from '@/components/shared/AddressForm/AddressForm';
 import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
 import logo from '@/assets/images/logo2.png';
 import styles from './CheckoutPage.module.scss';
@@ -36,7 +37,6 @@ const CheckoutPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [orderId, setOrderId] = useState<string | null>(null);
-    const [paymentRedirectUrl, setPaymentRedirectUrl] = useState<string | null>(null);
     const [useDefaultAddress, setUseDefaultAddress] = useState<boolean>(true);
 
     // Form state
@@ -105,12 +105,10 @@ const CheckoutPage: React.FC = () => {
                         const resultErrorMessage = encodeURIComponent(result.error_message || errorMessage);
                         router.push(`/shop/payment-failed?order_id=${returnedOrderId}&error_code=${resultErrorCode}&error_message=${resultErrorMessage}`);
                     }
-                } catch (err: unknown) {
-                    console.error('Error verifying payment:', err);
-                    // Extract error message safely
-                    const errorMessage = err && typeof err === 'object' && 'message' in err
-                        ? String((err as { message?: string }).message)
-                        : 'خطا در تایید پرداخت';
+                } catch (error) {
+                    console.error('Error verifying payment:', error);
+                    const standardError = error as StandardErrorResponse;
+                    const errorMessage = standardError.message || 'خطا در تایید پرداخت';
                     // Redirect to payment failed page with error details
                     router.push(`/shop/payment-failed?order_id=${returnedOrderId}&error_code=api_error&error_message=${encodeURIComponent(errorMessage)}`);
                 } finally {
@@ -158,9 +156,10 @@ const CheckoutPage: React.FC = () => {
             if (response.shipping_methods.length > 0) {
                 setSelectedShippingMethod(response.shipping_methods[0]);
             }
-        } catch (err) {
-            console.error('Error fetching shipping methods:', err);
-            toast.error('خطا در دریافت روش‌های ارسال');
+        } catch (error) {
+            console.error('Error fetching shipping methods:', error);
+            const standardError = error as StandardErrorResponse;
+            toast.error(standardError.message || 'خطا در دریافت روش‌های ارسال');
             setAvailableShippingMethods([]);
         } finally {
             setLoadingShippingMethods(false);
@@ -275,13 +274,10 @@ const CheckoutPage: React.FC = () => {
                 await clearCart(false);  // Clear the cart without refreshing (redirecting away)
                 router.push(`/shop/order-confirmation/${order.id}`);
             }
-        } catch (err: unknown) {
-            console.error('Error placing order:', err);
-
-            // Extract error message safely
-            const errorMessage = err && typeof err === 'object' && 'message' in err
-                ? String((err as { message?: string }).message)
-                : 'خطا در ثبت سفارش';
+        } catch (error) {
+            console.error('Error placing order:', error);
+            const standardError = error as StandardErrorResponse;
+            const errorMessage = standardError.message || 'خطا در ثبت سفارش';
 
             // Instead of just setting an error, redirect to payment failed page
             if (orderId) {
