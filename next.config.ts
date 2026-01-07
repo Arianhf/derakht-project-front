@@ -16,6 +16,8 @@ const nextConfig = {
       },
     ],
   },
+  // Temporarily disabled due to Next.js 16.1.0 issue with middleware + standalone
+  // See: https://github.com/vercel/next.js/issues/...
   output: 'standalone',
   // Enable React Compiler for automatic memoization and performance optimization
   reactCompiler: true,
