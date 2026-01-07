@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { CanvasMetadata } from '@/types/story';
-import { CanvasJSON } from '@/types/canvas';
+import { CanvasJSON, FabricCanvas } from '@/types/canvas';
 import styles from './TextCanvasViewer.module.scss';
 
 export interface TextCanvasViewerProps {
@@ -23,8 +23,9 @@ const TextCanvasViewer: React.FC<TextCanvasViewerProps> = ({
                                                            }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fabricCanvasRef = useRef<any>(null);
-    const fabricLibRef = useRef<any>(null);
+    const fabricLibRef = useRef<typeof import('fabric') | null>(null);
     const dimensionsCalculatedRef = useRef(false);
     const originalCanvasDataRef = useRef<{ canvasJSON: CanvasJSON; originalWidth: number; originalHeight: number } | null>(null);
     const standardSizeRef = useRef({ width: 1000, height: 1000 }); // Store original canvas size
