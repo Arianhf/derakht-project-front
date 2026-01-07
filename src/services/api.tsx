@@ -16,7 +16,9 @@ function getBaseUrl() {
             // Use localhost for development, or construct from environment
             const host = process.env.NEXT_PUBLIC_API_HOST || 'http://localhost:3000';
             const fullUrl = `${host}${configuredUrl}`;
-            console.log('[API] Server-side: Using absolute URL:', fullUrl);
+            if (process.env.NODE_ENV === 'development') {
+                console.log('[API] Server-side: Using absolute URL:', fullUrl);
+            }
             return fullUrl;
         }
         return configuredUrl;
@@ -34,7 +36,9 @@ function getBaseUrl() {
     if (isServer) {
         const host = process.env.NEXT_PUBLIC_API_HOST || 'http://localhost:3000';
         const fullUrl = `${host}/api/`;
-        console.log('[API] Server-side: Using default absolute URL:', fullUrl);
+        if (process.env.NODE_ENV === 'development') {
+            console.log('[API] Server-side: Using default absolute URL:', fullUrl);
+        }
         return fullUrl;
     }
 
@@ -49,8 +53,10 @@ const api = axios.create({
     },
 });
 
-// Log the configured baseURL for debugging
-console.log('[API] Axios instance created with baseURL:', baseURL);
+// Log the configured baseURL for debugging (development only)
+if (process.env.NODE_ENV === 'development') {
+    console.log('[API] Axios instance created with baseURL:', baseURL);
+}
 
 // Token refresh state management
 let isRefreshing = false;
@@ -121,11 +127,13 @@ const refreshAccessToken = async (): Promise<string> => {
 
 api.interceptors.request.use(
     async (config) => {
-        console.log('[API] ========== Request Interceptor ==========');
-        console.log('[API] Request URL:', config.url);
-        console.log('[API] Base URL:', config.baseURL);
-        console.log('[API] Full URL:', `${config.baseURL}${config.url}`);
-        console.log('[API] Is Server:', typeof window === 'undefined');
+        if (process.env.NODE_ENV === 'development') {
+            console.log('[API] ========== Request Interceptor ==========');
+            console.log('[API] Request URL:', config.url);
+            console.log('[API] Base URL:', config.baseURL);
+            console.log('[API] Full URL:', `${config.baseURL}${config.url}`);
+            console.log('[API] Is Server:', typeof window === 'undefined');
+        }
 
         // Add auth token if available
         let token: string | null = null;
@@ -134,38 +142,50 @@ api.interceptors.request.use(
         if (typeof window === 'undefined') {
             // Server-side: Dynamically import and use Next.js cookies() function
             try {
-                console.log('[API] Server-side: Getting cookies from next/headers');
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('[API] Server-side: Getting cookies from next/headers');
+                }
                 const { cookies } = await import('next/headers');
                 const cookieStore = await cookies();
                 const accessTokenCookie = cookieStore.get('access_token');
                 token = accessTokenCookie?.value || null;
-                console.log('[API] Server token found:', !!token);
-                if (token) {
-                    console.log('[API] Server token (first 20 chars):', token.substring(0, 20) + '...');
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('[API] Server token found:', !!token);
+                    // Note: Never log actual token value, even in development
                 }
             } catch (error) {
-                console.error('[API] Error getting server cookies:', error);
+                if (process.env.NODE_ENV === 'development') {
+                    console.error('[API] Error getting server cookies:', error);
+                }
                 token = null;
             }
         } else {
             // Client-side: Use js-cookie and localStorage
-            console.log('[API] Client-side: Getting cookies from js-cookie');
+            if (process.env.NODE_ENV === 'development') {
+                console.log('[API] Client-side: Getting cookies from js-cookie');
+            }
             const cookieToken = Cookies.get("access_token");
             const localStorageToken = localStorage.getItem("access_token");
             token = cookieToken || localStorageToken;
-            console.log('[API] Client cookie token found:', !!cookieToken);
-            console.log('[API] Client localStorage token found:', !!localStorageToken);
-            console.log('[API] Client final token found:', !!token);
+            if (process.env.NODE_ENV === 'development') {
+                console.log('[API] Client cookie token found:', !!cookieToken);
+                console.log('[API] Client localStorage token found:', !!localStorageToken);
+                console.log('[API] Client final token found:', !!token);
+            }
         }
 
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
-            console.log('[API] Authorization header set');
+            if (process.env.NODE_ENV === 'development') {
+                console.log('[API] Authorization header set');
+            }
         } else {
             // Explicitly remove Authorization header when no token is available
             // This ensures the header doesn't persist after logout
             delete config.headers.Authorization;
-            console.log('[API] No token available - Authorization header removed');
+            if (process.env.NODE_ENV === 'development') {
+                console.log('[API] No token available - Authorization header removed');
+            }
         }
 
         // Add anonymous cart ID header if available and not already authenticated
@@ -174,7 +194,9 @@ api.interceptors.request.use(
                 const anonymousCartId = Cookies.get("anonymous_cart_id");
                 if (anonymousCartId) {
                     config.headers["X-Anonymous-Cart-ID"] = anonymousCartId;
-                    console.log('[API] Anonymous cart ID header added');
+                    if (process.env.NODE_ENV === 'development') {
+                        console.log('[API] Anonymous cart ID header added');
+                    }
                 }
             } else {
                 try {
@@ -183,7 +205,9 @@ api.interceptors.request.use(
                     const anonymousCartId = cookieStore.get("anonymous_cart_id")?.value;
                     if (anonymousCartId) {
                         config.headers["X-Anonymous-Cart-ID"] = anonymousCartId;
-                        console.log('[API] Server anonymous cart ID header added');
+                        if (process.env.NODE_ENV === 'development') {
+                            console.log('[API] Server anonymous cart ID header added');
+                        }
                     }
                 } catch (error) {
                     // Ignore errors getting anonymous cart ID
@@ -197,10 +221,12 @@ api.interceptors.request.use(
             url: config.url,
         });
 
-        console.log('[API] Final request headers:', {
-            Authorization: config.headers.Authorization ? 'Bearer ***' : 'None',
-            'X-Anonymous-Cart-ID': config.headers['X-Anonymous-Cart-ID'] || 'None'
-        });
+        if (process.env.NODE_ENV === 'development') {
+            console.log('[API] Final request headers:', {
+                Authorization: config.headers.Authorization ? 'Bearer ***' : 'None',
+                'X-Anonymous-Cart-ID': config.headers['X-Anonymous-Cart-ID'] || 'None'
+            });
+        }
 
         return config;
     },
