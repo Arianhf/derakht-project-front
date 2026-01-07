@@ -63,19 +63,21 @@ async function proxyRequest(
   const shouldAddTrailingSlash = originalHasTrailingSlash || needsTrailingSlash;
   const backendUrl = `${BACKEND_URL}/${pathname}${shouldAddTrailingSlash ? '/' : ''}${url.search}`;
 
-  // DEBUG LOGGING
-  console.log('========== API PROXY DEBUG ==========');
-  console.log('[Proxy] Method:', method);
-  console.log('[Proxy] Original URL:', request.url);
-  console.log('[Proxy] URL pathname:', url.pathname);
-  console.log('[Proxy] Path array:', path);
-  console.log('[Proxy] Joined pathname:', pathname);
-  console.log('[Proxy] Original has trailing slash?:', originalHasTrailingSlash);
-  console.log('[Proxy] Needs trailing slash?:', needsTrailingSlash);
-  console.log('[Proxy] Will add trailing slash?:', shouldAddTrailingSlash);
-  console.log('[Proxy] Query string:', url.search);
-  console.log('[Proxy] Final backend URL:', backendUrl);
-  console.log('====================================');
+  // DEBUG LOGGING - Only in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('========== API PROXY DEBUG ==========');
+    console.log('[Proxy] Method:', method);
+    console.log('[Proxy] Original URL:', request.url);
+    console.log('[Proxy] URL pathname:', url.pathname);
+    console.log('[Proxy] Path array:', path);
+    console.log('[Proxy] Joined pathname:', pathname);
+    console.log('[Proxy] Original has trailing slash?:', originalHasTrailingSlash);
+    console.log('[Proxy] Needs trailing slash?:', needsTrailingSlash);
+    console.log('[Proxy] Will add trailing slash?:', shouldAddTrailingSlash);
+    console.log('[Proxy] Query string:', url.search);
+    console.log('[Proxy] Final backend URL:', backendUrl);
+    console.log('====================================');
+  }
 
   // Copy headers from incoming request
   const headers: HeadersInit = {};
@@ -108,9 +110,11 @@ async function proxyRequest(
     // Make request to backend
     const response = await fetch(backendUrl, options);
 
-    // DEBUG LOGGING - Response
-    console.log('[Proxy] Response status:', response.status, response.statusText);
-    console.log('[Proxy] Response headers:', Object.fromEntries(response.headers.entries()));
+    // DEBUG LOGGING - Response (development only)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Proxy] Response status:', response.status, response.statusText);
+      console.log('[Proxy] Response headers:', Object.fromEntries(response.headers.entries()));
+    }
 
     // Copy response headers, but skip encoding-related headers
     // The fetch API already handles decompression, so we don't want the browser to try again
@@ -134,7 +138,10 @@ async function proxyRequest(
       headers: responseHeaders,
     });
   } catch (error) {
-    console.error('[API Proxy] Error:', error);
+    // Log errors only in development to avoid exposing sensitive data
+    if (process.env.NODE_ENV === 'development') {
+      console.error('[API Proxy] Error:', error);
+    }
     return NextResponse.json(
       { error: 'Proxy request failed', message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 502 }
