@@ -80,7 +80,8 @@ const AssetsPanel: React.FC<AssetsPanelProps> = ({ isOpen, onClose, onAssetSelec
           return uploadedAsset;
         } catch (error) {
           console.error(`Error uploading ${file.name}:`, error);
-          toast.error(`خطا در آپلود ${file.name}`);
+          const standardError = error as StandardErrorResponse;
+          toast.error(standardError.message || `خطا در آپلود ${file.name}`);
           return null;
         }
       });
@@ -110,7 +111,8 @@ const AssetsPanel: React.FC<AssetsPanelProps> = ({ isOpen, onClose, onAssetSelec
       toast.success('تصویر حذف شد');
     } catch (error) {
       console.error('Error deleting asset:', error);
-      toast.error('خطا در حذف تصویر');
+      const standardError = error as StandardErrorResponse;
+      toast.error(standardError.message || 'خطا در حذف تصویر');
     }
   };
 
