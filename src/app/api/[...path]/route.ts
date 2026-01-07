@@ -2,7 +2,16 @@
 // Proxies requests from /api/* to the backend API
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_URL = 'https://derakht.darkube.app/api';
+// Backend API URL from environment variable with fallback for backward compatibility
+const BACKEND_URL = process.env.BACKEND_API_URL || 'https://derakht.darkube.app/api';
+
+// Validate that the backend URL is configured
+if (!process.env.BACKEND_API_URL && process.env.NODE_ENV === 'development') {
+  console.warn(
+    '[API Proxy] Warning: BACKEND_API_URL environment variable is not set. ' +
+    'Using fallback URL. Please add BACKEND_API_URL to your .env file.'
+  );
+}
 
 export async function GET(
   request: NextRequest,
