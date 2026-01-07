@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import Footer from '@/components/shared/Footer/Footer';
 import { blogService } from '@/services/blogService';
-import CategoryPageClient from '@/components/blog/CategoryPageClient';
+import { CategoryPageClient } from '@/components/blog';
 import logoImage from '@/assets/images/logo2.png';
 import styles from './page.module.scss';
 

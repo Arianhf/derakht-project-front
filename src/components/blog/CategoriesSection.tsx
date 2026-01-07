@@ -1,4 +1,6 @@
 // src/components/blog/CategoriesSection.tsx
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { blogService, BlogCategory } from '@/services/blogService';
 import CategoryCard from './CategoryCard';
