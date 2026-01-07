@@ -56,8 +56,9 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fabricCanvasRef = useRef<any>(null);
-    const fabricLibRef = useRef<any>(null);
+    const fabricLibRef = useRef<typeof import('fabric') | null>(null);
     const dimensionsCalculatedRef = useRef(false);
     const initialStateLoadedRef = useRef(false);
     const standardSizeRef = useRef(standardCanvasSize); // Store standard canvas size
@@ -350,7 +351,8 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
             brush.width = brushSize;
             canvas.isDrawingMode = true;
             canvas.selection = false;
-            canvas.forEachObject((obj: FabricObject) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            canvas.forEachObject((obj: any) => {
                 obj.selectable = false;
             });
         } else if (currentTool === 'eraser') {
@@ -358,13 +360,15 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
             brush.width = brushSize * 2;
             canvas.isDrawingMode = true;
             canvas.selection = false;
-            canvas.forEachObject((obj: FabricObject) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            canvas.forEachObject((obj: any) => {
                 obj.selectable = false;
             });
         } else if (currentTool === 'select') {
             canvas.isDrawingMode = false;
             canvas.selection = true;
-            canvas.forEachObject((obj: FabricObject) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            canvas.forEachObject((obj: any) => {
                 obj.selectable = true;
                 obj.evented = true;
             });
@@ -401,7 +405,8 @@ const IllustrationCanvasEditor: React.FC<IllustrationCanvasEditorProps> = ({
             return;
         }
 
-        activeObjects.forEach((obj: FabricObject) => canvas.remove(obj));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        activeObjects.forEach((obj: any) => canvas.remove(obj));
         canvas.discardActiveObject();
         canvas.renderAll();
 
