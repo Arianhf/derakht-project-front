@@ -1,18 +1,18 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useParams, useRouter } from 'next/navigation';
 import { FaCheckCircle, FaHome, FaListAlt } from 'react-icons/fa';
-import { shopService } from '@/services/shopService';
-import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
-import { Order } from '@/types/shop';
-import { StandardErrorResponse } from '@/types/error';
-import { Navbar } from '@/components/shared/Navbar/Navbar';
-import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import ErrorMessage from "@/components/shared/ErrorMessage";
-import styles from './OrderConfirmationPage.module.scss';
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import { Navbar } from '@/components/shared/Navbar/Navbar';
+import { shopService } from '@/services/shopService';
+import { StandardErrorResponse } from '@/types/error';
+import { Order } from '@/types/shop';
+import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
 import logo from '@/assets/images/logo2.png';
+import styles from './OrderConfirmationPage.module.scss';
 
 const OrderConfirmationPage: React.FC = () => {
     const router = useRouter();
