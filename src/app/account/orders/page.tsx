@@ -1,6 +1,5 @@
 import React from 'react';
-import AccountLayout from '@/components/account/AccountLayout';
-import OrderHistory from '@/components/account/OrderHistory';
+import { AccountLayout, OrderHistory } from '@/components/account';
 import { UserProvider } from '@/contexts/UserContext';
 import { userService } from '@/services/userService';
 

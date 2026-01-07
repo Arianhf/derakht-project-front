@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import AccountLayout from '@/components/account/AccountLayout';
-import AccountDashboard from '@/components/account/AccountDashboard';
+import { AccountLayout, AccountDashboard } from '@/components/account';
 import { UserProvider } from '@/contexts/UserContext';
 
 const AccountPage: React.FC = () => {
