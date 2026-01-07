@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FaArrowRight, FaBarcode, FaInfoCircle } from 'react-icons/fa';
-import styles from './ProductInfoDetails.module.scss';
+
 import VideoPlayer from './VideoPlayer';
+import { sanitizeHTML } from '@/utils/sanitize';
+
+import styles from './ProductInfoDetails.module.scss';
 
 interface ProductImage {
     id: number;
@@ -93,7 +96,7 @@ const ProductInfoDetails: React.FC<ProductInfoProps> = ({ productInfo }) => {
         if (videoElements.length === 0) {
             return (
                 <div
-                    dangerouslySetInnerHTML={{ __html: processedContent }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHTML(processedContent, 'product') }}
                     className={styles.contentBody}
                 />
             );
@@ -111,7 +114,7 @@ const ProductInfoDetails: React.FC<ProductInfoProps> = ({ productInfo }) => {
                 renderedContent.push(
                     <div
                         key={`content-${i}`}
-                        dangerouslySetInnerHTML={{ __html: parts[i] }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeHTML(parts[i], 'product') }}
                         className={styles.contentPart}
                     />
                 );

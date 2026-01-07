@@ -3,21 +3,24 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+
 import { Navbar } from '@/components/shared/Navbar/Navbar';
 import { Button } from '@/components/shared/Button';
 import Breadcrumbs from '@/components/shop/Breadcrumbs';
 import ProductImageGallery from '@/components/shared/ProductImageGallery/ProductImageGallery';
-import styles from './productDetails.module.scss';
-import logo from '@/assets/images/logo2.png';
-import heroImage from "../../../../public/images/shop_bg.png";
-import { FaPlus, FaMinus, FaTrash, FaArrowRight, FaSpinner, FaShoppingCart } from 'react-icons/fa';
-import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
 import { Product, Breadcrumb, ProductComment } from '@/types/shop';
 import { shopService } from '@/services/shopService';
 import toast, { Toaster } from 'react-hot-toast';
 import { useProductQuantity } from '@/hooks/useProductQuantity';
 import { StandardErrorResponse } from '@/types/error';
 import { ERROR_MESSAGES } from '@/constants/errorMessages';
+import { toPersianNumber, formatPrice } from '@/utils/convertToPersianNumber';
+import { sanitizeHTML } from '@/utils/sanitize';
+
+import styles from './productDetails.module.scss';
+import logo from '@/assets/images/logo2.png';
+import heroImage from '../../../../public/images/shop_bg.png';
+import { FaPlus, FaMinus, FaTrash, FaArrowRight, FaSpinner, FaShoppingCart } from 'react-icons/fa';
 
 interface ProductDetailsPageClientProps {
     product: Product;
@@ -153,7 +156,7 @@ const ProductDetailsPageClient: React.FC<ProductDetailsPageClientProps> = ({
 
                         <div
                             className={styles.productDescription}
-                            dangerouslySetInnerHTML={{ __html: product.description }}
+                            dangerouslySetInnerHTML={{ __html: sanitizeHTML(product.description, 'product') }}
                         />
 
                         {product.is_available && (
