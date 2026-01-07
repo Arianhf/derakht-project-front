@@ -22,8 +22,6 @@ export default [
       'src/components/story/IllustrationCanvasEditor.tsx',
       'src/components/story/TextCanvasViewer.tsx',
       'src/components/story/TextCanvasEditor.tsx',
-      'src/components/shop/CheckoutPage.tsx',
-      'src/components/shop/OrderConfirmationPage.tsx',
       'src/components/admin/TemplateForm.tsx',
       'src/components/admin/TemplatePartEditor.tsx',
       'src/components/checkout/ShippingForm.tsx',
