@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import BlogDetails from '@/components/blog/BlogDetails';
+import { BlogDetails } from '@/components/blog';
 import { blogService } from '@/services/blogService';
 import logo from '@/assets/images/logo2.png';
 import { Navbar } from '@/components/shared/Navbar/Navbar';

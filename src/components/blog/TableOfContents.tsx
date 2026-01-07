@@ -1,4 +1,6 @@
 // src/components/blog/TableOfContents.tsx
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import styles from './TableOfContents.module.scss';
 
