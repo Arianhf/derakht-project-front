@@ -6,7 +6,7 @@ import { compressImage, blobToFile, formatFileSize } from '@/utils/imageCompress
 import { validateImageFile } from '@/utils/imageValidation';
 import { storyService } from '@/services/storyService';
 import { StandardErrorResponse } from '@/types/error';
-import { FabricObject, FabricImage } from '@/types/canvas';
+import { FabricObject, FabricImage, FabricCanvas } from '@/types/canvas';
 import DrawingToolbar from './DrawingToolbar';
 import styles from './DrawingCanvas.module.scss';
 
@@ -52,8 +52,9 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
 }, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fabricCanvasRef = useRef<any>(null);
-  const fabricLibRef = useRef<any>(null);
+  const fabricLibRef = useRef<typeof import('fabric') | null>(null);
   const dimensionsCalculatedRef = useRef(false);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
   const [isFabricLoaded, setIsFabricLoaded] = useState(false);
@@ -68,22 +69,22 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
   React.useImperativeHandle(ref, () => ({
     exportAsImage: () => {
       if (!fabricCanvasRef.current) return '';
-      return fabricCanvasRef.current.toDataURL({
+      return fabricCanvasRef.current.toDataURL?.({
         format: 'png',
         quality: 1,
-      });
+      }) || '';
     },
     getCanvasJSON: () => {
       if (!fabricCanvasRef.current) return '{}';
-      return JSON.stringify(fabricCanvasRef.current.toJSON());
+      return JSON.stringify(fabricCanvasRef.current.toJSON?.() || {});
     },
     clearCanvas: () => {
       if (!fabricCanvasRef.current) return;
-      fabricCanvasRef.current.clear();
+      fabricCanvasRef.current.clear?.();
       fabricCanvasRef.current.backgroundColor = backgroundColor;
-      fabricCanvasRef.current.renderAll();
+      fabricCanvasRef.current.renderAll?.();
       if (onChange) {
-        const json = JSON.stringify(fabricCanvasRef.current.toJSON());
+        const json = JSON.stringify(fabricCanvasRef.current.toJSON?.() || {});
         onChange(json);
       }
     },
@@ -309,11 +310,12 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.key === 'Delete' || e.key === 'Backspace') && document.activeElement?.tagName !== 'INPUT') {
         e.preventDefault();
-        const activeObjects = canvas.getActiveObjects();
+        const activeObjects = canvas.getActiveObjects?.();
         if (activeObjects && activeObjects.length > 0) {
-          activeObjects.forEach((obj: FabricObject) => canvas.remove(obj));
-          canvas.discardActiveObject();
-          canvas.renderAll();
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          activeObjects.forEach((obj: any) => canvas.remove?.(obj));
+          canvas.discardActiveObject?.();
+          canvas.renderAll?.();
 
           if (onChange) {
             const json = JSON.stringify(canvas.toJSON());
@@ -340,11 +342,11 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     if (!fabricCanvasRef.current) return;
 
     console.log('Updating canvas dimensions to:', canvasDimensions);
-    fabricCanvasRef.current.setDimensions({
+    fabricCanvasRef.current.setDimensions?.({
       width: canvasDimensions.width,
       height: canvasDimensions.height,
     });
-    fabricCanvasRef.current.renderAll();
+    fabricCanvasRef.current.renderAll?.();
   }, [canvasDimensions]);
 
   /**
@@ -362,7 +364,8 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
       canvas.isDrawingMode = true;
       canvas.selection = false;
       // Disable object selection in drawing mode
-      canvas.forEachObject((obj: FabricObject) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      canvas.forEachObject((obj: any) => {
         obj.selectable = false;
       });
     } else if (currentTool === 'eraser') {
@@ -372,7 +375,8 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
       canvas.isDrawingMode = true;
       canvas.selection = false;
       // Disable object selection in eraser mode
-      canvas.forEachObject((obj: FabricObject) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      canvas.forEachObject((obj: any) => {
         obj.selectable = false;
       });
     } else if (currentTool === 'select') {
@@ -380,7 +384,8 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
       canvas.isDrawingMode = false;
       canvas.selection = true;
       // Enable object selection and movement
-      canvas.forEachObject((obj: FabricObject) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      canvas.forEachObject((obj: any) => {
         obj.selectable = true;
         obj.evented = true;
       });
@@ -396,7 +401,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     return () => {
       if (fabricCanvasRef.current) {
         console.log('Component unmounting, cleaning up canvas...');
-        fabricCanvasRef.current.dispose();
+        fabricCanvasRef.current.dispose?.();
         fabricCanvasRef.current = null;
         setIsCanvasReady(false);
       }
@@ -420,7 +425,8 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     // Load image
     FabricImage.fromURL(url, {
       crossOrigin: 'anonymous',
-    }).then((img: FabricImage) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }).then((img: any) => {
       // Scale image to fit canvas if it's too large
       const maxWidth = canvas.width * 0.5;
       const maxHeight = canvas.height * 0.5;
@@ -467,12 +473,12 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
   const clearCanvas = useCallback(() => {
     if (!fabricCanvasRef.current) return;
 
-    fabricCanvasRef.current.clear();
+    fabricCanvasRef.current.clear?.();
     fabricCanvasRef.current.backgroundColor = backgroundColor;
-    fabricCanvasRef.current.renderAll();
+    fabricCanvasRef.current.renderAll?.();
 
     if (onChange) {
-      const json = JSON.stringify(fabricCanvasRef.current.toJSON());
+      const json = JSON.stringify(fabricCanvasRef.current.toJSON?.() || {});
       onChange(json);
     }
 
@@ -506,10 +512,10 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
    */
   const exportAsImage = useCallback((): string => {
     if (!fabricCanvasRef.current) return '';
-    return fabricCanvasRef.current.toDataURL({
+    return fabricCanvasRef.current.toDataURL?.({
       format: 'png',
       quality: 1,
-    });
+    }) || '';
   }, []);
 
   /**
@@ -517,7 +523,7 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
    */
   const getCanvasJSON = useCallback((): string => {
     if (!fabricCanvasRef.current) return '{}';
-    return JSON.stringify(fabricCanvasRef.current.toJSON());
+    return JSON.stringify(fabricCanvasRef.current.toJSON?.() || {});
   }, []);
 
   /**
@@ -527,8 +533,8 @@ const DrawingCanvas = React.forwardRef<DrawingCanvasRef, DrawingCanvasProps>(({
     if (!fabricCanvasRef.current) return;
 
     try {
-      fabricCanvasRef.current.loadFromJSON(json, () => {
-        fabricCanvasRef.current?.renderAll();
+      fabricCanvasRef.current.loadFromJSON?.(json, () => {
+        fabricCanvasRef.current?.renderAll?.();
       });
       toast.success('وضعیت بارگذاری شد');
     } catch (error) {
