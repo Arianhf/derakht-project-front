@@ -4,11 +4,14 @@ import React, { useState, useEffect } from 'react';
 import Image, { StaticImageData } from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FaArrowRight, FaCalendarAlt, FaUserCircle, FaClock, FaComment, FaStar } from 'react-icons/fa';
-import styles from './BlogDetails.module.scss';
+
 import RelatedPosts from './RelatedPosts';
 import { RelatedPost } from '@/services/blogService';
 import TableOfContents from './TableOfContents';
-import {toPersianNumber} from "@/utils/convertToPersianNumber";
+import { toPersianNumber } from '@/utils/convertToPersianNumber';
+import { sanitizeHTML } from '@/utils/sanitize';
+
+import styles from './BlogDetails.module.scss';
 
 interface BlogDetailsProps {
     blog: {
@@ -218,8 +221,8 @@ const BlogDetails: React.FC<BlogDetailsProps> = ({ blog, relatedPosts = [], logo
                     <TableOfContents content={processedContent} />
 
                     <div className={styles.blogContent}>
-                        {/* We use the processedContent now */}
-                        <div dangerouslySetInnerHTML={{ __html: processedContent }} />
+                        {/* We use the processedContent now with XSS sanitization */}
+                        <div dangerouslySetInnerHTML={{ __html: sanitizeHTML(processedContent, 'blog') }} />
                     </div>
                 </article>
 
