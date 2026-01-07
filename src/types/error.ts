@@ -64,14 +64,20 @@ export interface ErrorDetails {
   /** Limit that was exceeded (for rate limiting, length validation, etc.) */
   limit?: number;
 
+  /** Minimum value (for validation) */
+  min?: number;
+
+  /** Maximum value (for validation) */
+  max?: number;
+
   /** Current count (for rate limiting) */
   count?: number;
 
   /** Time until retry is allowed (in seconds) */
   retryAfter?: number;
 
-  /** Additional custom data (including value that caused the error) */
-  [key: string]: unknown;
+  /** Field-level validation errors (from backend) */
+  errors?: Record<string, string[] | unknown>;
 }
 
 /**

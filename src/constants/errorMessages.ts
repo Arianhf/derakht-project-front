@@ -16,7 +16,6 @@ export interface ErrorMessageDetails {
   productName?: string;
   max?: number;
   retryAfter?: number;
-  [key: string]: string | number | boolean | undefined;
 }
 
 /**
