@@ -2,8 +2,7 @@
 'use client';
 
 import React from 'react';
-import AccountLayout from '@/components/account/AccountLayout';
-import OrderDetail from '@/components/account/OrderDetail';
+import { AccountLayout, OrderDetail } from '@/components/account';
 import { UserProvider } from '@/contexts/UserContext';
 import { Order } from '@/types/shop';
 

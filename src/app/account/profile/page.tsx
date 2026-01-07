@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import AccountLayout from '@/components/account/AccountLayout';
-import ProfileManagement from '@/components/account/ProfileManagement';
+import { AccountLayout, ProfileManagement } from '@/components/account';
 import { UserProvider } from '@/contexts/UserContext';
 
 const ProfilePage: React.FC = () => {
