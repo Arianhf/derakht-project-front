@@ -1,6 +1,5 @@
 // src/services/storyService.tsx
 import { AxiosProgressEvent } from 'axios';
-import api from './api';
 import {
   StoryTemplate,
   StoryResponse,
@@ -14,6 +13,7 @@ import {
   CreateTemplatePartStandalonePayload,
   UpdateTemplatePartPayload
 } from '@/types/story';
+import api from './api';
 
 /**
  * Backend asset response structure

@@ -32,8 +32,6 @@ export default [
       'src/types/error.ts',
       'src/utils/errorLogger.ts',
       'src/utils/validation.ts',
-      'src/services/storyService.tsx',
-      'src/services/api.tsx',
     ],
   },
   {

@@ -1,7 +1,7 @@
 // src/services/api.tsx with anonymous cart ID and error handling
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
-import { StandardErrorResponse, ErrorCode, ApiErrorResponse } from "@/types/error";
+import { StandardErrorResponse, ErrorCode } from "@/types/error";
 import { addBreadcrumb } from "@/utils/errorLogger";
 
 function getBaseUrl() {
@@ -209,7 +209,7 @@ api.interceptors.request.use(
                             console.log('[API] Server anonymous cart ID header added');
                         }
                     }
-                } catch (error) {
+                } catch {
                     // Ignore errors getting anonymous cart ID
                 }
             }
