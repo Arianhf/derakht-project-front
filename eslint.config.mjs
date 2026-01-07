@@ -24,7 +24,6 @@ export default [
       'src/components/story/TextCanvasEditor.tsx',
       'src/components/shop/CheckoutPage.tsx',
       'src/components/shop/OrderConfirmationPage.tsx',
-      'src/components/login/LoginPage.tsx',
       'src/components/admin/TemplateForm.tsx',
       'src/components/admin/TemplatePartEditor.tsx',
       'src/components/checkout/ShippingForm.tsx',
